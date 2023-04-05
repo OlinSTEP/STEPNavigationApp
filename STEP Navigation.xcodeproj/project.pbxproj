@@ -8,17 +8,43 @@
 
 /* Begin PBXBuildFile section */
 		8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
-		8241735329DE0C6F001599B1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735229DE0C6F001599B1 /* ContentView.swift */; };
 		8241735529DE0C70001599B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735429DE0C70001599B1 /* Assets.xcassets */; };
 		8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735729DE0C70001599B1 /* Preview Assets.xcassets */; };
+		8241736229DE1398001599B1 /* AnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736129DE1398001599B1 /* AnchorListView.swift */; };
+		8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736329DE13A5001599B1 /* LocalizingView.swift */; };
+		8241736629DE13B0001599B1 /* LocalAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736529DE13B0001599B1 /* LocalAnchorListView.swift */; };
+		8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736729DE13B8001599B1 /* AnchorDetailView.swift */; };
+		8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736929DE13BF001599B1 /* NavigatingView.swift */; };
+		8241736C29DE13F4001599B1 /* HapticFeedbackAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736B29DE13F4001599B1 /* HapticFeedbackAdapter.swift */; };
+		8241736E29DE140D001599B1 /* SoundFeedbackAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736D29DE140D001599B1 /* SoundFeedbackAdapter.swift */; };
+		8241737029DE1415001599B1 /* TextFeedbackAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736F29DE1415001599B1 /* TextFeedbackAdapter.swift */; };
+		8241737229DE1430001599B1 /* AllAnchorDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737129DE1430001599B1 /* AllAnchorDetails.swift */; };
+		8241737429DE1440001599B1 /* AllPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737329DE1440001599B1 /* AllPaths.swift */; };
+		8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737529DE144C001599B1 /* DatabaseModel.swift */; };
+		8241737929DE1478001599B1 /* PositioningModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737829DE1478001599B1 /* PositioningModel.swift */; };
+		8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737A29DE187E001599B1 /* AdjustmentModel.swift */; };
+		8241737D29DE1890001599B1 /* PathPlannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737C29DE1890001599B1 /* PathPlannerModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		8241734D29DE0C6F001599B1 /* STEP Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Navigation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_NavigationApp.swift; sourceTree = "<group>"; };
-		8241735229DE0C6F001599B1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8241735729DE0C70001599B1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		8241736129DE1398001599B1 /* AnchorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorListView.swift; sourceTree = "<group>"; };
+		8241736329DE13A5001599B1 /* LocalizingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizingView.swift; sourceTree = "<group>"; };
+		8241736529DE13B0001599B1 /* LocalAnchorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAnchorListView.swift; sourceTree = "<group>"; };
+		8241736729DE13B8001599B1 /* AnchorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetailView.swift; sourceTree = "<group>"; };
+		8241736929DE13BF001599B1 /* NavigatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigatingView.swift; sourceTree = "<group>"; };
+		8241736B29DE13F4001599B1 /* HapticFeedbackAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackAdapter.swift; sourceTree = "<group>"; };
+		8241736D29DE140D001599B1 /* SoundFeedbackAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFeedbackAdapter.swift; sourceTree = "<group>"; };
+		8241736F29DE1415001599B1 /* TextFeedbackAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFeedbackAdapter.swift; sourceTree = "<group>"; };
+		8241737129DE1430001599B1 /* AllAnchorDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllAnchorDetails.swift; sourceTree = "<group>"; };
+		8241737329DE1440001599B1 /* AllPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPaths.swift; sourceTree = "<group>"; };
+		8241737529DE144C001599B1 /* DatabaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseModel.swift; sourceTree = "<group>"; };
+		8241737829DE1478001599B1 /* PositioningModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningModel.swift; sourceTree = "<group>"; };
+		8241737A29DE187E001599B1 /* AdjustmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustmentModel.swift; sourceTree = "<group>"; };
+		8241737C29DE1890001599B1 /* PathPlannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathPlannerModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,8 +77,10 @@
 		8241734F29DE0C6F001599B1 /* STEP Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				8241736029DE1374001599B1 /* Adapters */,
+				8241735F29DE1370001599B1 /* Models */,
+				8241735E29DE1369001599B1 /* Views */,
 				8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */,
-				8241735229DE0C6F001599B1 /* ContentView.swift */,
 				8241735429DE0C70001599B1 /* Assets.xcassets */,
 				8241735629DE0C70001599B1 /* Preview Content */,
 			);
@@ -65,6 +93,41 @@
 				8241735729DE0C70001599B1 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		8241735E29DE1369001599B1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8241736729DE13B8001599B1 /* AnchorDetailView.swift */,
+				8241736129DE1398001599B1 /* AnchorListView.swift */,
+				8241736329DE13A5001599B1 /* LocalizingView.swift */,
+				8241736529DE13B0001599B1 /* LocalAnchorListView.swift */,
+				8241736929DE13BF001599B1 /* NavigatingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8241735F29DE1370001599B1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8241737129DE1430001599B1 /* AllAnchorDetails.swift */,
+				8241737329DE1440001599B1 /* AllPaths.swift */,
+				8241737529DE144C001599B1 /* DatabaseModel.swift */,
+				8241737829DE1478001599B1 /* PositioningModel.swift */,
+				8241737A29DE187E001599B1 /* AdjustmentModel.swift */,
+				8241737C29DE1890001599B1 /* PathPlannerModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8241736029DE1374001599B1 /* Adapters */ = {
+			isa = PBXGroup;
+			children = (
+				8241736B29DE13F4001599B1 /* HapticFeedbackAdapter.swift */,
+				8241736D29DE140D001599B1 /* SoundFeedbackAdapter.swift */,
+				8241736F29DE1415001599B1 /* TextFeedbackAdapter.swift */,
+			);
+			path = Adapters;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,8 +200,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8241735329DE0C6F001599B1 /* ContentView.swift in Sources */,
+				8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */,
+				8241737029DE1415001599B1 /* TextFeedbackAdapter.swift in Sources */,
+				8241736629DE13B0001599B1 /* LocalAnchorListView.swift in Sources */,
+				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
 				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,
+				8241737429DE1440001599B1 /* AllPaths.swift in Sources */,
+				8241736C29DE13F4001599B1 /* HapticFeedbackAdapter.swift in Sources */,
+				8241736E29DE140D001599B1 /* SoundFeedbackAdapter.swift in Sources */,
+				8241737929DE1478001599B1 /* PositioningModel.swift in Sources */,
+				8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */,
+				8241737D29DE1890001599B1 /* PathPlannerModel.swift in Sources */,
+				8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */,
+				8241736229DE1398001599B1 /* AnchorListView.swift in Sources */,
+				8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */,
+				8241737229DE1430001599B1 /* AllAnchorDetails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

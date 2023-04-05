@@ -11,7 +11,7 @@ import SwiftUI
 struct STEP_NavigationApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AnchorListView()
         }
     }
 }
