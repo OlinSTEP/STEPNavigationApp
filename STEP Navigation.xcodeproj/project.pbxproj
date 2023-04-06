@@ -24,6 +24,7 @@
 		8241737929DE1478001599B1 /* PositioningModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737829DE1478001599B1 /* PositioningModel.swift */; };
 		8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737A29DE187E001599B1 /* AdjustmentModel.swift */; };
 		8241737D29DE1890001599B1 /* PathPlannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737C29DE1890001599B1 /* PathPlannerModel.swift */; };
+		82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		8241737829DE1478001599B1 /* PositioningModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningModel.swift; sourceTree = "<group>"; };
 		8241737A29DE187E001599B1 /* AdjustmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustmentModel.swift; sourceTree = "<group>"; };
 		8241737C29DE1890001599B1 /* PathPlannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathPlannerModel.swift; sourceTree = "<group>"; };
+		82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 		8241734F29DE0C6F001599B1 /* STEP Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */,
 				8241736029DE1374001599B1 /* Adapters */,
 				8241735F29DE1370001599B1 /* Models */,
 				8241735E29DE1369001599B1 /* Views */,
@@ -190,6 +193,7 @@
 			files = (
 				8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */,
 				8241735529DE0C70001599B1 /* Assets.xcassets in Resources */,
+				82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
