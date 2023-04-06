@@ -25,6 +25,13 @@
 		8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737A29DE187E001599B1 /* AdjustmentModel.swift */; };
 		8241737D29DE1890001599B1 /* PathPlannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737C29DE1890001599B1 /* PathPlannerModel.swift */; };
 		82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */; };
+		82659CA729DF5FC8007546A1 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CA629DF5FC8007546A1 /* FirebaseAnalytics */; };
+		82659CA929DF5FC8007546A1 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CA829DF5FC8007546A1 /* FirebaseDatabase */; };
+		82659CAB29DF5FC8007546A1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CAA29DF5FC8007546A1 /* FirebaseStorage */; };
+		82659CAE29DF5FFC007546A1 /* ARCoreCloudAnchors in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CAD29DF5FFC007546A1 /* ARCoreCloudAnchors */; };
+		82659CB029DF5FFC007546A1 /* ARCoreGARSession in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CAF29DF5FFC007546A1 /* ARCoreGARSession */; };
+		82659CB229DF5FFC007546A1 /* ARCoreGeospatial in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB129DF5FFC007546A1 /* ARCoreGeospatial */; };
+		82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB429DF60B5007546A1 /* SwiftGraph */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +61,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */,
+				82659CA929DF5FC8007546A1 /* FirebaseDatabase in Frameworks */,
+				82659CA729DF5FC8007546A1 /* FirebaseAnalytics in Frameworks */,
+				82659CB029DF5FFC007546A1 /* ARCoreGARSession in Frameworks */,
+				82659CAB29DF5FC8007546A1 /* FirebaseStorage in Frameworks */,
+				82659CAE29DF5FFC007546A1 /* ARCoreCloudAnchors in Frameworks */,
+				82659CB229DF5FFC007546A1 /* ARCoreGeospatial in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +163,15 @@
 			dependencies = (
 			);
 			name = "STEP Navigation";
+			packageProductDependencies = (
+				82659CA629DF5FC8007546A1 /* FirebaseAnalytics */,
+				82659CA829DF5FC8007546A1 /* FirebaseDatabase */,
+				82659CAA29DF5FC8007546A1 /* FirebaseStorage */,
+				82659CAD29DF5FFC007546A1 /* ARCoreCloudAnchors */,
+				82659CAF29DF5FFC007546A1 /* ARCoreGARSession */,
+				82659CB129DF5FFC007546A1 /* ARCoreGeospatial */,
+				82659CB429DF60B5007546A1 /* SwiftGraph */,
+			);
 			productName = "STEP Navigation";
 			productReference = 8241734D29DE0C6F001599B1 /* STEP Navigation.app */;
 			productType = "com.apple.product-type.application";
@@ -177,6 +200,11 @@
 				Base,
 			);
 			mainGroup = 8241734429DE0C6F001599B1;
+			packageReferences = (
+				82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */,
+				82659CB329DF60B5007546A1 /* XCRemoteSwiftPackageReference "SwiftGraph" */,
+			);
 			productRefGroup = 8241734E29DE0C6F001599B1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -275,7 +303,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -329,7 +357,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -355,11 +383,16 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-Navigation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -384,11 +417,16 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-Navigation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -419,6 +457,71 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
+			};
+		};
+		82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google-ar/arcore-ios-sdk";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.36.0;
+			};
+		};
+		82659CB329DF60B5007546A1 /* XCRemoteSwiftPackageReference "SwiftGraph" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/davecom/SwiftGraph";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		82659CA629DF5FC8007546A1 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		82659CA829DF5FC8007546A1 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		82659CAA29DF5FC8007546A1 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		82659CAD29DF5FFC007546A1 /* ARCoreCloudAnchors */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */;
+			productName = ARCoreCloudAnchors;
+		};
+		82659CAF29DF5FFC007546A1 /* ARCoreGARSession */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */;
+			productName = ARCoreGARSession;
+		};
+		82659CB129DF5FFC007546A1 /* ARCoreGeospatial */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */;
+			productName = ARCoreGeospatial;
+		};
+		82659CB429DF60B5007546A1 /* SwiftGraph */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CB329DF60B5007546A1 /* XCRemoteSwiftPackageReference "SwiftGraph" */;
+			productName = SwiftGraph;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8241734529DE0C6F001599B1 /* Project object */;
 }
