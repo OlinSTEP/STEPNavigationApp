@@ -14,39 +14,36 @@ struct AnchorDetailView: View {
     private let listTextColor = AppColor.black
     
     var body: some View {
-        VStack {
-            HStack {
-                Text(anchorDetails.locationAddress)
-                    .font(.title)
-                    .padding()
-                Spacer()
-            }
+        NavigationView {
             VStack {
                 HStack {
-                    Text("Location Notes")
+                    Text(anchorDetails.locationAddress)
                         .font(.title)
                         .padding()
                     Spacer()
                 }
-                HStack {
-                    Text(anchorDetails.notes)
-                        .padding()
-                    Spacer()
+                VStack {
+                    HStack {
+                        Text("Location Notes")
+                            .font(.title)
+                            .padding()
+                        Spacer()
+                    }
+                    HStack {
+                        Text(anchorDetails.notes)
+                            .padding()
+                        Spacer()
+                    }
                 }
+                Spacer()
+                Button (action: {
+                    print("Pressed navigate")
+                }, label: {
+                    Text("Navigate")
+                })
             }
-            Spacer()
-            Button (action: {
-                print("Pressed navigate")
-            }, label: {
-                Text("Navigate")
-            })
-            Button (action: {
-                print("Pressed cancel")
-            }, label: {
-                Text("Cancel")
-            })
+            .navigationTitle(anchorDetails.name)
         }
-        .navigationTitle(anchorDetails.name)
     }
 }
 
@@ -55,8 +52,6 @@ struct AnchorDetailView_Previews: PreviewProvider {
 
     
     static var previews: some View {
-        NavigationView {
             AnchorDetailView(anchorDetails: anchorDetails)
-        }
     }
 }
