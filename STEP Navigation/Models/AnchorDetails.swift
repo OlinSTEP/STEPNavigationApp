@@ -32,5 +32,6 @@ struct AnchorDetails: Identifiable {
         case busStop = "Bus Stop"
         case externalDoor = "External Door"
         case bathroom = "Bathroom"
+        case frontdesk = "Front Desk"
     }
 }
