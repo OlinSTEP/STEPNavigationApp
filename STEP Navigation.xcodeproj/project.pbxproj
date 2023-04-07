@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7B1956F929E066D700C629F5 /* UserLost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1956F829E066D700C629F5 /* UserLost.swift */; };
+		7B1956FB29E0683100C629F5 /* GetUserLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1956FA29E0683100C629F5 /* GetUserLocation.swift */; };
 		8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
 		8241735529DE0C70001599B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735429DE0C70001599B1 /* Assets.xcassets */; };
 		8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735729DE0C70001599B1 /* Preview Assets.xcassets */; };
@@ -37,6 +39,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7B1956F829E066D700C629F5 /* UserLost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLost.swift; sourceTree = "<group>"; };
+		7B1956FA29E0683100C629F5 /* GetUserLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserLocation.swift; sourceTree = "<group>"; };
 		8241734D29DE0C6F001599B1 /* STEP Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Navigation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_NavigationApp.swift; sourceTree = "<group>"; };
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -138,6 +142,8 @@
 				8241737329DE1440001599B1 /* AllPaths.swift */,
 				8241737529DE144C001599B1 /* DatabaseModel.swift */,
 				8241737A29DE187E001599B1 /* AdjustmentModel.swift */,
+				7B1956F829E066D700C629F5 /* UserLost.swift */,
+				7B1956FA29E0683100C629F5 /* GetUserLocation.swift */,
 				8241737C29DE1890001599B1 /* PathPlannerModel.swift */,
 			);
 			path = Models;
@@ -238,6 +244,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B1956F929E066D700C629F5 /* UserLost.swift in Sources */,
 				8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */,
 				8241737029DE1415001599B1 /* TextFeedbackAdapter.swift in Sources */,
 				8241736629DE13B0001599B1 /* LocalAnchorListView.swift in Sources */,
@@ -251,6 +258,7 @@
 				8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */,
 				8241737D29DE1890001599B1 /* PathPlannerModel.swift in Sources */,
 				A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */,
+				7B1956FB29E0683100C629F5 /* GetUserLocation.swift in Sources */,
 				8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */,
 				8241736229DE1398001599B1 /* AnchorListView.swift in Sources */,
 				8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */,
