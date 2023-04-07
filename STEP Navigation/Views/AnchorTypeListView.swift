@@ -24,7 +24,7 @@ struct AnchorTypeListView: View {
                         })
                 }
             }
-            .navigationTitle("My Anchor Groups")
+            .navigationTitle("Anchor Groups")
             .toolbar (content: {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
