@@ -11,7 +11,8 @@ import SwiftUI
 struct STEP_NavigationApp: App {
     var body: some Scene {
         WindowGroup {
-            AnchorListView()
+            AnchorListView(anchorType: .busStop)
+                .environmentObject(AnchorData())
         }
     }
 }

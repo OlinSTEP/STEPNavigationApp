@@ -32,6 +32,8 @@
 		82659CB029DF5FFC007546A1 /* ARCoreGARSession in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CAF29DF5FFC007546A1 /* ARCoreGARSession */; };
 		82659CB229DF5FFC007546A1 /* ARCoreGeospatial in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB129DF5FFC007546A1 /* ARCoreGeospatial */; };
 		82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB429DF60B5007546A1 /* SwiftGraph */; };
+		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
+		A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +56,8 @@
 		8241737A29DE187E001599B1 /* AdjustmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustmentModel.swift; sourceTree = "<group>"; };
 		8241737C29DE1890001599B1 /* PathPlannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathPlannerModel.swift; sourceTree = "<group>"; };
 		82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
+		A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetails.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,9 +121,11 @@
 			children = (
 				8241736729DE13B8001599B1 /* AnchorDetailView.swift */,
 				8241736129DE1398001599B1 /* AnchorListView.swift */,
+				8241737829DE1478001599B1 /* PositioningModel.swift */,
 				8241736329DE13A5001599B1 /* LocalizingView.swift */,
 				8241736529DE13B0001599B1 /* LocalAnchorListView.swift */,
 				8241736929DE13BF001599B1 /* NavigatingView.swift */,
+				A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -128,9 +134,9 @@
 			isa = PBXGroup;
 			children = (
 				8241737129DE1430001599B1 /* AllAnchorDetails.swift */,
+				A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */,
 				8241737329DE1440001599B1 /* AllPaths.swift */,
 				8241737529DE144C001599B1 /* DatabaseModel.swift */,
-				8241737829DE1478001599B1 /* PositioningModel.swift */,
 				8241737A29DE187E001599B1 /* AdjustmentModel.swift */,
 				8241737C29DE1890001599B1 /* PathPlannerModel.swift */,
 			);
@@ -241,8 +247,10 @@
 				8241736C29DE13F4001599B1 /* HapticFeedbackAdapter.swift in Sources */,
 				8241736E29DE140D001599B1 /* SoundFeedbackAdapter.swift in Sources */,
 				8241737929DE1478001599B1 /* PositioningModel.swift in Sources */,
+				A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */,
 				8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */,
 				8241737D29DE1890001599B1 /* PathPlannerModel.swift in Sources */,
+				A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */,
 				8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */,
 				8241736229DE1398001599B1 /* AnchorListView.swift in Sources */,
 				8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */,
