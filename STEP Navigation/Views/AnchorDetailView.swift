@@ -13,18 +13,20 @@ struct AnchorDetailView: View {
     var body: some View {
             VStack {
                 HStack {
-                    Text(anchorDetails.locationAddress)
-                        .font(.title)
-                        .padding(.horizontal)
-                        .padding(.bottom)
+                    Text(anchorDetails.name)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .font(.largeTitle)
+                        .padding()
                     Spacer()
                 }
                 VStack {
                     HStack {
                         Text("Location Notes")
-                            .font(.headline)
+                            .font(.title2)
+                            .bold()
                             .padding(.horizontal)
                             .padding(.top)
+                            .padding(.bottom, 5)
                             .foregroundColor(AppColor.black)
                         Spacer()
                     }
@@ -37,21 +39,23 @@ struct AnchorDetailView: View {
                     }
                 }
                 .background(AppColor.grey)
+                .padding()
                 Spacer()
                 Button (action: {
                     print("Pressed navigate")
                 }, label: {
                     Text("Navigate")
                         .font(.title)
+                        .bold()
                         .frame(maxWidth: 300)
                         .foregroundColor(AppColor.black)
                 })
+                .padding(.bottom, 20)
                 .tint(AppColor.accent)
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
                 .controlSize(.large)
             }
-            .navigationTitle(anchorDetails.name)
     }
 }
 
