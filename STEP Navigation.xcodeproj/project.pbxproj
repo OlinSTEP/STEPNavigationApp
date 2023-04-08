@@ -37,6 +37,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		130E7C3B29E106BA004B1E81 /* STEP-Navigation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "STEP-Navigation-Info.plist"; sourceTree = SOURCE_ROOT; };
 		8241734D29DE0C6F001599B1 /* STEP Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Navigation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_NavigationApp.swift; sourceTree = "<group>"; };
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -97,6 +98,7 @@
 		8241734F29DE0C6F001599B1 /* STEP Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				130E7C3B29E106BA004B1E81 /* STEP-Navigation-Info.plist */,
 				82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */,
 				8241736029DE1374001599B1 /* Adapters */,
 				8241735F29DE1370001599B1 /* Models */,
@@ -380,12 +382,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"STEP Navigation/Preview Content\"";
-				DEVELOPMENT_TEAM = WNX6LNFDXA;
+				DEVELOPMENT_TEAM = 787TUDMR8Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "STEP-Navigation-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera permission is needed to localize and navigate your surroundings";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location while in use permission is needed to localize you to your surroundings";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -403,6 +409,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-Navigation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -414,12 +421,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"STEP Navigation/Preview Content\"";
-				DEVELOPMENT_TEAM = WNX6LNFDXA;
+				DEVELOPMENT_TEAM = 787TUDMR8Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "STEP-Navigation-Info.plist";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera permission is needed to localize and navigate your surroundings";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location while in use permission is needed to localize you to your surroundings";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -437,6 +448,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-Navigation";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
