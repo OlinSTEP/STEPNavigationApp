@@ -10,40 +10,48 @@ import SwiftUI
 struct AnchorDetailView: View {
     let anchorDetails: AnchorDetails
     
-    private let listBackgroundColor = AppColor.grey
-    private let listTextColor = AppColor.black
-    
     var body: some View {
-        NavigationView {
             VStack {
                 HStack {
                     Text(anchorDetails.locationAddress)
                         .font(.title)
-                        .padding()
+                        .padding(.horizontal)
+                        .padding(.bottom)
                     Spacer()
                 }
                 VStack {
                     HStack {
                         Text("Location Notes")
-                            .font(.title)
-                            .padding()
+                            .font(.headline)
+                            .padding(.horizontal)
+                            .padding(.top)
+                            .foregroundColor(AppColor.black)
                         Spacer()
                     }
                     HStack {
                         Text(anchorDetails.notes)
-                            .padding()
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .foregroundColor(AppColor.black)
                         Spacer()
                     }
                 }
+                .background(AppColor.grey)
                 Spacer()
                 Button (action: {
                     print("Pressed navigate")
                 }, label: {
                     Text("Navigate")
+                        .font(.title)
+                        .frame(maxWidth: 300)
+                        .foregroundColor(AppColor.black)
                 })
+                .tint(AppColor.accent)
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
             }
             .navigationTitle(anchorDetails.name)
-        }
     }
 }
 

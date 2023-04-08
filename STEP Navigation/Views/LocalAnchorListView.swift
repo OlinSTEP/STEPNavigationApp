@@ -15,7 +15,6 @@ struct LocalAnchorListView: View {
     private let listTextColor = AppColor.black
     
     var body: some View {
-        NavigationView {
             List {
                 ForEach(anchors) {
                     anchor in NavigationLink(anchor.name, destination: AnchorDetailView(anchorDetails: anchor))
@@ -24,7 +23,6 @@ struct LocalAnchorListView: View {
                 .foregroundColor(listTextColor)
             }
             .navigationTitle("Nearby \(anchorType.rawValue)s")
-        }
     }
     
     private var anchors: [AnchorDetails] {
