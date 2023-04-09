@@ -13,17 +13,19 @@ struct AnchorDetails: Identifiable {
     var name: String
     var notes: String
     var locationCoordinates: String //what format are we storing the location in??
+    var distanceAway: Double //in meters
     var anchorType: AnchorType
     
-    init(name: String, notes: String, locationCoordinates: String, anchorType: AnchorType) {
+    init(name: String, notes: String, locationCoordinates: String, distanceAway: Double, anchorType: AnchorType) {
         self.name = name
         self.notes = notes
         self.locationCoordinates = locationCoordinates
+        self.distanceAway = distanceAway
         self.anchorType = anchorType
     }
     
     init() {
-        self.init(name: "", notes: "", locationCoordinates: "", anchorType: .busStop)
+        self.init(name: "", notes: "", locationCoordinates: "", distanceAway: 0.0, anchorType: .busStop)
     }
     
     enum AnchorType: String, CaseIterable {

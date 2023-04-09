@@ -25,7 +25,9 @@ struct AnchorDetailView: View {
                 }
                 
                 HStack {
-                    Text("7 meters away")
+                    let formattedDistance = String(format: "%g", anchorDetails.distanceAway)
+
+                    Text("\(formattedDistance) meters away")
                         .font(.title)
                         .padding(.horizontal)
                     Spacer()
