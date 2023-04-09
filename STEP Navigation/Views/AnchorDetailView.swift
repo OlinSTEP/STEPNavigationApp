@@ -12,11 +12,22 @@ struct AnchorDetailView: View {
     
     var body: some View {
             VStack {
+                //need to add in 20 units of spacing colored spacing here
+                
                 HStack {
                     Text(anchorDetails.name)
-                        .navigationBarTitleDisplayMode(.inline)
                         .font(.largeTitle)
-                        .padding()
+                        .bold()
+                        .padding(.horizontal)
+                        .padding(.top)
+                        .padding(.bottom, 2)
+                    Spacer()
+                }
+                
+                HStack {
+                    Text("7 meters away")
+                        .font(.title)
+                        .padding(.horizontal)
                     Spacer()
                 }
                 VStack {
@@ -24,21 +35,16 @@ struct AnchorDetailView: View {
                         Text("Location Notes")
                             .font(.title2)
                             .bold()
-                            .padding(.horizontal)
-                            .padding(.top)
                             .padding(.bottom, 5)
-                            .foregroundColor(AppColor.black)
+                            .multilineTextAlignment(.leading)
                         Spacer()
                     }
                     HStack {
                         Text(anchorDetails.notes)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .foregroundColor(AppColor.black)
+                            .multilineTextAlignment(.leading)
                         Spacer()
                     }
                 }
-                .background(AppColor.grey)
                 .padding()
                 Spacer()
                 Button (action: {
@@ -56,6 +62,16 @@ struct AnchorDetailView: View {
                 .buttonBorderShape(.capsule)
                 .controlSize(.large)
             }
+            .navigationBarItems(
+                trailing:
+                    Button(action: {
+                        print("pressed settings")
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .scaleEffect(1.5)
+                            .foregroundColor(AppColor.black)
+                    }
+            )
     }
 }
 
