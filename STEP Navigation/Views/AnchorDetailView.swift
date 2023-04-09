@@ -51,9 +51,7 @@ struct AnchorDetailView: View {
                 .padding()
                                 
                 Spacer()
-                Button (action: {
-                    print("Pressed navigate")
-                }, label: {
+                NavigationLink (destination: NavigatingView(), label: {
                     Text("Navigate")
                         .font(.title)
                         .bold()
