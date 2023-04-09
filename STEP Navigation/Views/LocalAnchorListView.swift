@@ -17,7 +17,7 @@ struct LocalAnchorListView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Nearby \(anchorType.rawValue)s")
+                Text("\(anchorType.rawValue) Anchors")
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
@@ -39,34 +39,6 @@ struct LocalAnchorListView: View {
             .padding(.bottom, 20)
         }
         .background(AppColor.accent)
-        
-        ScrollView {
-            VStack {
-                ForEach(anchors) {
-                    anchor in
-                    NavigationLink (
-                        destination: AnchorDetailView(anchorDetails: anchor),
-                        label: {
-                            HStack {
-                                Text(anchor.name)
-                                    .font(.title)
-                                    .bold()
-                                    .padding(30)
-                                    .multilineTextAlignment(.leading)
-                                Spacer()
-                            }
-                            .frame(maxWidth: .infinity)
-                            .frame(minHeight: 140)
-                            .foregroundColor(AppColor.black)
-                        })
-                    .background(AppColor.grey)
-                    .cornerRadius(20)
-                    .padding(.horizontal)
-                }
-                .padding(.top, 20)
-            }
-            Spacer()
-        }
         .navigationBarItems(
             trailing:
                 Button(action: {
@@ -77,6 +49,47 @@ struct LocalAnchorListView: View {
                         .foregroundColor(AppColor.black)
                 }
         )
+        
+        if anchors.isEmpty {
+            VStack {
+                Spacer()
+                Text("Nothing nearby. Try widening your search radius.")
+                    .font(.title)
+                    .padding()
+                    .multilineTextAlignment(.center)
+                Spacer()
+            }
+            
+        } else {
+            
+            ScrollView {
+                VStack {
+                    ForEach(anchors) {
+                        anchor in
+                        NavigationLink (
+                            destination: AnchorDetailView(anchorDetails: anchor),
+                            label: {
+                                HStack {
+                                    Text(anchor.name)
+                                        .font(.title)
+                                        .bold()
+                                        .padding(30)
+                                        .multilineTextAlignment(.leading)
+                                    Spacer()
+                                }
+                                .frame(maxWidth: .infinity)
+                                .frame(minHeight: 140)
+                                .foregroundColor(AppColor.black)
+                            })
+                        .background(AppColor.grey)
+                        .cornerRadius(20)
+                        .padding(.horizontal)
+                    }
+                    .padding(.top, 20)
+                }
+                Spacer()
+            }
+        }
     }
     
     private var anchors: [AnchorDetails] {

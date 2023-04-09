@@ -33,6 +33,7 @@
 		82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB429DF60B5007546A1 /* SwiftGraph */; };
 		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
 		A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */; };
+		A8EACA0329E24E9500CBF590 /* CapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EACA0229E24E9500CBF590 /* CapsuleButton.swift */; };
 		A8FF1A1229E062DD002019E9 /* AnchorTypeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,7 @@
 		82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 		A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetails.swift; sourceTree = "<group>"; };
+		A8EACA0229E24E9500CBF590 /* CapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleButton.swift; sourceTree = "<group>"; };
 		A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorTypeListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -121,6 +123,7 @@
 			children = (
 				8241736729DE13B8001599B1 /* AnchorDetailView.swift */,
 				A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */,
+				A8EACA0229E24E9500CBF590 /* CapsuleButton.swift */,
 				8241736129DE1398001599B1 /* LocalAnchorListView.swift */,
 				8241737829DE1478001599B1 /* PositioningModel.swift */,
 				8241736329DE13A5001599B1 /* LocalizingView.swift */,
@@ -239,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */,
+				A8EACA0329E24E9500CBF590 /* CapsuleButton.swift in Sources */,
 				8241737029DE1415001599B1 /* TextFeedbackAdapter.swift in Sources */,
 				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
 				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,

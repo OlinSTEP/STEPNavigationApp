@@ -11,6 +11,7 @@ struct AnchorDetailView: View {
     let anchorDetails: AnchorDetails
     
     var body: some View {
+        ZStack {
             VStack {
                 //need to add in 20 units of spacing colored spacing here
                 
@@ -26,7 +27,7 @@ struct AnchorDetailView: View {
                 
                 HStack {
                     let formattedDistance = String(format: "%g", anchorDetails.distanceAway)
-
+                    
                     Text("\(formattedDistance) meters away")
                         .font(.title)
                         .padding(.horizontal)
@@ -48,6 +49,7 @@ struct AnchorDetailView: View {
                     }
                 }
                 .padding()
+                                
                 Spacer()
                 Button (action: {
                     print("Pressed navigate")
@@ -64,6 +66,10 @@ struct AnchorDetailView: View {
                 .buttonBorderShape(.capsule)
                 .controlSize(.large)
             }
+            
+            CapsuleButton()
+
+        }
             .navigationBarItems(
                 trailing:
                     Button(action: {
@@ -82,6 +88,6 @@ struct AnchorDetailView_Previews: PreviewProvider {
 
     
     static var previews: some View {
-            AnchorDetailView(anchorDetails: anchorDetails)
+        AnchorDetailView(anchorDetails: anchorDetails)
     }
 }

@@ -25,9 +25,9 @@ struct AppColor {
                                        blue: 255/255,
                                        opacity: 1)
   static let accent: Color = Color(.sRGB,
-                                       red: 99/255,
-                                       green: 228/255,
-                                       blue: 197/255,
+                                       red: 25/255,
+                                       green: 193/255,
+                                       blue: 255/255,
                                        opacity: 1)
 
 }

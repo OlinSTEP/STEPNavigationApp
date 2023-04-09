@@ -38,6 +38,16 @@ struct AnchorTypeListView: View {
                 .padding(.bottom, 20)
             }
             .background(AppColor.accent)
+            .navigationBarItems(
+                trailing:
+                    Button(action: {
+                        print("pressed settings")
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .scaleEffect(1.5)
+                            .foregroundColor(AppColor.black)
+                    }
+            )
             
             ScrollView {
                 VStack {
@@ -64,16 +74,6 @@ struct AnchorTypeListView: View {
                 }
                 Spacer()
             }
-            .navigationBarItems(
-                trailing:
-                    Button(action: {
-                        print("pressed settings")
-                    }) {
-                        Image(systemName: "gearshape.fill")
-                            .scaleEffect(1.5)
-                            .foregroundColor(AppColor.black)
-                    }
-            )
         }
         .accentColor(AppColor.black)
     }
