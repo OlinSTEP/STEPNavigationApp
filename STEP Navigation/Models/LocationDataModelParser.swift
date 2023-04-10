@@ -9,7 +9,16 @@ import Foundation
 import CoreLocation
 
 struct LocationDataModelParser {
-    static func parseJSON(from filename: String, fileType: String, anchorType: AnchorType) throws -> [LocationDataModel] {
+    /**
+     Parses a given json file into a list of LocationDataModel objects.
+     
+     - parameter filename: The name of the file to parse (without the .extension).
+     - parameter fileType: The file extension (either json or geojson).
+     - parameter anchorType: The type of anchor the file is representing.
+     
+     - returns: A list of LocationDataModels.
+     */
+    static func parse(from filename: String, fileType: String, anchorType: AnchorType) throws -> [LocationDataModel] {
         guard let url = Bundle.main.url(forResource: filename, withExtension: fileType) else {
             throw NSError(domain: "LocatinoDataModelParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "JSON file not found"])
         }
@@ -26,8 +35,8 @@ struct LocationDataModelParser {
             
             for i in 0...stopsRaw.count-1 {
                 let stop = stopsRaw[i]
-                let coordinates = CLLocationCoordinate2D(latitude: stop.latitude, longitude: stop.longitude)
-                locationModels.append(LocationDataModel(anchorType: anchorType, coordinates: coordinates, name: stop.name))
+                let coordinates = CLLocationCoordinate2D(latitude: stop.Latitude, longitude: stop.Longitude)
+                locationModels.append(LocationDataModel(anchorType: anchorType, coordinates: coordinates, name: stop.Stop_name))
             }
         case .externalDoor:
             print("Decode external door file.")
@@ -52,11 +61,11 @@ struct LocationDataModelParser {
 
 // MBTA Bus Stops
 struct BusStop : Decodable {
-    var id: Int
-    var name: String
-    var direction: Int
-    var latitude: Double
-    var longitude: Double
+    var Stop_ID: Int
+    var Stop_name: String
+    var Direction: Int
+    var Latitude: Double
+    var Longitude: Double
 }
 
 // External Door helper structs

@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-//MARK: Define struct
+// MARK: Define struct
 /**
     A struct that represents a location data model where an anchor can be created.
 */

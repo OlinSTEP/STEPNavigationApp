@@ -25,6 +25,18 @@ class DataModelManager {
     }
     
     /**
+     Add a list of new location data models to the allDataModels dictionary.
+     
+     - parameter dataModels: The list of data models to add (they must all be the same anchorType)
+     */
+    func listAddDataModel(_ dataModels: [LocationDataModel], anchorType: AnchorType) {
+        var models = allLocationModels[anchorType] ?? []
+        models += dataModels
+        allLocationModels[anchorType] = models
+        
+    }
+    
+    /**
         Returns dictionary with all location models
         Note: this is primiarly used for debuggina and should not be used in finalized code
      */
@@ -75,4 +87,3 @@ class DataModelManager {
     }
      
 }
-
