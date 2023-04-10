@@ -10,20 +10,20 @@ import CoreLocation
 
 struct LocationDataModelParser {
     /**
-     Parses a given json file into a list of LocationDataModel objects.
+     Parses a given json file into a set of LocationDataModel objects.
      
      - parameter filename: The name of the file to parse (without the .extension).
      - parameter fileType: The file extension (either json or geojson).
      - parameter anchorType: The type of anchor the file is representing.
      
-     - returns: A list of LocationDataModels.
+     - returns: A set of LocationDataModels.
      */
-    static func parse(from filename: String, fileType: String, anchorType: AnchorType) throws -> [LocationDataModel] {
+    static func parse(from filename: String, fileType: String, anchorType: AnchorType) throws -> Set<LocationDataModel> {
         guard let url = Bundle.main.url(forResource: filename, withExtension: fileType) else {
             throw NSError(domain: "LocatinoDataModelParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "JSON file not found"])
         }
         
-        var locationModels: [LocationDataModel] = []
+        var locationModels = Set<LocationDataModel>()
         let data = try Data(contentsOf: url, options: .mappedIfSafe)
         let decoder = JSONDecoder()
         
@@ -36,7 +36,7 @@ struct LocationDataModelParser {
             for i in 0...stopsRaw.count-1 {
                 let stop = stopsRaw[i]
                 let coordinates = CLLocationCoordinate2D(latitude: stop.Latitude, longitude: stop.Longitude)
-                locationModels.append(LocationDataModel(anchorType: anchorType, coordinates: coordinates, name: stop.Stop_name))
+                locationModels.insert(LocationDataModel(anchorType: anchorType, coordinates: coordinates, name: stop.Stop_name))
             }
         case .externalDoor:
             print("Decode external door file.")
@@ -47,7 +47,7 @@ struct LocationDataModelParser {
                 let door = doorsRaw[i]
                 let name = door.properties.name
                 let coordinates = CLLocationCoordinate2D(latitude: door.geometry.coordinates[1], longitude: door.geometry.coordinates[1])
-                locationModels.append(LocationDataModel(anchorType: anchorType, coordinates: coordinates, name: name))
+                locationModels.insert(LocationDataModel(anchorType: anchorType, coordinates: coordinates, name: name))
             }
         default:
             print("Not valid anchor type \(anchorType)")

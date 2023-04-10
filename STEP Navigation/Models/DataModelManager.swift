@@ -11,7 +11,7 @@ import CoreLocation
 class DataModelManager {
     
     // Dictionary that stores all the location models
-    private var allLocationModels = [AnchorType: [LocationDataModel]]()
+    private var allLocationModels = [AnchorType: Set<LocationDataModel>]()
     
     /**
         Adds a new location data model to the allDataModels dictionary.
@@ -20,18 +20,18 @@ class DataModelManager {
     */
     func addDataModel(_ dataModel: LocationDataModel) {
         var models = allLocationModels[dataModel.getAnchorType()] ?? []
-        models.append(dataModel)
+        models.insert(dataModel)
         allLocationModels[dataModel.getAnchorType()] = models
     }
     
     /**
-     Add a list of new location data models to the allDataModels dictionary.
+     Add a set of new location data models to the allDataModels dictionary item for that AnchorType
      
-     - parameter dataModels: The list of data models to add (they must all be the same anchorType)
+     - parameter dataModels: The set of data models to add (they must all be the same anchorType)
      */
-    func listAddDataModel(_ dataModels: [LocationDataModel], anchorType: AnchorType) {
+    func multiAddDataModel(_ dataModels: Set<LocationDataModel>, anchorType: AnchorType) {
         var models = allLocationModels[anchorType] ?? []
-        models += dataModels
+        models.formUnion(dataModels)
         allLocationModels[anchorType] = models
         
     }
@@ -40,7 +40,7 @@ class DataModelManager {
         Returns dictionary with all location models
         Note: this is primiarly used for debuggina and should not be used in finalized code
      */
-    func getAllLocationModels() -> [AnchorType: [LocationDataModel]] {
+    func getAllLocationModels() -> [AnchorType: Set<LocationDataModel>] {
         return allLocationModels
     }
     
@@ -52,29 +52,30 @@ class DataModelManager {
     }
      
     /**
-      Returns list of all locations of a given anchorType
+      Returns set of all locations of a given anchorType
       
       - parameter anchorType: The type of anchor.
       
-      - returns: A list containing all location data models of the specified anchor type.
+      - returns: A set containing all location data models of the specified anchor type.
       */
-    func getLocationsByType(anchorType: AnchorType) -> [LocationDataModel] {
-        guard let locations = allLocationModels[anchorType] else { return [] }
+    func getLocationsByType(anchorType: AnchorType) -> Set<LocationDataModel> {
+        guard let locations = allLocationModels[anchorType] else { return Set<LocationDataModel>() }
         return locations
     }
     
     /**
-            Returns a dictionary containing all location data models within the specified distance from the specified location.
+            Returns a set containing all location data models within the specified distance from the specified location.
          
             - parameter anchorType: The type of the anchor.
             - parameter location: The location to use as the center point for the distance calculation.
             - parameter maxDistance: The maximum distance in meters.
          
-            - returns: A dictionary containing all location data models within the specified distance from the specified location.
+            - returns: A set containing all location data models within the specified distance from the specified location.
     */
-    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance) -> [LocationDataModel] {
+    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance) -> Set<LocationDataModel> {
         guard let models = allLocationModels[anchorType] else {
-            return []
+            print("in the guard let")
+            return Set<LocationDataModel>()
         }
         
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
