@@ -8,6 +8,14 @@
 import Foundation
 import CoreLocation
 
+/**
+ A class that manages the storage of `LocationDataModel` objects.
+ 
+ It stores the resulting data models in a dictionary, where the keys are the `AnchorType` enum cases and the values are sets of `LocationDataModel` objects.
+ 
+ The class provides methods to retrieve data models by anchor type, location, and distance. It also provides a method to return all data models in the dictionary.
+ */
+
 class DataModelManager {
     
     // Dictionary that stores all the location models

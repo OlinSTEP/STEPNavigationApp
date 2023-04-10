@@ -8,7 +8,6 @@
 import Foundation
 import CoreLocation
 
-// MARK: Define struct
 /**
     A struct that represents a location data model where an anchor can be created.
 */
@@ -62,7 +61,6 @@ struct LocationDataModel: Hashable {
             lhs.name == rhs.name
     }
     
-// MARK: Get functions for all private attributes
     func getAnchorType() -> AnchorType {
         return self.anchorType
     }
@@ -80,7 +78,14 @@ struct LocationDataModel: Hashable {
     }
 }
 
-// MARK: Types of anchors
+/**
+An enum representing the different types of anchors that can be used to categorize `LocationDataModel` objects.
+ 
+- case busStop: Represents a bus stop anchor type.
+- case externalDoor: Represents an external door anchor type.
+- case bathroom: Represents a bathroom anchor type.
+- case frontdesk: Represents a front desk anchor type.
+*/
 enum AnchorType: String {
     case busStop = "Bus Stop"
     case externalDoor = "External Door"

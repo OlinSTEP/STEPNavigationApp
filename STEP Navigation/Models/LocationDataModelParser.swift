@@ -10,13 +10,15 @@ import CoreLocation
 
 struct LocationDataModelParser {
     /**
-     Parses a given json file into a set of LocationDataModel objects.
+     Parses a given json file into a set of `LocationDataModel` objects.
      
      - parameter filename: The name of the file to parse (without the .extension).
      - parameter fileType: The file extension (either json or geojson).
      - parameter anchorType: The type of anchor the file is representing.
      
      - returns: A set of LocationDataModels.
+     
+     - Note: This function assumes that the JSON files have the expected format and are present in the main bundle of the app. If the files are not present or the format is incorrect, the parsing and creation of data models may fail
      */
     static func parse(from filename: String, fileType: String, anchorType: AnchorType) throws -> Set<LocationDataModel> {
         guard let url = Bundle.main.url(forResource: filename, withExtension: fileType) else {
@@ -57,8 +59,7 @@ struct LocationDataModelParser {
     }
 }
 
-// MARK: Helper structs
-
+// Helper structs for JSON parsing
 // MBTA Bus Stops
 struct BusStop : Decodable {
     var Stop_ID: Int
