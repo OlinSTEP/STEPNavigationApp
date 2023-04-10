@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "Olin College Doors",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "Milas Door (Main)" }, "geometry": { "type": "Point", "coordinates": [ -71.264047239568399, 42.292977039976599, 58.222413532784202 ] } },
+{ "type": "Feature", "properties": { "Name": "East Hall Front Door" }, "geometry": { "type": "Point", "coordinates": [ -71.262263945264294, 42.292611596638999, 47.967055248856902 ] } },
+{ "type": "Feature", "properties": { "Name": "West Hall Door Facing Gate" }, "geometry": { "type": "Point", "coordinates": [ -71.262682551419601, 42.2933941299572, 51.129128694339698 ] } }
+]
+}
