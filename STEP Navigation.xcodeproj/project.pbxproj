@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		130862B929E479C500CADE79 /* TestDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130862B829E479C500CADE79 /* TestDataModel.swift */; };
+		130862C029E4874400CADE79 /* testDoors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 130862BF29E4874400CADE79 /* testDoors.geojson */; };
+		130862C229E488B800CADE79 /* testBusStops.json in Resources */ = {isa = PBXBuildFile; fileRef = 130862C129E488B800CADE79 /* testBusStops.json */; };
+		130E7C4129E23494004B1E81 /* LocationDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4029E23494004B1E81 /* LocationDataModel.swift */; };
+		130E7C4329E236BD004B1E81 /* DataModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4229E236BD004B1E81 /* DataModelManager.swift */; };
+		130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */; };
+		130E7C4929E36E36004B1E81 /* mbtaBusStops.json in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4829E36E36004B1E81 /* mbtaBusStops.json */; };
+		130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */; };
 		8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
 		8241735529DE0C70001599B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735429DE0C70001599B1 /* Assets.xcassets */; };
 		8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735729DE0C70001599B1 /* Preview Assets.xcassets */; };
@@ -36,8 +44,28 @@
 		A8FF1A1229E062DD002019E9 /* AnchorTypeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		130862BA29E479C500CADE79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8241734529DE0C6F001599B1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8241734C29DE0C6F001599B1;
+			remoteInfo = "STEP Navigation";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		130862B629E479C500CADE79 /* STEP NavigationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "STEP NavigationTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		130862B829E479C500CADE79 /* TestDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataModel.swift; sourceTree = "<group>"; };
+		130862BF29E4874400CADE79 /* testDoors.geojson */ = {isa = PBXFileReference; lastKnownFileType = text; path = testDoors.geojson; sourceTree = "<group>"; };
+		130862C129E488B800CADE79 /* testBusStops.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testBusStops.json; sourceTree = "<group>"; };
 		130E7C3B29E106BA004B1E81 /* STEP-Navigation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "STEP-Navigation-Info.plist"; sourceTree = SOURCE_ROOT; };
+		130E7C4029E23494004B1E81 /* LocationDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataModel.swift; sourceTree = "<group>"; };
+		130E7C4229E236BD004B1E81 /* DataModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelManager.swift; sourceTree = "<group>"; };
+		130E7C4429E25322004B1E81 /* ModelTestingByHand.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ModelTestingByHand.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataModelParser.swift; sourceTree = "<group>"; };
+		130E7C4829E36E36004B1E81 /* mbtaBusStops.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mbtaBusStops.json; sourceTree = "<group>"; };
+		130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Olin_College_Doors.geojson; sourceTree = "<group>"; };
 		8241734D29DE0C6F001599B1 /* STEP Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Navigation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_NavigationApp.swift; sourceTree = "<group>"; };
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -62,6 +90,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		130862B329E479C500CADE79 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8241734A29DE0C6F001599B1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -79,10 +114,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		130862B729E479C500CADE79 /* STEP NavigationTests */ = {
+			isa = PBXGroup;
+			children = (
+				130862B829E479C500CADE79 /* TestDataModel.swift */,
+			);
+			path = "STEP NavigationTests";
+			sourceTree = "<group>";
+		};
+		130E7C4729E36CFF004B1E81 /* DataFiles */ = {
+			isa = PBXGroup;
+			children = (
+				130862C129E488B800CADE79 /* testBusStops.json */,
+				130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */,
+				130E7C4829E36E36004B1E81 /* mbtaBusStops.json */,
+				130862BF29E4874400CADE79 /* testDoors.geojson */,
+			);
+			path = DataFiles;
+			sourceTree = "<group>";
+		};
 		8241734429DE0C6F001599B1 = {
 			isa = PBXGroup;
 			children = (
 				8241734F29DE0C6F001599B1 /* STEP Navigation */,
+				130862B729E479C500CADE79 /* STEP NavigationTests */,
 				8241734E29DE0C6F001599B1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -91,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				8241734D29DE0C6F001599B1 /* STEP Navigation.app */,
+				130862B629E479C500CADE79 /* STEP NavigationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -98,6 +154,7 @@
 		8241734F29DE0C6F001599B1 /* STEP Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				130E7C4729E36CFF004B1E81 /* DataFiles */,
 				130E7C3B29E106BA004B1E81 /* STEP-Navigation-Info.plist */,
 				82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */,
 				8241736029DE1374001599B1 /* Adapters */,
@@ -141,6 +198,10 @@
 				8241737529DE144C001599B1 /* DatabaseModel.swift */,
 				8241737A29DE187E001599B1 /* AdjustmentModel.swift */,
 				8241737C29DE1890001599B1 /* PathPlannerModel.swift */,
+				130E7C4029E23494004B1E81 /* LocationDataModel.swift */,
+				130E7C4229E236BD004B1E81 /* DataModelManager.swift */,
+				130E7C4429E25322004B1E81 /* ModelTestingByHand.playground */,
+				130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -158,6 +219,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		130862B529E479C500CADE79 /* STEP NavigationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 130862BE29E479C500CADE79 /* Build configuration list for PBXNativeTarget "STEP NavigationTests" */;
+			buildPhases = (
+				130862B229E479C500CADE79 /* Sources */,
+				130862B329E479C500CADE79 /* Frameworks */,
+				130862B429E479C500CADE79 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				130862BB29E479C500CADE79 /* PBXTargetDependency */,
+			);
+			name = "STEP NavigationTests";
+			productName = "STEP NavigationTests";
+			productReference = 130862B629E479C500CADE79 /* STEP NavigationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8241734C29DE0C6F001599B1 /* STEP Navigation */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8241735B29DE0C70001599B1 /* Build configuration list for PBXNativeTarget "STEP Navigation" */;
@@ -191,9 +270,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					130862B529E479C500CADE79 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 8241734C29DE0C6F001599B1;
+					};
 					8241734C29DE0C6F001599B1 = {
 						CreatedOnToolsVersion = 14.3;
 					};
@@ -218,24 +301,44 @@
 			projectRoot = "";
 			targets = (
 				8241734C29DE0C6F001599B1 /* STEP Navigation */,
+				130862B529E479C500CADE79 /* STEP NavigationTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		130862B429E479C500CADE79 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8241734B29DE0C6F001599B1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				130E7C4929E36E36004B1E81 /* mbtaBusStops.json in Resources */,
 				8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */,
 				8241735529DE0C70001599B1 /* Assets.xcassets in Resources */,
+				130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */,
 				82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */,
+				130862C029E4874400CADE79 /* testDoors.geojson in Resources */,
+				130862C229E488B800CADE79 /* testBusStops.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		130862B229E479C500CADE79 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				130862B929E479C500CADE79 /* TestDataModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8241734929DE0C6F001599B1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -250,7 +353,10 @@
 				8241736E29DE140D001599B1 /* SoundFeedbackAdapter.swift in Sources */,
 				8241737929DE1478001599B1 /* PositioningModel.swift in Sources */,
 				A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */,
+				130E7C4329E236BD004B1E81 /* DataModelManager.swift in Sources */,
+				130E7C4129E23494004B1E81 /* LocationDataModel.swift in Sources */,
 				8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */,
+				130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */,
 				8241737D29DE1890001599B1 /* PathPlannerModel.swift in Sources */,
 				A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */,
 				8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */,
@@ -262,7 +368,53 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		130862BB29E479C500CADE79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8241734C29DE0C6F001599B1 /* STEP Navigation */;
+			targetProxy = 130862BA29E479C500CADE79 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		130862BC29E479C500CADE79 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 787TUDMR8Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-NavigationTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/STEP Navigation.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/STEP Navigation";
+			};
+			name = Debug;
+		};
+		130862BD29E479C500CADE79 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 787TUDMR8Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-NavigationTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/STEP Navigation.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/STEP Navigation";
+			};
+			name = Release;
+		};
 		8241735929DE0C70001599B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -458,6 +610,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		130862BE29E479C500CADE79 /* Build configuration list for PBXNativeTarget "STEP NavigationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				130862BC29E479C500CADE79 /* Debug */,
+				130862BD29E479C500CADE79 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		8241734829DE0C6F001599B1 /* Build configuration list for PBXProject "STEP Navigation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
