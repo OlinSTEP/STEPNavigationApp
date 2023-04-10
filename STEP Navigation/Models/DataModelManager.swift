@@ -53,10 +53,10 @@ class DataModelManager {
     }
     
     /**
-     Returns an array of all AnchorTypes currently in the system
+     Returns a set of all AnchorTypes currently in the system
      */
-    func getAnchorTypes() -> [AnchorType] {
-        return Array(allLocationModels.keys)
+    func getAnchorTypes() -> Set<AnchorType> {
+        return Set(allLocationModels.keys)
     }
      
     /**
