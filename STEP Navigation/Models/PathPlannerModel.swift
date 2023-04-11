@@ -47,7 +47,6 @@ class PathPlannerModel {
         
         // Calculate angle between 2 vectors.
         let q = simd_quaternion(headingVec, pointingVector)
-        print("in angle diff: \(q.angle * sign(q.axis.y))")
         return q.angle * sign(q.axis.y)
     }
     
