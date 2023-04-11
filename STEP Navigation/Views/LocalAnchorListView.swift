@@ -14,6 +14,10 @@ struct LocalAnchorListView: View {
     private let listBackgroundColor = AppColor.grey
     private let listTextColor = AppColor.black
     
+    @State private var nearbyDistance: Double = 50
+    @State private var maxDistance: Double = 200
+    @State var showPopup = false
+    
     var body: some View {
         VStack {
             HStack {
@@ -24,19 +28,35 @@ struct LocalAnchorListView: View {
                 Spacer()
             }
             .padding(.top, 20)
+            
             HStack {
-                Text("Within 0.5 miles")
+                Text("Within \(nearbyDistance, specifier: "%.0f") meters")
                     .font(.title)
                     .padding(.leading)
-                Image(systemName: "chevron.down")
+                if showPopup == false {
+                    Image(systemName: "chevron.down")
+                } else {
+                    Image(systemName: "chevron.up")
+                }
                 // want to make the chevron bigger/easier to see/etc - not sure how thought??
-                    .onTapGesture {
-                        print("Tapped chevron to change distance")
-                        // in real life would want to present dropdown popup
-                    }
                 Spacer()
             }
             .padding(.bottom, 20)
+            .onTapGesture {
+                showPopup.toggle()
+                // in real life would want to present dropdown popup
+                
+            }
+            
+            if showPopup == true {
+                HStack {
+                    Text("0")
+                    Slider(value: $nearbyDistance, in: 0...maxDistance, step: 10)
+                    Text("\(maxDistance, specifier: "%.0f")")
+                }
+                .frame(width: 300)
+                .padding(.bottom, 20)
+            }
         }
         .background(AppColor.accent)
         .navigationBarItems(
