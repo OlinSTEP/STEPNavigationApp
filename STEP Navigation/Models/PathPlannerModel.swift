@@ -27,9 +27,8 @@ class PathFinderModel {
     
     /// Initializes a new instance of the PathFinderModel with the given ARFrame and SCNNode.
     ///
-    /// - Parameters:
-    ///   - frame: The current ARFrame.
-    ///   - nextNode: The next node in the path.
+    /// - parameter frame: The current ARFrame.
+    /// - parameter nextNode: The next node in the path.
     init(frame: ARFrame, nextNode: SCNNode) {
         self.frame = frame
         self.nextNode = nextNode
@@ -63,16 +62,19 @@ class PathFinderModel {
     
     /// Updates the instance attributes with the given ARFrame and SCNNode, and calculates the straight line distance and the angle difference.
     ///
-    /// - Parameters:
-    ///   - frame: The new ARFrame.
-    ///   - nextNode: The new next node in the path.
-    func getDirections(frame: ARFrame, nextNode: SCNNode) {
+    /// - parameter frame: The new ARFrame.
+    /// - parameter nextNode: The next node in the path.
+    ///
+    /// - returns: The straight line distance and angle differene to the node.
+    func getDirections(frame: ARFrame, nextNode: SCNNode) -> (Float?, Float?){
         // Update instance attributes.
         self.frame = frame
         self.nextNode = nextNode
         
         self.calculateStraightDistance()
         self.calculateAngleDifference()
+        
+        return (self.straightDistance, self.angleDifference)
     }
     
 }
