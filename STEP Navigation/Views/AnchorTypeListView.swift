@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct AnchorTypeListView: View {
-    @StateObject private var anchorData = AnchorData()
+//    @StateObject private var anchorData = AnchorData()
     
+    // Sets the appearance of the Navigation Bar using UIKit
     init() {
         let appearance = UINavigationBarAppearance()
         appearance.shadowColor = .clear
@@ -19,8 +20,10 @@ struct AnchorTypeListView: View {
     }
     
     var body: some View {
+        // Navigation Stack determines the Navigation Bar
         NavigationStack {
             VStack {
+                // Sets the title text
                 HStack {
                     Text("Anchor Groups")
                         .font(.largeTitle)
@@ -28,20 +31,15 @@ struct AnchorTypeListView: View {
                         .padding(.horizontal)
                     Spacer()
                 }
-                .padding(.top, 20)
-//                HStack {
-//                    Text("Subtitle")
-//                        .font(.title)
-//                        .padding(.horizontal)
-//                    Spacer()
-//                }
-                .padding(.bottom, 20)
+                .padding(.vertical, 20)
             }
             .background(AppColor.accent)
+            // Sets the settings button
             .navigationBarItems(
                 trailing:
                     Button(action: {
                         print("pressed settings")
+                        // replace with a Navigation Link that goes to settings
                     }) {
                         Image(systemName: "gearshape.fill")
                             .scaleEffect(1.5)
@@ -49,19 +47,21 @@ struct AnchorTypeListView: View {
                     }
             )
             
+            // The scroll view contains the main body of text
             ScrollView {
                 VStack {
-                    ForEach(AnchorDetails.AnchorType.allCases, id: \.self) {
+                    
+                    let anchorTypes = DataModelManager.shared.getAnchorTypes()
+                    // Creates a navigation button for each anchor type
+                    ForEach(Array(anchorTypes).sorted(by: {$0.rawValue < $1.rawValue})) {
                         anchorType in
                         NavigationLink (
-                            destination: LocalAnchorListView(anchorType: anchorType)
-                                .environmentObject(anchorData),
+                            destination: LocalAnchorListView(anchorType: anchorType),
                             label: {
                                 Text(anchorType.rawValue)
                                     .font(.largeTitle)
                                     .bold()
                                     .padding(30)
-//                                    .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity)
                                     .frame(minHeight: 140)
                                     .foregroundColor(AppColor.black)

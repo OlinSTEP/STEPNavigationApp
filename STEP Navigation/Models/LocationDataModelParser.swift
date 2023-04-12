@@ -48,7 +48,7 @@ struct LocationDataModelParser {
             for i in 0...doorsRaw.count-1 {
                 let door = doorsRaw[i]
                 let name = door.properties.name
-                let coordinates = CLLocationCoordinate2D(latitude: door.geometry.coordinates[1], longitude: door.geometry.coordinates[1])
+                let coordinates = CLLocationCoordinate2D(latitude: door.geometry.coordinates[1], longitude: door.geometry.coordinates[0])
                 locationModels.insert(LocationDataModel(anchorType: anchorType, coordinates: coordinates, name: name))
             }
         default:

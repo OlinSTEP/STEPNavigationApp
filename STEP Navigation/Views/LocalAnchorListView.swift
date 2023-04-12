@@ -6,19 +6,28 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct LocalAnchorListView: View {
-    @EnvironmentObject private var anchorData: AnchorData
-    let anchorType: AnchorDetails.AnchorType
+//    @EnvironmentObject private var anchorData: AnchorData
+//    let anchorType: AnchorDetails.AnchorType
+    let anchorType: AnchorType
     
     private let listBackgroundColor = AppColor.grey
     private let listTextColor = AppColor.black
     
-    @State private var nearbyDistance: Double = 50
-    @State private var maxDistance: Double = 200
+    @State private var nearbyDistance: Double = 10000000
     @State var showPopup = false
     
+    
+//    private var anchors: [AnchorDetails] {
+//        anchorData.anchors(for: anchorType)
+//    }
+    
     var body: some View {
+        let anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: CLLocationCoordinate2D(latitude: 42, longitude: -71), maxDistance: CLLocationDistance(nearbyDistance)))
+
+        // location: CLLocationCoordinate2D(latitude, longitude) current
         VStack {
             HStack {
                 Text("\(anchorType.rawValue) Anchors")
@@ -51,8 +60,8 @@ struct LocalAnchorListView: View {
             if showPopup == true {
                 HStack {
                     Text("0")
-                    Slider(value: $nearbyDistance, in: 0...maxDistance, step: 10)
-                    Text("\(maxDistance, specifier: "%.0f")")
+                    Slider(value: $nearbyDistance, in: 0...10000000, step: 10)
+                    Text("10000000")
                 }
                 .frame(width: 300)
                 .padding(.bottom, 20)
@@ -78,19 +87,20 @@ struct LocalAnchorListView: View {
                     .padding()
                     .multilineTextAlignment(.center)
                 Spacer()
+                Text("\(anchors)" as String)
             }
             
         } else {
-            
+
             ScrollView {
                 VStack {
-                    ForEach(anchors) {
+                    ForEach(anchors, id: \.self) {
                         anchor in
                         NavigationLink (
                             destination: AnchorDetailView(anchorDetails: anchor),
                             label: {
                                 HStack {
-                                    Text(anchor.name)
+                                    Text(anchor.getName())
                                         .font(.title)
                                         .bold()
                                         .padding(30)
@@ -112,28 +122,27 @@ struct LocalAnchorListView: View {
         }
     }
     
-    private var anchors: [AnchorDetails] {
-        anchorData.anchors(for: anchorType)
-    }
+    
+    
 }
 
 struct AnchorListView_Previews: PreviewProvider {
     static var previews: some View {
         LocalAnchorListView(anchorType: .busStop)
-            .environmentObject(AnchorData())
+//            .environmentObject(AnchorData())
     }
 }
 
-class AnchorData: ObservableObject {
-    @Published var anchors = AnchorDetails.testAnchors
-    
-    func anchors(for anchorType: AnchorDetails.AnchorType) -> [AnchorDetails] {
-        var filteredAnchors = [AnchorDetails]()
-        for anchor in anchors {
-            if anchor.anchorType == anchorType {
-                filteredAnchors.append(anchor)
-            }
-        }
-        return filteredAnchors
-    }
-}
+//class AnchorData: ObservableObject {
+//    @Published var anchors = AnchorDetails.testAnchors
+//
+//    func anchors(for anchorType: AnchorDetails.AnchorType) -> [AnchorDetails] {
+//        var filteredAnchors = [AnchorDetails]()
+//        for anchor in anchors {
+//            if anchor.anchorType == anchorType {
+//                filteredAnchors.append(anchor)
+//            }
+//        }
+//        return filteredAnchors
+//    }
+//}

@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct AnchorDetailView: View {
-    let anchorDetails: AnchorDetails
+    let anchorDetails: LocationDataModel
     
     var body: some View {
         ZStack {
@@ -16,7 +17,7 @@ struct AnchorDetailView: View {
                 //need to add in 20 units of spacing colored spacing here
                 
                 HStack {
-                    Text(anchorDetails.name)
+                    Text(anchorDetails.getName())
                         .font(.largeTitle)
                         .bold()
                         .padding(.horizontal)
@@ -26,9 +27,9 @@ struct AnchorDetailView: View {
                 }
                 
                 HStack {
-                    let formattedDistance = String(format: "%g", anchorDetails.distanceAway)
+//                    let formattedDistance = String(format: "%g", anchorDetails.distanceAway)
                     
-                    Text("\(formattedDistance) meters away")
+                    Text("X meters away")
                         .font(.title)
                         .padding(.horizontal)
                     Spacer()
@@ -42,11 +43,11 @@ struct AnchorDetailView: View {
                             .multilineTextAlignment(.leading)
                         Spacer()
                     }
-                    HStack {
-                        Text(anchorDetails.notes)
-                            .multilineTextAlignment(.leading)
-                        Spacer()
-                    }
+//                    HStack {
+//                        Text(anchorDetails.notes)
+//                            .multilineTextAlignment(.leading)
+//                        Spacer()
+//                    }
                 }
                 .padding()
                                 
@@ -82,7 +83,7 @@ struct AnchorDetailView: View {
 }
 
 struct AnchorDetailView_Previews: PreviewProvider {
-    @State static var anchorDetails = AnchorDetails.testAnchors[0]
+    @State static var anchorDetails = LocationDataModel(anchorType: .externalDoor, coordinates: CLLocationCoordinate2D(latitude: 42, longitude: -71), name: "Test Door")
 
     
     static var previews: some View {
