@@ -9,27 +9,7 @@ import Foundation
 import ARCoreGeospatial
 
 class PathPlannerModel {
-//    /// The current ARFrame.
-//    private var frame: ARFrame?
-//
-//    /// The next node in the path (where we want to go).
-//    private var nextNode: SCNNode?
-//
-//    /// The straight line distance to the next node in meters.
-//    private var straightDistance: Float?
-//
-//    /// The angle difference between the current direction and the direction to the next node in degrees.
-//    private var angleDifference: Float?
-//
-//    /// Initializes a new instance of the PathFinderModel with the given ARFrame and SCNNode.
-//    ///
-//    /// - parameter frame: The current ARFrame.
-//    /// - parameter nextNode: The next node in the path.
-//    init(frame: ARFrame, nextNode: SCNNode) {
-//        self.frame = frame
-//        self.nextNode = nextNode
-//    }
-    
+
     /// Calculates the straight line distance in meters between the current position and the next node.
     func calculateStraightDistance(cameraTransform: simd_float4x4, nextNodeTransform: simd_float4x4)->Float {
        return simd_distance(nextNodeTransform.columns.3, cameraTransform.columns.3) // Straight line distance in meters.
@@ -41,10 +21,9 @@ class PathPlannerModel {
         let headingVec = simd_normalize(simd_float3(-cameraTransform.columns.2.x, 0.0, -cameraTransform.columns.2.z))
         
         // Direction we want to go.
-        let pointingVector = simd_float3(nextNodeTransform.columns.3.x - nextNodeTransform.columns.3.x,
-                                         0.0,
-                                         nextNodeTransform.columns.3.z - nextNodeTransform.columns.3.z)
-        
+        let pointingVector = simd_normalize(
+            simd_float3(nextNodeTransform.columns.3.x - cameraTransform.columns.3.x, 0.0, nextNodeTransform.columns.3.z - cameraTransform.columns.3.z)
+        )
         // Calculate angle between 2 vectors.
         let q = simd_quaternion(headingVec, pointingVector)
         return q.angle * sign(q.axis.y)

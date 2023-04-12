@@ -31,9 +31,6 @@ extension simd_float4x4 {
 
 final class TestPathPlannerModel: XCTestCase {
     func setUpMock(angle: Float, distance: Float) -> (simd_float4x4, simd_float4x4) {
-        // we would expect back -pi/2 and then 10 meters
-//        let cameraTransform = simd_float4x4(translation: simd_float3(0, 0, 0), yaw: Float.pi/2)
-//        let nextNodeTransform = simd_float4x4(translation: simd_float3(10.0, 0, 0), yaw: 0.0)
         
         let cameraTransform = simd_float4x4(translation: simd_float3(0, 0, 0), cameraYaw: angle)
         let nextNodeTransform = simd_float4x4(translation: simd_float3(distance, 0, 0), yaw: 0.0)
@@ -41,30 +38,19 @@ final class TestPathPlannerModel: XCTestCase {
         return (cameraTransform, nextNodeTransform)
     }
 
-
-//    override func setUpWithError() throws {
-//        // Put setup code here. This method is called before the invocation of each test method in the class.
-//    }
-//
-//    override func tearDownWithError() throws {
-//        // Put teardown code here. This method is called after the invocation of each test method in the class.
-//    }
-
-
     func testCalculateStraightDistance() throws {
         let (cameraTranform, nextNodeTransform) = setUpMock(angle: Float.pi/2, distance: 10)
         let pathPlannerModel = PathPlannerModel()
         let straightDistance = pathPlannerModel.calculateStraightDistance(cameraTransform: cameraTranform, nextNodeTransform: nextNodeTransform)
         XCTAssertEqual(straightDistance, 10)
-        print("distance: \(straightDistance)")
     }
     
     func testCalculateAngleDifference() throws {
         let (cameraTranform, nextNodeTransform) = setUpMock(angle: Float.pi/2, distance: 10)
         let pathPlannerModel = PathPlannerModel()
         let angleDifference = pathPlannerModel.calculateAngleDifference(cameraTransform: cameraTranform, nextNodeTransform: nextNodeTransform)
-        XCTAssertEqual(angleDifference, Float.pi/2)
-        print("angle difference: \(angleDifference)")
+        let tolerance: Float = 0.00001
+        XCTAssertTrue(abs(angleDifference - -Float.pi/2) < tolerance)
     }
 
 }
