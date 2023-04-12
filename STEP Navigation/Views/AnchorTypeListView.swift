@@ -56,7 +56,8 @@ struct AnchorTypeListView: View {
                     ForEach(Array(anchorTypes).sorted(by: {$0.rawValue < $1.rawValue})) {
                         anchorType in
                         NavigationLink (
-                            destination: LocalAnchorListView(anchorType: anchorType),
+//                            destination: LocalizingView(),
+                            destination: LocalizingView(anchorType: anchorType),
                             label: {
                                 Text(anchorType.rawValue)
                                     .font(.largeTitle)

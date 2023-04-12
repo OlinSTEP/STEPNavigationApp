@@ -10,12 +10,14 @@ import AVFoundation
 import CoreLocation
 
 struct LocalizingView: View {
+    @ObservedObject var positionModel = PositioningModel.shared
+    let locationManager = CLLocationManager()
+    let anchorType: AnchorType
     
-    let locationManger = CLLocationManager()
-    
-    init() {
+    init(anchorType: AnchorType) {
         // Request location permission
-        locationManger.requestWhenInUseAuthorization()
+        self.anchorType = anchorType
+        locationManager.requestWhenInUseAuthorization()
         AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
             if granted {
                 print("Camera access granted")
@@ -26,12 +28,32 @@ struct LocalizingView: View {
     }
     
     var body: some View {
-        Text("Hello, World!")
+        switch positionModel.geoLocalizationAccuracy {
+        case .none:
+            Text("No Location")
+        case .low:
+            Text("low accuracy")
+        case .medium:
+            Text("medium accuracy")
+        case .high:
+            Text("localized")
+//            Button("Start Navigation") {
+//                NavigationView()
+//            }
+            if let currentLatLon = positionModel.currentLatLon {
+                NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon), label: {
+                    Text("My nearby locations")
+                })
+            } else {
+                Text("Inconsistent State.  Contact your developer")
+            }
+        }
+        
     }
 }
 
 struct LocalizingView_Previews: PreviewProvider {
     static var previews: some View {
-        LocalizingView()
+        LocalizingView(anchorType: .externalDoor)
     }
 }

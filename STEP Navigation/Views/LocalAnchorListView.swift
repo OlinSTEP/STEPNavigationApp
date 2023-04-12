@@ -12,6 +12,7 @@ struct LocalAnchorListView: View {
 //    @EnvironmentObject private var anchorData: AnchorData
 //    let anchorType: AnchorDetails.AnchorType
     let anchorType: AnchorType
+    let location: CLLocationCoordinate2D
     
     private let listBackgroundColor = AppColor.grey
     private let listTextColor = AppColor.black
@@ -25,7 +26,7 @@ struct LocalAnchorListView: View {
 //    }
     
     var body: some View {
-        let anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: CLLocationCoordinate2D(latitude: 42, longitude: -71), maxDistance: CLLocationDistance(nearbyDistance)))
+        let anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: location, maxDistance: CLLocationDistance(nearbyDistance)))
 
         // location: CLLocationCoordinate2D(latitude, longitude) current
         VStack {
@@ -128,7 +129,7 @@ struct LocalAnchorListView: View {
 
 struct AnchorListView_Previews: PreviewProvider {
     static var previews: some View {
-        LocalAnchorListView(anchorType: .busStop)
+        LocalAnchorListView(anchorType: .busStop, location: CLLocationCoordinate2D(latitude: 42, longitude: -71))
 //            .environmentObject(AnchorData())
     }
 }

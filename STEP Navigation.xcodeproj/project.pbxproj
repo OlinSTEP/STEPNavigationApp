@@ -182,7 +182,6 @@
 				A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */,
 				A8EACA0229E24E9500CBF590 /* CapsuleButton.swift */,
 				8241736129DE1398001599B1 /* LocalAnchorListView.swift */,
-				8241737829DE1478001599B1 /* PositioningModel.swift */,
 				8241736329DE13A5001599B1 /* LocalizingView.swift */,
 				8241736929DE13BF001599B1 /* NavigatingView.swift */,
 				A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */,
@@ -202,6 +201,7 @@
 				130E7C4229E236BD004B1E81 /* DataModelManager.swift */,
 				130E7C4429E25322004B1E81 /* ModelTestingByHand.playground */,
 				130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */,
+				8241737829DE1478001599B1 /* PositioningModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
