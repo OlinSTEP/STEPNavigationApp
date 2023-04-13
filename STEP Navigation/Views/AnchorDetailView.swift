@@ -6,52 +6,87 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct AnchorDetailView: View {
-    let anchorDetails: AnchorDetails
-    
-    private let listBackgroundColor = AppColor.grey
-    private let listTextColor = AppColor.black
+    let anchorDetails: LocationDataModel
     
     var body: some View {
-        NavigationView {
+        ZStack {
             VStack {
+                //need to add in 20 units of spacing colored spacing here
+                
                 HStack {
-                    Text(anchorDetails.locationAddress)
+                    Text(anchorDetails.getName())
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.horizontal)
+                        .padding(.top)
+                        .padding(.bottom, 2)
+                    Spacer()
+                }
+                
+                HStack {
+//                    let formattedDistance = String(format: "%g", anchorDetails.distanceAway)
+                    
+                    Text("X meters away")
                         .font(.title)
-                        .padding()
+                        .padding(.horizontal)
                     Spacer()
                 }
                 VStack {
                     HStack {
                         Text("Location Notes")
-                            .font(.title)
-                            .padding()
+                            .font(.title2)
+                            .bold()
+                            .padding(.bottom, 5)
+                            .multilineTextAlignment(.leading)
                         Spacer()
                     }
-                    HStack {
-                        Text(anchorDetails.notes)
-                            .padding()
-                        Spacer()
-                    }
+//                    HStack {
+//                        Text(anchorDetails.notes)
+//                            .multilineTextAlignment(.leading)
+//                        Spacer()
+//                    }
                 }
+                .padding()
+                                
                 Spacer()
-                Button (action: {
-                    print("Pressed navigate")
-                }, label: {
+                NavigationLink (destination: NavigatingView(), label: {
                     Text("Navigate")
+                        .font(.title)
+                        .bold()
+                        .frame(maxWidth: 300)
+                        .foregroundColor(AppColor.black)
                 })
+                .padding(.bottom, 20)
+                .tint(AppColor.accent)
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
             }
-            .navigationTitle(anchorDetails.name)
+            
+            CapsuleButton()
+
         }
+            .navigationBarItems(
+                trailing:
+                    Button(action: {
+                        print("pressed settings")
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .scaleEffect(1.5)
+                            .foregroundColor(AppColor.black)
+                    }
+            )
     }
 }
 
 struct AnchorDetailView_Previews: PreviewProvider {
-    @State static var anchorDetails = AnchorDetails.testAnchors[0]
+    @State static var anchorDetails = LocationDataModel(anchorType: .externalDoor, coordinates: CLLocationCoordinate2D(latitude: 42, longitude: -71), name: "Test Door")
 
     
     static var previews: some View {
-            AnchorDetailView(anchorDetails: anchorDetails)
+        AnchorDetailView(anchorDetails: anchorDetails)
     }
 }

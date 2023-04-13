@@ -16,10 +16,33 @@ import CoreLocation
  The class provides methods to retrieve data models by anchor type, location, and distance. It also provides a method to return all data models in the dictionary.
  */
 
-class DataModelManager {
+class DataModelManager: ObservableObject {
+    public static var shared = DataModelManager()
+    
+    @Published var nearbyLocations: [LocationDataModel] = []
     
     // Dictionary that stores all the location models
     private var allLocationModels = [AnchorType: Set<LocationDataModel>]()
+    
+    private init() {
+        do {
+            let doors = try LocationDataModelParser.parse(from: "Olin_College_Doors", fileType: "geojson", anchorType: .externalDoor)
+            multiAddDataModel(doors, anchorType: .externalDoor)
+        }
+        catch {
+            print("Error parsing Olin_College_Doors")
+        }
+        
+        do {
+            let busStops = try LocationDataModelParser.parse(from: "mbtaBusStops", fileType: "json", anchorType: .busStop)
+            multiAddDataModel(busStops, anchorType: .busStop)
+        }
+        catch {
+            print("Error parsing mbtaBusStops")
+        }
+    }
+    
+   
     
     /**
         Adds a new location data model to the allDataModels dictionary.

@@ -86,7 +86,11 @@ An enum representing the different types of anchors that can be used to categori
 - case bathroom: Represents a bathroom anchor type.
 - case frontdesk: Represents a front desk anchor type.
 */
-enum AnchorType: String {
+enum AnchorType: String, Identifiable {
+    var id: String {
+        return rawValue
+    }
+    
     case busStop = "Bus Stop"
     case externalDoor = "External Door"
     case bathroom = "Bathroom"
