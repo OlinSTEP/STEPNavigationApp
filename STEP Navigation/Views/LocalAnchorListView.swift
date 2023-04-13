@@ -17,7 +17,7 @@ struct LocalAnchorListView: View {
     private let listBackgroundColor = AppColor.grey
     private let listTextColor = AppColor.black
     
-    @State private var nearbyDistance: Double = 10000000
+    @State private var nearbyDistance: Double = 10
     @State var showPopup = false
     
     
@@ -61,8 +61,8 @@ struct LocalAnchorListView: View {
             if showPopup == true {
                 HStack {
                     Text("0")
-                    Slider(value: $nearbyDistance, in: 0...10000000, step: 10)
-                    Text("10000000")
+                    Slider(value: $nearbyDistance, in: 0...100, step: 10)
+                    Text("100")
                 }
                 .frame(width: 300)
                 .padding(.bottom, 20)
