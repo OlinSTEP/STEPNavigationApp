@@ -35,7 +35,7 @@ class PathPlannerModel {
     /// - parameter nextNode: The next node in the path.
     ///
     /// - returns: The straight line distance and angle differene to the node.
-    func getDirections(cameraTransform: simd_float4x4, nextNodeTransform: simd_float4x4) -> (Float?, Float?) {
+    func getDirections(cameraTransform: simd_float4x4, nextNodeTransform: simd_float4x4) -> (Float, Float) {
         let straightDistance = calculateStraightDistance(cameraTransform: cameraTransform, nextNodeTransform: nextNodeTransform)
         let angleDiff = calculateAngleDifference(cameraTransform: cameraTransform, nextNodeTransform: nextNodeTransform)
         return (straightDistance, angleDiff)
