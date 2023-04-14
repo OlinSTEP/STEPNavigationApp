@@ -52,7 +52,7 @@ struct AnchorDetailView: View {
                 .padding()
                                 
                 Spacer()
-                NavigationLink (destination: NavigatingView(), label: {
+                NavigationLink (destination: NavigatingView(anchorDetails: anchorDetails), label: {
                     Text("Navigate")
                         .font(.title)
                         .bold()

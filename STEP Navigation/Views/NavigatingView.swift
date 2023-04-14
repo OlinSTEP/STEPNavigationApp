@@ -6,26 +6,34 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct NavigatingView: View {
-        
+    let anchorDetails: LocationDataModel
     var body: some View {
-        Spacer()
-                
-        VStack {
-            InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
-            Spacer()
-            HStack {
-                Image(systemName: "pause.circle.fill")
-                    .resizable()
-                    .frame(width: 100, height: 100)
-                    .foregroundColor(.red)
+        ZStack {
+            ARViewContainer()
+            VStack {
+                Spacer()
+                VStack {
+                    InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
+                    Spacer()
+                    HStack {
+                        Image(systemName: "pause.circle.fill")
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .foregroundColor(.red)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 140)
+                    .background(AppColor.black)
+                }
+                .padding(.vertical, 100)
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 140)
-            .background(AppColor.black)
+        }.onAppear() {
+            // plan path
+            PathPlanner.shared.navigate(to: anchorDetails)
         }
-        .padding(.vertical, 100)
     }
 }
 
@@ -101,6 +109,6 @@ struct InformationPopup: View {
 
 struct NavigatingView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigatingView()
+        NavigatingView(anchorDetails: LocationDataModel(anchorType: .busStop, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1"))
     }
 }
