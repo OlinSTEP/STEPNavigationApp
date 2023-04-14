@@ -11,44 +11,73 @@ import CoreLocation
 
 struct LocalizingView: View {
     @ObservedObject var positionModel = PositioningModel.shared
-    let locationManager = CLLocationManager()
     let anchorType: AnchorType
     
-    init(anchorType: AnchorType) {
-        // Request location permission
-        self.anchorType = anchorType
-        locationManager.requestWhenInUseAuthorization()
-        AVCaptureDevice.requestAccess(for: AVMediaType.video) { granted in
-            if granted {
-                print("Camera access granted")
-            } else {
-                print("Camera access denied")
-            }
-        }
-    }
-    
-    var body: some View {
-        switch positionModel.geoLocalizationAccuracy {
-        case .none:
-            Text("No Location")
-        case .low:
-            Text("low accuracy")
-        case .medium:
-            Text("medium accuracy")
-        case .high:
-            Text("localized")
-//            Button("Start Navigation") {
-//                NavigationView()
-//            }
-            if let currentLatLon = positionModel.currentLatLon {
-                NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon), label: {
-                    Text("My nearby locations")
-                })
-            } else {
-                Text("Inconsistent State.  Contact your developer")
-            }
-        }
+    @State var highAccuracy = false
         
+    var body: some View {
+        ZStack {
+            ARViewContainer()
+            if positionModel.geoLocalizationAccuracy == .high {
+                if let currentLatLon = positionModel.currentLatLon {
+                    VStack {
+                        HStack {
+                            Text("Successfully Localized")
+                                .foregroundColor(AppColor.white)
+                                .bold()
+                                .font(.title)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+                        }
+                        .padding(.vertical)
+                        
+                        NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon)) {
+                            Text("Go to nearby locations")
+                                .font(.title2)
+                                .bold()
+                                .frame(maxWidth: 300)
+                                .foregroundColor(AppColor.black)
+                        }
+                        .padding(.bottom, 20)
+                        .tint(AppColor.accent)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(AppColor.black)
+                    
+                } else {
+                    Text("Inconsistent State.  Contact your developer")
+                }
+                    
+            } else {
+                VStack {
+                    HStack {
+                        Text("Localizing...")
+                            .foregroundColor(AppColor.white)
+                            .bold()
+                            .font(.title2)
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
+                        Spacer()
+                    }
+                    HStack {
+                        Text("Move your phone around with the camera facing out.")
+                            .foregroundColor(AppColor.white)
+                            .bold()
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
+                        Spacer()
+                    }
+
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(AppColor.black)
+            }
+        }
     }
 }
 
