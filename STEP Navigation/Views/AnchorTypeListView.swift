@@ -6,13 +6,11 @@
 //
 
 import SwiftUI
-import CoreLocation
 
 struct AnchorTypeListView: View {
     @StateObject private var anchorData = AnchorData()
     
     var body: some View {
-
         NavigationView {
             List {
                 ForEach(AnchorDetails.AnchorType.allCases, id: \.self) {
@@ -43,15 +41,6 @@ struct AnchorTypeListView: View {
                     })
                 }
             })
-             //TODO make this asynch
-            .onAppear {
-                let dataModelManager = DataModelManager()
-                let busModels = try! LocationDataModelParser.parse(from: "mbtaBusStops", fileType: "json", anchorType: .busStop)
-                dataModelManager.multiAddDataModel(busModels, anchorType: .busStop)
-                let closeStops = dataModelManager.getNearbyLocations(for: .busStop, location: CLLocationCoordinate2D(latitude: 42.293592, longitude: -71.264154), maxDistance: CLLocationDistance(3000))
-                print("debug here")
-                print(closeStops)
-            }
         }
     }
 }
