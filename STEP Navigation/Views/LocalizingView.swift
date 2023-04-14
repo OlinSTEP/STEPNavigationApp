@@ -13,41 +13,69 @@ struct LocalizingView: View {
     @ObservedObject var positionModel = PositioningModel.shared
     let anchorType: AnchorType
     
+    @State var highAccuracy = false
+        
     var body: some View {
         ZStack {
             ARViewContainer()
-            switch positionModel.geoLocalizationAccuracy {
-            case .none:
-                Text("No Location")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-
-            case .low:
-                Text("low accuracy")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-
-            case .medium:
-                Text("medium accuracy")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-            case .high:
+            if positionModel.geoLocalizationAccuracy == .high {
                 if let currentLatLon = positionModel.currentLatLon {
-                    NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon), label: {
-                        Text("My nearby locations")
-                            .font(.title)
-                            .bold()
-                            .frame(maxWidth: 300)
-                            .foregroundColor(AppColor.black)
-                    })
-                    .padding(.bottom, 20)
-                    .tint(AppColor.accent)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
+                    VStack {
+                        HStack {
+                            Text("Successfully Localized")
+                                .foregroundColor(AppColor.white)
+                                .bold()
+                                .font(.title)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+                        }
+                        .padding(.vertical)
+                        
+                        NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon)) {
+                            Text("Go to nearby locations")
+                                .font(.title2)
+                                .bold()
+                                .frame(maxWidth: 300)
+                                .foregroundColor(AppColor.black)
+                        }
+                        .padding(.bottom, 20)
+                        .tint(AppColor.accent)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(AppColor.black)
+                    
                 } else {
                     Text("Inconsistent State.  Contact your developer")
                 }
+                    
+            } else {
+                VStack {
+                    HStack {
+                        Text("Localizing...")
+                            .foregroundColor(AppColor.white)
+                            .bold()
+                            .font(.title2)
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
+                        Spacer()
+                    }
+                    HStack {
+                        Text("Move your phone around with the camera facing out.")
+                            .foregroundColor(AppColor.white)
+                            .bold()
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
+                        Spacer()
+                    }
+
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(AppColor.black)
             }
         }
     }

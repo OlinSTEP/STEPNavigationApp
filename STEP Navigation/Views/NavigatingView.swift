@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct NavigatingView: View {
+    let popupEntry: String = "Testing Text"
         
     var body: some View {
         Spacer()
-                
         VStack {
-            InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
+            InformationPopup(popupEntry: popupEntry)
             Spacer()
             HStack {
                 Image(systemName: "pause.circle.fill")
@@ -31,71 +31,20 @@ struct NavigatingView: View {
 
 struct InformationPopup: View {
     let popupEntry: String
-    let popupType: PopupType
-    let units: Units
-
+    
     var body: some View {
         VStack {
-//            HStack {
-//                Text("\(popupType.rawValue)")
-//                    .foregroundColor(AppColor.white)
-//                    .bold()
-//                    .font(.title2)
-//                    .multilineTextAlignment(.leading)
-//                Spacer()
-//            }
-            
-            switch popupType {
-            case .userNote:
-                HStack {
-                    Text("User Note")
-                        .foregroundColor(AppColor.white)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-                HStack {
-                    Text(popupEntry)
-                        .foregroundColor(AppColor.white)
-                        .font(.title2)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-            case .distanceAway:
-                HStack {
-                    Text("\(popupEntry) \(units.rawValue) away")
-                        .foregroundColor(AppColor.white)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.center)
-                }
-            case .arrived:
-                HStack {
-                    Text("Arrived. You should be within one cane's length of your destination.")
-                        .foregroundColor(AppColor.white)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.leading)
-                }
-                
+            HStack {
+                Text(popupEntry)
+                    .foregroundColor(AppColor.white)
+                    .font(.title2)
+                    .multilineTextAlignment(.leading)
+                Spacer()
             }
         }
         .frame(maxWidth: .infinity)
         .padding()
         .background(AppColor.black)
-    }
-    
-    enum PopupType: CaseIterable {
-        case userNote
-        case distanceAway
-        case arrived
-    }
-    
-    enum Units: String, CaseIterable {
-        case meters = "meters"
-        case feet = "feet"
-        case none = ""
     }
 }
 

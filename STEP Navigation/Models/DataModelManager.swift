@@ -103,19 +103,38 @@ class DataModelManager: ObservableObject {
          
             - returns: A set containing all location data models within the specified distance from the specified location.
     */
-    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance) -> Set<LocationDataModel> {
+    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance) -> [LocationDataModel] {
         guard let models = allLocationModels[anchorType] else {
             print("in the guard let")
-            return Set<LocationDataModel>()
+            return []
         }
         
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         
-        return models.filter { model in
+        let filteredModels = models.filter { model in
             let locationCoordinate = model.getLocationCoordinate()
             let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
             return location.distance(from: threshold) <= maxDistance
         }
+        var modelsAsArray: [LocationDataModel] = []
+        for locationModel in filteredModels {
+            modelsAsArray.append(locationModel)
+        }
+        
+        let sortedModels = modelsAsArray.sorted(by: { location.distance(from: $0.getLocationCoordinate()) < location.distance(from: $1.getLocationCoordinate())  })
+        return sortedModels
+//        return models.filter { model in
+//            let locationCoordinate = model.getLocationCoordinate()
+//            let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+//            return location.distance(from: threshold) <= maxDistance
+//        }
     }
      
+}
+
+extension CLLocationCoordinate2D {
+    func distance(from other: CLLocationCoordinate2D)->Double {
+        return CLLocation(latitude: latitude, longitude: longitude).distance(from: CLLocation(latitude: other.latitude,
+                                                                                       longitude: other.longitude))
+    }
 }

@@ -63,7 +63,7 @@
 		130862C129E488B800CADE79 /* testBusStops.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testBusStops.json; sourceTree = "<group>"; };
 		130E7C3B29E106BA004B1E81 /* STEP-Navigation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "STEP-Navigation-Info.plist"; sourceTree = SOURCE_ROOT; };
 		130E7C4029E23494004B1E81 /* LocationDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataModel.swift; sourceTree = "<group>"; };
-		130E7C4229E236BD004B1E81 /* DataModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelManager.swift; sourceTree = "<group>"; };
+		130E7C4229E236BD004B1E81 /* DataModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelManager.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		130E7C4429E25322004B1E81 /* ModelTestingByHand.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ModelTestingByHand.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataModelParser.swift; sourceTree = "<group>"; };
 		130E7C4829E36E36004B1E81 /* mbtaBusStops.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mbtaBusStops.json; sourceTree = "<group>"; };
