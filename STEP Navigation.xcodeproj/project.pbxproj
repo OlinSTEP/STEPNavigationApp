@@ -10,6 +10,7 @@
 		130862B929E479C500CADE79 /* TestDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130862B829E479C500CADE79 /* TestDataModel.swift */; };
 		130862C029E4874400CADE79 /* testDoors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 130862BF29E4874400CADE79 /* testDoors.geojson */; };
 		130862C229E488B800CADE79 /* testBusStops.json in Resources */ = {isa = PBXBuildFile; fileRef = 130862C129E488B800CADE79 /* testBusStops.json */; };
+		130862CA29E5030100CADE79 /* TestPathPlannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130862C929E5030100CADE79 /* TestPathPlannerModel.swift */; };
 		130E7C4129E23494004B1E81 /* LocationDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4029E23494004B1E81 /* LocationDataModel.swift */; };
 		130E7C4329E236BD004B1E81 /* DataModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4229E236BD004B1E81 /* DataModelManager.swift */; };
 		130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */; };
@@ -61,6 +62,7 @@
 		130862B829E479C500CADE79 /* TestDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataModel.swift; sourceTree = "<group>"; };
 		130862BF29E4874400CADE79 /* testDoors.geojson */ = {isa = PBXFileReference; lastKnownFileType = text; path = testDoors.geojson; sourceTree = "<group>"; };
 		130862C129E488B800CADE79 /* testBusStops.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testBusStops.json; sourceTree = "<group>"; };
+		130862C929E5030100CADE79 /* TestPathPlannerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPathPlannerModel.swift; sourceTree = "<group>"; };
 		130E7C3B29E106BA004B1E81 /* STEP-Navigation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "STEP-Navigation-Info.plist"; sourceTree = SOURCE_ROOT; };
 		130E7C4029E23494004B1E81 /* LocationDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataModel.swift; sourceTree = "<group>"; };
 		130E7C4229E236BD004B1E81 /* DataModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelManager.swift; sourceTree = "<group>"; wrapsLines = 0; };
@@ -122,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				130862B829E479C500CADE79 /* TestDataModel.swift */,
+				130862C929E5030100CADE79 /* TestPathPlannerModel.swift */,
 			);
 			path = "STEP NavigationTests";
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				130862B929E479C500CADE79 /* TestDataModel.swift in Sources */,
+				130862CA29E5030100CADE79 /* TestPathPlannerModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
