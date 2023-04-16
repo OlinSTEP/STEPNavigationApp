@@ -12,26 +12,14 @@ import CoreLocation
 struct LocalizingView: View {
     @ObservedObject var positionModel = PositioningModel.shared
     let anchorType: AnchorType
+    var minimumGeoLocationAccuracy: GeoLocationAccuracy {
+        return anchorType == .indoorDestination ? .low : .high
+    }
     
     var body: some View {
         ZStack {
             ARViewContainer()
-            switch positionModel.geoLocalizationAccuracy {
-            case .none:
-                Text("No Location")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-
-            case .low:
-                Text("low accuracy")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-
-            case .medium:
-                Text("medium accuracy")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-            case .high:
+            if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                 if let currentLatLon = positionModel.currentLatLon {
                     NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon), label: {
                         Text("My nearby locations")
@@ -47,6 +35,27 @@ struct LocalizingView: View {
                     .controlSize(.large)
                 } else {
                     Text("Inconsistent State.  Contact your developer")
+                }
+            } else  {
+                switch positionModel.geoLocalizationAccuracy {
+                case .none:
+                    Text("No Location")
+                        .font(.largeTitle)
+                        .foregroundColor(.red)
+                    
+                case .low:
+                    Text("Low accuracy")
+                        .font(.largeTitle)
+                        .foregroundColor(.red)
+                    
+                case .medium:
+                    Text("Medium accuracy")
+                        .font(.largeTitle)
+                        .foregroundColor(.red)
+                case .high:
+                    Text("High accuracy")
+                        .font(.largeTitle)
+                        .foregroundColor(.red)
                 }
             }
         }

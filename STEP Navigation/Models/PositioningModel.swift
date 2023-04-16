@@ -11,11 +11,15 @@ import RealityKit
 import ARCoreGeospatial
 import ARCoreCloudAnchors
 
-enum GeoLocationAccuracy {
-    case none
-    case low
-    case medium
-    case high
+enum GeoLocationAccuracy: Int {
+    case none = 0
+    case low = 1
+    case medium = 2
+    case high = 3
+    
+    func isAtLeastAsGoodAs(other: GeoLocationAccuracy)->Bool {
+        return self.rawValue >= other.rawValue
+    }
 }
 
 struct CloudAnchorMetadata {
@@ -114,7 +118,7 @@ extension PositioningModel: ARSessionDelegate {
                 print("horizontalAccuracy \(cameraGeospatialTransform.horizontalAccuracy)")
                 currentLatLon = cameraGeospatialTransform.coordinate
                 // NOTE: Don't check in
-                if cameraGeospatialTransform.horizontalAccuracy < 300.0 {
+                if cameraGeospatialTransform.horizontalAccuracy < 3.0 {
                     geoLocalizationAccuracy = .high
                 } else if cameraGeospatialTransform.horizontalAccuracy < 8.0 {
                     geoLocalizationAccuracy = .medium

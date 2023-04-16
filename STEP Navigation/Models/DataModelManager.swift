@@ -79,7 +79,7 @@ class DataModelManager: ObservableObject {
      Returns a set of all AnchorTypes currently in the system
      */
     func getAnchorTypes() -> Set<AnchorType> {
-        return Set(allLocationModels.keys)
+        return Set(allLocationModels.keys + [.indoorDestination])
     }
      
     /**

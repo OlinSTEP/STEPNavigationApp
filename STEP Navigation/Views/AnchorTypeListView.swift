@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AnchorTypeListView: View {
 //    @StateObject private var anchorData = AnchorData()
-    
+    @ObservedObject var database = FirebaseManager.shared
     // Sets the appearance of the Navigation Bar using UIKit
     init() {
         let appearance = UINavigationBarAppearance()
@@ -56,7 +56,6 @@ struct AnchorTypeListView: View {
                     ForEach(Array(anchorTypes).sorted(by: {$0.rawValue < $1.rawValue})) {
                         anchorType in
                         NavigationLink (
-//                            destination: LocalizingView(),
                             destination: LocalizingView(anchorType: anchorType),
                             label: {
                                 Text(anchorType.rawValue)
