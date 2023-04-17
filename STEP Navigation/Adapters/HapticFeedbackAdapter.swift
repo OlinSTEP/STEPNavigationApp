@@ -35,6 +35,14 @@ class HapticFeedbackAdapter {
         adjustHaptics(intensity: max(0.0, 1.0 - simd_distance(pos, goal)))
     }
     
+    func stopHaptics() {
+        do {
+            try hapticPlayer?.stop(atTime: 0.0)
+        } catch {
+            
+        }
+    }
+    
     func startEndOfRouteHaptics() {
         do {
             hapticEngine = try CHHapticEngine()

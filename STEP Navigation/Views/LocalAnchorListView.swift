@@ -28,8 +28,7 @@ struct LocalAnchorListView: View {
 //    }
     
     var body: some View {
-        // TODO: fix hardcoding to Olin College
-        let anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: location, maxDistance: CLLocationDistance(anchorType == .indoorDestination ? 1000000000: nearbyDistance)))
+        let anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: location, maxDistance: CLLocationDistance(nearbyDistance)))
         VStack {
             HStack {
                 Text("\(anchorType.rawValue) Anchors")

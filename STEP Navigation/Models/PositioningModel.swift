@@ -43,7 +43,15 @@ class PositioningModel: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     private var garSession: GARSession?
     public static var shared = PositioningModel()
-    private var manualAlignment: simd_float4x4?
+    private var manualAlignment: simd_float4x4? {
+        didSet {
+            if let newValue = manualAlignment {
+                DispatchQueue.main.async {
+                    self.rendererHelper.anchorEntity?.setTransformMatrix(newValue, relativeTo: nil)
+                }
+            }
+        }
+    }
     private let rendererHelper: RendererHelper
     private let cloudAnchorAligner = CloudAnchorAligner()
     @Published var resolvedCloudAnchors = Set<String>()
@@ -87,7 +95,7 @@ class PositioningModel: NSObject, ObservableObject {
     }
     
     func removeRenderedContent() {
-        
+        rendererHelper.removeRenderedContent()
     }
     
     func hasAligned()->Bool {

@@ -38,7 +38,7 @@ class NavigationManager: ObservableObject {
             return []
         }
         let anchorGraph = makeWeightedGraph()
-        let (distances, pathDict) = anchorGraph.dijkstra(root: cloudID, startDistance: 0)
+        let (distances, _) = anchorGraph.dijkstra(root: cloudID, startDistance: 0)
         let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
         return pool.map({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil && start != $0 })
     }
@@ -69,8 +69,8 @@ class NavigationManager: ObservableObject {
         let anchorGraph = makeWeightedGraph()
         // Note: from https://github.com/davecom/SwiftGraph
         let (distances, pathDict) = anchorGraph.dijkstra(root: anchorID1, startDistance: 0)
-        let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
-        let totalDistance = nameDistance[anchorID2]
+        // let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
+        // let totalDistance = nameDistance[anchorID2]
         let path: [WeightedEdge<Float>] = pathDictToPath(from: anchorGraph.indexOfVertex(anchorID1)!, to: anchorGraph.indexOfVertex(anchorID2)!, pathDict: pathDict)
         let stops: [String] = anchorGraph.edgesToVertices(edges: path)
         return stops
@@ -123,8 +123,10 @@ class NavigationManager: ObservableObject {
     }
     
     func stopNavigating() {
+        // TODO: we may not be cleaning up the cloud anchors appropriately
         PositioningModel.shared.removeRenderedContent()
         hapticTimer?.invalidate()
+        HapticFeedbackAdapter.shared.stopHaptics()
         followingCrumbs?.invalidate()
         // AnnouncementManager.shared.announce(announcement: "You've arrived")
         PathLogger.shared.uploadLog()

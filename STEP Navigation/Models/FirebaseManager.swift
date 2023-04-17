@@ -68,10 +68,16 @@ class FirebaseManager: ObservableObject {
             guard let anchorName = keyValuePairs["name"] as? String else {
                 return
             }
+            guard let geospatialTransform = keyValuePairs["geospatialTransform"] as? [String: Any],
+                  let geoLocation = geospatialTransform["location"] as? [String: Double],
+                  let latitude = geoLocation["latitude"],
+                  let longitude = geoLocation["longitude"] else {
+                return
+            }
             let anchorTypeString = (keyValuePairs["type"] as? String) ?? "Generic Destination"
             // TODO: connect the particular type to the anchor type
             let anchorType = AnchorType.indoorDestination
-            DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, coordinates: CLLocationCoordinate2D(latitude: 42.293567, longitude: -71.264018), name: anchorName, cloudAnchorID: snapshot.key))
+            DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), name: anchorName, cloudAnchorID: snapshot.key))
             self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: anchorType)
             self.pathGraph.cloudNodes.insert(snapshot.key)
         }

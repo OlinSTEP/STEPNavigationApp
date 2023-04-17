@@ -23,7 +23,11 @@ struct NavigatingView: View {
                     if !didLocalize {
                         InformationPopup(popupEntry: "7", popupType: .waitingToLocalize, units: .none)
                     } else {
-                        InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
+                        if RouteNavigator.shared.keypoints?.isEmpty == true {
+                            InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
+                        } else {
+                            InformationPopup(popupEntry: "7", popupType: .distanceAway, units: .none)
+                        }
                     }
                     Spacer()
                     HStack {
@@ -44,6 +48,8 @@ struct NavigatingView: View {
                 } else {
                     PathPlanner.shared.navigate(to: destinationAnchorDetails)
                 }
+            }.onDisappear() {
+                NavigationManager.shared.stopNavigating()
             }
         }.onReceive(positioningModel.$resolvedCloudAnchors) { newValue in
             if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), newValue.contains(startCloudID), !didLocalize {
