@@ -11,6 +11,8 @@ import RealityKit
 import ARCoreGeospatial
 import ARCoreCloudAnchors
 
+/// This is a coarse metric of how well we have localized the user with respect to their latitude and longitude.
+/// Currently, there is no defined standard for these values (they are determined on a View by View basis)
 enum GeoLocationAccuracy: Int {
     case none = 0
     case low = 1
@@ -53,7 +55,7 @@ class PositioningModel: NSObject, ObservableObject {
         }
     }
     private let rendererHelper: RendererHelper
-    private let cloudAnchorAligner = CloudAnchorAligner()
+    private var cloudAnchorAligner = CloudAnchorAligner()
     @Published var resolvedCloudAnchors = Set<String>()
 
     @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
@@ -96,6 +98,11 @@ class PositioningModel: NSObject, ObservableObject {
     
     func removeRenderedContent() {
         rendererHelper.removeRenderedContent()
+    }
+    
+    func resetAlignment() {
+        manualAlignment = nil
+        cloudAnchorAligner = CloudAnchorAligner()
     }
     
     func hasAligned()->Bool {
@@ -141,7 +148,8 @@ extension PositioningModel: ARSessionDelegate {
     }
     
     func renderKeypoint(at location: simd_float4x4) {
-        rendererHelper.renderKeypoint(at: location)
+        print("manualAlignment \(manualAlignment)")
+        rendererHelper.renderKeypoint(at: location, withInitialAlignment: manualAlignment)
     }
     
     func addTerrainAnchor(at location: CLLocationCoordinate2D, withName name: String)->GARAnchor? {
@@ -177,7 +185,7 @@ class RendererHelper {
         self.arView = arView
     }
     
-    func renderKeypoint(at location: simd_float4x4) {
+    func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
         let mesh = MeshResource.generateBox(size: 0.5)
         let material = SimpleMaterial(color: .green, isMetallic: false)
         keypointEntity?.removeFromParent()
@@ -185,6 +193,8 @@ class RendererHelper {
         keypointEntity!.position = location.translation
         if anchorEntity == nil {
             anchorEntity = AnchorEntity()
+            let initialTransform = alignment ?? matrix_identity_float4x4
+            anchorEntity?.setTransformMatrix(initialTransform, relativeTo: nil)
             arView.scene.anchors.append(anchorEntity!)
         }
         anchorEntity!.addChild(keypointEntity!)

@@ -125,6 +125,8 @@ class NavigationManager: ObservableObject {
     func stopNavigating() {
         // TODO: we may not be cleaning up the cloud anchors appropriately
         PositioningModel.shared.removeRenderedContent()
+        // TODO: we may not be cleaning up old cloud anchors
+        PositioningModel.shared.resetAlignment()
         hapticTimer?.invalidate()
         HapticFeedbackAdapter.shared.stopHaptics()
         followingCrumbs?.invalidate()
