@@ -65,12 +65,15 @@ class FirebaseManager: ObservableObject {
             guard let keyValuePairs = snapshot.value as? [String: Any] else {
                 return
             }
-//            guard let anchorName = keyValuePairs["name"] as? String else {
-//                return
-//            }
-//            let anchorType = (keyValuePairs["type"] as? String) ?? "Generic Destination"
-//            self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: AnchorType(rawValue: anchorType) ?? .destination)
-//            self.pathGraph.cloudNodes.insert(snapshot.key)
+            guard let anchorName = keyValuePairs["name"] as? String else {
+                return
+            }
+            let anchorTypeString = (keyValuePairs["type"] as? String) ?? "Generic Destination"
+            // TODO: connect the particular type to the anchor type
+            let anchorType = AnchorType.indoorDestination
+            DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, coordinates: CLLocationCoordinate2D(latitude: 42.293567, longitude: -71.264018), name: anchorName, cloudAnchorID: snapshot.key))
+            self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: anchorType)
+            self.pathGraph.cloudNodes.insert(snapshot.key)
         }
         cloudAnchorRef.child("connections").observe(.childAdded) { snapshot in
             self.handleConnections(snapshot: snapshot)

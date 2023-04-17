@@ -18,6 +18,7 @@ class PathPlanner {
     public static var shared = PathPlanner()
     private var crowFliesGoal: GARAnchor?
     private var navigationType: NavigationType = .none
+    private var cloudAnchors: [String] = []
     
     private init() {
         
@@ -26,7 +27,22 @@ class PathPlanner {
     func navigate(to anchor: LocationDataModel) {
         navigationType = .asTheCrowFlies
         crowFliesGoal = PositioningModel.shared.addTerrainAnchor(at: anchor.getLocationCoordinate(), withName: anchor.getName())
-        print("test")
+    }
+    
+    func prepareToNavigate(from start: LocationDataModel, to end: LocationDataModel) {
+        guard let cloudAnchorID1 = start.getCloudAnchorID(), let cloudAnchorID2 = end.getCloudAnchorID() else {
+            // Note: this shouldn't happen
+            return
+        }
+        cloudAnchors = NavigationManager.shared.computePathBetween(cloudAnchorID1, cloudAnchorID2)
+        for cloudAnchor in cloudAnchors {
+            PositioningModel.shared.resolveCloudAnchor(byID: cloudAnchor)
+        }
+    }
+    
+    func navigate(from start: LocationDataModel, to end: LocationDataModel) {
+        NavigationManager.shared.computeAndRenderComplexPath(cloudAnchors)
+        NavigationManager.shared.startNavigating()
     }
     
     func getGoalForAsTheCrowFlies()->GARAnchor? {

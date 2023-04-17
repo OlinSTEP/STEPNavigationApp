@@ -19,6 +19,8 @@ struct LocalAnchorListView: View {
     
     @State private var nearbyDistance: Double = 10
     @State var showPopup = false
+    @State var chosenStart: LocationDataModel?
+    @State var chosenEnd: LocationDataModel?
     
     
 //    private var anchors: [AnchorDetails] {
@@ -26,9 +28,8 @@ struct LocalAnchorListView: View {
 //    }
     
     var body: some View {
-        let anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: location, maxDistance: CLLocationDistance(nearbyDistance)))
-
-        // location: CLLocationCoordinate2D(latitude, longitude) current
+        // TODO: fix hardcoding to Olin College
+        let anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: location, maxDistance: CLLocationDistance(anchorType == .indoorDestination ? 1000000000: nearbyDistance)))
         VStack {
             HStack {
                 Text("\(anchorType.rawValue) Anchors")
@@ -79,7 +80,57 @@ struct LocalAnchorListView: View {
                         .foregroundColor(AppColor.black)
                 }
         )
-        
+        if anchorType == .indoorDestination {
+            Text("Choose Start")
+            ChooseAnchorComponentView(isStart: true, anchors: anchors, chosenAnchor: $chosenStart, otherAnchor: $chosenEnd)
+            Text("Choose End")
+            ChooseAnchorComponentView(isStart: false, anchors: anchors, chosenAnchor: $chosenEnd, otherAnchor: $chosenStart)
+            if let chosenStart = chosenStart, let chosenEnd = chosenEnd {
+                NavigationLink (destination: NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: chosenEnd), label: {
+                    Text("Navigate")
+                        .font(.title)
+                        .bold()
+                        .frame(maxWidth: 300)
+                        .foregroundColor(AppColor.black)
+                })
+                .padding(.bottom, 20)
+                .tint(AppColor.accent)
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+            }
+        } else {
+            ChooseAnchorComponentView(isStart: false, anchors: anchors, chosenAnchor: $chosenEnd, otherAnchor: $chosenStart)
+        }
+    }
+}
+
+struct LocationDataModelWrapper: Hashable {
+    var model: LocationDataModel
+    var isSelected: Bool
+}
+
+struct ChooseAnchorComponentView: View {
+    @State var selected: [Bool]
+
+    let isStart: Bool
+    let anchors: [LocationDataModel]
+    var chosenAnchor : Binding<LocationDataModel?>
+    var otherAnchor : Binding<LocationDataModel?>
+    
+    init(isStart: Bool,
+         anchors: [LocationDataModel],
+         chosenAnchor: Binding<LocationDataModel?>,
+         otherAnchor: Binding<LocationDataModel?>) {
+        self.isStart = isStart
+        self.anchors = anchors
+        self.chosenAnchor = chosenAnchor
+        self.otherAnchor = otherAnchor
+        self.selected = anchors.map({anchor in false })
+    }
+    
+    var body: some View {
+        let isReachable: [Bool] = otherAnchor.wrappedValue == nil ? Array(repeating: true, count: anchors.count) : NavigationManager.shared.getReachability(from: otherAnchor.wrappedValue!, outOf: anchors)
         if anchors.isEmpty {
             VStack {
                 Spacer()
@@ -95,13 +146,24 @@ struct LocalAnchorListView: View {
 
             ScrollView {
                 VStack {
-                    ForEach(anchors, id: \.self) {
-                        anchor in
-                        NavigationLink (
-                            destination: AnchorDetailView(anchorDetails: anchor),
-                            label: {
+                    ForEach(0..<anchors.count, id: \.self) { idx in
+                        if isReachable[idx] {
+                            Button(action: {
+                                for i in 0..<selected.count {
+                                    if i == idx {
+                                        selected[i] = !selected[i]
+                                    } else {
+                                        selected[i] = false
+                                    }
+                                }
+                                if selected[idx] {
+                                    chosenAnchor.wrappedValue = anchors[idx]
+                                } else {
+                                    chosenAnchor.wrappedValue = nil
+                                }
+                            }){
                                 HStack {
-                                    Text(anchor.getName())
+                                    Text(anchors[idx].getName())
                                         .font(.title)
                                         .bold()
                                         .padding(30)
@@ -110,21 +172,38 @@ struct LocalAnchorListView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .frame(minHeight: 140)
-                                .foregroundColor(AppColor.black)
-                            })
-                        .background(AppColor.grey)
-                        .cornerRadius(20)
-                        .padding(.horizontal)
+                            }.foregroundColor(selected[idx] ? .yellow : .black)
+                        }
                     }
-                    .padding(.top, 20)
+                    
+//
+//                        anchor in
+//                        Toggle("test", isOn: anchor.isSelected)
+//                        NavigationLink (
+//                            destination: AnchorDetailView(anchorDetails: anchor),
+//                            label: {
+//                                HStack {
+//                                    Text(anchor.getName())
+//                                        .font(.title)
+//                                        .bold()
+//                                        .padding(30)
+//                                        .multilineTextAlignment(.leading)
+//                                    Spacer()
+//                                }
+//                                .frame(maxWidth: .infinity)
+//                                .frame(minHeight: 140)
+//                                .foregroundColor(AppColor.black)
+//                            })
+//                        .background(AppColor.grey)
+//                        .cornerRadius(20)
+//                        .padding(.horizontal)
+//                    }
+//                    .padding(.top, 20)
                 }
                 Spacer()
             }
         }
     }
-    
-    
-    
 }
 
 struct AnchorListView_Previews: PreviewProvider {

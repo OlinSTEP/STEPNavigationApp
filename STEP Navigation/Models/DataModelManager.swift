@@ -20,7 +20,6 @@ class DataModelManager: ObservableObject {
     public static var shared = DataModelManager()
     
     @Published var nearbyLocations: [LocationDataModel] = []
-    
     // Dictionary that stores all the location models
     private var allLocationModels = [AnchorType: Set<LocationDataModel>]()
     

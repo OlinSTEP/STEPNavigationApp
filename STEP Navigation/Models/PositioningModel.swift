@@ -46,6 +46,7 @@ class PositioningModel: NSObject, ObservableObject {
     private var manualAlignment: simd_float4x4?
     private let rendererHelper: RendererHelper
     private let cloudAnchorAligner = CloudAnchorAligner()
+    @Published var resolvedCloudAnchors = Set<String>()
 
     @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
     @Published var currentLatLon: CLLocationCoordinate2D?
@@ -149,7 +150,14 @@ extension PositioningModel: ARSessionDelegate {
 }
 
 extension PositioningModel: GARSessionDelegate {
-    // TODO: add function that are needed
+    func session(_ session: GARSession, didResolve anchor:GARAnchor) {
+        // TODO: need to update when the GARAnchor changes
+        if let cloudIdentifier = anchor.cloudIdentifier {
+            cloudAnchorAligner.cloudAnchorDidUpdate(withCloudID: cloudIdentifier, withIdentifier: anchor.identifier.uuidString, withPose: anchor.transform, timestamp: arView.session.currentFrame?.timestamp ?? 0.0)
+            resolvedCloudAnchors.insert(cloudIdentifier)
+            manualAlignment = cloudAnchorAligner.adjust(currentAlignment: manualAlignment)
+        }
+    }
 }
 
 class RendererHelper {

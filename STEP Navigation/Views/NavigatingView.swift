@@ -9,14 +9,22 @@ import SwiftUI
 import CoreLocation
 
 struct NavigatingView: View {
-    let anchorDetails: LocationDataModel
+    let startAnchorDetails: LocationDataModel?
+    let destinationAnchorDetails: LocationDataModel
+    @State var didLocalize = false
+    @ObservedObject var positioningModel = PositioningModel.shared
+    
     var body: some View {
         ZStack {
             ARViewContainer()
             VStack {
                 Spacer()
                 VStack {
-                    InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
+                    if !didLocalize {
+                        InformationPopup(popupEntry: "7", popupType: .waitingToLocalize, units: .none)
+                    } else {
+                        InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
+                    }
                     Spacer()
                     HStack {
                         Image(systemName: "pause.circle.fill")
@@ -29,10 +37,19 @@ struct NavigatingView: View {
                     .background(AppColor.black)
                 }
                 .padding(.vertical, 100)
+            }.onAppear() {
+                // plan path
+                if let startAnchorDetails = startAnchorDetails {
+                    PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
+                } else {
+                    PathPlanner.shared.navigate(to: destinationAnchorDetails)
+                }
             }
-        }.onAppear() {
-            // plan path
-            PathPlanner.shared.navigate(to: anchorDetails)
+        }.onReceive(positioningModel.$resolvedCloudAnchors) { newValue in
+            if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), newValue.contains(startCloudID), !didLocalize {
+                didLocalize = true
+                PathPlanner.shared.navigate(from: startAnchorDetails, to: destinationAnchorDetails)
+            }
         }
     }
 }
@@ -54,6 +71,14 @@ struct InformationPopup: View {
 //            }
             
             switch popupType {
+            case .waitingToLocalize:
+                HStack {
+                    Text("Waiting to localize")
+                        .foregroundColor(AppColor.white)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                }
             case .userNote:
                 HStack {
                     Text("User Note")
@@ -95,6 +120,7 @@ struct InformationPopup: View {
     }
     
     enum PopupType: CaseIterable {
+        case waitingToLocalize
         case userNote
         case distanceAway
         case arrived
@@ -109,6 +135,6 @@ struct InformationPopup: View {
 
 struct NavigatingView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigatingView(anchorDetails: LocationDataModel(anchorType: .busStop, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1"))
+        NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: LocationDataModel(anchorType: .busStop, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1"))
     }
 }

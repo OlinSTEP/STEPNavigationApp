@@ -33,12 +33,20 @@ class NavigationManager: ObservableObject {
         
     }
     
-    /// Computes the path between the two specified anchors.  The path is stored within the navigation to enable navigation guidance as the user moves through the environment.
-    /// - Parameters:
-    ///   - anchorID1: the starting cloud anchor ID
-    ///   - anchorID2: the ending cloud anchor ID
-    /// - Returns: a list of cloud anchor IDs that are on the route.  These should be passed to ARCore for resolving
-    func computePathBetween(_ anchorID1: String, _ anchorID2: String)->[String] {
+    func getReachability(from start: LocationDataModel, outOf pool: [LocationDataModel])->[Bool] {
+        guard let cloudID = start.getCloudAnchorID() else {
+            return []
+        }
+        let anchorGraph = makeWeightedGraph()
+        let (distances, pathDict) = anchorGraph.dijkstra(root: cloudID, startDistance: 0)
+        let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
+        return pool.map({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil && start != $0 })
+    }
+    
+    /// Creates the weighted graph from the currently recorded nodes and edges.
+    /// Note: this doesn't auto update with Firebase changes
+    /// - Returns: the weighted SwiftGraph
+    private func makeWeightedGraph()->WeightedGraph<String, Float> {
         let nodes = FirebaseManager.shared.pathGraph.cloudNodes
         let edges = FirebaseManager.shared.pathGraph.connections
         let anchorGraph = WeightedGraph<String, Float>(vertices: Array(nodes))
@@ -49,6 +57,16 @@ class NavigationManager: ObservableObject {
             print("adding \(nodeInfo.from) \(nodeInfo.to)")
             anchorGraph.addEdge(from: nodeInfo.from, to: nodeInfo.to, weight: edgeInfo.cost, directed: true)
         }
+        return anchorGraph
+    }
+    
+    /// Computes the path between the two specified anchors.  The path is stored within the navigation to enable navigation guidance as the user moves through the environment.
+    /// - Parameters:
+    ///   - anchorID1: the starting cloud anchor ID
+    ///   - anchorID2: the ending cloud anchor ID
+    /// - Returns: a list of cloud anchor IDs that are on the route.  These should be passed to ARCore for resolving
+    func computePathBetween(_ anchorID1: String, _ anchorID2: String)->[String] {
+        let anchorGraph = makeWeightedGraph()
         // Note: from https://github.com/davecom/SwiftGraph
         let (distances, pathDict) = anchorGraph.dijkstra(root: anchorID1, startDistance: 0)
         let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
