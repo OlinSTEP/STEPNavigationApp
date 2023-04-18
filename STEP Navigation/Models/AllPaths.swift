@@ -64,8 +64,27 @@ class RouteNavigator: ObservableObject {
     static var shared = RouteNavigator()
     
     private init() {
-        
     }
+    
+    /// Compute the distance remaining in the route.  The distance is the as the crow flies distance to the next keypoint and the remaining path semgnets.
+    /// - Returns: the remaining route distance
+    func getRemainingRouteDistance()->Float {
+        guard let keypoints = keypoints else {
+            return 0.0
+        }
+        guard let currentPosition = PositioningModel.shared.cameraTransform?.translation else {
+            return 0.0
+        }
+        guard let nextKeypointPosition = keypoints.first?.currentTransform.translation else {
+            return 0.0
+        }
+        var totalDistance: Float = simd_distance(currentPosition, nextKeypointPosition)
+        for (kp_i, kp_iplus1) in zip(keypoints[0..<keypoints.count-1], keypoints[1...]) {
+            totalDistance += simd_distance(kp_i.location.translation, kp_iplus1.location.translation)
+        }
+        return totalDistance
+    }
+    
     func setRouteKeypoints(kps: [KeypointInfo]) {
         originalKeypoints = kps
         keypoints = kps

@@ -191,8 +191,6 @@ class NavigationManager: ObservableObject {
                 // erase current keypoint and render next keypoint node
                 PositioningModel.shared.renderKeypoint(at: RouteNavigator.shared.nextKeypoint!.location)
                 
-                //ARSessionManager.shared.renderPath(prevKeypointPosition, RouteManager.shared.nextKeypoint!.location, defaultPathColor: defaultPathColor)
-                
                 // update directions to next keypoint
                 if let newDirectionToNextKeypoint = nav.getDirectionToNextKeypoint(currentLocation: curLocation) {
                     nav.setDirectionText(currentLocation: curLocation, direction: newDirectionToNextKeypoint, displayDistance: true)

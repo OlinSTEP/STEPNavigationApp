@@ -51,7 +51,6 @@ struct LocalAnchorListView: View {
             .onTapGesture {
                 showPopup.toggle()
                 // in real life would want to present dropdown popup
-                
             }
             
             if showPopup == true {
@@ -67,7 +66,13 @@ struct LocalAnchorListView: View {
             guard let latLon = latLon else {
                 return
             }
-            anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: latLon, maxDistance: CLLocationDistance(nearbyDistance)))
+            anchors = Array(
+                DataModelManager.shared.getNearbyLocations(for: anchorType,
+                                                           location: latLon,
+                                                           maxDistance: CLLocationDistance(nearbyDistance)))
+                    .sorted(by: {
+                        $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
+                    })
         }
         .background(AppColor.accent)
         .navigationBarItems(
@@ -82,10 +87,16 @@ struct LocalAnchorListView: View {
         )
         if anchorType == .indoorDestination {
             Section(header: Text("Choose Start").font(.title).fontWeight(.heavy)) {
-                ChooseAnchorComponentView(isStart: true, anchors: $anchors, chosenAnchor: $chosenStart, otherAnchor: $chosenEnd)
+                ChooseAnchorComponentView(isStart: true,
+                                          anchors: $anchors,
+                                          chosenAnchor: $chosenStart,
+                                          otherAnchor: $chosenEnd)
             }
             Section(header: Text("Choose Destination").font(.title).fontWeight(.heavy)) {
-                ChooseAnchorComponentView(isStart: false, anchors: $anchors, chosenAnchor: $chosenEnd, otherAnchor: $chosenStart)
+                ChooseAnchorComponentView(isStart: false,
+                                          anchors: $anchors,
+                                          chosenAnchor: $chosenEnd,
+                                          otherAnchor: $chosenStart)
             }
             if let chosenStart = chosenStart, let chosenEnd = chosenEnd {
                 NavigationLink (destination: NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: chosenEnd), label: {
@@ -102,7 +113,10 @@ struct LocalAnchorListView: View {
                 .controlSize(.large)
             }
         } else {
-            ChooseAnchorComponentView(isStart: false, anchors: $anchors, chosenAnchor: $chosenEnd, otherAnchor: $chosenStart)
+            ChooseAnchorComponentView(isStart: false,
+                                      anchors: $anchors,
+                                      chosenAnchor: $chosenEnd,
+                                      otherAnchor: $chosenStart)
         }
     }
 }

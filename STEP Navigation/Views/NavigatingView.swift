@@ -13,6 +13,7 @@ struct NavigatingView: View {
     let destinationAnchorDetails: LocationDataModel
     @State var didLocalize = false
     @ObservedObject var positioningModel = PositioningModel.shared
+    @ObservedObject var navigationManager = NavigationManager.shared
     
     var body: some View {
         ZStack {
@@ -26,7 +27,7 @@ struct NavigatingView: View {
                         if RouteNavigator.shared.keypoints?.isEmpty == true {
                             InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
                         } else {
-                            InformationPopup(popupEntry: "7", popupType: .distanceAway, units: .none)
+                            InformationPopup(popupEntry: String(RouteNavigator.shared.getRemainingRouteDistance()), popupType: .distanceAway, units: .none)
                         }
                     }
                     Spacer()
