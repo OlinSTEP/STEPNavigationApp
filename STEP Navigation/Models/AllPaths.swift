@@ -35,13 +35,10 @@ class PathPlanner {
             return
         }
         cloudAnchors = NavigationManager.shared.computePathBetween(cloudAnchorID1, cloudAnchorID2)
-        for cloudAnchor in cloudAnchors {
-            PositioningModel.shared.resolveCloudAnchor(byID: cloudAnchor)
-        }
+        NavigationManager.shared.computeMultisegmentPath(cloudAnchors)
     }
     
     func navigate(from start: LocationDataModel, to end: LocationDataModel) {
-        NavigationManager.shared.computeAndRenderComplexPath(cloudAnchors)
         NavigationManager.shared.startNavigating()
     }
     

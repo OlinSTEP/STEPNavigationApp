@@ -27,7 +27,7 @@ struct NavigatingView: View {
                         if RouteNavigator.shared.keypoints?.isEmpty == true {
                             InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
                         } else {
-                            InformationPopup(popupEntry: String(RouteNavigator.shared.getRemainingRouteDistance()), popupType: .distanceAway, units: .none)
+                            InformationPopup(popupEntry: "\(Int(round(RouteNavigator.shared.getRemainingRouteDistance()*100/2.54/12))) ft", popupType: .distanceAway, units: .none)
                         }
                     }
                     Spacer()

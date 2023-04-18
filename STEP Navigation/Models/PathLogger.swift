@@ -54,6 +54,7 @@ class PathLogger {
     }
     
     func logCloudAnchorDidUpdate(cloudID: String, identifier: String, pose: simd_float4x4, mapPose: simd_float4x4, timestamp: Double) {
+        print("APPENDING CLOUD ANCHOR RESOLUTION")
         cloudAnchorResolutions.append(LoggedCloudAnchorResolution(cloudID: cloudID, sessionID: identifier, pose: pose, mapPose: mapPose, timestamp: timestamp))
     }
 }

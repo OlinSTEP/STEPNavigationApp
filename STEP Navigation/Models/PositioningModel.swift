@@ -44,6 +44,7 @@ class PositioningModel: NSObject, ObservableObject {
     let arView = ARView(frame: .zero)
     private let locationManager = CLLocationManager()
     private var garSession: GARSession?
+    private var latestGARAnchors: [GARAnchor]? = nil
     public static var shared = PositioningModel()
     private var manualAlignment: simd_float4x4? {
         didSet {
@@ -70,7 +71,6 @@ class PositioningModel: NSObject, ObservableObject {
         super.init()
         locationManager.requestWhenInUseAuthorization()
         arView.session.delegate = self
-        startGARSession()
         //setDefaultsForTesting()
     }
     
@@ -128,18 +128,35 @@ class PositioningModel: NSObject, ObservableObject {
 
 extension PositioningModel: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        PathLogger.shared.logPose(frame.camera.transform, timestamp: frame.timestamp)
+        if frame.camera.trackingState == .normal && garSession == nil {
+            startGARSession()
+        }
         do {
-            let garFrame = try garSession?.update(frame)
-            if let cameraGeospatialTransform = garFrame?.earth?.cameraGeospatialTransform {
-                print("horizontalAccuracy \(cameraGeospatialTransform.horizontalAccuracy)")
-                currentLatLon = cameraGeospatialTransform.coordinate
-                // NOTE: Don't check in
-                if cameraGeospatialTransform.horizontalAccuracy < 3.0 {
-                    geoLocalizationAccuracy = .high
-                } else if cameraGeospatialTransform.horizontalAccuracy < 8.0 {
-                    geoLocalizationAccuracy = .medium
-                } else {
-                    geoLocalizationAccuracy = .low
+            if let garFrame = try garSession?.update(frame) {
+                latestGARAnchors = garFrame.anchors
+                var shouldDoCloudAnchorAlignment = false
+                for anchor in garFrame.updatedAnchors {
+                    guard let cloudIdentifier = anchor.cloudIdentifier else {
+                        continue
+                    }
+                    shouldDoCloudAnchorAlignment = true
+                    cloudAnchorAligner.cloudAnchorDidUpdate(withCloudID: cloudIdentifier, withIdentifier: anchor.identifier.uuidString, withPose: anchor.transform, timestamp: frame.timestamp)
+                }
+                if shouldDoCloudAnchorAlignment {
+                    manualAlignment = cloudAnchorAligner.adjust(currentAlignment: manualAlignment)
+                }
+                if let cameraGeospatialTransform = garFrame.earth?.cameraGeospatialTransform {
+                    print("horizontalAccuracy \(cameraGeospatialTransform.horizontalAccuracy)")
+                    currentLatLon = cameraGeospatialTransform.coordinate
+                    // NOTE: Don't check in
+                    if cameraGeospatialTransform.horizontalAccuracy < 3.0 {
+                        geoLocalizationAccuracy = .high
+                    } else if cameraGeospatialTransform.horizontalAccuracy < 8.0 {
+                        geoLocalizationAccuracy = .medium
+                    } else {
+                        geoLocalizationAccuracy = .low
+                    }
                 }
             }
         } catch {

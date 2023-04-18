@@ -76,7 +76,7 @@ class NavigationManager: ObservableObject {
         return stops
     }
     
-    func computeAndRenderComplexPath(_ cloudAnchors: [String]) {
+    func computeMultisegmentPath(_ cloudAnchors: [String]) {
         var poses: [simd_float4x4] = []
         if cloudAnchors.count == 1 {
             // TODO: think of how to handle this case
