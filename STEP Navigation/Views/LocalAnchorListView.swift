@@ -21,14 +21,10 @@ struct LocalAnchorListView: View {
     @State var showPopup = false
     @State var chosenStart: LocationDataModel?
     @State var chosenEnd: LocationDataModel?
-    
-    
-//    private var anchors: [AnchorDetails] {
-//        anchorData.anchors(for: anchorType)
-//    }
+    @ObservedObject var positionModel = PositioningModel.shared
+    @State var anchors: [LocationDataModel] = []
     
     var body: some View {
-        let anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: location, maxDistance: CLLocationDistance(nearbyDistance)))
         VStack {
             HStack {
                 Text("\(anchorType.rawValue) Anchors")
@@ -67,6 +63,11 @@ struct LocalAnchorListView: View {
                 .frame(width: 300)
                 .padding(.bottom, 20)
             }
+        }.onReceive(positionModel.$currentLatLon) { latLon in
+            guard let latLon = latLon else {
+                return
+            }
+            anchors = Array(DataModelManager.shared.getNearbyLocations(for: anchorType, location: latLon, maxDistance: CLLocationDistance(nearbyDistance)))
         }
         .background(AppColor.accent)
         .navigationBarItems(
@@ -80,10 +81,12 @@ struct LocalAnchorListView: View {
                 }
         )
         if anchorType == .indoorDestination {
-            Text("Choose Start")
-            ChooseAnchorComponentView(isStart: true, anchors: anchors, chosenAnchor: $chosenStart, otherAnchor: $chosenEnd)
-            Text("Choose End")
-            ChooseAnchorComponentView(isStart: false, anchors: anchors, chosenAnchor: $chosenEnd, otherAnchor: $chosenStart)
+            Section(header: Text("Choose Start").font(.title).fontWeight(.heavy)) {
+                ChooseAnchorComponentView(isStart: true, anchors: $anchors, chosenAnchor: $chosenStart, otherAnchor: $chosenEnd)
+            }
+            Section(header: Text("Choose Destination").font(.title).fontWeight(.heavy)) {
+                ChooseAnchorComponentView(isStart: false, anchors: $anchors, chosenAnchor: $chosenEnd, otherAnchor: $chosenStart)
+            }
             if let chosenStart = chosenStart, let chosenEnd = chosenEnd {
                 NavigationLink (destination: NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: chosenEnd), label: {
                     Text("Navigate")
@@ -99,7 +102,7 @@ struct LocalAnchorListView: View {
                 .controlSize(.large)
             }
         } else {
-            ChooseAnchorComponentView(isStart: false, anchors: anchors, chosenAnchor: $chosenEnd, otherAnchor: $chosenStart)
+            ChooseAnchorComponentView(isStart: false, anchors: $anchors, chosenAnchor: $chosenEnd, otherAnchor: $chosenStart)
         }
     }
 }
@@ -110,26 +113,23 @@ struct LocationDataModelWrapper: Hashable {
 }
 
 struct ChooseAnchorComponentView: View {
-    @State var selected: [Bool]
-
+    var anchors: Binding<[LocationDataModel]>
     let isStart: Bool
-    let anchors: [LocationDataModel]
     var chosenAnchor : Binding<LocationDataModel?>
     var otherAnchor : Binding<LocationDataModel?>
     
     init(isStart: Bool,
-         anchors: [LocationDataModel],
+         anchors: Binding<[LocationDataModel]>,
          chosenAnchor: Binding<LocationDataModel?>,
          otherAnchor: Binding<LocationDataModel?>) {
         self.isStart = isStart
         self.anchors = anchors
         self.chosenAnchor = chosenAnchor
         self.otherAnchor = otherAnchor
-        self.selected = anchors.map({anchor in false })
     }
     
     var body: some View {
-        let isReachable: [Bool] = otherAnchor.wrappedValue == nil ? Array(repeating: true, count: anchors.count) : NavigationManager.shared.getReachability(from: otherAnchor.wrappedValue!, outOf: anchors)
+        let isReachable: [Bool] = otherAnchor.wrappedValue == nil ? Array(repeating: true, count: anchors.count) : NavigationManager.shared.getReachability(from: otherAnchor.wrappedValue!, outOf: anchors.wrappedValue)
         if anchors.isEmpty {
             VStack {
                 Spacer()
@@ -142,27 +142,20 @@ struct ChooseAnchorComponentView: View {
             }
             
         } else {
-
+            
             ScrollView {
                 VStack {
                     ForEach(0..<anchors.count, id: \.self) { idx in
                         if isReachable[idx] {
                             Button(action: {
-                                for i in 0..<selected.count {
-                                    if i == idx {
-                                        selected[i] = !selected[i]
-                                    } else {
-                                        selected[i] = false
-                                    }
-                                }
-                                if selected[idx] {
-                                    chosenAnchor.wrappedValue = anchors[idx]
-                                } else {
+                                if chosenAnchor.wrappedValue == anchors[idx].wrappedValue {
                                     chosenAnchor.wrappedValue = nil
+                                } else {
+                                    chosenAnchor.wrappedValue = anchors[idx].wrappedValue
                                 }
                             }){
                                 HStack {
-                                    Text(anchors[idx].getName())
+                                    Text(anchors.wrappedValue[idx].getName())
                                         .font(.title)
                                         .bold()
                                         .padding(30)
@@ -171,33 +164,35 @@ struct ChooseAnchorComponentView: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .frame(minHeight: 140)
-                            }.foregroundColor(selected[idx] ? .yellow : .black)
+                            }
+                            .foregroundColor(chosenAnchor.wrappedValue == anchors[idx].wrappedValue ? .yellow : .black)
+                            .accessibilityAddTraits(chosenAnchor.wrappedValue == anchors[idx].wrappedValue ? [.isSelected] : [])
                         }
                     }
                     
-//
-//                        anchor in
-//                        Toggle("test", isOn: anchor.isSelected)
-//                        NavigationLink (
-//                            destination: AnchorDetailView(anchorDetails: anchor),
-//                            label: {
-//                                HStack {
-//                                    Text(anchor.getName())
-//                                        .font(.title)
-//                                        .bold()
-//                                        .padding(30)
-//                                        .multilineTextAlignment(.leading)
-//                                    Spacer()
-//                                }
-//                                .frame(maxWidth: .infinity)
-//                                .frame(minHeight: 140)
-//                                .foregroundColor(AppColor.black)
-//                            })
-//                        .background(AppColor.grey)
-//                        .cornerRadius(20)
-//                        .padding(.horizontal)
-//                    }
-//                    .padding(.top, 20)
+                    //
+                    //                        anchor in
+                    //                        Toggle("test", isOn: anchor.isSelected)
+                    //                        NavigationLink (
+                    //                            destination: AnchorDetailView(anchorDetails: anchor),
+                    //                            label: {
+                    //                                HStack {
+                    //                                    Text(anchor.getName())
+                    //                                        .font(.title)
+                    //                                        .bold()
+                    //                                        .padding(30)
+                    //                                        .multilineTextAlignment(.leading)
+                    //                                    Spacer()
+                    //                                }
+                    //                                .frame(maxWidth: .infinity)
+                    //                                .frame(minHeight: 140)
+                    //                                .foregroundColor(AppColor.black)
+                    //                            })
+                    //                        .background(AppColor.grey)
+                    //                        .cornerRadius(20)
+                    //                        .padding(.horizontal)
+                    //                    }
+                    //                    .padding(.top, 20)
                 }
                 Spacer()
             }
