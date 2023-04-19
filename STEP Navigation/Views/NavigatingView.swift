@@ -12,6 +12,7 @@ struct NavigatingView: View {
     let startAnchorDetails: LocationDataModel?
     let destinationAnchorDetails: LocationDataModel
     @State var didLocalize = false
+    @State var didPrepareToNavigate = false
     @ObservedObject var positioningModel = PositioningModel.shared
     @ObservedObject var navigationManager = NavigationManager.shared
     
@@ -47,6 +48,7 @@ struct NavigatingView: View {
                 didLocalize = false
                 if let startAnchorDetails = startAnchorDetails {
                     PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
+                    didPrepareToNavigate = true
                     checkLocalization(cloudAnchorsToCheck: positioningModel.resolvedCloudAnchors)
                 } else {
                     PathPlanner.shared.navigate(to: destinationAnchorDetails)
@@ -61,6 +63,10 @@ struct NavigatingView: View {
     
     private func checkLocalization(cloudAnchorsToCheck: Set<String>) {
         if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), cloudAnchorsToCheck.contains(startCloudID), !didLocalize {
+            if !didPrepareToNavigate {
+                PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
+                didPrepareToNavigate = true
+            }
             didLocalize = true
             PathPlanner.shared.navigate(from: startAnchorDetails, to: destinationAnchorDetails)
         }
