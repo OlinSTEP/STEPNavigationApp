@@ -199,9 +199,7 @@ class NavigationManager: ObservableObject {
                 // arrived at final keypoint
                 // send haptic/sonic feedback
                 SoundEffectManager.shared.success()
-
                 RouteNavigator.shared.checkOffKeypoint()
-                stopNavigating()
             }
         }
     }

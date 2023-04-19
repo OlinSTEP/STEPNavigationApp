@@ -114,7 +114,6 @@ class RouteNavigator: ObservableObject {
             return
         }
         for keypoint in originalKeypoints {
-            // TODO: does thsi actually work
             if keypoints?.first!.id == keypoint.id {
                 break
             }
