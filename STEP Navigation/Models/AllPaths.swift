@@ -34,6 +34,7 @@ class PathPlanner {
             // Note: this shouldn't happen
             return
         }
+        PathLogger.shared.startLoggingData()
         cloudAnchors = NavigationManager.shared.computePathBetween(cloudAnchorID1, cloudAnchorID2)
         NavigationManager.shared.computeMultisegmentPath(cloudAnchors)
     }

@@ -131,6 +131,8 @@ class NavigationManager: ObservableObject {
         HapticFeedbackAdapter.shared.stopHaptics()
         followingCrumbs?.invalidate()
         // AnnouncementManager.shared.announce(announcement: "You've arrived")
+        // NOTE: we may have already called these functions if we finished navigating the route
+        PathLogger.shared.stopLoggingData()
         PathLogger.shared.uploadLog()
     }
     
@@ -200,6 +202,8 @@ class NavigationManager: ObservableObject {
                 // send haptic/sonic feedback
                 SoundEffectManager.shared.success()
                 RouteNavigator.shared.checkOffKeypoint()
+                PathLogger.shared.stopLoggingData()
+                PathLogger.shared.uploadLog()
             }
         }
     }

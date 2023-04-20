@@ -36,6 +36,7 @@ class FirebaseManager: ObservableObject {
     
     func uploadLog(data: Data) {
         let uniqueId = RouteNavigator.shared.routeNameForLogging ?? UUID().uuidString
+        print("UPLOADING LOG \(RouteNavigator.shared.routeNameForLogging)")
         Storage.storage().reference().child("take2logs").child("\(uniqueId).log").putData(data) { (metadata, error) in
             print("error \(error)")
         }
