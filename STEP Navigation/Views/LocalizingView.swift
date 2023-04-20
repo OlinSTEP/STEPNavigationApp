@@ -18,18 +18,23 @@ struct LocalizingView: View {
     var body: some View {
         ZStack {
             ARViewContainer()
-            if positionModel.geoLocalizationAccuracy == .high {
+            if positionModel.geoLocalizationAccuracy == .low {
                 if let currentLatLon = positionModel.currentLatLon {
                     VStack {
+                        Spacer()
                         HStack {
-                            Text("Successfully Localized")
-                                .foregroundColor(AppColor.white)
+                            Text("Succesfully Localized")
                                 .bold()
-                                .font(.title)
+                                .foregroundColor(AppColor.white)
+                                .font(.title2)
                                 .multilineTextAlignment(.leading)
-                                .padding(.horizontal)
+                            Spacer()
                         }
-                        .padding(.vertical)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(AppColor.black)
+                        
+                        Spacer()
                         
                         NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon)) {
                             Text("Go to nearby locations")
@@ -38,16 +43,12 @@ struct LocalizingView: View {
                                 .frame(maxWidth: 300)
                                 .foregroundColor(AppColor.black)
                         }
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 50)
                         .tint(AppColor.accent)
                         .buttonStyle(.borderedProminent)
                         .buttonBorderShape(.capsule)
                         .controlSize(.large)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(AppColor.black)
-                    
                 } else {
                     Text("Inconsistent State.  Contact your developer")
                 }
@@ -78,6 +79,7 @@ struct LocalizingView: View {
                 .background(AppColor.black)
             }
         }
+        .background(AppColor.accent)
     }
 }
 

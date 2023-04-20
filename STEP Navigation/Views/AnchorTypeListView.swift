@@ -33,6 +33,7 @@ struct AnchorTypeListView: View {
                 }
                 .padding(.vertical, 20)
             }
+            .navigationBarBackButtonHidden()
             .background(AppColor.accent)
             // Sets the settings button
 //            .navigationBarItems(
@@ -67,7 +68,7 @@ struct AnchorTypeListView: View {
                                     .frame(minHeight: 140)
                                     .foregroundColor(AppColor.black)
                             })
-                        .background(AppColor.grey)
+                        .background(AppColor.accent)
                         .cornerRadius(20)
                         .padding(.horizontal)
                     }
