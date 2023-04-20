@@ -119,10 +119,12 @@ class FirebaseManager: ObservableObject {
                             endAnchorTransform: endPose,
                             path: pathPoses,
                                                                          pathAnchors: pathAnchorsAsDict)
-            // note: experimentign with bidirectional edges
-            pathGraph.connections[NodePair(from: endID, to: startID)] = ComplexEdge(startAnchorTransform: endPose,
-                            endAnchorTransform: fromPose,
-                                                                                    path: pathPoses.reversed(), pathAnchors: pathAnchorsAsDict)
+            // Add the reverse edge if none exists yet.  If we have an actual reverse edge than this would not run
+            if pathGraph.connections[NodePair(from: endID, to: startID)] == nil {
+                pathGraph.connections[NodePair(from: endID, to: startID)] = ComplexEdge(startAnchorTransform: endPose,
+                                                                                        endAnchorTransform: fromPose,
+                                                                                        path: pathPoses.reversed(), pathAnchors: pathAnchorsAsDict)
+            }
         }
     }
     
