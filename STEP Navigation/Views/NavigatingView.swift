@@ -6,69 +6,177 @@
 //
 
 import SwiftUI
+import CoreLocation
+
+// TODO: ughh what to do about this global variable
+var hideNavTimer: Timer?
 
 struct NavigatingView: View {
-    let popupEntry: String = "Testing Text"
-    @State var showingConfirmation = false
-        
+    let startAnchorDetails: LocationDataModel?
+    let destinationAnchorDetails: LocationDataModel
+    @State var didLocalize = false
+    @State var didPrepareToNavigate = false
+    @State var navigationDirection: String = ""
+    @ObservedObject var positioningModel = PositioningModel.shared
+    @ObservedObject var navigationManager = NavigationManager.shared
+    
     var body: some View {
-        Spacer()
         ZStack {
+            ARViewContainer()
             VStack {
-                InformationPopup(popupEntry: popupEntry)
                 Spacer()
-                HStack {
-                    Image(systemName: "pause.circle.fill")
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                        .foregroundColor(.red)
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 140)
-                .background(AppColor.black)
-            }
-            .padding(.vertical, 100)
-            .navigationBarBackButtonHidden()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Text("Exit")
-                        .bold()
-                        .font(.title2)
-                        .onTapGesture {
-                            showingConfirmation = true
+                VStack {
+                    if !didLocalize {
+                        InformationPopup(popupEntry: "7", popupType: .waitingToLocalize, units: .none)
+                    } else {
+                        if RouteNavigator.shared.keypoints?.isEmpty == true {
+                            InformationPopup(popupEntry: "", popupType: .arrived, units: .none)
+                        } else if !navigationDirection.isEmpty {
+                            InformationPopup(popupEntry: navigationDirection, popupType: .direction, units: .none)
                         }
+                    }
+                    Spacer()
+                    if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
+                        HStack {
+                            Button(action: {
+                                navigationManager.updateDirections()
+                            }) {
+                                Image(systemName: "point.filled.topleft.down.curvedto.point.bottomright.up")
+                                    .resizable()
+                                    .frame(width: 100, height: 100)
+                                    .foregroundColor(.green)
+                            }.accessibilityLabel("Get directions")
+                            //                        Image(systemName: "pause.circle.fill")
+                            //                            .resizable()
+                            //                            .frame(width: 100, height: 100)
+                            //                            .foregroundColor(.red)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 140)
+                        .background(AppColor.black)
+                    }
                 }
+                .padding(.vertical, 100)
+            }.onAppear() {
+                // plan path
+                didLocalize = false
+                AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
+                if let startAnchorDetails = startAnchorDetails {
+                    PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
+                    didPrepareToNavigate = true
+                    checkLocalization(cloudAnchorsToCheck: positioningModel.resolvedCloudAnchors)
+                } else {
+                    PathPlanner.shared.navigate(to: destinationAnchorDetails)
+                }
+            }.onDisappear() {
+                NavigationManager.shared.stopNavigating()
             }
-            
-            if showingConfirmation == true {
-                ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
+        }.onReceive(positioningModel.$resolvedCloudAnchors) { newValue in
+            checkLocalization(cloudAnchorsToCheck: newValue)
+        }.onReceive(navigationManager.$navigationDirection) {
+            newValue in
+            hideNavTimer?.invalidate()
+            navigationDirection = newValue ?? ""
+            hideNavTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { timer in
+                navigationDirection = ""
             }
         }
-//        .background(AppColor.accent)
     }
+    
+    private func checkLocalization(cloudAnchorsToCheck: Set<String>) {
+        if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), cloudAnchorsToCheck.contains(startCloudID), !didLocalize {
+            if !didPrepareToNavigate {
+                PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
+                didPrepareToNavigate = true
+            }
+            didLocalize = true
+            PathPlanner.shared.navigate(from: startAnchorDetails, to: destinationAnchorDetails)
+        }
+    }
+    let popupEntry: String = "Testing Text"
+    @State var showingConfirmation = false
 }
 
 struct InformationPopup: View {
     let popupEntry: String
+    let popupType: PopupType
+    let units: Units
     
     var body: some View {
         VStack {
-            HStack {
-                Text(popupEntry)
-                    .foregroundColor(AppColor.white)
-                    .font(.title2)
-                    .multilineTextAlignment(.leading)
-                Spacer()
+            switch popupType {
+            case .waitingToLocalize:
+                HStack {
+                    Text("Trying to align to your route. Scan your phone around to recognize your surroundings.")
+                        .foregroundColor(AppColor.white)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                }
+            case .userNote:
+                HStack {
+                    Text("User Note")
+                        .foregroundColor(AppColor.white)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.leading)
+                    Spacer()
+                }
+                HStack {
+                    Text(popupEntry)
+                        .foregroundColor(AppColor.white)
+                        .font(.title2)
+                        .multilineTextAlignment(.leading)
+                    Spacer()
+                }
+            case .distanceAway:
+                HStack {
+                    Text("\(popupEntry) \(units.rawValue) away")
+                        .foregroundColor(AppColor.white)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                }
+            case .direction:
+                HStack {
+                    Text("\(popupEntry)")
+                        .foregroundColor(AppColor.white)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                }
+            case .arrived:
+                HStack {
+                    Text("Arrived. You should be within one cane's length of your destination.")
+                        .foregroundColor(AppColor.white)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.leading)
+                }
             }
         }
         .frame(maxWidth: .infinity)
         .padding()
         .background(AppColor.black)
     }
+    
+    enum PopupType: CaseIterable {
+        case waitingToLocalize
+        case userNote
+        case distanceAway
+        case arrived
+        case direction
+    }
+    
+    enum Units: String, CaseIterable {
+        case meters = "meters"
+        case feet = "feet"
+        case none = ""
+    }
 }
 
 struct NavigatingView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigatingView()
+        NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: LocationDataModel(anchorType: .busStop, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1"))
     }
 }

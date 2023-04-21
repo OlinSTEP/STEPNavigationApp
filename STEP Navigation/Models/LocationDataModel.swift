@@ -16,6 +16,7 @@ struct LocationDataModel: Hashable {
     private let coordinates: CLLocationCoordinate2D
     private let notes: String?
     private let name: String
+    private let cloudAnchorID: String?
     
     
     /**
@@ -26,11 +27,12 @@ struct LocationDataModel: Hashable {
         - parameter notes: Any additional notes about the location.
         - parameter name: The name of the location.
     */
-    init(anchorType: AnchorType, coordinates: CLLocationCoordinate2D, notes: String? = "", name: String) {
+    init(anchorType: AnchorType, coordinates: CLLocationCoordinate2D, notes: String? = "", name: String, cloudAnchorID: String?=nil) {
         self.anchorType = anchorType
         self.coordinates = coordinates
         self.notes = notes
         self.name = name
+        self.cloudAnchorID = cloudAnchorID
     }
     
     /**
@@ -76,6 +78,10 @@ struct LocationDataModel: Hashable {
     func getNotes() -> String? {
         return self.notes
     }
+    
+    func getCloudAnchorID() -> String? {
+        return self.cloudAnchorID
+    }
 }
 
 /**
@@ -95,4 +101,6 @@ enum AnchorType: String, Identifiable {
     case externalDoor = "External Door"
     case bathroom = "Bathroom"
     case frontdesk = "Front Desk"
+    case indoorDestination = "Indoor"
+//    case indoorDestination = "Indoors (temporary category)"
 }
