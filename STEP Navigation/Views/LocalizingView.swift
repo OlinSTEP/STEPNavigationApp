@@ -11,14 +11,18 @@ import CoreLocation
 
 struct LocalizingView: View {
     @ObservedObject var positionModel = PositioningModel.shared
-    let anchorType: AnchorType
-    
     @State var highAccuracy = false
-        
+
+    let anchorType: AnchorType
+    var minimumGeoLocationAccuracy: GeoLocationAccuracy {
+        return anchorType == .indoorDestination ? .low : .high
+    }
+    
     var body: some View {
         ZStack {
             ARViewContainer()
-            if positionModel.geoLocalizationAccuracy == .low {
+
+            if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                 if let currentLatLon = positionModel.currentLatLon {
                     VStack {
                         Spacer()
@@ -33,7 +37,7 @@ struct LocalizingView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(AppColor.black)
-                        
+    
                         Spacer()
                         
                         NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon)) {
@@ -52,8 +56,7 @@ struct LocalizingView: View {
                 } else {
                     Text("Inconsistent State.  Contact your developer")
                 }
-                    
-            } else {
+            } else  {
                 VStack {
                     HStack {
                         Text("Localizing...")
@@ -65,6 +68,34 @@ struct LocalizingView: View {
                         Spacer()
                     }
                     HStack {
+                        switch positionModel.geoLocalizationAccuracy {
+                        case .none:
+                            Text("Current Accuracy: None (No Location)")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+
+                        case .low:
+                            Text("Current Accuracy: Low")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+
+                        case .medium:
+                            Text("Current Accuracy: Medium")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+                            
+                        case .high:
+                            Text("Current Accuracy: High")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+                        }
+                        Spacer()
+                    }
+                    HStack {
                         Text("Move your phone around with the camera facing out.")
                             .foregroundColor(AppColor.white)
                             .bold()
@@ -72,7 +103,6 @@ struct LocalizingView: View {
                             .padding(.horizontal)
                         Spacer()
                     }
-
                 }
                 .frame(maxWidth: .infinity)
                 .padding()

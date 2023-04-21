@@ -28,13 +28,13 @@ struct AnchorDetails: Identifiable {
         self.init(name: "", notes: "", locationCoordinates: "", distanceAway: 0.0, anchorType: .busStop)
     }
     
-    enum AnchorType: String, CaseIterable {
-        case busStop = "Bus Stop"
-        case externalDoor = "External Door"
-        case bathroom = "Bathroom"
-        case frontdesk = "Front Desk"
-        case elevator = "Elevator"
-        case stairs = "Stairs"
-        case room = "Room"
-    }
+//    enum AnchorType: String, CaseIterable {
+//        case busStop = "Bus Stop"
+//        case externalDoor = "External Door"
+//        case bathroom = "Bathroom"
+//        case frontdesk = "Front Desk"
+//        case elevator = "Elevator"
+//        case stairs = "Stairs"
+//        case room = "Room"
+//    }
 }

@@ -59,7 +59,7 @@ struct AnchorDetailView: View {
                 .padding()
                                 
                 Spacer()
-                NavigationLink (destination: NavigatingView(), label: {
+                NavigationLink (destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchorDetails), label: {
                     Text("Navigate")
                         .font(.title)
                         .bold()
@@ -76,16 +76,16 @@ struct AnchorDetailView: View {
             CapsuleButton()
 
         }
-//            .navigationBarItems(
-//                trailing:
-//                    Button(action: {
-//                        print("pressed settings")
-//                    }) {
-//                        Image(systemName: "gearshape.fill")
-//                            .scaleEffect(1.5)
-//                            .foregroundColor(AppColor.black)
-//                    }
-//            )
+        .navigationBarItems(
+            trailing:
+                Button(action: {
+                    print("pressed settings")
+                }) {
+                    Image(systemName: "gearshape.fill")
+                        .scaleEffect(1.5)
+                        .foregroundColor(AppColor.black)
+                }
+        )
     }
 }
 

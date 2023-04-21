@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AnchorTypeListView: View {
 //    @StateObject private var anchorData = AnchorData()
-    
+    @ObservedObject var database = FirebaseManager.shared
     // Sets the appearance of the Navigation Bar using UIKit
     init() {
         let appearance = UINavigationBarAppearance()
@@ -36,17 +36,6 @@ struct AnchorTypeListView: View {
             .navigationBarBackButtonHidden()
             .background(AppColor.accent)
             // Sets the settings button
-//            .navigationBarItems(
-//                trailing:
-//                    Button(action: {
-//                        print("pressed settings")
-//                        // replace with a Navigation Link that goes to settings
-//                    }) {
-//                        Image(systemName: "gearshape.fill")
-//                            .scaleEffect(1.5)
-//                            .foregroundColor(AppColor.black)
-//                    }
-//            )
             
             // The scroll view contains the main body of text
             ScrollView {
@@ -57,7 +46,6 @@ struct AnchorTypeListView: View {
                     ForEach(Array(anchorTypes).sorted(by: {$0.rawValue < $1.rawValue})) {
                         anchorType in
                         NavigationLink (
-//                            destination: LocalizingView(),
                             destination: LocalizingView(anchorType: anchorType),
                             label: {
                                 Text(anchorType.rawValue)

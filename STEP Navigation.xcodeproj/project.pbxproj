@@ -31,6 +31,24 @@
 		8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737529DE144C001599B1 /* DatabaseModel.swift */; };
 		8241737929DE1478001599B1 /* PositioningModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737829DE1478001599B1 /* PositioningModel.swift */; };
 		8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737A29DE187E001599B1 /* AdjustmentModel.swift */; };
+		825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */; };
+		825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */; };
+		825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F3229E9B7910043BD98 /* STEP_MappingApp.swift */; };
+		825F1F3529E9B7910043BD98 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F3429E9B7910043BD98 /* ContentView.swift */; };
+		825F1F3729E9B7920043BD98 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 825F1F3629E9B7920043BD98 /* Assets.xcassets */; };
+		825F1F3A29E9B7920043BD98 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 825F1F3929E9B7920043BD98 /* Preview Assets.xcassets */; };
+		825F1F4029E9C65F0043BD98 /* simd_extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F3F29E9C65F0043BD98 /* simd_extensions.swift */; };
+		825F1F4729E9C8380043BD98 /* ClewTutorialFeedback.wav in Resources */ = {isa = PBXBuildFile; fileRef = 825F1F4229E9C8380043BD98 /* ClewTutorialFeedback.wav */; };
+		825F1F4829E9C8380043BD98 /* ClewSuccessSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 825F1F4329E9C8380043BD98 /* ClewSuccessSound.wav */; };
+		825F1F4929E9C8380043BD98 /* StartRecording.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 825F1F4429E9C8380043BD98 /* StartRecording.aiff */; };
+		825F1F4A29E9C8380043BD98 /* StopRecording.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 825F1F4529E9C8380043BD98 /* StopRecording.aiff */; };
+		825F1F4B29E9C8380043BD98 /* ClewErrorSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 825F1F4629E9C8380043BD98 /* ClewErrorSound.wav */; };
+		825F1F4D29E9CACE0043BD98 /* MapDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F4C29E9CACE0043BD98 /* MapDataModel.swift */; };
+		825F1F4F29E9CB350043BD98 /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F4E29E9CB350043BD98 /* NavigationManager.swift */; };
+		825F1F5129E9CBA70043BD98 /* MapGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5029E9CBA70043BD98 /* MapGraph.swift */; };
+		825F1F5329E9CF130043BD98 /* CloudAnchorAligner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5229E9CF130043BD98 /* CloudAnchorAligner.swift */; };
+		825F1F5529E9CF490043BD98 /* PathLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5429E9CF490043BD98 /* PathLogger.swift */; };
+		825F1F5729E9CF7D0043BD98 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */; };
 		82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */; };
 		82659CA729DF5FC8007546A1 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CA629DF5FC8007546A1 /* FirebaseAnalytics */; };
 		82659CA929DF5FC8007546A1 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CA829DF5FC8007546A1 /* FirebaseDatabase */; };
@@ -41,6 +59,8 @@
 		82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB429DF60B5007546A1 /* SwiftGraph */; };
 		826C994729E87C130070290B /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994629E87C130070290B /* ARViewContainer.swift */; };
 		826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994829E87EA10070290B /* ARCoreCredentials.swift */; };
+		829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */; };
+		829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 829F7B6829F2C2AB00B59EE0 /* Localizable.strings */; };
 		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
 		A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */; };
 		A8D886C229EEE550003E05E7 /* ExitNavigationAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D886C129EEE550003E05E7 /* ExitNavigationAlertView.swift */; };
@@ -87,9 +107,30 @@
 		8241737529DE144C001599B1 /* DatabaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseModel.swift; sourceTree = "<group>"; };
 		8241737829DE1478001599B1 /* PositioningModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningModel.swift; sourceTree = "<group>"; };
 		8241737A29DE187E001599B1 /* AdjustmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustmentModel.swift; sourceTree = "<group>"; };
+		825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSegmentPathBuilder.swift; sourceTree = "<group>"; };
+		825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectManager.swift; sourceTree = "<group>"; };
+		825F1F3029E9B7910043BD98 /* STEP Mapping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Mapping.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		825F1F3229E9B7910043BD98 /* STEP_MappingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_MappingApp.swift; sourceTree = "<group>"; };
+		825F1F3429E9B7910043BD98 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		825F1F3629E9B7920043BD98 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		825F1F3929E9B7920043BD98 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		825F1F3F29E9C65F0043BD98 /* simd_extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = simd_extensions.swift; sourceTree = "<group>"; };
+		825F1F4229E9C8380043BD98 /* ClewTutorialFeedback.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ClewTutorialFeedback.wav; sourceTree = "<group>"; };
+		825F1F4329E9C8380043BD98 /* ClewSuccessSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ClewSuccessSound.wav; sourceTree = "<group>"; };
+		825F1F4429E9C8380043BD98 /* StartRecording.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = StartRecording.aiff; sourceTree = "<group>"; };
+		825F1F4529E9C8380043BD98 /* StopRecording.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = StopRecording.aiff; sourceTree = "<group>"; };
+		825F1F4629E9C8380043BD98 /* ClewErrorSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ClewErrorSound.wav; sourceTree = "<group>"; };
+		825F1F4C29E9CACE0043BD98 /* MapDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapDataModel.swift; sourceTree = "<group>"; };
+		825F1F4E29E9CB350043BD98 /* NavigationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationManager.swift; sourceTree = "<group>"; };
+		825F1F5029E9CBA70043BD98 /* MapGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapGraph.swift; sourceTree = "<group>"; };
+		825F1F5229E9CF130043BD98 /* CloudAnchorAligner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudAnchorAligner.swift; sourceTree = "<group>"; };
+		825F1F5429E9CF490043BD98 /* PathLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathLogger.swift; sourceTree = "<group>"; };
+		825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
 		82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		826C994629E87C130070290B /* ARViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewContainer.swift; sourceTree = "<group>"; };
 		826C994829E87EA10070290B /* ARCoreCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCoreCredentials.swift; sourceTree = "<group>"; };
+		829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementManager.swift; sourceTree = "<group>"; };
+		829F7B6829F2C2AB00B59EE0 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 		A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetails.swift; sourceTree = "<group>"; };
 		A8D886C129EEE550003E05E7 /* ExitNavigationAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExitNavigationAlertView.swift; sourceTree = "<group>"; };
@@ -116,6 +157,13 @@
 				82659CAB29DF5FC8007546A1 /* FirebaseStorage in Frameworks */,
 				82659CAE29DF5FFC007546A1 /* ARCoreCloudAnchors in Frameworks */,
 				82659CB229DF5FFC007546A1 /* ARCoreGeospatial in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		825F1F2D29E9B7910043BD98 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,6 +195,7 @@
 			children = (
 				8241734F29DE0C6F001599B1 /* STEP Navigation */,
 				130862B729E479C500CADE79 /* STEP NavigationTests */,
+				825F1F3129E9B7910043BD98 /* STEP Mapping */,
 				8241734E29DE0C6F001599B1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -156,6 +205,7 @@
 			children = (
 				8241734D29DE0C6F001599B1 /* STEP Navigation.app */,
 				130862B629E479C500CADE79 /* STEP NavigationTests.xctest */,
+				825F1F3029E9B7910043BD98 /* STEP Mapping.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -163,6 +213,8 @@
 		8241734F29DE0C6F001599B1 /* STEP Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				825F1F4129E9C82A0043BD98 /* Sound Effects */,
+				825F1F3E29E9C6510043BD98 /* Utilities */,
 				130E7C4729E36CFF004B1E81 /* DataFiles */,
 				130E7C3B29E106BA004B1E81 /* STEP-Navigation-Info.plist */,
 				82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */,
@@ -173,6 +225,7 @@
 				8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */,
 				8241735429DE0C70001599B1 /* Assets.xcassets */,
 				8241735629DE0C70001599B1 /* Preview Content */,
+				829F7B6829F2C2AB00B59EE0 /* Localizable.strings */,
 			);
 			path = "STEP Navigation";
 			sourceTree = "<group>";
@@ -212,8 +265,17 @@
 				130E7C4029E23494004B1E81 /* LocationDataModel.swift */,
 				130E7C4229E236BD004B1E81 /* DataModelManager.swift */,
 				130E7C4429E25322004B1E81 /* ModelTestingByHand.playground */,
+				825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */,
 				130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */,
 				8241737829DE1478001599B1 /* PositioningModel.swift */,
+				825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */,
+				825F1F4C29E9CACE0043BD98 /* MapDataModel.swift */,
+				825F1F4E29E9CB350043BD98 /* NavigationManager.swift */,
+				825F1F5029E9CBA70043BD98 /* MapGraph.swift */,
+				825F1F5229E9CF130043BD98 /* CloudAnchorAligner.swift */,
+				825F1F5429E9CF490043BD98 /* PathLogger.swift */,
+				825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */,
+				829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -226,6 +288,45 @@
 				8241736F29DE1415001599B1 /* TextFeedbackAdapter.swift */,
 			);
 			path = Adapters;
+			sourceTree = "<group>";
+		};
+		825F1F3129E9B7910043BD98 /* STEP Mapping */ = {
+			isa = PBXGroup;
+			children = (
+				825F1F3229E9B7910043BD98 /* STEP_MappingApp.swift */,
+				825F1F3429E9B7910043BD98 /* ContentView.swift */,
+				825F1F3629E9B7920043BD98 /* Assets.xcassets */,
+				825F1F3829E9B7920043BD98 /* Preview Content */,
+			);
+			path = "STEP Mapping";
+			sourceTree = "<group>";
+		};
+		825F1F3829E9B7920043BD98 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				825F1F3929E9B7920043BD98 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		825F1F3E29E9C6510043BD98 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				825F1F3F29E9C65F0043BD98 /* simd_extensions.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		825F1F4129E9C82A0043BD98 /* Sound Effects */ = {
+			isa = PBXGroup;
+			children = (
+				825F1F4629E9C8380043BD98 /* ClewErrorSound.wav */,
+				825F1F4329E9C8380043BD98 /* ClewSuccessSound.wav */,
+				825F1F4229E9C8380043BD98 /* ClewTutorialFeedback.wav */,
+				825F1F4429E9C8380043BD98 /* StartRecording.aiff */,
+				825F1F4529E9C8380043BD98 /* StopRecording.aiff */,
+			);
+			path = "Sound Effects";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,6 +376,23 @@
 			productReference = 8241734D29DE0C6F001599B1 /* STEP Navigation.app */;
 			productType = "com.apple.product-type.application";
 		};
+		825F1F2F29E9B7910043BD98 /* STEP Mapping */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 825F1F3B29E9B7920043BD98 /* Build configuration list for PBXNativeTarget "STEP Mapping" */;
+			buildPhases = (
+				825F1F2C29E9B7910043BD98 /* Sources */,
+				825F1F2D29E9B7910043BD98 /* Frameworks */,
+				825F1F2E29E9B7910043BD98 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "STEP Mapping";
+			productName = "STEP Mapping";
+			productReference = 825F1F3029E9B7910043BD98 /* STEP Mapping.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -282,7 +400,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1420;
+				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					130862B529E479C500CADE79 = {
@@ -290,6 +408,9 @@
 						TestTargetID = 8241734C29DE0C6F001599B1;
 					};
 					8241734C29DE0C6F001599B1 = {
+						CreatedOnToolsVersion = 14.3;
+					};
+					825F1F2F29E9B7910043BD98 = {
 						CreatedOnToolsVersion = 14.3;
 					};
 				};
@@ -314,6 +435,7 @@
 			targets = (
 				8241734C29DE0C6F001599B1 /* STEP Navigation */,
 				130862B529E479C500CADE79 /* STEP NavigationTests */,
+				825F1F2F29E9B7910043BD98 /* STEP Mapping */,
 			);
 		};
 /* End PBXProject section */
@@ -330,13 +452,28 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				825F1F4729E9C8380043BD98 /* ClewTutorialFeedback.wav in Resources */,
 				130E7C4929E36E36004B1E81 /* mbtaBusStops.json in Resources */,
+				825F1F4929E9C8380043BD98 /* StartRecording.aiff in Resources */,
 				8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */,
+				825F1F4B29E9C8380043BD98 /* ClewErrorSound.wav in Resources */,
 				8241735529DE0C70001599B1 /* Assets.xcassets in Resources */,
 				130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */,
+				825F1F4829E9C8380043BD98 /* ClewSuccessSound.wav in Resources */,
 				82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */,
+				829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */,
 				130862C029E4874400CADE79 /* testDoors.geojson in Resources */,
+				825F1F4A29E9C8380043BD98 /* StopRecording.aiff in Resources */,
 				130862C229E488B800CADE79 /* testBusStops.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		825F1F2E29E9B7910043BD98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				825F1F3A29E9B7920043BD98 /* Preview Assets.xcassets in Resources */,
+				825F1F3729E9B7920043BD98 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,26 +496,45 @@
 				8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */,
 				A8EACA0329E24E9500CBF590 /* CapsuleButton.swift in Sources */,
 				8241737029DE1415001599B1 /* TextFeedbackAdapter.swift in Sources */,
+				825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */,
 				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
 				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,
 				8241737429DE1440001599B1 /* AllPaths.swift in Sources */,
 				A8FF1A1229E062DD002019E9 /* AnchorTypeListView.swift in Sources */,
 				8241736C29DE13F4001599B1 /* HapticFeedbackAdapter.swift in Sources */,
+				825F1F5729E9CF7D0043BD98 /* FirebaseManager.swift in Sources */,
+				825F1F5129E9CBA70043BD98 /* MapGraph.swift in Sources */,
 				8241736E29DE140D001599B1 /* SoundFeedbackAdapter.swift in Sources */,
 				8241737929DE1478001599B1 /* PositioningModel.swift in Sources */,
+				825F1F5329E9CF130043BD98 /* CloudAnchorAligner.swift in Sources */,
 				A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */,
 				130E7C4329E236BD004B1E81 /* DataModelManager.swift in Sources */,
+				825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */,
+				825F1F4029E9C65F0043BD98 /* simd_extensions.swift in Sources */,
 				130E7C4129E23494004B1E81 /* LocationDataModel.swift in Sources */,
+				825F1F4D29E9CACE0043BD98 /* MapDataModel.swift in Sources */,
 				8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */,
 				A8D886C229EEE550003E05E7 /* ExitNavigationAlertView.swift in Sources */,
 				826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */,
 				130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */,
+				825F1F5529E9CF490043BD98 /* PathLogger.swift in Sources */,
+				825F1F4F29E9CB350043BD98 /* NavigationManager.swift in Sources */,
 				A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */,
+				829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */,
 				8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */,
 				826C994729E87C130070290B /* ARViewContainer.swift in Sources */,
 				8241736229DE1398001599B1 /* LocalAnchorListView.swift in Sources */,
 				8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */,
 				8241737229DE1430001599B1 /* AllAnchorDetails.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		825F1F2C29E9B7910043BD98 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				825F1F3529E9B7910043BD98 /* ContentView.swift in Sources */,
+				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -625,6 +781,66 @@
 			};
 			name = Release;
 		};
+		825F1F3C29E9B7920043BD98 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"STEP Mapping/Preview Content\"";
+				DEVELOPMENT_TEAM = 787TUDMR8Q;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-Mapping";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		825F1F3D29E9B7920043BD98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"STEP Mapping/Preview Content\"";
+				DEVELOPMENT_TEAM = 787TUDMR8Q;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-Mapping";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -651,6 +867,15 @@
 			buildConfigurations = (
 				8241735C29DE0C70001599B1 /* Debug */,
 				8241735D29DE0C70001599B1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		825F1F3B29E9B7920043BD98 /* Build configuration list for PBXNativeTarget "STEP Mapping" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				825F1F3C29E9B7920043BD98 /* Debug */,
+				825F1F3D29E9B7920043BD98 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

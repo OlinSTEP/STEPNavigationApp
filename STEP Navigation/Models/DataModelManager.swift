@@ -20,7 +20,6 @@ class DataModelManager: ObservableObject {
     public static var shared = DataModelManager()
     
     @Published var nearbyLocations: [LocationDataModel] = []
-    
     // Dictionary that stores all the location models
     private var allLocationModels = [AnchorType: Set<LocationDataModel>]()
     
@@ -79,7 +78,7 @@ class DataModelManager: ObservableObject {
      Returns a set of all AnchorTypes currently in the system
      */
     func getAnchorTypes() -> Set<AnchorType> {
-        return Set(allLocationModels.keys)
+        return Set(allLocationModels.keys + [.indoorDestination])
     }
      
     /**
@@ -103,31 +102,19 @@ class DataModelManager: ObservableObject {
          
             - returns: A set containing all location data models within the specified distance from the specified location.
     */
-    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance) -> [LocationDataModel] {
+    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
         guard let models = allLocationModels[anchorType] else {
             print("in the guard let")
-            return []
+            return Set<LocationDataModel>()
         }
         
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         
-        let filteredModels = models.filter { model in
+        return models.filter { model in
             let locationCoordinate = model.getLocationCoordinate()
             let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
-            return location.distance(from: threshold) <= maxDistance
+            return location.distance(from: threshold) <= maxDistance + withBuffer
         }
-        var modelsAsArray: [LocationDataModel] = []
-        for locationModel in filteredModels {
-            modelsAsArray.append(locationModel)
-        }
-        
-        let sortedModels = modelsAsArray.sorted(by: { location.distance(from: $0.getLocationCoordinate()) < location.distance(from: $1.getLocationCoordinate())  })
-        return sortedModels
-//        return models.filter { model in
-//            let locationCoordinate = model.getLocationCoordinate()
-//            let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
-//            return location.distance(from: threshold) <= maxDistance
-//        }
     }
      
 }
