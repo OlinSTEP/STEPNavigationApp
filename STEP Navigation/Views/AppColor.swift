@@ -10,14 +10,14 @@ import SwiftUI
 
 struct AppColor {
   static let grey: Color = Color(.sRGB,
-                                       red: 217/255,
-                                       green: 217/255,
-                                       blue: 217/255,
+                                       red: 231/255,
+                                       green: 231/255,
+                                       blue: 231/255,
                                        opacity: 1)
   static let black: Color = Color(.sRGB,
-                                       red: 0/255,
-                                       green: 0/255,
-                                       blue: 0/255,
+                                       red: 34/255,
+                                       green: 34/255,
+                                       blue: 34/255,
                                        opacity: 1)
   static let white: Color = Color(.sRGB,
                                        red: 255/255,
@@ -25,9 +25,9 @@ struct AppColor {
                                        blue: 255/255,
                                        opacity: 1)
   static let accent: Color = Color(.sRGB,
-                                       red: 25/255,
-                                       green: 193/255,
-                                       blue: 255/255,
+                                       red: 171/255,
+                                       green: 236/255,
+                                       blue: 220/255,
                                        opacity: 1)
 
 }
