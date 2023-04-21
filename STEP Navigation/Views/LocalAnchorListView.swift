@@ -79,6 +79,7 @@ struct LocalAnchorListView: View {
                 $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
             })
             
+
             allAnchors = Array(
                 DataModelManager.shared.getNearbyLocations(
                     for: anchorType,
@@ -196,52 +197,57 @@ struct ChooseAnchorComponentView: View {
         } else {
             ScrollView {
                 VStack {
+                    // TODO: this is pretty unwieldy (code sharing is pretty low here).  Maybe we should create a separate view type?
                     ForEach(0..<candidateAnchors.count, id: \.self) { idx in
-                        // TODO: this is pretty unwieldy (code sharing is pretty low here).  Maybe we should create a separate view type?
                         if anchorSelectionType == .destinationOutdoors {
-                            NavigationLink (
-                                destination: AnchorDetailView(anchorDetails: candidateAnchors[idx]),
-                                label: {
-                                    HStack {
-                                        Text(candidateAnchors[idx].getName())
-                                            .font(.title)
-                                            .bold()
-                                            .padding(30)
-                                            .multilineTextAlignment(.leading)
-                                        Spacer()
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .frame(minHeight: 140)
-                                    .foregroundColor(AppColor.black)
-                                })
+                            VStack {
+                                NavigationLink (
+                                   destination: AnchorDetailView(anchorDetails: candidateAnchors[idx]),
+                                   label: {
+                                       HStack {
+                                           Text(candidateAnchors[idx].getName())
+                                               .font(.title)
+                                               .bold()
+                                               .padding(30)
+                                               .multilineTextAlignment(.leading)
+                                           Spacer()
+                                       }
+                                       .frame(maxWidth: .infinity)
+                                       .frame(minHeight: 140)
+                                       .foregroundColor(AppColor.black)
+                                   })
+                            }
                             .background(AppColor.accent)
                             .cornerRadius(20)
                             .padding(.horizontal)
+                            
                         } else {
                             if isReachable[idx] {
-                                Button(action: {
-                                    if chosenAnchor.wrappedValue == candidateAnchors[idx] {
-                                        chosenAnchor.wrappedValue = nil
-                                    } else {
-                                        chosenAnchor.wrappedValue = candidateAnchors[idx]
+                                VStack {
+                                    Button {
+                                        if chosenAnchor.wrappedValue == candidateAnchors[idx] {
+                                            chosenAnchor.wrappedValue = nil
+                                        } else {
+                                            chosenAnchor.wrappedValue = candidateAnchors[idx]
+                                        }
+                                    } label: {
+                                        HStack {
+                                            Text(candidateAnchors[idx].getName())
+                                                .font(.title)
+                                                .bold()
+                                                .padding(30)
+                                                .multilineTextAlignment(.leading)
+                                            Spacer()
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                        .frame(minHeight: 100)
+                                        .background(chosenAnchor.wrappedValue == candidateAnchors[idx] ? AppColor.accent : AppColor.grey)
                                     }
-                                }){
-                                    HStack {
-                                        Text(candidateAnchors[idx].getName())
-                                            .font(.title)
-                                            .bold()
-                                            .padding(30)
-                                            .multilineTextAlignment(.leading)
-                                        Spacer()
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .frame(minHeight: 100)
-                                    .background(chosenAnchor.wrappedValue == candidateAnchors[idx] ? AppColor.accent : AppColor.grey)
                                 }
                                 .cornerRadius(20)
                                 .padding(.horizontal)
-                                .foregroundColor(AppColor.black)
                                 .accessibilityAddTraits(chosenAnchor.wrappedValue == candidateAnchors[idx] ? [.isSelected] : [])
+
                             }
                         }
                     }

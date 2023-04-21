@@ -12,6 +12,7 @@ import CoreLocation
 var hideNavTimer: Timer?
 
 struct NavigatingView: View {
+
     let startAnchorDetails: LocationDataModel?
     let destinationAnchorDetails: LocationDataModel
     @State var didLocalize = false

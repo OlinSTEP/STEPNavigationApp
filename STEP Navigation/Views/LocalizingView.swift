@@ -21,6 +21,7 @@ struct LocalizingView: View {
     var body: some View {
         ZStack {
             ARViewContainer()
+
             if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                 if let currentLatLon = positionModel.currentLatLon {
                     VStack {
