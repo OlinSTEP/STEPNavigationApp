@@ -29,6 +29,10 @@ class PathPlanner {
         crowFliesGoal = PositioningModel.shared.addTerrainAnchor(at: anchor.getLocationCoordinate(), withName: anchor.getName())
     }
     
+    func prepareToNavigate(to destination: LocationDataModel) {
+        PositioningModel.shared.addTerrainAnchor(at: destination.getLocationCoordinate(), withName: "destination")
+    }
+    
     func prepareToNavigate(from start: LocationDataModel, to end: LocationDataModel) {
         guard let cloudAnchorID1 = start.getCloudAnchorID(), let cloudAnchorID2 = end.getCloudAnchorID() else {
             // Note: this shouldn't happen
