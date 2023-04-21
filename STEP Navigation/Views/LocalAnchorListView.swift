@@ -102,14 +102,14 @@ struct LocalAnchorListView: View {
         )
         if anchorType == .indoorDestination {
             Section(header: Text("Choose Start").font(.title).fontWeight(.heavy)) {
-                ChooseAnchorComponentView(isStart: true,
+                ChooseAnchorComponentView(anchorSelectionType: .startOfIndoorRoute,
                                           anchors: $anchors,
                                           allAnchors: $allAnchors,
                                           chosenAnchor: $chosenStart,
                                           otherAnchor: $chosenEnd)
             }
             Section(header: Text("Choose Destination").font(.title).fontWeight(.heavy)) {
-                ChooseAnchorComponentView(isStart: false,
+                ChooseAnchorComponentView(anchorSelectionType: .endOfIndoorRoute,
                                           anchors: $anchors,
                                           allAnchors: $allAnchors,
                                           chosenAnchor: $chosenEnd,
@@ -130,7 +130,7 @@ struct LocalAnchorListView: View {
                 .controlSize(.large)
             }
         } else {
-            ChooseAnchorComponentView(isStart: false,
+            ChooseAnchorComponentView(anchorSelectionType: .destinationOutdoors,
                                       anchors: $anchors,
                                       allAnchors: $allAnchors,
                                       chosenAnchor: $chosenEnd,
@@ -159,19 +159,26 @@ struct LocationDataModelWrapper: Hashable {
     var isSelected: Bool
 }
 
+/// This type is used to specify to the ChooseAnchorComponentView whether we are choosing the anchor in the context of indoor or outdoor navigation.  Further, if indoors, we differentiate between the start and end of a route
+enum AnchorSelectionType {
+    case startOfIndoorRoute
+    case endOfIndoorRoute
+    case destinationOutdoors
+}
+
 struct ChooseAnchorComponentView: View {
     var anchors: Binding<[LocationDataModel]>
     var allAnchors: Binding<[LocationDataModel]>
-    let isStart: Bool
+    let anchorSelectionType: AnchorSelectionType
     var chosenAnchor : Binding<LocationDataModel?>
     var otherAnchor : Binding<LocationDataModel?>
     
-    init(isStart: Bool,
+    init(anchorSelectionType: AnchorSelectionType,
          anchors: Binding<[LocationDataModel]>,
          allAnchors: Binding<[LocationDataModel]>,
          chosenAnchor: Binding<LocationDataModel?>,
          otherAnchor: Binding<LocationDataModel?>) {
-        self.isStart = isStart
+        self.anchorSelectionType = anchorSelectionType
         self.anchors = anchors
         self.allAnchors = allAnchors
         self.chosenAnchor = chosenAnchor
@@ -197,27 +204,49 @@ struct ChooseAnchorComponentView: View {
             ScrollView {
                 VStack {
                     ForEach(0..<candidateAnchors.count, id: \.self) { idx in
-                        if isReachable[idx] {
-                            Button(action: {
-                                if chosenAnchor.wrappedValue == candidateAnchors[idx] {
-                                    chosenAnchor.wrappedValue = nil
-                                } else {
-                                    chosenAnchor.wrappedValue = candidateAnchors[idx]
+                        // TODO: this is pretty unwieldy (code sharing is pretty low here).  Maybe we should create a separate view type?
+                        if anchorSelectionType == .destinationOutdoors {
+                            NavigationLink (
+                                destination: AnchorDetailView(anchorDetails: candidateAnchors[idx]),
+                                label: {
+                                    HStack {
+                                        Text(candidateAnchors[idx].getName())
+                                            .font(.title)
+                                            .bold()
+                                            .padding(30)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer()
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .frame(minHeight: 140)
+                                    .foregroundColor(AppColor.black)
+                                })
+                            .background(AppColor.accent)
+                            .cornerRadius(20)
+                            .padding(.horizontal)
+                        } else {
+                            if isReachable[idx] {
+                                Button(action: {
+                                    if chosenAnchor.wrappedValue == candidateAnchors[idx] {
+                                        chosenAnchor.wrappedValue = nil
+                                    } else {
+                                        chosenAnchor.wrappedValue = candidateAnchors[idx]
+                                    }
+                                }){
+                                    HStack {
+                                        Text(candidateAnchors[idx].getName())
+                                            .font(.title)
+                                            .bold()
+                                            .padding(30)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer()
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .frame(minHeight: 140)
                                 }
-                            }){
-                                HStack {
-                                    Text(candidateAnchors[idx].getName())
-                                        .font(.title)
-                                        .bold()
-                                        .padding(30)
-                                        .multilineTextAlignment(.leading)
-                                    Spacer()
-                                }
-                                .frame(maxWidth: .infinity)
-                                .frame(minHeight: 140)
+                                .foregroundColor(chosenAnchor.wrappedValue == candidateAnchors[idx] ? .yellow : .black)
+                                .accessibilityAddTraits(chosenAnchor.wrappedValue == candidateAnchors[idx] ? [.isSelected] : [])
                             }
-                            .foregroundColor(chosenAnchor.wrappedValue == candidateAnchors[idx] ? .yellow : .black)
-                            .accessibilityAddTraits(chosenAnchor.wrappedValue == candidateAnchors[idx] ? [.isSelected] : [])
                         }
                     }
                     
