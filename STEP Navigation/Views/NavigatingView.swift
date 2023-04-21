@@ -37,7 +37,7 @@ struct NavigatingView: View {
                         }
                     }
                     Spacer()
-                    if didLocalize {
+                    if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
                         HStack {
                             Button(action: {
                                 navigationManager.updateDirections()
@@ -61,6 +61,7 @@ struct NavigatingView: View {
             }.onAppear() {
                 // plan path
                 didLocalize = false
+                AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
                 if let startAnchorDetails = startAnchorDetails {
                     PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
                     didPrepareToNavigate = true
@@ -114,7 +115,7 @@ struct InformationPopup: View {
             switch popupType {
             case .waitingToLocalize:
                 HStack {
-                    Text("Waiting to localize")
+                    Text("Trying to align to your route. Scan your phone around to recognize your surroundings.")
                         .foregroundColor(AppColor.white)
                         .bold()
                         .font(.title2)

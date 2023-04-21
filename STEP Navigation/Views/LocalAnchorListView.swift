@@ -23,6 +23,7 @@ struct LocalAnchorListView: View {
     @State var chosenEnd: LocationDataModel?
     @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
+    @State var allAnchors: [LocationDataModel] = []
     
     var body: some View {
         VStack {
@@ -67,12 +68,27 @@ struct LocalAnchorListView: View {
                 return
             }
             anchors = Array(
-                DataModelManager.shared.getNearbyLocations(for: anchorType,
-                                                           location: latLon,
-                                                           maxDistance: CLLocationDistance(nearbyDistance)))
-                    .sorted(by: {
-                        $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
-                    })
+                DataModelManager.shared.getNearbyLocations(
+                    for: anchorType,
+                    location: latLon,
+                    maxDistance: CLLocationDistance(nearbyDistance),
+                    withBuffer: Self.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                )
+            )
+            .sorted(by: {
+                $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
+            })
+            
+            allAnchors = Array(
+                DataModelManager.shared.getNearbyLocations(
+                    for: anchorType,
+                    location: latLon,
+                    maxDistance: CLLocationDistance.infinity
+                )
+            )
+            .sorted(by: {
+                $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
+            })
         }
         .background(AppColor.accent)
 // NECO
@@ -90,12 +106,14 @@ struct LocalAnchorListView: View {
             Section(header: Text("Choose Start").font(.title).fontWeight(.heavy)) {
                 ChooseAnchorComponentView(isStart: true,
                                           anchors: $anchors,
+                                          allAnchors: $allAnchors,
                                           chosenAnchor: $chosenStart,
                                           otherAnchor: $chosenEnd)
             }
             Section(header: Text("Choose Destination").font(.title).fontWeight(.heavy)) {
                 ChooseAnchorComponentView(isStart: false,
                                           anchors: $anchors,
+                                          allAnchors: $allAnchors,
                                           chosenAnchor: $chosenEnd,
                                           otherAnchor: $chosenStart)
             }
@@ -116,8 +134,24 @@ struct LocalAnchorListView: View {
         } else {
             ChooseAnchorComponentView(isStart: false,
                                       anchors: $anchors,
+                                      allAnchors: $allAnchors,
                                       chosenAnchor: $chosenEnd,
                                       otherAnchor: $chosenStart)
+        }
+    }
+    /// Compute the notion of "close enough" to display to the user.  This is a buffer distance added on top of the distance the user has already selected from the UI
+    /// - Parameter accuracy: the current localization accuracy
+    /// - Returns: the buffer distance to use
+    static func getBufferDistance(_ accuracy: GeoLocationAccuracy)->CLLocationDistance {
+        switch accuracy {
+        case .none:
+            return 100.0
+        case .low:
+            return 200.0
+        case .medium:
+            return 50.0
+        case .high:
+            return 10.0
         }
     }
 }
@@ -129,23 +163,28 @@ struct LocationDataModelWrapper: Hashable {
 
 struct ChooseAnchorComponentView: View {
     var anchors: Binding<[LocationDataModel]>
+    var allAnchors: Binding<[LocationDataModel]>
     let isStart: Bool
     var chosenAnchor : Binding<LocationDataModel?>
     var otherAnchor : Binding<LocationDataModel?>
     
     init(isStart: Bool,
          anchors: Binding<[LocationDataModel]>,
+         allAnchors: Binding<[LocationDataModel]>,
          chosenAnchor: Binding<LocationDataModel?>,
          otherAnchor: Binding<LocationDataModel?>) {
         self.isStart = isStart
         self.anchors = anchors
+        self.allAnchors = allAnchors
         self.chosenAnchor = chosenAnchor
         self.otherAnchor = otherAnchor
     }
     
     var body: some View {
-        let isReachable: [Bool] = otherAnchor.wrappedValue == nil ? Array(repeating: true, count: anchors.count) : NavigationManager.shared.getReachability(from: otherAnchor.wrappedValue!, outOf: anchors.wrappedValue)
-        if anchors.isEmpty {
+        let candidateAnchors: [LocationDataModel] = otherAnchor.wrappedValue != nil ? allAnchors.wrappedValue : anchors.wrappedValue
+        
+        let isReachable: [Bool] = otherAnchor.wrappedValue == nil ? Array(repeating: true, count: anchors.count) : NavigationManager.shared.getReachability(from: otherAnchor.wrappedValue!, outOf: candidateAnchors)
+        if candidateAnchors.isEmpty {
             VStack {
                 Spacer()
                 Text("Nothing nearby. Try widening your search radius.")
@@ -157,20 +196,19 @@ struct ChooseAnchorComponentView: View {
             }
             
         } else {
-            
             ScrollView {
                 VStack {
-                    ForEach(0..<anchors.count, id: \.self) { idx in
+                    ForEach(0..<candidateAnchors.count, id: \.self) { idx in
                         if isReachable[idx] {
                             Button(action: {
-                                if chosenAnchor.wrappedValue == anchors[idx].wrappedValue {
+                                if chosenAnchor.wrappedValue == candidateAnchors[idx] {
                                     chosenAnchor.wrappedValue = nil
                                 } else {
-                                    chosenAnchor.wrappedValue = anchors[idx].wrappedValue
+                                    chosenAnchor.wrappedValue = candidateAnchors[idx]
                                 }
                             }){
                                 HStack {
-                                    Text(anchors.wrappedValue[idx].getName())
+                                    Text(candidateAnchors[idx].getName())
                                         .font(.title)
                                         .bold()
                                         .padding(30)
@@ -180,8 +218,8 @@ struct ChooseAnchorComponentView: View {
                                 .frame(maxWidth: .infinity)
                                 .frame(minHeight: 140)
                             }
-                            .foregroundColor(chosenAnchor.wrappedValue == anchors[idx].wrappedValue ? .yellow : .black)
-                            .accessibilityAddTraits(chosenAnchor.wrappedValue == anchors[idx].wrappedValue ? [.isSelected] : [])
+                            .foregroundColor(chosenAnchor.wrappedValue == candidateAnchors[idx] ? .yellow : .black)
+                            .accessibilityAddTraits(chosenAnchor.wrappedValue == candidateAnchors[idx] ? [.isSelected] : [])
                         }
                     }
                     

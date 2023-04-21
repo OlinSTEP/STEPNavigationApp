@@ -102,7 +102,7 @@ class DataModelManager: ObservableObject {
          
             - returns: A set containing all location data models within the specified distance from the specified location.
     */
-    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance) -> Set<LocationDataModel> {
+    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
         guard let models = allLocationModels[anchorType] else {
             print("in the guard let")
             return Set<LocationDataModel>()
@@ -113,7 +113,7 @@ class DataModelManager: ObservableObject {
         return models.filter { model in
             let locationCoordinate = model.getLocationCoordinate()
             let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
-            return location.distance(from: threshold) <= maxDistance
+            return location.distance(from: threshold) <= maxDistance + withBuffer
         }
     }
      
