@@ -23,44 +23,92 @@ struct LocalizingView: View {
             ARViewContainer()
             if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                 if let currentLatLon = positionModel.currentLatLon {
-                    NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon), label: {
-                        Text("My nearby locations")
-                            .font(.title)
-                            .bold()
-                            .frame(maxWidth: 300)
-                            .foregroundColor(AppColor.black)
-                    })
-                    .padding(.bottom, 20)
-                    .tint(AppColor.accent)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text("Succesfully Localized")
+                                .bold()
+                                .foregroundColor(AppColor.white)
+                                .font(.title2)
+                                .multilineTextAlignment(.leading)
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(AppColor.black)
+    
+                        Spacer()
+                        
+                        NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon)) {
+                            Text("Go to nearby locations")
+                                .font(.title2)
+                                .bold()
+                                .frame(maxWidth: 300)
+                                .foregroundColor(AppColor.black)
+                        }
+                        .padding(.bottom, 50)
+                        .tint(AppColor.accent)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                    }
                 } else {
                     Text("Inconsistent State.  Contact your developer")
                 }
             } else  {
-                switch positionModel.geoLocalizationAccuracy {
-                case .none:
-                    Text("No Location")
-                        .font(.largeTitle)
-                        .foregroundColor(.red)
-                    
-                case .low:
-                    Text("Low accuracy")
-                        .font(.largeTitle)
-                        .foregroundColor(.red)
-                    
-                case .medium:
-                    Text("Medium accuracy")
-                        .font(.largeTitle)
-                        .foregroundColor(.red)
-                case .high:
-                    Text("High accuracy")
-                        .font(.largeTitle)
-                        .foregroundColor(.red)
+                VStack {
+                    HStack {
+                        Text("Localizing...")
+                            .foregroundColor(AppColor.white)
+                            .bold()
+                            .font(.title2)
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
+                        Spacer()
+                    }
+                    HStack {
+                        switch positionModel.geoLocalizationAccuracy {
+                        case .none:
+                            Text("Current Accuracy: None (No Location)")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+
+                        case .low:
+                            Text("Current Accuracy: Low")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+
+                        case .medium:
+                            Text("Current Accuracy: Medium")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+                            
+                        case .high:
+                            Text("Current Accuracy: High")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
+                        }
+                        Spacer()
+                    }
+                    HStack {
+                        Text("Move your phone around with the camera facing out.")
+                            .foregroundColor(AppColor.white)
+                            .bold()
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
+                        Spacer()
+                    }
                 }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(AppColor.black)
             }
         }
+        .background(AppColor.accent)
     }
 }
 

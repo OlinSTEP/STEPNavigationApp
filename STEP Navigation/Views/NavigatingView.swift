@@ -81,6 +81,22 @@ struct NavigatingView: View {
                 navigationDirection = ""
             }
         }
+        .background(AppColor.accent)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Text("Exit")
+                    .bold()
+                    .font(.title2)
+                    .onTapGesture {
+                        showingConfirmation = true
+                    }
+            }
+        }
+        
+        if showingConfirmation == true {
+                       ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
+                   }
     }
     
     private func checkLocalization(cloudAnchorsToCheck: Set<String>) {
