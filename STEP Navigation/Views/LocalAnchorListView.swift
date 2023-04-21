@@ -35,24 +35,23 @@ struct LocalAnchorListView: View {
                 Spacer()
             }
             .padding(.top, 20)
-           // NECO
-//            HStack {
-//                Text("Within \(nearbyDistance, specifier: "%.0f") meters")
-//                    .font(.title)
-//                    .padding(.leading)
-//                if showPopup == false {
-//                    Image(systemName: "chevron.down")
-//                } else {
-//                    Image(systemName: "chevron.up")
-//                }
-//                // want to make the chevron bigger/easier to see/etc - not sure how thought??
-//                Spacer()
-//            }
-//            .padding(.bottom, 20)
-//            .onTapGesture {
-//                showPopup.toggle()
-//                // in real life would want to present dropdown popup
-//            }
+            HStack {
+                Text("Within \(nearbyDistance, specifier: "%.0f") meters")
+                    .font(.title)
+                    .padding(.leading)
+                if showPopup == false {
+                    Image(systemName: "chevron.down")
+                } else {
+                    Image(systemName: "chevron.up")
+                }
+                // want to make the chevron bigger/easier to see/etc - not sure how thought??
+                Spacer()
+            }
+            .padding(.bottom, 20)
+            .onTapGesture {
+                showPopup.toggle()
+                // in real life would want to present dropdown popup
+            }
             
             if showPopup == true {
                 HStack {
@@ -91,17 +90,16 @@ struct LocalAnchorListView: View {
             })
         }
         .background(AppColor.accent)
-// NECO
-//        .navigationBarItems(
-//            trailing:
-//                Button(action: {
-//                    print("pressed settings")
-//                }) {
-//                    Image(systemName: "gearshape.fill")
-//                        .scaleEffect(1.5)
-//                        .foregroundColor(AppColor.black)
-//                }
-//        )
+        .navigationBarItems(
+            trailing:
+                Button(action: {
+                    print("pressed settings")
+                }) {
+                    Image(systemName: "gearshape.fill")
+                        .scaleEffect(1.5)
+                        .foregroundColor(AppColor.black)
+                }
+        )
         if anchorType == .indoorDestination {
             Section(header: Text("Choose Start").font(.title).fontWeight(.heavy)) {
                 ChooseAnchorComponentView(isStart: true,
@@ -256,20 +254,5 @@ struct ChooseAnchorComponentView: View {
 struct AnchorListView_Previews: PreviewProvider {
     static var previews: some View {
         LocalAnchorListView(anchorType: .busStop, location: CLLocationCoordinate2D(latitude: 42, longitude: -71))
-//            .environmentObject(AnchorData())
     }
 }
-
-//class AnchorData: ObservableObject {
-//    @Published var anchors = AnchorDetails.testAnchors
-//
-//    func anchors(for anchorType: AnchorDetails.AnchorType) -> [AnchorDetails] {
-//        var filteredAnchors = [AnchorDetails]()
-//        for anchor in anchors {
-//            if anchor.anchorType == anchorType {
-//                filteredAnchors.append(anchor)
-//            }
-//        }
-//        return filteredAnchors
-//    }
-//}

@@ -11,11 +11,12 @@ import CoreLocation
 struct AnchorDetailView: View {
     let anchorDetails: LocationDataModel
     
+    
+    
     var body: some View {
         ZStack {
             VStack {
                 //need to add in 20 units of spacing colored spacing here
-                
                 HStack {
                     Text(anchorDetails.getName())
                         .font(.largeTitle)
@@ -27,11 +28,13 @@ struct AnchorDetailView: View {
                 }
                 
                 HStack {
-//                    let formattedDistance = String(format: "%g", anchorDetails.distanceAway)
-                    
-                    Text("X meters away")
-                        .font(.title)
-                        .padding(.horizontal)
+                    if let currentLocation = PositioningModel.shared.currentLatLon {
+                        let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
+                        let formattedDistance = String(format: "%.0f", distance)
+                        Text("\(formattedDistance) meters away")
+                            .font(.title)
+                            .padding(.horizontal)
+                    }
                     Spacer()
                 }
                 VStack {
@@ -43,11 +46,15 @@ struct AnchorDetailView: View {
                             .multilineTextAlignment(.leading)
                         Spacer()
                     }
-//                    HStack {
-//                        Text(anchorDetails.notes)
-//                            .multilineTextAlignment(.leading)
-//                        Spacer()
-//                    }
+                    HStack {
+                        if let notes = anchorDetails.getNotes(), notes != "" {
+                            Text("\(notes)")
+                        }
+                        else {
+                            Text("No notes available for this location.")
+                        }
+                        Spacer()
+                    }
                 }
                 .padding()
                                 
@@ -69,17 +76,16 @@ struct AnchorDetailView: View {
             CapsuleButton()
 
         }
-// NECO
-//            .navigationBarItems(
-//                trailing:
-//                    Button(action: {
-//                        print("pressed settings")
-//                    }) {
-//                        Image(systemName: "gearshape.fill")
-//                            .scaleEffect(1.5)
-//                            .foregroundColor(AppColor.black)
-//                    }
-//            )
+        .navigationBarItems(
+            trailing:
+                Button(action: {
+                    print("pressed settings")
+                }) {
+                    Image(systemName: "gearshape.fill")
+                        .scaleEffect(1.5)
+                        .foregroundColor(AppColor.black)
+                }
+        )
     }
 }
 

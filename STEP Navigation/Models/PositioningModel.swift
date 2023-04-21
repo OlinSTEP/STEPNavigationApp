@@ -61,7 +61,6 @@ class PositioningModel: NSObject, ObservableObject {
 
     @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
     @Published var currentLatLon: CLLocationCoordinate2D?
-    
     var cameraTransform: simd_float4x4? {
         return arView.session.currentFrame?.camera.transform
     }
@@ -71,7 +70,7 @@ class PositioningModel: NSObject, ObservableObject {
         super.init()
         locationManager.requestWhenInUseAuthorization()
         arView.session.delegate = self
-        //setDefaultsForTesting()
+        // setDefaultsForTesting()
     }
     
     private func setDefaultsForTesting() {
@@ -95,7 +94,7 @@ class PositioningModel: NSObject, ObservableObject {
             print("failed to create GARSession")
         }
     }
-    
+
     func removeRenderedContent() {
         rendererHelper.removeRenderedContent()
     }

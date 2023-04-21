@@ -118,3 +118,10 @@ class DataModelManager: ObservableObject {
     }
      
 }
+
+extension CLLocationCoordinate2D {
+    func distance(from other: CLLocationCoordinate2D)->Double {
+        return CLLocation(latitude: latitude, longitude: longitude).distance(from: CLLocation(latitude: other.latitude,
+                                                                                       longitude: other.longitude))
+    }
+}

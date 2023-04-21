@@ -102,6 +102,5 @@ enum AnchorType: String, Identifiable {
     case bathroom = "Bathroom"
     case frontdesk = "Front Desk"
     case indoorDestination = "Indoor"
-    // NECO
 //    case indoorDestination = "Indoors (temporary category)"
 }

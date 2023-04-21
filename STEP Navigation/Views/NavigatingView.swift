@@ -33,7 +33,6 @@ struct NavigatingView: View {
                             InformationPopup(popupEntry: "", popupType: .arrived, units: .none)
                         } else if !navigationDirection.isEmpty {
                             InformationPopup(popupEntry: navigationDirection, popupType: .direction, units: .none)
-//                            InformationPopup(popupEntry: "\(Int(round(RouteNavigator.shared.getRemainingRouteDistance()*100/2.54/12))) ft", popupType: .distanceAway, units: .none)
                         }
                     }
                     Spacer()
@@ -94,24 +93,17 @@ struct NavigatingView: View {
             PathPlanner.shared.navigate(from: startAnchorDetails, to: destinationAnchorDetails)
         }
     }
+    let popupEntry: String = "Testing Text"
+    @State var showingConfirmation = false
 }
 
 struct InformationPopup: View {
     let popupEntry: String
     let popupType: PopupType
     let units: Units
-
+    
     var body: some View {
         VStack {
-//            HStack {
-//                Text("\(popupType.rawValue)")
-//                    .foregroundColor(AppColor.white)
-//                    .bold()
-//                    .font(.title2)
-//                    .multilineTextAlignment(.leading)
-//                Spacer()
-//            }
-            
             switch popupType {
             case .waitingToLocalize:
                 HStack {
@@ -161,7 +153,6 @@ struct InformationPopup: View {
                         .font(.title2)
                         .multilineTextAlignment(.leading)
                 }
-                
             }
         }
         .frame(maxWidth: .infinity)

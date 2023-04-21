@@ -11,6 +11,8 @@ import CoreLocation
 
 struct LocalizingView: View {
     @ObservedObject var positionModel = PositioningModel.shared
+    @State var highAccuracy = false
+
     let anchorType: AnchorType
     var minimumGeoLocationAccuracy: GeoLocationAccuracy {
         return anchorType == .indoorDestination ? .low : .high
