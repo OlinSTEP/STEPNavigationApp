@@ -8,11 +8,15 @@
 import SwiftUI
 import CoreLocation
 
+// TODO: ughh what to do about this global variable
+var hideNavTimer: Timer?
+
 struct NavigatingView: View {
     let startAnchorDetails: LocationDataModel?
     let destinationAnchorDetails: LocationDataModel
     @State var didLocalize = false
     @State var didPrepareToNavigate = false
+    @State var navigationDirection: String = ""
     @ObservedObject var positioningModel = PositioningModel.shared
     @ObservedObject var navigationManager = NavigationManager.shared
     
@@ -26,21 +30,32 @@ struct NavigatingView: View {
                         InformationPopup(popupEntry: "7", popupType: .waitingToLocalize, units: .none)
                     } else {
                         if RouteNavigator.shared.keypoints?.isEmpty == true {
-                            InformationPopup(popupEntry: "7", popupType: .arrived, units: .none)
-                        } else {
-                            InformationPopup(popupEntry: "\(Int(round(RouteNavigator.shared.getRemainingRouteDistance()*100/2.54/12))) ft", popupType: .distanceAway, units: .none)
+                            InformationPopup(popupEntry: "", popupType: .arrived, units: .none)
+                        } else if !navigationDirection.isEmpty {
+                            InformationPopup(popupEntry: navigationDirection, popupType: .direction, units: .none)
+//                            InformationPopup(popupEntry: "\(Int(round(RouteNavigator.shared.getRemainingRouteDistance()*100/2.54/12))) ft", popupType: .distanceAway, units: .none)
                         }
                     }
                     Spacer()
-                    HStack {
-                        Image(systemName: "pause.circle.fill")
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                            .foregroundColor(.red)
+                    if didLocalize {
+                        HStack {
+                            Button(action: {
+                                navigationManager.updateDirections()
+                            }) {
+                                Image(systemName: "point.filled.topleft.down.curvedto.point.bottomright.up")
+                                    .resizable()
+                                    .frame(width: 100, height: 100)
+                                    .foregroundColor(.green)
+                            }.accessibilityLabel("Get directions")
+                            //                        Image(systemName: "pause.circle.fill")
+                            //                            .resizable()
+                            //                            .frame(width: 100, height: 100)
+                            //                            .foregroundColor(.red)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 140)
+                        .background(AppColor.black)
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 140)
-                    .background(AppColor.black)
                 }
                 .padding(.vertical, 100)
             }.onAppear() {
@@ -58,6 +73,13 @@ struct NavigatingView: View {
             }
         }.onReceive(positioningModel.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
+        }.onReceive(navigationManager.$navigationDirection) {
+            newValue in
+            hideNavTimer?.invalidate()
+            navigationDirection = newValue ?? ""
+            hideNavTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { timer in
+                navigationDirection = ""
+            }
         }
     }
     
@@ -122,6 +144,14 @@ struct InformationPopup: View {
                         .font(.title2)
                         .multilineTextAlignment(.center)
                 }
+            case .direction:
+                HStack {
+                    Text("\(popupEntry)")
+                        .foregroundColor(AppColor.white)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                }
             case .arrived:
                 HStack {
                     Text("Arrived. You should be within one cane's length of your destination.")
@@ -143,6 +173,7 @@ struct InformationPopup: View {
         case userNote
         case distanceAway
         case arrived
+        case direction
     }
     
     enum Units: String, CaseIterable {

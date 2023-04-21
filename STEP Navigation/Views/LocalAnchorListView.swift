@@ -34,24 +34,24 @@ struct LocalAnchorListView: View {
                 Spacer()
             }
             .padding(.top, 20)
-            
-            HStack {
-                Text("Within \(nearbyDistance, specifier: "%.0f") meters")
-                    .font(.title)
-                    .padding(.leading)
-                if showPopup == false {
-                    Image(systemName: "chevron.down")
-                } else {
-                    Image(systemName: "chevron.up")
-                }
-                // want to make the chevron bigger/easier to see/etc - not sure how thought??
-                Spacer()
-            }
-            .padding(.bottom, 20)
-            .onTapGesture {
-                showPopup.toggle()
-                // in real life would want to present dropdown popup
-            }
+           // NECO
+//            HStack {
+//                Text("Within \(nearbyDistance, specifier: "%.0f") meters")
+//                    .font(.title)
+//                    .padding(.leading)
+//                if showPopup == false {
+//                    Image(systemName: "chevron.down")
+//                } else {
+//                    Image(systemName: "chevron.up")
+//                }
+//                // want to make the chevron bigger/easier to see/etc - not sure how thought??
+//                Spacer()
+//            }
+//            .padding(.bottom, 20)
+//            .onTapGesture {
+//                showPopup.toggle()
+//                // in real life would want to present dropdown popup
+//            }
             
             if showPopup == true {
                 HStack {
@@ -75,16 +75,17 @@ struct LocalAnchorListView: View {
                     })
         }
         .background(AppColor.accent)
-        .navigationBarItems(
-            trailing:
-                Button(action: {
-                    print("pressed settings")
-                }) {
-                    Image(systemName: "gearshape.fill")
-                        .scaleEffect(1.5)
-                        .foregroundColor(AppColor.black)
-                }
-        )
+// NECO
+//        .navigationBarItems(
+//            trailing:
+//                Button(action: {
+//                    print("pressed settings")
+//                }) {
+//                    Image(systemName: "gearshape.fill")
+//                        .scaleEffect(1.5)
+//                        .foregroundColor(AppColor.black)
+//                }
+//        )
         if anchorType == .indoorDestination {
             Section(header: Text("Choose Start").font(.title).fontWeight(.heavy)) {
                 ChooseAnchorComponentView(isStart: true,

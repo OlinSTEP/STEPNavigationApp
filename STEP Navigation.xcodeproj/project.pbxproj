@@ -58,6 +58,8 @@
 		82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB429DF60B5007546A1 /* SwiftGraph */; };
 		826C994729E87C130070290B /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994629E87C130070290B /* ARViewContainer.swift */; };
 		826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994829E87EA10070290B /* ARCoreCredentials.swift */; };
+		829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */; };
+		829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 829F7B6829F2C2AB00B59EE0 /* Localizable.strings */; };
 		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
 		A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */; };
 		A8EACA0329E24E9500CBF590 /* CapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EACA0229E24E9500CBF590 /* CapsuleButton.swift */; };
@@ -124,6 +126,8 @@
 		82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		826C994629E87C130070290B /* ARViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewContainer.swift; sourceTree = "<group>"; };
 		826C994829E87EA10070290B /* ARCoreCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCoreCredentials.swift; sourceTree = "<group>"; };
+		829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementManager.swift; sourceTree = "<group>"; };
+		829F7B6829F2C2AB00B59EE0 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 		A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetails.swift; sourceTree = "<group>"; };
 		A8EACA0229E24E9500CBF590 /* CapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleButton.swift; sourceTree = "<group>"; };
@@ -216,6 +220,7 @@
 				8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */,
 				8241735429DE0C70001599B1 /* Assets.xcassets */,
 				8241735629DE0C70001599B1 /* Preview Content */,
+				829F7B6829F2C2AB00B59EE0 /* Localizable.strings */,
 			);
 			path = "STEP Navigation";
 			sourceTree = "<group>";
@@ -264,6 +269,7 @@
 				825F1F5229E9CF130043BD98 /* CloudAnchorAligner.swift */,
 				825F1F5429E9CF490043BD98 /* PathLogger.swift */,
 				825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */,
+				829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -449,6 +455,7 @@
 				130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */,
 				825F1F4829E9C8380043BD98 /* ClewSuccessSound.wav in Resources */,
 				82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */,
+				829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */,
 				130862C029E4874400CADE79 /* testDoors.geojson in Resources */,
 				825F1F4A29E9C8380043BD98 /* StopRecording.aiff in Resources */,
 				130862C229E488B800CADE79 /* testBusStops.json in Resources */,
@@ -505,6 +512,7 @@
 				825F1F5529E9CF490043BD98 /* PathLogger.swift in Sources */,
 				825F1F4F29E9CB350043BD98 /* NavigationManager.swift in Sources */,
 				A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */,
+				829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */,
 				8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */,
 				826C994729E87C130070290B /* ARViewContainer.swift in Sources */,
 				8241736229DE1398001599B1 /* LocalAnchorListView.swift in Sources */,

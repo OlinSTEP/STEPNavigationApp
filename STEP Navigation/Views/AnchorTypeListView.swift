@@ -34,18 +34,19 @@ struct AnchorTypeListView: View {
                 .padding(.vertical, 20)
             }
             .background(AppColor.accent)
+            // NECO
             // Sets the settings button
-            .navigationBarItems(
-                trailing:
-                    Button(action: {
-                        print("pressed settings")
-                        // replace with a Navigation Link that goes to settings
-                    }) {
-                        Image(systemName: "gearshape.fill")
-                            .scaleEffect(1.5)
-                            .foregroundColor(AppColor.black)
-                    }
-            )
+//            .navigationBarItems(
+//                trailing:
+//                    Button(action: {
+//                        print("pressed settings")
+//                        // replace with a Navigation Link that goes to settings
+//                    }) {
+//                        Image(systemName: "gearshape.fill")
+//                            .scaleEffect(1.5)
+//                            .foregroundColor(AppColor.black)
+//                    }
+//            )
             
             // The scroll view contains the main body of text
             ScrollView {

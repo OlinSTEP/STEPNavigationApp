@@ -327,9 +327,9 @@ class Navigation {
     ///   - currentLocation: the current location of the device
     ///   - direction: the direction info struct (e.g., as computed by the `Navigation` class)
     ///   - displayDistance: a Boolean that indicates whether the distance to the net keypoint should be displayed (true if it should be displayed, false otherwise)
-    func setDirectionText(currentLocation: simd_float4x4, direction: DirectionInfo, displayDistance: Bool) {
+    func setDirectionText(currentLocation: simd_float4x4, direction: DirectionInfo, displayDistance: Bool)->String? {
         guard let nextKeypoint = RouteNavigator.shared.nextKeypoint else {
-            return
+            return nil
         }
         // Set direction text for text label and VoiceOver
         let xzNorm = sqrtf(powf(currentLocation.columns.3.x - nextKeypoint.location.translation.x, 2) + powf(currentLocation.columns.3.z - nextKeypoint.location.translation.z, 2))
@@ -339,13 +339,13 @@ class Navigation {
         
         if yDistance > 1 && slope > 0.3 { // Go upstairs
             dir += "\(Directions[direction.clockDirection]!)" + NSLocalizedString(" and proceed upstairs", comment: "Additional directions given to user telling them to climb stairs")
-            updateDirectionText(dir, distance: 0, displayDistance: false)
+            return updateDirectionText(dir, distance: 0, displayDistance: false)
         } else if yDistance > 1 && slope < -0.3 { // Go downstairs
             dir += "\(Directions[direction.clockDirection]!)\(NSLocalizedString("descendStairsDirection" , comment: "This is a direction which instructs the user to descend stairs"))"
-            updateDirectionText(dir, distance: direction.distance, displayDistance: false)
+            return updateDirectionText(dir, distance: direction.distance, displayDistance: false)
         } else { // normal directions
             dir += "\(Directions[direction.clockDirection]!)"
-            updateDirectionText(dir, distance: direction.distance, displayDistance:  displayDistance)
+            return updateDirectionText(dir, distance: direction.distance, displayDistance:  displayDistance)
         }
     }
     
@@ -355,7 +355,7 @@ class Navigation {
     ///   - description: the direction text to display (e.g., may include the direction to turn)
     ///   - distance: the distance (expressed in meters)
     ///   - displayDistance: a Boolean that indicates whether to display the distance (true means display distance)
-    func updateDirectionText(_ description: String, distance: Float, displayDistance: Bool) {
+    func updateDirectionText(_ description: String, distance: Float, displayDistance: Bool)->String {
         let distanceToDisplay = roundToTenths(distance * Float(100.0/2.54/12.0))
         var altText = description
         if (displayDistance) {
@@ -363,7 +363,7 @@ class Navigation {
                 // Related to higher number of meters, there is a somewhat strange behavior in VoiceOver where numbers greater than 10 will be read as, for instance, 11 dot 4 meters (instead of 11 point 4 meters).
             altText += " " + NSLocalizedString("and walk", comment: "this text is presented when getting directions.  It is placed between a direction of how to turn and a distance to travel") + " \(Int(distanceToDisplay)) feet"
         }
-        // AnnouncementManager.shared.announce(announcement: altText)
+        return altText
     }
         
 }

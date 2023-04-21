@@ -16,7 +16,8 @@ class NavigationManager: ObservableObject {
     var soundTimer: Date!
     /// The time of last haptic feedback
     var feedbackTimer: Date!
-
+    /// Description the current navigation direction for the user (if one exists)
+    @Published var navigationDirection: String?
     /// previous keypoint location - originally set to current location
     var prevKeypointPosition: simd_float4x4!
     
@@ -130,7 +131,6 @@ class NavigationManager: ObservableObject {
         hapticTimer?.invalidate()
         HapticFeedbackAdapter.shared.stopHaptics()
         followingCrumbs?.invalidate()
-        // AnnouncementManager.shared.announce(announcement: "You've arrived")
         // NOTE: we may have already called these functions if we finished navigating the route
         PathLogger.shared.stopLoggingData()
         PathLogger.shared.uploadLog()
@@ -170,6 +170,18 @@ class NavigationManager: ObservableObject {
         }
     }
     
+    func updateDirections() {
+        guard let curLocation = PositioningModel.shared.cameraTransform, let nextKeypoint = RouteNavigator.shared.nextKeypoint else {
+            // TODO: might want to indicate that something is wrong to the user
+            return
+        }
+        if let directionToNextKeypoint = nav.getDirectionToNextKeypoint(currentLocation: curLocation),
+           let newDirection = nav.setDirectionText(currentLocation: curLocation, direction: directionToNextKeypoint, displayDistance: true) {
+            NavigationManager.shared.navigationDirection = newDirection
+            AnnouncementManager.shared.announce(announcement: newDirection)
+        }
+    }
+    
     /// checks to see if user is on the right path during navigation.
     @objc func followCrumb() {
         guard let curLocation = PositioningModel.shared.cameraTransform, let nextKeypoint = RouteNavigator.shared.nextKeypoint else {
@@ -180,7 +192,7 @@ class NavigationManager: ObservableObject {
             return
         }
         
-        if (directionToNextKeypoint.targetState == PositionState.atTarget) {
+        if directionToNextKeypoint.targetState == PositionState.atTarget {
             if !RouteNavigator.shared.onLastKeypoint {
                 // arrived at keypoint
                 // send haptic/sonic feedback
@@ -192,16 +204,13 @@ class NavigationManager: ObservableObject {
                 
                 // erase current keypoint and render next keypoint node
                 PositioningModel.shared.renderKeypoint(at: RouteNavigator.shared.nextKeypoint!.location)
-                
-                // update directions to next keypoint
-                if let newDirectionToNextKeypoint = nav.getDirectionToNextKeypoint(currentLocation: curLocation) {
-                    nav.setDirectionText(currentLocation: curLocation, direction: newDirectionToNextKeypoint, displayDistance: true)
-                }
+                updateDirections()
             } else {
                 // arrived at final keypoint
                 // send haptic/sonic feedback
                 SoundEffectManager.shared.success()
                 RouteNavigator.shared.checkOffKeypoint()
+                AnnouncementManager.shared.announce(announcement: "You've arrived")
                 PathLogger.shared.stopLoggingData()
                 PathLogger.shared.uploadLog()
             }

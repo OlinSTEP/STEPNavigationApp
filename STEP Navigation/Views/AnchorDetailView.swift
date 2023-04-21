@@ -69,16 +69,17 @@ struct AnchorDetailView: View {
             CapsuleButton()
 
         }
-            .navigationBarItems(
-                trailing:
-                    Button(action: {
-                        print("pressed settings")
-                    }) {
-                        Image(systemName: "gearshape.fill")
-                            .scaleEffect(1.5)
-                            .foregroundColor(AppColor.black)
-                    }
-            )
+// NECO
+//            .navigationBarItems(
+//                trailing:
+//                    Button(action: {
+//                        print("pressed settings")
+//                    }) {
+//                        Image(systemName: "gearshape.fill")
+//                            .scaleEffect(1.5)
+//                            .foregroundColor(AppColor.black)
+//                    }
+//            )
     }
 }
 
