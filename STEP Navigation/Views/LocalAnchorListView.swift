@@ -17,7 +17,7 @@ struct LocalAnchorListView: View {
     private let listBackgroundColor = AppColor.grey
     private let listTextColor = AppColor.black
     
-    @State private var nearbyDistance: Double = 10
+    @State private var nearbyDistance: Double = 100
     @State var showPopup = false
     @State var chosenStart: LocationDataModel?
     @State var chosenEnd: LocationDataModel?
@@ -34,34 +34,35 @@ struct LocalAnchorListView: View {
                     .padding(.horizontal)
                 Spacer()
             }
-            .padding(.top, 20)
-            HStack {
-                Text("Within \(nearbyDistance, specifier: "%.0f") meters")
-                    .font(.title)
-                    .padding(.leading)
-                if showPopup == false {
-                    Image(systemName: "chevron.down")
-                } else {
-                    Image(systemName: "chevron.up")
-                }
-                // want to make the chevron bigger/easier to see/etc - not sure how thought??
-                Spacer()
-            }
-            .padding(.bottom, 20)
-            .onTapGesture {
-                showPopup.toggle()
-                // in real life would want to present dropdown popup
-            }
-            
-            if showPopup == true {
-                HStack {
-                    Text("0")
-                    Slider(value: $nearbyDistance, in: 0...100, step: 10)
-                    Text("100")
-                }
-                .frame(width: 300)
-                .padding(.bottom, 20)
-            }
+            .padding(.vertical, 20)
+            //Turned off nearby distance slider, set nearby distance to 100 meters.
+//            HStack {
+//                Text("Within \(nearbyDistance, specifier: "%.0f") meters")
+//                    .font(.title)
+//                    .padding(.leading)
+//                if showPopup == false {
+//                    Image(systemName: "chevron.down")
+//                } else {
+//                    Image(systemName: "chevron.up")
+//                }
+//                // want to make the chevron bigger/easier to see/etc - not sure how thought??
+//                Spacer()
+//            }
+//            .padding(.bottom, 20)
+//            .onTapGesture {
+//                showPopup.toggle()
+//                // in real life would want to present dropdown popup
+//            }
+//
+//            if showPopup == true {
+//                HStack {
+//                    Text("0")
+//                    Slider(value: $nearbyDistance, in: 0...100, step: 10)
+//                    Text("100")
+//                }
+//                .frame(width: 300)
+//                .padding(.bottom, 20)
+//            }
         }.onReceive(positionModel.$currentLatLon) { latLon in
             guard let latLon = latLon else {
                 return
@@ -90,25 +91,16 @@ struct LocalAnchorListView: View {
             })
         }
         .background(AppColor.accent)
-        .navigationBarItems(
-            trailing:
-                Button(action: {
-                    print("pressed settings")
-                }) {
-                    Image(systemName: "gearshape.fill")
-                        .scaleEffect(1.5)
-                        .foregroundColor(AppColor.black)
-                }
-        )
+        
         if anchorType == .indoorDestination {
-            Section(header: Text("Choose Start").font(.title).fontWeight(.heavy)) {
+            Section(header: Text("FROM").font(.title).fontWeight(.heavy)) {
                 ChooseAnchorComponentView(anchorSelectionType: .startOfIndoorRoute,
                                           anchors: $anchors,
                                           allAnchors: $allAnchors,
                                           chosenAnchor: $chosenStart,
                                           otherAnchor: $chosenEnd)
             }
-            Section(header: Text("Choose Destination").font(.title).fontWeight(.heavy)) {
+            Section(header: Text("TO").font(.title).fontWeight(.heavy)) {
                 ChooseAnchorComponentView(anchorSelectionType: .endOfIndoorRoute,
                                           anchors: $anchors,
                                           allAnchors: $allAnchors,
@@ -124,6 +116,7 @@ struct LocalAnchorListView: View {
                         .foregroundColor(AppColor.black)
                 })
                 .padding(.bottom, 20)
+                .padding(.top, 20)
                 .tint(AppColor.accent)
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
@@ -242,9 +235,12 @@ struct ChooseAnchorComponentView: View {
                                         Spacer()
                                     }
                                     .frame(maxWidth: .infinity)
-                                    .frame(minHeight: 140)
+                                    .frame(minHeight: 100)
+                                    .background(chosenAnchor.wrappedValue == candidateAnchors[idx] ? AppColor.accent : AppColor.grey)
                                 }
-                                .foregroundColor(chosenAnchor.wrappedValue == candidateAnchors[idx] ? .yellow : .black)
+                                .cornerRadius(20)
+                                .padding(.horizontal)
+                                .foregroundColor(AppColor.black)
                                 .accessibilityAddTraits(chosenAnchor.wrappedValue == candidateAnchors[idx] ? [.isSelected] : [])
                             }
                         }
