@@ -109,7 +109,7 @@ struct LocalAnchorListView: View {
                                           otherAnchor: $chosenStart)
             }
             if let chosenStart = chosenStart, let chosenEnd = chosenEnd {
-                NavigationLink (destination: NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: chosenEnd), label: {
+                NavigationLink (destination: CloudAnchorsDetailView(startAnchorDetails: chosenStart, destinationAnchorDetails: chosenEnd), label: {
                     Text("Navigate")
                         .font(.title)
                         .bold()

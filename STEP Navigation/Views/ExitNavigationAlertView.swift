@@ -21,7 +21,7 @@ struct ExitNavigationAlertView: View {
             }
             .padding()
             VStack {
-                NavigationLink (destination: AnchorTypeListView(), label: {
+                NavigationLink (destination: MainView(), label: {
                     Text("Exit")
                         .font(.title2)
                         .bold()

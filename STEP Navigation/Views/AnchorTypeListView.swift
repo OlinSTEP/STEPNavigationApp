@@ -7,8 +7,7 @@
 
 import SwiftUI
 
-struct AnchorTypeListView: View {
-//    @StateObject private var anchorData = AnchorData()
+struct AnchorTypeListView: View {    
     @ObservedObject var database = FirebaseManager.shared
     // Sets the appearance of the Navigation Bar using UIKit
     init() {
@@ -33,9 +32,7 @@ struct AnchorTypeListView: View {
                 }
                 .padding(.vertical, 20)
             }
-            .navigationBarBackButtonHidden()
             .background(AppColor.accent)
-            // Sets the settings button
             
             // The scroll view contains the main body of text
             ScrollView {
@@ -65,7 +62,6 @@ struct AnchorTypeListView: View {
                 Spacer()
             }
         }
-        .accentColor(AppColor.black)
     }
 }
 

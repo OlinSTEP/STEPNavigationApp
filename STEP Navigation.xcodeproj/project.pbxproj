@@ -64,6 +64,9 @@
 		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
 		A8CB6EBF29DFB37000EABD80 /* AnchorDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */; };
 		A8D886C229EEE550003E05E7 /* ExitNavigationAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D886C129EEE550003E05E7 /* ExitNavigationAlertView.swift */; };
+		A8D886C629F741FD003E05E7 /* CloudAnchorsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D886C529F741FD003E05E7 /* CloudAnchorsDetailView.swift */; };
+		A8D886C829F7471D003E05E7 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D886C729F7471D003E05E7 /* MainView.swift */; };
+		A8D886CA29F74BE0003E05E7 /* ArrivedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D886C929F74BE0003E05E7 /* ArrivedView.swift */; };
 		A8EACA0329E24E9500CBF590 /* CapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EACA0229E24E9500CBF590 /* CapsuleButton.swift */; };
 		A8FF1A1229E062DD002019E9 /* AnchorTypeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */; };
 /* End PBXBuildFile section */
@@ -134,6 +137,9 @@
 		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 		A8CB6EBE29DFB37000EABD80 /* AnchorDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetails.swift; sourceTree = "<group>"; };
 		A8D886C129EEE550003E05E7 /* ExitNavigationAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExitNavigationAlertView.swift; sourceTree = "<group>"; };
+		A8D886C529F741FD003E05E7 /* CloudAnchorsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudAnchorsDetailView.swift; sourceTree = "<group>"; };
+		A8D886C729F7471D003E05E7 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		A8D886C929F74BE0003E05E7 /* ArrivedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivedView.swift; sourceTree = "<group>"; };
 		A8EACA0229E24E9500CBF590 /* CapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleButton.swift; sourceTree = "<group>"; };
 		A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorTypeListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -250,6 +256,9 @@
 				A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */,
 				826C994629E87C130070290B /* ARViewContainer.swift */,
 				A8D886C129EEE550003E05E7 /* ExitNavigationAlertView.swift */,
+				A8D886C529F741FD003E05E7 /* CloudAnchorsDetailView.swift */,
+				A8D886C729F7471D003E05E7 /* MainView.swift */,
+				A8D886C929F74BE0003E05E7 /* ArrivedView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -501,9 +510,11 @@
 				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,
 				8241737429DE1440001599B1 /* AllPaths.swift in Sources */,
 				A8FF1A1229E062DD002019E9 /* AnchorTypeListView.swift in Sources */,
+				A8D886C829F7471D003E05E7 /* MainView.swift in Sources */,
 				8241736C29DE13F4001599B1 /* HapticFeedbackAdapter.swift in Sources */,
 				825F1F5729E9CF7D0043BD98 /* FirebaseManager.swift in Sources */,
 				825F1F5129E9CBA70043BD98 /* MapGraph.swift in Sources */,
+				A8D886CA29F74BE0003E05E7 /* ArrivedView.swift in Sources */,
 				8241736E29DE140D001599B1 /* SoundFeedbackAdapter.swift in Sources */,
 				8241737929DE1478001599B1 /* PositioningModel.swift in Sources */,
 				825F1F5329E9CF130043BD98 /* CloudAnchorAligner.swift in Sources */,
@@ -525,6 +536,7 @@
 				826C994729E87C130070290B /* ARViewContainer.swift in Sources */,
 				8241736229DE1398001599B1 /* LocalAnchorListView.swift in Sources */,
 				8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */,
+				A8D886C629F741FD003E05E7 /* CloudAnchorsDetailView.swift in Sources */,
 				8241737229DE1430001599B1 /* AllAnchorDetails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
