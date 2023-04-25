@@ -93,6 +93,74 @@ class DataModelManager: ObservableObject {
         return locations
     }
     
+    
+    /**
+            Returns a set containing all outdoor within the specified distance from the specified location.
+         
+            - parameter model: the models to search through
+            - parameter location: The location to use as the center point for the distance calculation.
+            - parameter maxDistance: The maximum distance in meters.
+         
+            - returns: A list of all possible anchor categories
+    */
+    private func getNearbyOutdoorDestinationCategories(type: AnchorType, models: Set<LocationDataModel>, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [String] {
+        for model in models {
+            if model.getLocationCoordinate().distance(from: location) <= maxDistance + withBuffer {
+                return [type.rawValue]
+            }
+        }
+        return []
+    }
+    
+    /**
+            Returns a set containing all indoor categories within the specified distance from the specified location.
+         
+            - parameter model: the models to search through
+            - parameter location: The location to use as the center point for the distance calculation.
+            - parameter maxDistance: The maximum distance in meters.
+         
+            - returns: A list of all possible anchor categories
+    */
+    private func getNearbyIndoorDestinationCategories(type: AnchorType, models: Set<LocationDataModel>, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [String] {
+        var categoriesAsSet = Set<String>()
+        var startingLocations: [LocationDataModel] = []
+        for model in models {
+            if model.getLocationCoordinate().distance(from: location) <= maxDistance + withBuffer {
+                // possible start location
+                startingLocations.append(model)
+            }
+        }
+        for startingLocation in startingLocations {
+            let reachableSet = NavigationManager.shared.getReachability(from: startingLocation, outOf: models)
+            let _ = reachableSet.map({
+                categoriesAsSet.insert($0.getAnchorCategory())
+            })
+        }
+        categoriesAsSet.remove("")
+        return Array(categoriesAsSet).sorted()
+    }
+
+    
+    /**
+            Returns a set containing all location data models within the specified distance from the specified location.
+         
+            - parameter location: The location to use as the center point for the distance calculation.
+            - parameter maxDistance: The maximum distance in meters.
+         
+            - returns: A list of all possible anchor categories
+    */
+    func getNearbyDestinationCategories(location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [String] {
+        var allCategories: [String] = []
+        for (type, models) in allLocationModels {
+            if type == .indoorDestination {
+                allCategories += getNearbyIndoorDestinationCategories(type: type, models: models, location: location, maxDistance: maxDistance, withBuffer: withBuffer)
+            } else {
+                allCategories += getNearbyOutdoorDestinationCategories(type: type, models: models, location: location, maxDistance: maxDistance, withBuffer: withBuffer)
+            }
+        }
+        return allCategories
+    }
+    
     /**
             Returns a set containing all location data models within the specified distance from the specified location.
          

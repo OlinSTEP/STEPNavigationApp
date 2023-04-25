@@ -34,6 +34,11 @@ class NavigationManager: ObservableObject {
         
     }
     
+    /// Get a Boolean array that specifies the reachability of each of the pool of candidates from the starting location
+    /// - Parameters:
+    ///   - start: the start location
+    ///   - pool: the potential destinations
+    /// - Returns: a boolean Array such that array[i] is true iff destination i is recahable from start
     func getReachability(from start: LocationDataModel, outOf pool: [LocationDataModel])->[Bool] {
         guard let cloudID = start.getCloudAnchorID() else {
             return []
@@ -42,6 +47,21 @@ class NavigationManager: ObservableObject {
         let (distances, _) = anchorGraph.dijkstra(root: cloudID, startDistance: 0)
         let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
         return pool.map({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil && start != $0 })
+    }
+    
+    /// Filter a list of destinations based on their rechability from the start
+    /// - Parameters:
+    ///   - start: the start location
+    ///   - pool: the potential destinations
+    /// - Returns: a set of reachable destination
+    func getReachability(from start: LocationDataModel, outOf pool: Set<LocationDataModel>)->Set<LocationDataModel> {
+        guard let cloudID = start.getCloudAnchorID() else {
+            return []
+        }
+        let anchorGraph = makeWeightedGraph()
+        let (distances, _) = anchorGraph.dijkstra(root: cloudID, startDistance: 0)
+        let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
+        return pool.filter({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil && start != $0 })
     }
     
     /// Creates the weighted graph from the currently recorded nodes and edges.

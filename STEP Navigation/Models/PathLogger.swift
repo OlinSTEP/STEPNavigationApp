@@ -32,6 +32,7 @@ class PathLogger {
     var cloudAnchorResolutions: [LoggedCloudAnchorResolution] = []
     var cloudAnchorLandmarks: [String: simd_float4x4]?
     var poseLog: [simd_float4x4] = []
+    var poseTimestamps: [Double] = []
     private var isLoggingData = false
     private var hasUploadedData = false
     
@@ -49,6 +50,7 @@ class PathLogger {
         }
         let data = try! JSONSerialization.data(withJSONObject:
                     ["poses": poseLog.map({ $0.toColumnMajor() }),
+                     "poseTimestamp": poseTimestamps,
                      "cloudAnchorResolutions": cloudAnchorResolutions.map({$0.asDict()}),
                      "cloudAnchorLandmarks": Array((cloudAnchorLandmarks ?? [:]).keys)
                     ]
@@ -60,6 +62,7 @@ class PathLogger {
     
     func reset() {
         poseLog = []
+        poseTimestamps = []
         cloudAnchorResolutions = []
         cloudAnchorLandmarks = [:]
         isLoggingData = false
@@ -70,6 +73,7 @@ class PathLogger {
             return
         }
         poseLog.append(pose)
+        poseTimestamps.append(timestamp)
     }
     
     func logCloudAnchorDidUpdate(cloudID: String, identifier: String, pose: simd_float4x4, mapPose: simd_float4x4, timestamp: Double) {

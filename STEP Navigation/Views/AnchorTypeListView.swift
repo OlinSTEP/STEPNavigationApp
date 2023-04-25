@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AnchorTypeListView: View {    
     @ObservedObject var database = FirebaseManager.shared
+    @State var hasLocalized = false
+    @State var anchorTypes: [String] = []
     // Sets the appearance of the Navigation Bar using UIKit
     init() {
         let appearance = UINavigationBarAppearance()
@@ -37,15 +39,13 @@ struct AnchorTypeListView: View {
             // The scroll view contains the main body of text
             ScrollView {
                 VStack {
-                    
-                    let anchorTypes = DataModelManager.shared.getAnchorTypes()
                     // Creates a navigation button for each anchor type
-                    ForEach(Array(anchorTypes).sorted(by: {$0.rawValue < $1.rawValue})) {
+                    ForEach(anchorTypes, id: \.self) {
                         anchorType in
                         NavigationLink (
-                            destination: LocalizingView(anchorType: anchorType),
+                            destination: LocalizingView(anchorType: .bathroom),
                             label: {
-                                Text(anchorType.rawValue)
+                                Text(anchorType)
                                     .font(.largeTitle)
                                     .bold()
                                     .padding(30)
@@ -60,6 +60,10 @@ struct AnchorTypeListView: View {
                     .padding(.top, 20)
                 }
                 Spacer()
+            }
+        }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
+            if newValue != .none && anchorTypes.isEmpty {
+                anchorTypes = DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: 100.0)
             }
         }
     }
