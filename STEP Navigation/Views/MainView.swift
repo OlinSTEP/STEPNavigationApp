@@ -10,20 +10,12 @@ import SwiftUI
 import SwiftUI
 
 struct MainView: View {
-    // Sets the appearance of the Navigation Bar using UIKit
-    init() {
-        let appearance = UINavigationBarAppearance()
-        appearance.shadowColor = .clear
-        appearance.backgroundColor = UIColor(AppColor.accent)
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
+    @ObservedObject var positionModel = PositioningModel.shared
+    let minimumGeoLocationAccuracy: GeoLocationAccuracy = .low
     
     var body: some View {
-        // Navigation Stack determines the Navigation Bar
         NavigationStack {
             VStack {
-                // Sets the title text
                 HStack {
                     Text("STEP Navigation")
                         .font(.largeTitle)
@@ -44,47 +36,69 @@ struct MainView: View {
             }
             .navigationBarBackButtonHidden()
             .background(AppColor.accent)
-            
-            VStack {
-                NavigationLink (
-                    destination: AnchorTypeListView(),
-                    label: {
-                        Text("Indoor Anchors")
-                            .font(.largeTitle)
+
+        ZStack {
+            ARViewContainer()
+
+            if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
+                if let currentLatLon = positionModel.currentLatLon {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text("Succesfully Localized")
+                                .bold()
+                                .foregroundColor(AppColor.white)
+                                .font(.title2)
+                                .multilineTextAlignment(.leading)
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(AppColor.black)
+    
+                        Spacer()
+                        
+                        NavigationLink(destination: AnchorTypeListView(), label: {
+                            Text("Go to nearby locations")
+                                .font(.title2)
+                                .bold()
+                                .frame(maxWidth: 300)
+                                .foregroundColor(AppColor.black)
+                        })
+                        .padding(.bottom, 50)
+                        .tint(AppColor.accent)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                    }
+                } else {
+                    Text("Inconsistent State.  Contact your developer")
+                }
+            } else  {
+                VStack {
+                    HStack {
+                        Text("Finding Anchors Near You")
+                            .foregroundColor(AppColor.white)
                             .bold()
-                            .padding(30)
-                            .frame(maxWidth: .infinity)
-                            .frame(maxHeight: .infinity)
-                            .foregroundColor(AppColor.black)
-                    })
-                .background(AppColor.accent)
-                .cornerRadius(20)
-                .padding(.horizontal)
-                .padding(.bottom, 10)
-                
-                NavigationLink (
-                    destination: AnchorTypeListView(),
-                    label: {
-                        Text("Outdoor Anchors")
-                            .font(.largeTitle)
-                            .bold()
-                            .padding(30)
-                            .frame(maxWidth: .infinity)
-                            .frame(maxHeight: .infinity)
-                            .foregroundColor(AppColor.black)
-                    })
-                .background(AppColor.accent)
-                .cornerRadius(20)
-                .padding(.horizontal)
+                            .font(.title2)
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal)
+                        Spacer()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(AppColor.black)
             }
-            .padding(.vertical, 20)
         }
-        .accentColor(AppColor.black)
+        .background(AppColor.accent)
+    }
+    .accentColor(AppColor.black)
     }
 }
         
-struct MainView_Previews: PreviewProvider {
-    static var previews: some View {
-        MainView()
-    }
-}
+//struct MainView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MainView()
+//    }
+//}

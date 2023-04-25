@@ -6,17 +6,14 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct AnchorTypeListView: View {    
     @ObservedObject var database = FirebaseManager.shared
-    // Sets the appearance of the Navigation Bar using UIKit
-    init() {
-        let appearance = UINavigationBarAppearance()
-        appearance.shadowColor = .clear
-        appearance.backgroundColor = UIColor(AppColor.accent)
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
+    @ObservedObject var positionModel = PositioningModel.shared
+    
+    @State private var nearbyDistance: Double = 100
+    @State var showPopup = false
     
     var body: some View {
         // Navigation Stack determines the Navigation Bar
@@ -24,15 +21,43 @@ struct AnchorTypeListView: View {
             VStack {
                 // Sets the title text
                 HStack {
-                    Text("Anchor Groups")
+                    Text("Destinations")
                         .font(.largeTitle)
                         .bold()
                         .padding(.horizontal)
                     Spacer()
                 }
-                .padding(.vertical, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 0.5)
+                
+                HStack {
+                    Text("Within \(nearbyDistance, specifier: "%.0f") meters")
+                        .font(.title)
+                        .padding(.leading)
+                    if showPopup == false {
+                        Image(systemName: "chevron.down")
+                    } else {
+                        Image(systemName: "chevron.up")
+                    }
+                    Spacer()
+                }
+                .padding(.bottom, 20)
+                .onTapGesture {
+                    showPopup.toggle()
+                }
+
+                if showPopup == true {
+                    HStack {
+                        Text("0")
+                        Slider(value: $nearbyDistance, in: 0...200, step: 10)
+                        Text("200")
+                    }
+                    .frame(width: 300)
+                    .padding(.bottom, 20)
+                }
             }
             .background(AppColor.accent)
+            
             
             // The scroll view contains the main body of text
             ScrollView {
@@ -65,8 +90,8 @@ struct AnchorTypeListView: View {
     }
 }
 
-struct AnchorTypeListView_Previews: PreviewProvider {
-    static var previews: some View {
-        AnchorTypeListView()
-    }
-}
+//struct AnchorTypeListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AnchorTypeListView()
+//    }
+//}
