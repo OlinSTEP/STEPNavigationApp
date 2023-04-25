@@ -8,6 +8,8 @@
 import SwiftUI
 import CoreLocation
 
+//TODO: add a statement that checks if the user has arrived, and if so, take them to the arrived view. Need to pass in destinationAnchorDetails into the arrived view.
+
 // TODO: ughh what to do about this global variable
 var hideNavTimer: Timer?
 
@@ -28,7 +30,7 @@ struct NavigatingView: View {
                 Spacer()
                 VStack {
                     if !didLocalize {
-                        InformationPopup(popupEntry: "7", popupType: .waitingToLocalize, units: .none)
+                        InformationPopup(popupEntry: "", popupType: .waitingToLocalize, units: .none) //what is this? why do we still have units and stuff?
                     } else {
                         if RouteNavigator.shared.keypoints?.isEmpty == true {
                             InformationPopup(popupEntry: "", popupType: .arrived, units: .none)
