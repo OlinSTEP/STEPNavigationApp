@@ -43,7 +43,7 @@ struct AnchorTypeListView: View {
                     ForEach(anchorTypes, id: \.self) {
                         anchorType in
                         NavigationLink (
-                            destination: LocalizingView(anchorType: .bathroom),
+                            destination: LocalizingView(anchorType: .indoorDestination),
                             label: {
                                 Text(anchorType)
                                     .font(.largeTitle)

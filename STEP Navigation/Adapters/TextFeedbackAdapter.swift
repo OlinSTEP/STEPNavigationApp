@@ -1,6 +1,6 @@
 //
 //  TextFeedbackAdapter.swift
-//  InvisibleMapTake2
+//  STEP Navigation
 //
 //  Created by Paul Ruvolo on 4/6/23.
 //
@@ -173,10 +173,10 @@ class Navigation {
     ///   - isLastKeypoint (true if the keypoint is the last one in the route, false otherwise)
     /// - Returns: relative position of next keypoint as `DirectionInfo` object
     public func getDirections(currentLocation: simd_float4x4, nextKeypoint: KeypointInfo, isLastKeypoint: Bool) -> DirectionInfo? {
-        guard PositioningModel.shared.hasAligned() else {
+        guard PositioningModel.shared.hasAligned(),
+              let nextLocation = PositioningModel.shared.currentLocation(of: nextKeypoint) else {
             return nil
         }
-        let nextLocation = PositioningModel.shared.currentLocation(of: nextKeypoint.location)
         // these tolerances are set depending on whether it is the last keypoint or not
         let keypointTargetDepth = isLastKeypoint ? lastKeypointTargetDepth : targetDepth
         let keypointTargetHeight = isLastKeypoint ? lastKeypointTargetHeight : targetHeight
@@ -214,16 +214,31 @@ class Navigation {
         
         var direction = DirectionInfo(distance: simd_length(planarDelta), angleDiff: angleDiff, clockDirection: clockDirection, hapticDirection: hapticDirection, lateralDistanceRatioWhenCrossingTarget: lateralDistanceRatioWhenCrossingTarget)
         
-        //  Determine whether the phone is inside the bounding box of the keypoint
-        if (xDiff <= keypointTargetDepth && yDiff <= keypointTargetHeight && zDiff <= keypointTargetWidth) {
-            direction.targetState = .atTarget
-        } else if (sqrtf(powf(Float(xDiff), 2) + powf(Float(zDiff), 2)) <= 4) {
-            direction.targetState = .closeToTarget
-        } else {
-            direction.targetState = .notAtTarget
+        switch nextKeypoint.mode {
+        case .cloudAnchorBased:
+                
+            //  Determine whether the phone is inside the bounding box of the keypoint
+            if (xDiff <= keypointTargetDepth && yDiff <= keypointTargetHeight && zDiff <= keypointTargetWidth) {
+                direction.targetState = .atTarget
+            } else if (sqrtf(powf(Float(xDiff), 2) + powf(Float(zDiff), 2)) <= 4) {
+                direction.targetState = .closeToTarget
+            } else {
+                direction.targetState = .notAtTarget
+            }
+            
+            return direction
+        case .latLonBased:
+            //  Determine whether the phone is inside the bounding box of the keypoint
+            if (abs(xDiff) <= keypointTargetDepth && abs(yDiff) <= keypointTargetHeight && abs(zDiff) <= keypointTargetWidth) {
+                direction.targetState = .atTarget
+            } else if (sqrtf(powf(Float(xDiff), 2) + powf(Float(zDiff), 2)) <= 4) {
+                direction.targetState = .closeToTarget
+            } else {
+                direction.targetState = .notAtTarget
+            }
+            
+            return direction
         }
-        
-        return direction
     }
     
     /// Divides all possible directional angles into six sections for using with haptic feedback.

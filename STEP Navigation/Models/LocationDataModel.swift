@@ -14,6 +14,7 @@ import CoreLocation
 struct LocationDataModel: Hashable {
     private let anchorType: AnchorType
     private let anchorCategory: String
+    private let associatedOutdoorFeature: String?
     private let coordinates: CLLocationCoordinate2D
     private let notes: String?
     private let name: String
@@ -25,13 +26,21 @@ struct LocationDataModel: Hashable {
      
         - parameter anchorType: The type of the anchor.
         - parameter anchorCategory: The category of the anchor
+        - parameter coordinates: the latitude and longitude of the model
         - parameter location: The location of the data model.
         - parameter notes: Any additional notes about the location.
         - parameter name: The name of the location.
     */
-    init(anchorType: AnchorType, anchorCategory: String, coordinates: CLLocationCoordinate2D, notes: String? = "", name: String, cloudAnchorID: String?=nil) {
+    init(anchorType: AnchorType,
+         anchorCategory: String,
+         coordinates: CLLocationCoordinate2D,
+         associatedOutdoorFeature: String?,
+         notes: String? = "",
+         name: String,
+         cloudAnchorID: String?=nil) {
         self.anchorType = anchorType
         self.anchorCategory = anchorCategory
+        self.associatedOutdoorFeature = associatedOutdoorFeature
         self.coordinates = coordinates
         self.notes = notes
         self.name = name
@@ -88,6 +97,10 @@ struct LocationDataModel: Hashable {
     
     func getCloudAnchorID() -> String? {
         return self.cloudAnchorID
+    }
+    
+    func getAssociatedOutdoorFeature() -> String? {
+        return self.associatedOutdoorFeature
     }
 }
 

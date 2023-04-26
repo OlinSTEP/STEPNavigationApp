@@ -80,6 +80,18 @@ class DataModelManager: ObservableObject {
     func getAnchorTypes() -> Set<AnchorType> {
         return Set(allLocationModels.keys + [.indoorDestination])
     }
+    
+    func getLocationDataModel(byName name: String)->LocationDataModel? {
+        // TODO: this is very wasteful
+        for (_, models) in allLocationModels {
+            for model in models {
+                if model.getName() == name {
+                    return model
+                }
+            }
+        }
+        return nil
+    }
      
     /**
       Returns set of all locations of a given anchorType

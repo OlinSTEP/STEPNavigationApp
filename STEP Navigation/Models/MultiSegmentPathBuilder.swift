@@ -9,21 +9,26 @@
 import Foundation
 import ARKit
 
+enum KeypointType {
+    case latLonBased
+    case cloudAnchorBased
+}
+
 /// Struct to store position and orientation of a keypoint
 ///
 /// Contains:
 /// * `location` (`LocationInfo`)
 /// * `orientation` (`Vector3` from `VectorMath`)
 public struct KeypointInfo: Identifiable {
-    public let id = UUID()
-    
+    public let id: UUID
+    let mode: KeypointType
     /// the location of the keypoint
     public var location: simd_float4x4
     /// the orientation of a keypoint is a unit vector that points from the previous keypoint to current keypoint.  The orientation is useful for defining the area where we check off the user as having reached a keypoint
     public var orientation: simd_float3 {
-        if let previousKeypoint = RouteNavigator.shared.getPreviousKeypoint(to: self) {
-            let currentKeypointLocation = PositioningModel.shared.currentLocation(of: location)
-            let prevKeypointLocation = PositioningModel.shared.currentLocation(of: previousKeypoint.location)
+        if let previousKeypoint = RouteNavigator.shared.getPreviousKeypoint(to: self),
+           let currentKeypointLocation = PositioningModel.shared.currentLocation(of: self),
+           let prevKeypointLocation = PositioningModel.shared.currentLocation(of: previousKeypoint) {
             return simd_normalize(simd_float3(prevKeypointLocation.translation.x - currentKeypointLocation.translation.x,
                                               0,
                                               prevKeypointLocation.translation.z - currentKeypointLocation.translation.z))
@@ -32,8 +37,8 @@ public struct KeypointInfo: Identifiable {
         }
     }
     
-    var currentTransform: simd_float4x4 {
-        return PositioningModel.shared.currentLocation(of: location)
+    var currentTransform: simd_float4x4? {
+        return PositioningModel.shared.currentLocation(of: self)
     }
 }
 
@@ -54,11 +59,8 @@ class MultiSegmentPathBuilder {
     ///
     /// - Parameters:
     ///   - crumbs: a list of `LocationInfo` objects representing the trail of breadcrumbs left on the path
-    ///   - hapticFeedback: whether or not hapticFeedback is on.
-    ///   - voiceFeedBack: whether or not voiceFeedback is on.
-    ///
-    /// - TODO:
-    ///   - Clarify why these magic `pathWidth` values are as they are.
+    ///   - manualKeypointIndices: if non-empty, use these indices to ocnstruct the keypoints.
+    /// - Returns: the list of route keypoints
     init(crumbs: [simd_float4x4], manualKeypointIndices: [Int]) {
         self.crumbs = crumbs
         self.manualKeypointIndices = manualKeypointIndices
@@ -88,15 +90,15 @@ class MultiSegmentPathBuilder {
     func getKeypoints(edibleCrumbs: [simd_float4x4]) -> [KeypointInfo] {
         let firstKeypointLocation = edibleCrumbs.first!
         if edibleCrumbs.count == 1 {
-            return [KeypointInfo(location: firstKeypointLocation)]
+            return [KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: firstKeypointLocation)]
         }
         var keypoints = [KeypointInfo]()
-        keypoints.append(KeypointInfo(location: firstKeypointLocation))
+        keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: firstKeypointLocation))
         
         keypoints += calculateKeypoints(edibleCrumbs: edibleCrumbs)
         
         let lastKeypointLocation = edibleCrumbs.last!
-        keypoints.append(KeypointInfo(location: lastKeypointLocation))
+        keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: lastKeypointLocation))
         return keypoints
     }
     
@@ -156,7 +158,7 @@ class MultiSegmentPathBuilder {
             }
                         
             let newKeypointLocation = edibleCrumbs[maxIndex!]
-            keypoints.append(KeypointInfo(location: newKeypointLocation))
+            keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: newKeypointLocation))
             
             if (!postKeypoints.isEmpty) {
                 keypoints += postKeypoints

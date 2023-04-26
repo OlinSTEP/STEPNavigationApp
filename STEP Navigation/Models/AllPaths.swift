@@ -24,15 +24,6 @@ class PathPlanner {
         
     }
     
-    func navigate(to anchor: LocationDataModel) {
-        navigationType = .asTheCrowFlies
-        crowFliesGoal = PositioningModel.shared.addTerrainAnchor(at: anchor.getLocationCoordinate(), withName: anchor.getName())
-    }
-    
-    func prepareToNavigate(to destination: LocationDataModel) {
-        PositioningModel.shared.addTerrainAnchor(at: destination.getLocationCoordinate(), withName: "destination")
-    }
-    
     func prepareToNavigate(from start: LocationDataModel, to end: LocationDataModel) {
         guard let cloudAnchorID1 = start.getCloudAnchorID(), let cloudAnchorID2 = end.getCloudAnchorID() else {
             // Note: this shouldn't happen
@@ -41,6 +32,31 @@ class PathPlanner {
         PathLogger.shared.startLoggingData()
         cloudAnchors = NavigationManager.shared.computePathBetween(cloudAnchorID1, cloudAnchorID2)
         NavigationManager.shared.computeMultisegmentPath(cloudAnchors)
+    }
+    
+    func prepareToNavigateFromOutdoors(to end: LocationDataModel) {
+        guard let cloudAnchorID = end.getCloudAnchorID() else {
+            // Note: this shouldn't happen
+            return
+        }
+        PathLogger.shared.startLoggingData()
+        cloudAnchors = NavigationManager.shared.computePathBetween("outdoors", cloudAnchorID)
+        // we should have at least 2 nodes in this path (the first is the special node "outdoors" and
+        // the second is the first cloud anchor
+        guard cloudAnchors.count >= 2 else {
+            return
+        }
+        let firstCloudAnchor = cloudAnchors[1]
+        for model in DataModelManager.shared.getLocationsByType(anchorType: .indoorDestination) {
+            if model.getCloudAnchorID() == firstCloudAnchor,
+               let outdoorFeature = model.getAssociatedOutdoorFeature(),
+               let outdoorDataModel = DataModelManager.shared.getLocationDataModel(byName: outdoorFeature) {
+                
+                NavigationManager.shared.computeMultisegmentPath(cloudAnchors, outsideStart: outdoorDataModel.getLocationCoordinate())
+                return
+            }
+        }
+        fatalError("Unexpectedly unable to plan path")
     }
     
     func navigate(from start: LocationDataModel, to end: LocationDataModel) {
@@ -77,7 +93,7 @@ class RouteNavigator: ObservableObject {
         guard let currentPosition = PositioningModel.shared.cameraTransform?.translation else {
             return 0.0
         }
-        guard let nextKeypointPosition = keypoints.first?.currentTransform.translation else {
+        guard let nextKeypointPosition = keypoints.first?.currentTransform?.translation else {
             return 0.0
         }
         var totalDistance: Float = simd_distance(currentPosition, nextKeypointPosition)

@@ -1,6 +1,6 @@
 //
 //  FirebaseManager.swift
-//  InvisibleMapTake2
+//  STEP Navigation
 //
 //  Created by Paul Ruvolo on 3/30/23.
 //

@@ -1,6 +1,6 @@
 //
 //  FirebaseManager.swift
-//  InvisibleMapTake2
+//  STEP Navigation
 //
 //  Created by Paul Ruvolo on 3/30/23.
 //
@@ -85,9 +85,10 @@ class FirebaseManager: ObservableObject {
             }
             let anchorTypeString = (keyValuePairs["type"] as? String) ?? "Generic Destination"
             let anchorCategory = (keyValuePairs["category"] as? String) ?? ""
+            let associatedOutdoorFeature = (keyValuePairs["associatedOutdoorFeature"] as? String) ?? ""
             // TODO: connect the particular type to the anchor type
             let anchorType = AnchorType.indoorDestination
-            DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, anchorCategory: anchorCategory, coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), name: anchorName, cloudAnchorID: snapshot.key))
+            DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, anchorCategory: anchorCategory, coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), associatedOutdoorFeature: associatedOutdoorFeature, name: anchorName, cloudAnchorID: snapshot.key))
             self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: anchorType)
             self.pathGraph.cloudNodes.insert(snapshot.key)
         }
@@ -148,5 +149,9 @@ class FirebaseManager: ObservableObject {
     
     func getCloudAnchorName(byID id: String)->String? {
         return mapAnchors[id]?.name
+    }
+    
+    func getCloudAnchorMetadata(byID id: String)->CloudAnchorMetadata? {
+        return mapAnchors[id]
     }
 }
