@@ -181,7 +181,6 @@ extension PositioningModel: ARSessionDelegate {
                     manualAlignment = cloudAnchorAligner.adjust(currentAlignment: manualAlignment)
                 }
                 if let cameraGeospatialTransform = garFrame.earth?.cameraGeospatialTransform {
-                    print("horizontalAccuracy \(cameraGeospatialTransform.horizontalAccuracy)")
                     currentLatLon = cameraGeospatialTransform.coordinate
                     if cameraGeospatialTransform.horizontalAccuracy < 3.0 {
                         geoLocalizationAccuracy = .high

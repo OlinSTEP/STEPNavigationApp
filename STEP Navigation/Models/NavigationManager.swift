@@ -98,7 +98,22 @@ class NavigationManager: ObservableObject {
                 anchorGraph.addEdge(from: "outdoors", to: cloudID, weight: Float(currentLatLon.distance(from: searchLatLon.getLocationCoordinate())), directed: true)
             }
         }
+        printNodeGraph(graph: anchorGraph)
         return anchorGraph
+    }
+    
+    private func printNodeGraph(graph: WeightedGraph<String, Float>) {
+        print("VERTICES")
+        for node in graph.vertices {
+            
+            print("  - \(FirebaseManager.shared.getCloudAnchorName(byID: node) ?? node)")
+        }
+        print("EDGES")
+        for outgoingEdges in graph.edges {
+            for edge in outgoingEdges {
+                print(" - \(FirebaseManager.shared.getCloudAnchorName(byID: graph.vertices[edge.u]) ?? graph.vertices[edge.u]) to \(FirebaseManager.shared.getCloudAnchorName(byID: graph.vertices[edge.v]) ?? graph.vertices[edge.v]) weight: \(edge.weight)")
+            }
+        }
     }
     
     /// Computes the path between the two specified anchors.  The path is stored within the navigation to enable navigation guidance as the user moves through the environment.
