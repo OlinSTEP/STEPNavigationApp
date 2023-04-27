@@ -13,6 +13,7 @@ import CoreLocation
 */
 struct LocationDataModel: Hashable {
     private let anchorType: AnchorType
+    //private let anchorCategory: String
     private let coordinates: CLLocationCoordinate2D
     private let notes: String?
     private let name: String
@@ -102,5 +103,22 @@ enum AnchorType: String, Identifiable {
     case bathroom = "Bathroom"
     case frontdesk = "Front Desk"
     case indoorDestination = "Indoor"
+    case room = "Room"
+    case waterFountain = "Water Fountain"
+    
+    var isIndoors: Bool {
+        switch self {
+        case .bathroom:
+            return true
+        case .frontdesk:
+            return true
+        case .waterFountain:
+            return true
+        case .room:
+            return true
+        default:
+            return false
+        }
+    }
 //    case indoorDestination = "Indoors (temporary category)"
 }

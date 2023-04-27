@@ -8,14 +8,22 @@
 import SwiftUI
 import CoreLocation
 
-struct AnchorTypeListView: View {    
-    @ObservedObject var database = FirebaseManager.shared
-    @ObservedObject var positionModel = PositioningModel.shared
-    
-    @State private var nearbyDistance: Double = 100
+struct AnchorTypeListView: View {        
+    @State var nearbyDistance: Double = 300
     @State var showPopup = false
+    @State var hasLocalized = false
+    @State var anchorTypes: [String] = []
+    // Sets the appearance of the Navigation Bar using UIKit
+    init() {
+        let appearance = UINavigationBarAppearance()
+        appearance.shadowColor = .clear
+        appearance.backgroundColor = UIColor(AppColor.accent)
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
     
     var body: some View {
+        let anchorTypes = PositioningModel.shared.currentLatLon != nil ? DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance) : []
         // Navigation Stack determines the Navigation Bar
         NavigationStack {
             VStack {
@@ -36,8 +44,10 @@ struct AnchorTypeListView: View {
                         .padding(.leading)
                     if showPopup == false {
                         Image(systemName: "chevron.down")
+                            .accessibilityLabel("Open Slider")
                     } else {
                         Image(systemName: "chevron.up")
+                            .accessibilityLabel("Close Slider")
                     }
                     Spacer()
                 }
@@ -45,12 +55,12 @@ struct AnchorTypeListView: View {
                 .onTapGesture {
                     showPopup.toggle()
                 }
-
+                
                 if showPopup == true {
                     HStack {
                         Text("0")
-                        Slider(value: $nearbyDistance, in: 0...200, step: 10)
-                        Text("200")
+                        Slider(value: $nearbyDistance, in: 0...1000, step: 10)
+                        Text("1000")
                     }
                     .frame(width: 300)
                     .padding(.bottom, 20)
@@ -62,13 +72,12 @@ struct AnchorTypeListView: View {
             // The scroll view contains the main body of text
             ScrollView {
                 VStack {
-                    
-                    let anchorTypes = DataModelManager.shared.getAnchorTypes()
                     // Creates a navigation button for each anchor type
-                    ForEach(Array(anchorTypes).sorted(by: {$0.rawValue < $1.rawValue})) {
+                    ForEach(anchorTypes, id: \.self) {
                         anchorType in
+                        //currently pass .bathroom into the navigationLink; need to pass in the anchorType instead, but since the anchor type is currently a string (I think?) it can't be passed through
                         NavigationLink (
-                            destination: LocalizingView(anchorType: anchorType),
+                            destination: LocalAnchorListView(anchorType:  anchorType, nearbyDistance: nearbyDistance),
                             label: {
                                 Text(anchorType.rawValue)
                                     .font(.largeTitle)
@@ -87,6 +96,11 @@ struct AnchorTypeListView: View {
                 Spacer()
             }
         }
+//        }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
+//            if newValue != .none && anchorTypes.isEmpty {
+//                anchorTypes = DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance)
+//            }
+//        }
     }
 }
 

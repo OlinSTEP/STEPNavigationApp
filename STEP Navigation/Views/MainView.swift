@@ -7,9 +7,8 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct MainView: View {
+    @ObservedObject var database = FirebaseManager.shared
     @ObservedObject var positionModel = PositioningModel.shared
     let minimumGeoLocationAccuracy: GeoLocationAccuracy = .low
     
@@ -59,7 +58,7 @@ struct MainView: View {
                         Spacer()
                         
                         NavigationLink(destination: AnchorTypeListView(), label: {
-                            Text("Go to nearby locations")
+                            Text("Next")
                                 .font(.title2)
                                 .bold()
                                 .frame(maxWidth: 300)
