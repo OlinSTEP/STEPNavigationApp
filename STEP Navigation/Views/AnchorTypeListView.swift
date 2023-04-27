@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import CoreLocation
 
-struct AnchorTypeListView: View {    
-    @ObservedObject var database = FirebaseManager.shared
+struct AnchorTypeListView: View {        
+    @State var nearbyDistance: Double = 300
+    @State var showPopup = false
     @State var hasLocalized = false
     @State var anchorTypes: [String] = []
     // Sets the appearance of the Navigation Bar using UIKit
@@ -21,20 +23,51 @@ struct AnchorTypeListView: View {
     }
     
     var body: some View {
+        let anchorTypes = PositioningModel.shared.currentLatLon != nil ? DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance) : []
         // Navigation Stack determines the Navigation Bar
         NavigationStack {
             VStack {
                 // Sets the title text
                 HStack {
-                    Text("Anchor Groups")
+                    Text("Destinations")
                         .font(.largeTitle)
                         .bold()
                         .padding(.horizontal)
                     Spacer()
                 }
-                .padding(.vertical, 20)
+                .padding(.top, 20)
+                .padding(.bottom, 0.5)
+                
+                HStack {
+                    Text("Within \(nearbyDistance, specifier: "%.0f") meters")
+                        .font(.title)
+                        .padding(.leading)
+                    if showPopup == false {
+                        Image(systemName: "chevron.down")
+                            .accessibilityLabel("Open Slider")
+                    } else {
+                        Image(systemName: "chevron.up")
+                            .accessibilityLabel("Close Slider")
+                    }
+                    Spacer()
+                }
+                .padding(.bottom, 20)
+                .onTapGesture {
+                    showPopup.toggle()
+                }
+                
+                if showPopup == true {
+                    HStack {
+                        Text("0")
+                        Slider(value: $nearbyDistance, in: 0...1000, step: 10)
+                        Text("1000")
+                    }
+                    .frame(width: 300)
+                    .padding(.bottom, 20)
+                }
             }
             .background(AppColor.accent)
+            
             
             // The scroll view contains the main body of text
             ScrollView {
@@ -42,10 +75,11 @@ struct AnchorTypeListView: View {
                     // Creates a navigation button for each anchor type
                     ForEach(anchorTypes, id: \.self) {
                         anchorType in
+                        //currently pass .bathroom into the navigationLink; need to pass in the anchorType instead, but since the anchor type is currently a string (I think?) it can't be passed through
                         NavigationLink (
-                            destination: LocalizingView(anchorType: .indoorDestination),
+                            destination: LocalAnchorListView(anchorType:  anchorType, nearbyDistance: nearbyDistance),
                             label: {
-                                Text(anchorType)
+                                Text(anchorType.rawValue)
                                     .font(.largeTitle)
                                     .bold()
                                     .padding(30)
@@ -61,16 +95,17 @@ struct AnchorTypeListView: View {
                 }
                 Spacer()
             }
-        }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
-            if newValue != .none && anchorTypes.isEmpty {
-                anchorTypes = DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: 100.0)
-            }
         }
+//        }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
+//            if newValue != .none && anchorTypes.isEmpty {
+//                anchorTypes = DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance)
+//            }
+//        }
     }
 }
 
-struct AnchorTypeListView_Previews: PreviewProvider {
-    static var previews: some View {
-        AnchorTypeListView()
-    }
-}
+//struct AnchorTypeListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AnchorTypeListView()
+//    }
+//}

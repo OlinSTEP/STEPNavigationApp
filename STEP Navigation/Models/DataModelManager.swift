@@ -74,6 +74,16 @@ class DataModelManager: ObservableObject {
         return allLocationModels
     }
     
+    func getAllIndoorLocationModels() -> Set<LocationDataModel> {
+        var indoorLocations = Set<LocationDataModel>()
+        for anchorType in AnchorType.allCases {
+            if anchorType.isIndoors, let anchorsOfThistype = allLocationModels[anchorType] {
+                indoorLocations.formUnion(anchorsOfThistype)
+            }
+        }
+        return indoorLocations
+    }
+    
     /**
      Returns a set of all AnchorTypes currently in the system
      */
@@ -115,13 +125,15 @@ class DataModelManager: ObservableObject {
          
             - returns: A list of all possible anchor categories
     */
-    private func getNearbyOutdoorDestinationCategories(type: AnchorType, models: Set<LocationDataModel>, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [String] {
+    private func getNearbyOutdoorDestinationTypes(models: Set<LocationDataModel>, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [AnchorType] {
+        var reachableTypesAsSet = Set<AnchorType>()
         for model in models {
-            if model.getLocationCoordinate().distance(from: location) <= maxDistance + withBuffer {
-                return [type.rawValue]
+            if model.getLocationCoordinate().distance(from: location) <= maxDistance + withBuffer &&
+                !model.getAnchorType().isIndoors {
+                reachableTypesAsSet.insert(model.getAnchorType())
             }
         }
-        return []
+        return Array(reachableTypesAsSet)
     }
     
     /**
@@ -133,8 +145,8 @@ class DataModelManager: ObservableObject {
          
             - returns: A list of all possible anchor categories
     */
-    private func getNearbyIndoorDestinationCategories(type: AnchorType, models: Set<LocationDataModel>, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [String] {
-        var categoriesAsSet = Set<String>()
+    private func getNearbyIndoorDestinationTypes(models: Set<LocationDataModel>, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [AnchorType] {
+        var anchorTypesAsSet = Set<AnchorType>()
         var startingLocations: [LocationDataModel] = []
         for model in models {
             if model.getLocationCoordinate().distance(from: location) <= maxDistance + withBuffer {
@@ -144,10 +156,9 @@ class DataModelManager: ObservableObject {
         }
         let reachableSet = NavigationManager.shared.getReachability(from: startingLocations, outOf: models)
         let _ = reachableSet.map({
-            categoriesAsSet.insert($0.getAnchorCategory())
+            anchorTypesAsSet.insert($0.getAnchorType())
         })
-        categoriesAsSet.remove("")
-        return Array(categoriesAsSet).sorted()
+        return Array(anchorTypesAsSet)
     }
 
     
@@ -159,31 +170,46 @@ class DataModelManager: ObservableObject {
          
             - returns: A list of all possible anchor categories
     */
-    func getNearbyDestinationCategories(location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [String] {
-        var allCategories: [String] = []
-        for (type, models) in allLocationModels {
-            if type == .indoorDestination {
-                allCategories += getNearbyIndoorDestinationCategories(type: type, models: models, location: location, maxDistance: maxDistance, withBuffer: withBuffer)
-            } else {
-                allCategories += getNearbyOutdoorDestinationCategories(type: type, models: models, location: location, maxDistance: maxDistance, withBuffer: withBuffer)
-            }
-        }
+    func getNearbyDestinationCategories(location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [AnchorType] {
+        var allCategories: [AnchorType] = []
+        let allModels = getAllDataModels()
+        allCategories += getNearbyIndoorDestinationTypes(models: allModels, location: location, maxDistance: maxDistance, withBuffer: withBuffer)
+        allCategories += getNearbyOutdoorDestinationTypes(models: allModels, location: location, maxDistance: maxDistance, withBuffer: withBuffer)
         return allCategories
+    }
+    
+    private func getAllDataModels()->Set<LocationDataModel> {
+        // TODO is this slow?
+        let start = Date()
+        var allModels = Set<LocationDataModel>()
+        for (_, models) in allLocationModels {
+            allModels.formUnion(models)
+        }
+        
+        print("time \(-start.timeIntervalSinceNow)")
+        return allModels
     }
     
     /**
             Returns a set containing all location data models within the specified distance from the specified location.
          
-            - parameter anchorType: The type of the anchor.
+            - parameter anchorType: The type of the anchor.  If the anchorType is the special value
+                    .indoorDestination, then any anchorType that has isIndoor set to true is okay
             - parameter location: The location to use as the center point for the distance calculation.
             - parameter maxDistance: The maximum distance in meters.
-         
             - returns: A set containing all location data models within the specified distance from the specified location.
     */
-    func getNearbyLocations(for anchorType: AnchorType, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
-        guard let models = allLocationModels[anchorType] else {
-            print("in the guard let")
-            return Set<LocationDataModel>()
+    func getNearbyLocations(for anchorType: AnchorType,
+                            location: CLLocationCoordinate2D,
+                            maxDistance: CLLocationDistance,
+                            withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
+        var models = Set<LocationDataModel>()
+        if anchorType == .indoorDestination {
+            for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
+                models.formUnion(allLocationModels[anchorTypeCase] ?? [])
+            }
+        } else {
+            models.formUnion(allLocationModels[anchorType] ?? [])
         }
         
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)

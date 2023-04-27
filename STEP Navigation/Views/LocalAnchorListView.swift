@@ -12,13 +12,12 @@ struct LocalAnchorListView: View {
 //    @EnvironmentObject private var anchorData: AnchorData
 //    let anchorType: AnchorDetails.AnchorType
     let anchorType: AnchorType
-    let location: CLLocationCoordinate2D
+    let location: CLLocationCoordinate2D? = PositioningModel.shared.currentLatLon
     
     private let listBackgroundColor = AppColor.grey
     private let listTextColor = AppColor.black
     
-    @State private var nearbyDistance: Double = 100
-    @State var showPopup = false
+    @State var nearbyDistance: Double
     @State var chosenStart: LocationDataModel?
     @State var chosenEnd: LocationDataModel?
     @State var outdoorsSelectedAsStart = false
@@ -36,34 +35,6 @@ struct LocalAnchorListView: View {
                 Spacer()
             }
             .padding(.vertical, 20)
-            //Turned off nearby distance slider, set nearby distance to 100 meters.
-//            HStack {
-//                Text("Within \(nearbyDistance, specifier: "%.0f") meters")
-//                    .font(.title)
-//                    .padding(.leading)
-//                if showPopup == false {
-//                    Image(systemName: "chevron.down")
-//                } else {
-//                    Image(systemName: "chevron.up")
-//                }
-//                // want to make the chevron bigger/easier to see/etc - not sure how thought??
-//                Spacer()
-//            }
-//            .padding(.bottom, 20)
-//            .onTapGesture {
-//                showPopup.toggle()
-//                // in real life would want to present dropdown popup
-//            }
-//
-//            if showPopup == true {
-//                HStack {
-//                    Text("0")
-//                    Slider(value: $nearbyDistance, in: 0...100, step: 10)
-//                    Text("100")
-//                }
-//                .frame(width: 300)
-//                .padding(.bottom, 20)
-//            }
         }.onReceive(positionModel.$currentLatLon) { latLon in
             guard let latLon = latLon else {
                 return
@@ -221,7 +192,6 @@ struct ChooseAnchorComponentView: View {
                     .padding()
                     .multilineTextAlignment(.center)
                 Spacer()
-                Text("\(anchors)" as String)
             }
             
         } else {
@@ -336,6 +306,6 @@ struct ChooseAnchorComponentView: View {
 
 struct AnchorListView_Previews: PreviewProvider {
     static var previews: some View {
-        LocalAnchorListView(anchorType: .busStop, location: CLLocationCoordinate2D(latitude: 42, longitude: -71))
+        LocalAnchorListView(anchorType: .busStop, nearbyDistance: 100)
     }
 }

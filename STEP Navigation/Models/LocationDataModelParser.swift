@@ -38,7 +38,7 @@ struct LocationDataModelParser {
             for i in 0...stopsRaw.count-1 {
                 let stop = stopsRaw[i]
                 let coordinates = CLLocationCoordinate2D(latitude: stop.Latitude, longitude: stop.Longitude)
-                locationModels.insert(LocationDataModel(anchorType: anchorType, anchorCategory: "", coordinates: coordinates, associatedOutdoorFeature: nil, name: stop.Stop_name))
+                locationModels.insert(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: nil, coordinates: coordinates, name: stop.Stop_name))
             }
         case .externalDoor:
             print("Decode external door file.")
@@ -53,7 +53,7 @@ struct LocationDataModelParser {
                 let door = doorsRaw[i]
                 let name = door.properties.name
                 let coordinates = CLLocationCoordinate2D(latitude: door.geometry.coordinates[1], longitude: door.geometry.coordinates[0])
-                locationModels.insert(LocationDataModel(anchorType: anchorType, anchorCategory: "", coordinates: coordinates, associatedOutdoorFeature: nil, name: name))
+                locationModels.insert(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: nil, coordinates: coordinates, name: name))
             }
         default:
             print("Not valid anchor type \(anchorType)")

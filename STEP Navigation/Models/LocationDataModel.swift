@@ -13,7 +13,6 @@ import CoreLocation
 */
 struct LocationDataModel: Hashable {
     private let anchorType: AnchorType
-    private let anchorCategory: String
     private let associatedOutdoorFeature: String?
     private let coordinates: CLLocationCoordinate2D
     private let notes: String?
@@ -25,21 +24,18 @@ struct LocationDataModel: Hashable {
         Initializes a new location data model.
      
         - parameter anchorType: The type of the anchor.
-        - parameter anchorCategory: The category of the anchor
         - parameter coordinates: the latitude and longitude of the model
-        - parameter location: The location of the data model.
         - parameter notes: Any additional notes about the location.
         - parameter name: The name of the location.
+        - parameter cloudAnchorID: the anchor id associated with this model
     */
     init(anchorType: AnchorType,
-         anchorCategory: String,
+         associatedOutdoorFeature: String?=nil,
          coordinates: CLLocationCoordinate2D,
-         associatedOutdoorFeature: String?,
          notes: String? = "",
          name: String,
          cloudAnchorID: String?=nil) {
         self.anchorType = anchorType
-        self.anchorCategory = anchorCategory
         self.associatedOutdoorFeature = associatedOutdoorFeature
         self.coordinates = coordinates
         self.notes = notes
@@ -79,10 +75,6 @@ struct LocationDataModel: Hashable {
         return self.anchorType
     }
     
-    func getAnchorCategory() -> String {
-        return self.anchorCategory
-    }
-    
     func getLocationCoordinate() -> CLLocationCoordinate2D {
         return self.coordinates
     }
@@ -112,7 +104,7 @@ An enum representing the different types of anchors that can be used to categori
 - case bathroom: Represents a bathroom anchor type.
 - case frontdesk: Represents a front desk anchor type.
 */
-enum AnchorType: String, Identifiable {
+enum AnchorType: String, CaseIterable, Identifiable {
     var id: String {
         return rawValue
     }
@@ -122,5 +114,24 @@ enum AnchorType: String, Identifiable {
     case bathroom = "Bathroom"
     case frontdesk = "Front Desk"
     case indoorDestination = "Indoor"
+    case room = "Room"
+    case waterFountain = "Water Fountain"
+    
+    var isIndoors: Bool {
+        switch self {
+        case .bathroom:
+            return true
+        case .frontdesk:
+            return true
+        case .waterFountain:
+            return true
+        case .room:
+            return true
+        case .indoorDestination:
+            return true
+        default:
+            return false
+        }
+    }
 //    case indoorDestination = "Indoors (temporary category)"
 }

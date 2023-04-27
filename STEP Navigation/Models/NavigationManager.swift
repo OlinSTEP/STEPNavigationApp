@@ -128,9 +128,8 @@ class NavigationManager: ObservableObject {
             }
             anchorGraph.addEdge(from: nodeInfo.from, to: nodeInfo.to, weight: edgeInfo.cost, directed: true)
         }
-        guard let indoorLocations = DataModelManager.shared.getAllLocationModels()[.indoorDestination] else {
-            return anchorGraph
-        }
+        let indoorLocations = DataModelManager.shared.getAllIndoorLocationModels()
+
         for indoorLocation in indoorLocations {
             if let cloudID = indoorLocation.getCloudAnchorID(),
                let associatedOutdoorFeature = indoorLocation.getAssociatedOutdoorFeature(),

@@ -40,18 +40,18 @@ struct LocalizingView: View {
     
                         Spacer()
                         
-                        NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon)) {
-                            Text("Go to nearby locations")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: 300)
-                                .foregroundColor(AppColor.black)
-                        }
-                        .padding(.bottom, 50)
-                        .tint(AppColor.accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
+//                        NavigationLink(destination: LocalAnchorListView(anchorType: anchorType, location: currentLatLon)) {
+//                            Text("Go to nearby locations")
+//                                .font(.title2)
+//                                .bold()
+//                                .frame(maxWidth: 300)
+//                                .foregroundColor(AppColor.black)
+//                        }
+//                        .padding(.bottom, 50)
+//                        .tint(AppColor.accent)
+//                        .buttonStyle(.borderedProminent)
+//                        .buttonBorderShape(.capsule)
+//                        .controlSize(.large)
                     }
                 } else {
                     Text("Inconsistent State.  Contact your developer")
@@ -59,7 +59,7 @@ struct LocalizingView: View {
             } else  {
                 VStack {
                     HStack {
-                        Text("Localizing...")
+                        Text("Localizing")
                             .foregroundColor(AppColor.white)
                             .bold()
                             .font(.title2)
