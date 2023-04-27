@@ -142,12 +142,10 @@ class DataModelManager: ObservableObject {
                 startingLocations.append(model)
             }
         }
-        for startingLocation in startingLocations {
-            let reachableSet = NavigationManager.shared.getReachability(from: startingLocation, outOf: models)
-            let _ = reachableSet.map({
-                categoriesAsSet.insert($0.getAnchorCategory())
-            })
-        }
+        let reachableSet = NavigationManager.shared.getReachability(from: startingLocations, outOf: models)
+        let _ = reachableSet.map({
+            categoriesAsSet.insert($0.getAnchorCategory())
+        })
         categoriesAsSet.remove("")
         return Array(categoriesAsSet).sorted()
     }

@@ -57,20 +57,61 @@ class NavigationManager: ObservableObject {
         return pool.map({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil && start != $0 })
     }
     
-    /// Filter a list of destinations based on their rechability from the start
+    /// Returns the set of destinations that can be reached from the specified pool
+    /// starting from at least one of the specified starting locations
+    /// - Parameters:
+    ///   - from: the list of possible locations to start from
+    ///   - pool: the set of locations to test for reachability
+    /// - Returns: the reachable destinations in pool starting from an element of
+    ///       start locations.
+    func getReachability(from startLocations: [LocationDataModel], outOf pool: Set<LocationDataModel>)->Set<LocationDataModel> {
+        var reachableCloudAnchorIDs = Set<String>()
+        let anchorGraph = makeWeightedGraph()
+        let cloudAnchorIDsInPool = pool.compactMap({ $0.getCloudAnchorID() })
+
+        for start in startLocations {
+            guard let cloudID = start.getCloudAnchorID() else {
+                continue
+            }
+            let reachableNodes = anchorGraph.findAllBfs(from: cloudID) { v in
+                cloudAnchorIDsInPool.contains(v)
+            }
+            for route in reachableNodes {
+                if let lastNode = route.last?.v {
+                    reachableCloudAnchorIDs.insert(anchorGraph[lastNode])
+                }
+            }
+        }
+        return pool.filter({
+            reachableCloudAnchorIDs.contains($0.getCloudAnchorID() ?? "")
+        })
+    }
+    
+    /// Filter a list of destinations based on their reachability from the start
     /// - Parameters:
     ///   - start: the start location
     ///   - pool: the potential destinations
     /// - Returns: a set of reachable destination
-    func getReachability(from start: LocationDataModel, outOf pool: Set<LocationDataModel>)->Set<LocationDataModel> {
+    func getReachability(from start: LocationDataModel, outOf pool:
+                         Set<LocationDataModel>)->Set<LocationDataModel> {
         guard let cloudID = start.getCloudAnchorID() else {
             return []
         }
+        var reachableCloudAnchorIDs = Set<String>()
+        let cloudAnchorIDsInPool = pool.compactMap({ $0.getCloudAnchorID() })
         // TODO: need to avoid recreating the graph constantly
         let anchorGraph = makeWeightedGraph()
-        let (distances, _) = anchorGraph.dijkstra(root: cloudID, startDistance: 0)
-        let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
-        return pool.filter({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil && start != $0 })
+        let reachableNodes = anchorGraph.findAllBfs(from: cloudID) { v in
+            cloudAnchorIDsInPool.contains(v)
+        }
+        for route in reachableNodes {
+            if let lastNode = route.last?.v {
+                reachableCloudAnchorIDs.insert(anchorGraph[lastNode])
+            }
+        }
+        return pool.filter({
+            reachableCloudAnchorIDs.contains($0.getCloudAnchorID() ?? "")
+        })
     }
     
     /// Creates the weighted graph from the currently recorded nodes and edges.
@@ -98,14 +139,16 @@ class NavigationManager: ObservableObject {
                 anchorGraph.addEdge(from: "outdoors", to: cloudID, weight: Float(currentLatLon.distance(from: searchLatLon.getLocationCoordinate())), directed: true)
             }
         }
-        printNodeGraph(graph: anchorGraph)
         return anchorGraph
     }
     
+    /// A utility function for printing the nodes and edges of a graph.  This function
+    /// makes a bunch of assumptions about the graph structure (e.g., that each of the
+    /// vertices (of String type) correspond either to a cloud anchor ID or a "outdoors")
+    /// - Parameter graph: a graph describing the node connectivity
     private func printNodeGraph(graph: WeightedGraph<String, Float>) {
         print("VERTICES")
         for node in graph.vertices {
-            
             print("  - \(FirebaseManager.shared.getCloudAnchorName(byID: node) ?? node)")
         }
         print("EDGES")
