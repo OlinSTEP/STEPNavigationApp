@@ -174,6 +174,13 @@ class NavigationManager: ObservableObject {
         return stops
     }
     
+    func computePathToOutdoorMarker(outsideStart: CLLocationCoordinate2D) {
+        if let garAnchor = PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") {
+            let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
+            RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint])
+        }
+    }
+    
     func computeMultisegmentPath(_ cloudAnchors: [String], outsideStart: CLLocationCoordinate2D?=nil) {
         guard !cloudAnchors.isEmpty else {
             fatalError("the path unexpectedly has no cloud anchors")

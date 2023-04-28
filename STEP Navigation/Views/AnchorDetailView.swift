@@ -11,8 +11,6 @@ import CoreLocation
 struct AnchorDetailView: View {
     let anchorDetails: LocationDataModel
     
-    
-    
     var body: some View {
         ZStack {
             VStack {
@@ -59,18 +57,33 @@ struct AnchorDetailView: View {
                 .padding()
                                 
                 Spacer()
-                NavigationLink (destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchorDetails), label: {
-                    Text("Navigate")
-                        .font(.title)
-                        .bold()
-                        .frame(maxWidth: 300)
-                        .foregroundColor(AppColor.black)
-                })
-                .padding(.bottom, 20)
-                .tint(AppColor.accent)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
+                if anchorDetails.getAnchorType().isIndoors {
+                    NavigationLink (destination: ChooseStartAnchorView(destinationAnchorDetails: anchorDetails), label: {
+                        Text("Find Start Anchor")
+                            .font(.title)
+                            .bold()
+                            .frame(maxWidth: 300)
+                            .foregroundColor(AppColor.black)
+                    })
+                    .padding(.bottom, 20)
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                } else {
+                    NavigationLink (destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchorDetails), label: {
+                        Text("Navigate")
+                            .font(.title)
+                            .bold()
+                            .frame(maxWidth: 300)
+                            .foregroundColor(AppColor.black)
+                    })
+                    .padding(.bottom, 20)
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                }
             }
         }
     }

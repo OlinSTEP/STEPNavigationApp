@@ -36,7 +36,7 @@ class PathPlanner {
     
     func prepareToNavigateFromOutdoors(to end: LocationDataModel) {
         guard let cloudAnchorID = end.getCloudAnchorID() else {
-            // Note: this shouldn't happen
+            NavigationManager.shared.computePathToOutdoorMarker(outsideStart: end.getLocationCoordinate())
             return
         }
         PathLogger.shared.startLoggingData()

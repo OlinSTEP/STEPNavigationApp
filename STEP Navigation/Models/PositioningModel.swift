@@ -245,7 +245,7 @@ class RendererHelper {
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
         let mesh = MeshResource.generateBox(size: 0.5)
-        let material = SimpleMaterial(color: .green, isMetallic: false)
+        let material = SimpleMaterial(color: UIColor(red: 23/255.0, green: 94/255.0, blue: 94/255.0, alpha: 1.0), isMetallic: false)
         keypointEntity?.removeFromParent()
         keypointEntity = ModelEntity(mesh: mesh, materials: [material])
         keypointEntity!.position = location.translation

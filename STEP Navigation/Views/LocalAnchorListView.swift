@@ -142,13 +142,13 @@ struct LocationDataModelWrapper: Hashable {
     var isSelected: Bool
 }
 
-/// This type is used to specify to the ChooseAnchorComponentView whether we are choosing the anchor in the context of indoor or outdoor navigation.  Further, if indoors, we differentiate between the start and end of a route
 enum AnchorSelectionType {
     case startOfIndoorRoute
     case endOfIndoorRoute
     case destinationOutdoors
 }
 
+/// This type is used to specify to the ChooseAnchorComponentView whether we are choosing the anchor in the context of indoor or outdoor navigation.  Further, if indoors, we differentiate between the start and end of a route
 struct ChooseAnchorComponentView: View {
     var anchors: Binding<[LocationDataModel]>
     var allAnchors: Binding<[LocationDataModel]>
