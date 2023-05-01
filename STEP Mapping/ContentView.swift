@@ -8,6 +8,8 @@
 import SwiftUI
 import RealityKit
 import Charts
+import ARCoreGeospatial
+import ARCore
 
 enum MainScreenType {
     case createAnchor
@@ -433,14 +435,14 @@ struct DeleteCloudAnchor: View {
 }
 
 struct ConnectAnchorView: View {
-    @ObservedObject var positioningModel = PositioningModel.shared
     @State var anchorID1 = FirebaseManager.shared.firstCloudAnchor ?? ""
     @State var anchorID2 = FirebaseManager.shared.firstCloudAnchor ?? ""
     @ObservedObject var firebaseManager = FirebaseManager.shared
+    @State var currentQuality: GARFeatureMapQuality?
     
     var body: some View {
         VStack {
-            if let currentQuality = PositioningModel.shared.currentQuality {
+            if let currentQuality = currentQuality {
                 switch currentQuality {
                 case .insufficient:
                     Text("Anchor quality insufficient")
@@ -481,6 +483,9 @@ struct ConnectAnchorView: View {
         }
         .background(Color.orange)
         .padding()
+        .onReceive(PositioningModel.shared.$currentQuality) { newQuality in
+            currentQuality = newQuality
+        }
     }
 }
 
