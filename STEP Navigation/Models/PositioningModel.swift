@@ -51,6 +51,7 @@ class PositioningModel: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     private var garSession: GARSession?
     private var latestGARAnchors: [GARAnchor]? = nil
+    var qualityChecker: Timer?
     public static var shared = PositioningModel()
     @Published var currentQuality: GARFeatureMapQuality?
     
@@ -193,6 +194,7 @@ extension PositioningModel: ARSessionDelegate {
         PathLogger.shared.logPose(frame.camera.transform, timestamp: frame.timestamp)
         if frame.camera.trackingState == .normal && garSession == nil {
             startGARSession()
+            monitorQuality()
         }
         do {
             if let garFrame = try garSession?.update(frame) {
@@ -288,6 +290,29 @@ extension PositioningModel: ARSessionDelegate {
         let poseIndex = max(0, poseBuffer.count - Self.poseBufferLookbackForCloudAnchorAssessment)
         let poseToUseForQualityEstimation = poseBuffer[poseIndex].alignY()
         return createCloudAnchor(atPose: poseToUseForQualityEstimation, withMetadata: metadata)
+    }
+    
+    func monitorQuality() {
+        qualityChecker?.invalidate()
+        qualityChecker = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            guard let cameraTransform = self.arView.session.currentFrame?.camera.transform,
+                  let geoSpatialTransfrom = self.garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform else {
+                return
+            }
+            // TODO: not the best data structure
+            self.poseBuffer.append(cameraTransform)
+            if self.poseBuffer.count > Self.poseBufferMaxLength {
+                // equivalent to pop front
+                self.poseBuffer = Array(self.poseBuffer[1...])
+            }
+            do {
+                let poseIndex = max(0, self.poseBuffer.count - Self.poseBufferLookbackForCloudAnchorAssessment)
+                let poseToUseForQualityEstimation = self.poseBuffer[poseIndex]
+                self.estimateFeatureMapQualityForHosting(pose: poseToUseForQualityEstimation)
+            } catch {
+                
+            }
+        }
     }
     
     func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata)->(GARAnchor, ARAnchor)? {
