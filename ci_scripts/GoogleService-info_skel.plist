@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>956432485698-3igt2l7d5plagf2tf6hl1e1j68mbua0n.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.956432485698-3igt2l7d5plagf2tf6hl1e1j68mbua0n</string>
+	<key>API_KEY</key>
+	<string>GOOGLE_SERVICE_KEY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>956432485698</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>edu.occamlab.STEP-Navigation</string>
+	<key>PROJECT_ID</key>
+	<string>stepnavigation</string>
+	<key>STORAGE_BUCKET</key>
+	<string>stepnavigation.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:956432485698:ios:0b54684cb1d6fc8d1b4cdb</string>
+</dict>
+</plist>
+
