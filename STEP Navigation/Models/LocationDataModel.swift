@@ -116,6 +116,7 @@ enum AnchorType: String, CaseIterable, Identifiable {
     case indoorDestination = "Indoor"
     case room = "Room"
     case waterFountain = "Water Fountain"
+    case path = "path"
     
     var isIndoors: Bool {
         switch self {
