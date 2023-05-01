@@ -20,6 +20,7 @@ struct LocalAnchorListView: View {
     @State var nearbyDistance: Double
     @State var chosenStart: LocationDataModel?
     @State var chosenEnd: LocationDataModel?
+    @State var outdoorsSelectedAsStart = false
     @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
     @State var allAnchors: [LocationDataModel] = []
@@ -69,7 +70,7 @@ struct LocalAnchorListView: View {
                 ChooseAnchorComponentView(anchorSelectionType: .startOfIndoorRoute,
                                           anchors: $anchors,
                                           allAnchors: $allAnchors,
-                                          chosenAnchor: $chosenStart,
+                                          chosenAnchor: $chosenStart, outdoorsSelected: $outdoorsSelectedAsStart,
                                           otherAnchor: $chosenEnd)
             }
             Section(header: Text("TO").font(.title).fontWeight(.heavy)) {
@@ -77,11 +78,27 @@ struct LocalAnchorListView: View {
                                           anchors: $anchors,
                                           allAnchors: $allAnchors,
                                           chosenAnchor: $chosenEnd,
+                                          outdoorsSelected: $outdoorsSelectedAsStart,
                                           otherAnchor: $chosenStart)
             }
             if let chosenStart = chosenStart, let chosenEnd = chosenEnd {
                 NavigationLink (destination: CloudAnchorsDetailView(startAnchorDetails: chosenStart, destinationAnchorDetails: chosenEnd), label: {
                     Text("Next")
+                        .font(.title)
+                        .bold()
+                        .frame(maxWidth: 300)
+                        .foregroundColor(AppColor.black)
+                })
+                .padding(.bottom, 20)
+                .padding(.top, 20)
+                .tint(AppColor.accent)
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+            } else if outdoorsSelectedAsStart, let chosenEnd = chosenEnd {
+                // TODO: need to figure out the detail view for this
+                NavigationLink (destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: chosenEnd), label: {
+                    Text("Navigate")
                         .font(.title)
                         .bold()
                         .frame(maxWidth: 300)
@@ -99,6 +116,7 @@ struct LocalAnchorListView: View {
                                       anchors: $anchors,
                                       allAnchors: $allAnchors,
                                       chosenAnchor: $chosenEnd,
+                                      outdoorsSelected: $outdoorsSelectedAsStart,
                                       otherAnchor: $chosenStart)
         }
     }
@@ -124,36 +142,48 @@ struct LocationDataModelWrapper: Hashable {
     var isSelected: Bool
 }
 
-/// This type is used to specify to the ChooseAnchorComponentView whether we are choosing the anchor in the context of indoor or outdoor navigation.  Further, if indoors, we differentiate between the start and end of a route
 enum AnchorSelectionType {
     case startOfIndoorRoute
     case endOfIndoorRoute
     case destinationOutdoors
 }
 
+/// This type is used to specify to the ChooseAnchorComponentView whether we are choosing the anchor in the context of indoor or outdoor navigation.  Further, if indoors, we differentiate between the start and end of a route
 struct ChooseAnchorComponentView: View {
     var anchors: Binding<[LocationDataModel]>
     var allAnchors: Binding<[LocationDataModel]>
     let anchorSelectionType: AnchorSelectionType
     var chosenAnchor : Binding<LocationDataModel?>
     var otherAnchor : Binding<LocationDataModel?>
+    var outdoorsSelected: Binding<Bool>
     
     init(anchorSelectionType: AnchorSelectionType,
          anchors: Binding<[LocationDataModel]>,
          allAnchors: Binding<[LocationDataModel]>,
          chosenAnchor: Binding<LocationDataModel?>,
+         outdoorsSelected: Binding<Bool>,
          otherAnchor: Binding<LocationDataModel?>) {
         self.anchorSelectionType = anchorSelectionType
         self.anchors = anchors
         self.allAnchors = allAnchors
         self.chosenAnchor = chosenAnchor
+        self.outdoorsSelected = outdoorsSelected
         self.otherAnchor = otherAnchor
+    }
+    
+    func getReachabilityMask(candidateAnchors: [LocationDataModel])->[Bool] {
+        let isReachable: [Bool]
+        if anchorSelectionType == .endOfIndoorRoute && outdoorsSelected.wrappedValue {
+            isReachable = NavigationManager.shared.getReachabilityFromOutdoors(outOf: candidateAnchors)
+        } else {
+            isReachable = otherAnchor.wrappedValue == nil ? Array(repeating: true, count: anchors.count) : NavigationManager.shared.getReachability(from: otherAnchor.wrappedValue!, outOf: candidateAnchors)
+        }
+        return isReachable
     }
     
     var body: some View {
         let candidateAnchors: [LocationDataModel] = otherAnchor.wrappedValue != nil ? allAnchors.wrappedValue : anchors.wrappedValue
-        
-        let isReachable: [Bool] = otherAnchor.wrappedValue == nil ? Array(repeating: true, count: anchors.count) : NavigationManager.shared.getReachability(from: otherAnchor.wrappedValue!, outOf: candidateAnchors)
+        let isReachable = getReachabilityMask(candidateAnchors: candidateAnchors)
         if candidateAnchors.isEmpty {
             VStack {
                 Spacer()
@@ -168,25 +198,44 @@ struct ChooseAnchorComponentView: View {
             ScrollView {
                 VStack {
                     // TODO: this is pretty unwieldy (code sharing is pretty low here).  Maybe we should create a separate view type?
+                    if anchorSelectionType == .startOfIndoorRoute {
+                        Button(action: {
+                            outdoorsSelected.wrappedValue.toggle()
+                            chosenAnchor.wrappedValue = nil
+                        }) {
+                            HStack {
+                                Text("Outside")
+                                    .font(.title)
+                                    .bold()
+                                    .padding(30)
+                                    .multilineTextAlignment(.leading)
+                                Spacer()
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(minHeight: 100)
+                            .background(outdoorsSelected.wrappedValue ? AppColor.accent : AppColor.grey)
+                            .cornerRadius(20)
+                            .padding(.horizontal)
+                            .accessibilityAddTraits(outdoorsSelected.wrappedValue ? [.isSelected] : [])
+                        }
+                    }
                     ForEach(0..<candidateAnchors.count, id: \.self) { idx in
                         if anchorSelectionType == .destinationOutdoors {
-                            VStack {
-                                NavigationLink (
-                                   destination: AnchorDetailView(anchorDetails: candidateAnchors[idx]),
-                                   label: {
-                                       HStack {
-                                           Text(candidateAnchors[idx].getName())
-                                               .font(.title)
-                                               .bold()
-                                               .padding(30)
-                                               .multilineTextAlignment(.leading)
-                                           Spacer()
-                                       }
-                                       .frame(maxWidth: .infinity)
-                                       .frame(minHeight: 140)
-                                       .foregroundColor(AppColor.black)
-                                   })
-                            }
+                            NavigationLink (
+                                destination: AnchorDetailView(anchorDetails: candidateAnchors[idx]),
+                                label: {
+                                    HStack {
+                                        Text(candidateAnchors[idx].getName())
+                                            .font(.title)
+                                            .bold()
+                                            .padding(30)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer()
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .frame(minHeight: 140)
+                                    .foregroundColor(AppColor.black)
+                                })
                             .background(AppColor.accent)
                             .cornerRadius(20)
                             .padding(.horizontal)
@@ -195,6 +244,9 @@ struct ChooseAnchorComponentView: View {
                             if isReachable[idx] {
                                 VStack {
                                     Button {
+                                        if anchorSelectionType == .startOfIndoorRoute {
+                                            outdoorsSelected.wrappedValue = false
+                                        }
                                         if chosenAnchor.wrappedValue == candidateAnchors[idx] {
                                             chosenAnchor.wrappedValue = nil
                                         } else {

@@ -1,6 +1,6 @@
 //
 //  NavigationManager.swift
-//  InvisibleMapTake2
+//  STEP Navigation
 //
 //  Created by Paul Ruvolo on 4/5/23.
 //
@@ -20,7 +20,8 @@ class NavigationManager: ObservableObject {
     @Published var navigationDirection: String?
     /// previous keypoint location - originally set to current location
     var prevKeypointPosition: simd_float4x4!
-    
+    /// stores whether we are localized ot the next part of the route (how to compute this and keep it current).  Could do this timer based?
+    @Published var localizedToNextKeypoint: Bool = false
     /// haptic feedback timer
     var hapticTimer: Timer?
     
@@ -32,6 +33,13 @@ class NavigationManager: ObservableObject {
     
     private init() {
         
+    }
+    
+    func getReachabilityFromOutdoors(outOf pool: [LocationDataModel])->[Bool] {
+        let anchorGraph = makeWeightedGraph()
+        let (distances, _) = anchorGraph.dijkstra(root: "outdoors", startDistance: 0)
+        let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
+        return pool.map({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil })
     }
     
     /// Get a Boolean array that specifies the reachability of each of the pool of candidates from the starting location
@@ -49,37 +57,105 @@ class NavigationManager: ObservableObject {
         return pool.map({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil && start != $0 })
     }
     
-    /// Filter a list of destinations based on their rechability from the start
+    /// Returns the set of destinations that can be reached from the specified pool
+    /// starting from at least one of the specified starting locations
+    /// - Parameters:
+    ///   - from: the list of possible locations to start from
+    ///   - pool: the set of locations to test for reachability
+    /// - Returns: the reachable destinations in pool starting from an element of
+    ///       start locations.
+    func getReachability(from startLocations: [LocationDataModel], outOf pool: Set<LocationDataModel>)->Set<LocationDataModel> {
+        var reachableCloudAnchorIDs = Set<String>()
+        let anchorGraph = makeWeightedGraph()
+        let cloudAnchorIDsInPool = pool.compactMap({ $0.getCloudAnchorID() })
+
+        for start in startLocations {
+            guard let cloudID = start.getCloudAnchorID() else {
+                continue
+            }
+            let reachableNodes = anchorGraph.findAllBfs(from: cloudID) { v in
+                cloudAnchorIDsInPool.contains(v)
+            }
+            for route in reachableNodes {
+                if let lastNode = route.last?.v {
+                    reachableCloudAnchorIDs.insert(anchorGraph[lastNode])
+                }
+            }
+        }
+        return pool.filter({
+            reachableCloudAnchorIDs.contains($0.getCloudAnchorID() ?? "")
+        })
+    }
+    
+    /// Filter a list of destinations based on their reachability from the start
     /// - Parameters:
     ///   - start: the start location
     ///   - pool: the potential destinations
     /// - Returns: a set of reachable destination
-    func getReachability(from start: LocationDataModel, outOf pool: Set<LocationDataModel>)->Set<LocationDataModel> {
+    func getReachability(from start: LocationDataModel, outOf pool:
+                         Set<LocationDataModel>)->Set<LocationDataModel> {
         guard let cloudID = start.getCloudAnchorID() else {
             return []
         }
+        var reachableCloudAnchorIDs = Set<String>()
+        let cloudAnchorIDsInPool = pool.compactMap({ $0.getCloudAnchorID() })
+        // TODO: need to avoid recreating the graph constantly
         let anchorGraph = makeWeightedGraph()
-        let (distances, _) = anchorGraph.dijkstra(root: cloudID, startDistance: 0)
-        let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
-        let cloudAnchorPool = pool.filter({ $0.getCloudAnchorID() != nil })
-        return cloudAnchorPool.filter({ nameDistance[$0.getCloudAnchorID()!]! != nil && start != $0 })
+        let reachableNodes = anchorGraph.findAllBfs(from: cloudID) { v in
+            cloudAnchorIDsInPool.contains(v)
+        }
+        for route in reachableNodes {
+            if let lastNode = route.last?.v {
+                reachableCloudAnchorIDs.insert(anchorGraph[lastNode])
+            }
+        }
+        return pool.filter({
+            reachableCloudAnchorIDs.contains($0.getCloudAnchorID() ?? "")
+        })
     }
     
     /// Creates the weighted graph from the currently recorded nodes and edges.
     /// Note: this doesn't auto update with Firebase changes
     /// - Returns: the weighted SwiftGraph
     private func makeWeightedGraph()->WeightedGraph<String, Float> {
-        let nodes = FirebaseManager.shared.pathGraph.cloudNodes
+        let currentLatLon = PositioningModel.shared.currentLatLon ?? CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
+        let nodes = FirebaseManager.shared.pathGraph.cloudNodes + ["outdoors"]
         let edges = FirebaseManager.shared.pathGraph.connections
         let anchorGraph = WeightedGraph<String, Float>(vertices: Array(nodes))
         for (nodeInfo, edgeInfo) in edges {
             guard nodes.contains(nodeInfo.from), nodes.contains(nodeInfo.to) else {
                 continue
             }
-            print("adding \(nodeInfo.from) \(nodeInfo.to)")
             anchorGraph.addEdge(from: nodeInfo.from, to: nodeInfo.to, weight: edgeInfo.cost, directed: true)
         }
+        let indoorLocations = DataModelManager.shared.getAllIndoorLocationModels()
+
+        for indoorLocation in indoorLocations {
+            if let cloudID = indoorLocation.getCloudAnchorID(),
+               let associatedOutdoorFeature = indoorLocation.getAssociatedOutdoorFeature(),
+               // TODO: we really need the identifier to be persistent (not named based)
+               let searchLatLon = DataModelManager.shared.getLocationDataModel(byName: associatedOutdoorFeature) {
+                anchorGraph.addEdge(from: "outdoors", to: cloudID, weight: Float(currentLatLon.distance(from: searchLatLon.getLocationCoordinate())), directed: true)
+            }
+        }
         return anchorGraph
+    }
+    
+    /// A utility function for printing the nodes and edges of a graph.  This function
+    /// makes a bunch of assumptions about the graph structure (e.g., that each of the
+    /// vertices (of String type) correspond either to a cloud anchor ID or a "outdoors")
+    /// - Parameter graph: a graph describing the node connectivity
+    private func printNodeGraph(graph: WeightedGraph<String, Float>) {
+        print("VERTICES")
+        for node in graph.vertices {
+            print("  - \(FirebaseManager.shared.getCloudAnchorName(byID: node) ?? node)")
+        }
+        print("EDGES")
+        for outgoingEdges in graph.edges {
+            for edge in outgoingEdges {
+                print(" - \(FirebaseManager.shared.getCloudAnchorName(byID: graph.vertices[edge.u]) ?? graph.vertices[edge.u]) to \(FirebaseManager.shared.getCloudAnchorName(byID: graph.vertices[edge.v]) ?? graph.vertices[edge.v]) weight: \(edge.weight)")
+            }
+        }
     }
     
     /// Computes the path between the two specified anchors.  The path is stored within the navigation to enable navigation guidance as the user moves through the environment.
@@ -98,17 +174,33 @@ class NavigationManager: ObservableObject {
         return stops
     }
     
-    func computeMultisegmentPath(_ cloudAnchors: [String]) {
+    func computePathToOutdoorMarker(outsideStart: CLLocationCoordinate2D) {
+        if let garAnchor = PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") {
+            let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
+            RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint])
+        }
+    }
+    
+    func computeMultisegmentPath(_ cloudAnchors: [String], outsideStart: CLLocationCoordinate2D?=nil) {
+        guard !cloudAnchors.isEmpty else {
+            fatalError("the path unexpectedly has no cloud anchors")
+        }
+        let finalCloudAnchors: [String]
         var poses: [simd_float4x4] = []
-        if cloudAnchors.count == 1 {
+        if outsideStart != nil {
+            finalCloudAnchors = Array(cloudAnchors[1...])
+        } else {
+            finalCloudAnchors = cloudAnchors
+        }
+        if finalCloudAnchors.count == 1 {
             // TODO: think of how to handle this case
             return
         }
         var aligner = matrix_identity_float4x4
         var endTransformFromPreviousEdge: simd_float4x4?
         var landmarks: [String: simd_float4x4] = [:]
-        for (a_n, a_nplus1) in zip(cloudAnchors[0..<cloudAnchors.count-1],
-                                   cloudAnchors[1...]) {
+        for (a_n, a_nplus1) in zip(finalCloudAnchors[0..<finalCloudAnchors.count-1],
+                finalCloudAnchors[1...]) {
             guard let edge = FirebaseManager.shared.pathGraph.connections[NodePair(from: a_n, to: a_nplus1)] else {
                 FirebaseManager.shared.pathGraph.printEdges()
                 // AnnouncementManager.shared.announce(announcement: "unexpectedly didn't find connection")
@@ -128,10 +220,20 @@ class NavigationManager: ObservableObject {
             poses.append(endTransformFromPreviousEdge!)
         }
         let routeKeypoints = MultiSegmentPathBuilder(crumbs: poses, manualKeypointIndices: []).keypoints
-        //AnnouncementManager.shared.announce(announcement: "route has \(landmarks.count) cloud anchors")
-        RouteNavigator.shared.setRouteKeypoints(kps: routeKeypoints)
+        if let outsideStart = outsideStart,
+           let garAnchor = PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") {
+
+            let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
+            RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint] + routeKeypoints)
+        } else {
+            RouteNavigator.shared.setRouteKeypoints(kps: routeKeypoints)
+        }
         PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
-        RouteNavigator.shared.routeNameForLogging = "\(FirebaseManager.shared.getCloudAnchorName(byID: cloudAnchors.first!)!)_\(FirebaseManager.shared.getCloudAnchorName(byID: cloudAnchors.last!)!)_\(UUID().uuidString)"
+        if outsideStart != nil {
+            RouteNavigator.shared.routeNameForLogging = "outside_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
+        } else {
+            RouteNavigator.shared.routeNameForLogging = "\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.first!)!)_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
+        }
     }
 
     func startNavigating() {
@@ -141,7 +243,7 @@ class NavigationManager: ObservableObject {
         hapticTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: (#selector(getHapticFeedback)), userInfo: nil, repeats: true)
         followingCrumbs = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: (#selector(self.followCrumb)), userInfo: nil, repeats: true)
         HapticFeedbackAdapter.shared.startEndOfRouteHaptics()
-        PositioningModel.shared.renderKeypoint(at: RouteNavigator.shared.nextKeypoint!.location)
+        PositioningModel.shared.renderKeypoint(RouteNavigator.shared.nextKeypoint!)
     }
     
     func stopNavigating() {
@@ -160,11 +262,12 @@ class NavigationManager: ObservableObject {
     /// send haptic feedback if the device is pointing towards the next keypoint.
     @objc func getHapticFeedback() {
         if RouteNavigator.shared.isComplete {
-            guard let curPos = PositioningModel.shared.cameraTransform?.translation, let routeEndKeypoint = RouteNavigator.shared.lastKeypoint else {
+            guard let curPos = PositioningModel.shared.cameraTransform?.translation,
+                  let routeEndKeypoint = RouteNavigator.shared.lastKeypoint,
+                  let routeEnd = PositioningModel.shared.currentLocation(of: routeEndKeypoint) else {
                 // TODO: might want to indicate that something is wrong to the user
                 return
             }
-            let routeEnd = PositioningModel.shared.currentLocation(of: routeEndKeypoint.location)
             let routeEndPos = routeEnd.translation
             let routeEndPosFloorPlane = simd_float2(routeEndPos.x, routeEndPos.z)
             let curPosFloorPlane = simd_float2(curPos.x, curPos.z)
@@ -224,7 +327,7 @@ class NavigationManager: ObservableObject {
                 RouteNavigator.shared.checkOffKeypoint()
                 
                 // erase current keypoint and render next keypoint node
-                PositioningModel.shared.renderKeypoint(at: RouteNavigator.shared.nextKeypoint!.location)
+                PositioningModel.shared.renderKeypoint(RouteNavigator.shared.nextKeypoint!)
                 updateDirections()
             } else {
                 // arrived at final keypoint

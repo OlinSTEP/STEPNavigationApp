@@ -11,8 +11,6 @@ import CoreLocation
 struct AnchorDetailView: View {
     let anchorDetails: LocationDataModel
     
-    
-    
     var body: some View {
         ZStack {
             VStack {
@@ -59,18 +57,33 @@ struct AnchorDetailView: View {
                 .padding()
                                 
                 Spacer()
-                NavigationLink (destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchorDetails), label: {
-                    Text("Navigate")
-                        .font(.title)
-                        .bold()
-                        .frame(maxWidth: 300)
-                        .foregroundColor(AppColor.black)
-                })
-                .padding(.bottom, 20)
-                .tint(AppColor.accent)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
+                if anchorDetails.getAnchorType().isIndoors {
+                    NavigationLink (destination: ChooseStartAnchorView(destinationAnchorDetails: anchorDetails), label: {
+                        Text("Find Start Anchor")
+                            .font(.title)
+                            .bold()
+                            .frame(maxWidth: 300)
+                            .foregroundColor(AppColor.black)
+                    })
+                    .padding(.bottom, 20)
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                } else {
+                    NavigationLink (destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchorDetails), label: {
+                        Text("Navigate")
+                            .font(.title)
+                            .bold()
+                            .frame(maxWidth: 300)
+                            .foregroundColor(AppColor.black)
+                    })
+                    .padding(.bottom, 20)
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                }
             }
         }
     }
@@ -78,7 +91,6 @@ struct AnchorDetailView: View {
 
 struct AnchorDetailView_Previews: PreviewProvider {
     @State static var anchorDetails = LocationDataModel(anchorType: .externalDoor, coordinates: CLLocationCoordinate2D(latitude: 42, longitude: -71), name: "Test Door")
-
     
     static var previews: some View {
         AnchorDetailView(anchorDetails: anchorDetails)

@@ -13,7 +13,7 @@ import CoreLocation
 */
 struct LocationDataModel: Hashable {
     private let anchorType: AnchorType
-    //private let anchorCategory: String
+    private let associatedOutdoorFeature: String?
     private let coordinates: CLLocationCoordinate2D
     private let notes: String?
     private let name: String
@@ -24,12 +24,19 @@ struct LocationDataModel: Hashable {
         Initializes a new location data model.
      
         - parameter anchorType: The type of the anchor.
-        - parameter location: The location of the data model.
+        - parameter coordinates: the latitude and longitude of the model
         - parameter notes: Any additional notes about the location.
         - parameter name: The name of the location.
+        - parameter cloudAnchorID: the anchor id associated with this model
     */
-    init(anchorType: AnchorType, coordinates: CLLocationCoordinate2D, notes: String? = "", name: String, cloudAnchorID: String?=nil) {
+    init(anchorType: AnchorType,
+         associatedOutdoorFeature: String?=nil,
+         coordinates: CLLocationCoordinate2D,
+         notes: String? = "",
+         name: String,
+         cloudAnchorID: String?=nil) {
         self.anchorType = anchorType
+        self.associatedOutdoorFeature = associatedOutdoorFeature
         self.coordinates = coordinates
         self.notes = notes
         self.name = name
@@ -83,6 +90,10 @@ struct LocationDataModel: Hashable {
     func getCloudAnchorID() -> String? {
         return self.cloudAnchorID
     }
+    
+    func getAssociatedOutdoorFeature() -> String? {
+        return self.associatedOutdoorFeature
+    }
 }
 
 /**
@@ -93,7 +104,7 @@ An enum representing the different types of anchors that can be used to categori
 - case bathroom: Represents a bathroom anchor type.
 - case frontdesk: Represents a front desk anchor type.
 */
-enum AnchorType: String, Identifiable {
+enum AnchorType: String, CaseIterable, Identifiable {
     var id: String {
         return rawValue
     }
@@ -115,6 +126,8 @@ enum AnchorType: String, Identifiable {
         case .waterFountain:
             return true
         case .room:
+            return true
+        case .indoorDestination:
             return true
         default:
             return false

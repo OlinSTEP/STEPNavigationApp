@@ -1,6 +1,6 @@
 //
 //  FirebaseManager.swift
-//  InvisibleMapTake2
+//  STEP Navigation
 //
 //  Created by Paul Ruvolo on 3/30/23.
 //
@@ -83,14 +83,12 @@ class FirebaseManager: ObservableObject {
                   let longitude = geoLocation["longitude"] else {
                 return
             }
-            // TODO: Might not need this anymore
-            let anchorTypeString = (keyValuePairs["type"] as? String) ?? "Generic Destination"
             let anchorCategory = (keyValuePairs["category"] as? String) ?? ""
-            if let anchorType = AnchorType(rawValue: anchorCategory) {
-                DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), name: anchorName, cloudAnchorID: snapshot.key))
-                self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: anchorType)
-                self.pathGraph.cloudNodes.insert(snapshot.key)
-            }
+            let associatedOutdoorFeature = (keyValuePairs["associatedOutdoorFeature"] as? String) ?? ""
+            let anchorType = AnchorType(rawValue: anchorCategory) ?? .indoorDestination
+            DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: associatedOutdoorFeature,  coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), name: anchorName, cloudAnchorID: snapshot.key))
+            self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: anchorType)
+            self.pathGraph.cloudNodes.insert(snapshot.key)
         }
         cloudAnchorRef.child("connections").observe(.childAdded) { snapshot in
             self.handleConnections(snapshot: snapshot)
@@ -149,5 +147,9 @@ class FirebaseManager: ObservableObject {
     
     func getCloudAnchorName(byID id: String)->String? {
         return mapAnchors[id]?.name
+    }
+    
+    func getCloudAnchorMetadata(byID id: String)->CloudAnchorMetadata? {
+        return mapAnchors[id]
     }
 }

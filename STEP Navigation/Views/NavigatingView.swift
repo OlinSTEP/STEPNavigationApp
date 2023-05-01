@@ -14,7 +14,6 @@ import CoreLocation
 var hideNavTimer: Timer?
 
 struct NavigatingView: View {
-
     let startAnchorDetails: LocationDataModel?
     let destinationAnchorDetails: LocationDataModel
     @State var didLocalize = false
@@ -62,14 +61,19 @@ struct NavigatingView: View {
                 .padding(.vertical, 100)
             }.onAppear() {
                 // plan path
-                didLocalize = false
-                AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
                 if let startAnchorDetails = startAnchorDetails {
+                    didLocalize = false
                     PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
                     didPrepareToNavigate = true
                     checkLocalization(cloudAnchorsToCheck: positioningModel.resolvedCloudAnchors)
                 } else {
-                    PathPlanner.shared.navigate(to: destinationAnchorDetails)
+                    // TODO: need something more subtle here based on quality of outdoor localization
+                    didLocalize = true
+                    PathPlanner.shared.prepareToNavigateFromOutdoors(to: destinationAnchorDetails)
+                    navigationManager.startNavigating()
+                }
+                if !didLocalize {
+                    AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
                 }
             }.onDisappear() {
                 NavigationManager.shared.stopNavigating()
@@ -97,9 +101,9 @@ struct NavigatingView: View {
             }
         }
         
-        if showingConfirmation == true {
-                       ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
-                   }
+        if showingConfirmation {
+            ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
+        }
     }
     
     private func checkLocalization(cloudAnchorsToCheck: Set<String>) {
@@ -196,6 +200,6 @@ struct InformationPopup: View {
 
 struct NavigatingView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: LocationDataModel(anchorType: .busStop, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1"))
+        NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: LocationDataModel(anchorType: .busStop, associatedOutdoorFeature: nil, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1"))
     }
 }

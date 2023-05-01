@@ -75,21 +75,23 @@ struct AnchorTypeListView: View {
                     // Creates a navigation button for each anchor type
                     ForEach(anchorTypes, id: \.self) {
                         anchorType in
-                        //currently pass .bathroom into the navigationLink; need to pass in the anchorType instead, but since the anchor type is currently a string (I think?) it can't be passed through
-                        NavigationLink (
-                            destination: LocalAnchorListView(anchorType:  anchorType, nearbyDistance: nearbyDistance),
-                            label: {
-                                Text(anchorType.rawValue)
-                                    .font(.largeTitle)
-                                    .bold()
-                                    .padding(30)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(minHeight: 140)
-                                    .foregroundColor(AppColor.black)
-                            })
-                        .background(AppColor.accent)
-                        .cornerRadius(20)
-                        .padding(.horizontal)
+                        if anchorType != .indoorDestination {
+                            //currently pass .bathroom into the navigationLink; need to pass in the anchorType instead, but since the anchor type is currently a string (I think?) it can't be passed through
+                            NavigationLink (
+                                destination: LocalAnchorListView(anchorType:  anchorType, nearbyDistance: nearbyDistance),
+                                label: {
+                                    Text(anchorType.rawValue)
+                                        .font(.largeTitle)
+                                        .bold()
+                                        .padding(30)
+                                        .frame(maxWidth: .infinity)
+                                        .frame(minHeight: 140)
+                                        .foregroundColor(AppColor.black)
+                                })
+                            .background(AppColor.accent)
+                            .cornerRadius(20)
+                            .padding(.horizontal)
+                        }
                     }
                     .padding(.top, 20)
                 }

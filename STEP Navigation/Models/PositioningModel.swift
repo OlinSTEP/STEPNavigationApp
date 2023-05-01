@@ -45,13 +45,14 @@ class PositioningModel: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     private var garSession: GARSession?
     private var latestGARAnchors: [GARAnchor]? = nil
-    private var outdoorAnchors: [UUID: GARAnchor] = [:]
     public static var shared = PositioningModel()
     private var manualAlignment: simd_float4x4? {
         didSet {
             if let newValue = manualAlignment {
                 DispatchQueue.main.async {
-                    self.rendererHelper.anchorEntity?.setTransformMatrix(newValue, relativeTo: nil)
+                    if RouteNavigator.shared.nextKeypoint?.mode != .latLonBased {
+                        self.rendererHelper.anchorEntity?.setTransformMatrix(newValue, relativeTo: nil)
+                    }
                 }
             }
         }
@@ -71,7 +72,6 @@ class PositioningModel: NSObject, ObservableObject {
         super.init()
         locationManager.requestWhenInUseAuthorization()
         arView.session.delegate = self
-        // setDefaultsForTesting()
     }
     
     private func setDefaultsForTesting() {
@@ -106,6 +106,11 @@ class PositioningModel: NSObject, ObservableObject {
     }
     
     func hasAligned()->Bool {
+        if let nextKeypoint = RouteNavigator.shared.nextKeypoint,
+           nextKeypoint.mode == .latLonBased,
+           let currentPosition = currentLocation(of: nextKeypoint) {
+            return !simd_almost_equal_elements(currentPosition, matrix_identity_float4x4, 0.001)
+        }
         return manualAlignment != nil
     }
     
@@ -115,6 +120,27 @@ class PositioningModel: NSObject, ObservableObject {
         } else {
             return transform
         }
+    }
+    
+    func currentLocation(of keypoint: KeypointInfo)->simd_float4x4? {
+        switch keypoint.mode {
+        case .cloudAnchorBased:
+            return currentLocation(of: keypoint.location)
+        case .latLonBased:
+            return currentLocation(ofGARAnchor: keypoint.id)
+        }
+    }
+    
+    func currentLocation(ofGARAnchor id: UUID)->simd_float4x4? {
+        guard let latestGARAnchors = latestGARAnchors else {
+            return nil
+        }
+        for anchor in latestGARAnchors {
+            if anchor.identifier == id {
+                return anchor.transform
+            }
+        }
+        return nil
     }
     
     func resolveCloudAnchor(byID cloudAnchorID: String) {
@@ -134,13 +160,15 @@ extension PositioningModel: ARSessionDelegate {
         }
         do {
             if let garFrame = try garSession?.update(frame) {
-                for anchor in garFrame.anchors {
-                    if let outdoorAnchor = outdoorAnchors[anchor.identifier] {
-                        rendererHelper.anchorEntity?.setTransformMatrix(anchor.transform, relativeTo: nil)
-                        print("terrain position", anchor.transform.translation)
+                latestGARAnchors = garFrame.anchors
+                if let nextKeypoint = RouteNavigator.shared.nextKeypoint,
+                   nextKeypoint.mode == .latLonBased {
+                    for anchor in latestGARAnchors ?? [] {
+                        if anchor.identifier == nextKeypoint.id {
+                            rendererHelper.anchorEntity?.setTransformMatrix(anchor.transform, relativeTo: nil)
+                        }
                     }
                 }
-                latestGARAnchors = garFrame.anchors
                 var shouldDoCloudAnchorAlignment = false
                 for anchor in garFrame.updatedAnchors {
                     guard let cloudIdentifier = anchor.cloudIdentifier else {
@@ -153,7 +181,6 @@ extension PositioningModel: ARSessionDelegate {
                     manualAlignment = cloudAnchorAligner.adjust(currentAlignment: manualAlignment)
                 }
                 if let cameraGeospatialTransform = garFrame.earth?.cameraGeospatialTransform {
-                    print("horizontalAccuracy \(cameraGeospatialTransform.horizontalAccuracy)")
                     currentLatLon = cameraGeospatialTransform.coordinate
                     if cameraGeospatialTransform.horizontalAccuracy < 3.0 {
                         geoLocalizationAccuracy = .high
@@ -169,13 +196,10 @@ extension PositioningModel: ARSessionDelegate {
         }
     }
     
-    func renderKeypoint(at location: simd_float4x4) {
-        print("manualAlignment \(manualAlignment)")
-        rendererHelper.renderKeypoint(at: location, withInitialAlignment: manualAlignment)
-    }
-    
-    func renderOutdoorLocation(at location: simd_float4x4) {
-        rendererHelper.renderPoll(at: location)
+    func renderKeypoint(_ keypoint: KeypointInfo) {
+        // if we are using a lat / lon based keypoint, we don't want to use manualAlignment
+        let initialAlignment = keypoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
+        rendererHelper.renderKeypoint(at: keypoint.location, withInitialAlignment: initialAlignment)
     }
     
     func addTerrainAnchor(at location: CLLocationCoordinate2D, withName name: String)->GARAnchor? {
@@ -183,9 +207,7 @@ extension PositioningModel: ARSessionDelegate {
             return nil
         }
         do {
-            let newAnchor = try garSession.createAnchorOnTerrain(coordinate: location, altitudeAboveTerrain: 0.0, eastUpSouthQAnchor: simd_quatf())
-            outdoorAnchors[newAnchor.identifier] = newAnchor
-            renderOutdoorLocation(at: newAnchor.transform)
+            let newAnchor = try garSession.createAnchorOnTerrain(coordinate: location, altitudeAboveTerrain: 1.0, eastUpSouthQAnchor: simd_quatf())
             return newAnchor
         } catch {
             
@@ -203,7 +225,6 @@ extension PositioningModel: ARSessionDelegate {
 
 extension PositioningModel: GARSessionDelegate {
     func session(_ session: GARSession, didResolve anchor:GARAnchor) {
-        // TODO: need to update when the GARAnchor changes
         if let cloudIdentifier = anchor.cloudIdentifier {
             cloudAnchorAligner.cloudAnchorDidUpdate(withCloudID: cloudIdentifier, withIdentifier: anchor.identifier.uuidString, withPose: anchor.transform, timestamp: arView.session.currentFrame?.timestamp ?? 0.0)
             resolvedCloudAnchors.insert(cloudIdentifier)
@@ -224,28 +245,17 @@ class RendererHelper {
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
         let mesh = MeshResource.generateBox(size: 0.5)
-        let material = SimpleMaterial(color: .green, isMetallic: false)
+        let material = SimpleMaterial(color: UIColor(red: 23/255.0, green: 94/255.0, blue: 94/255.0, alpha: 1.0), isMetallic: false)
         keypointEntity?.removeFromParent()
         keypointEntity = ModelEntity(mesh: mesh, materials: [material])
         keypointEntity!.position = location.translation
         if anchorEntity == nil {
             anchorEntity = AnchorEntity()
-            let initialTransform = alignment ?? matrix_identity_float4x4
-            anchorEntity?.setTransformMatrix(initialTransform, relativeTo: nil)
             arView.scene.anchors.append(anchorEntity!)
         }
+        let initialTransform = alignment ?? matrix_identity_float4x4
+        anchorEntity?.setTransformMatrix(initialTransform, relativeTo: nil)
         anchorEntity!.addChild(keypointEntity!)
-    }
-    
-    func renderPoll(at location: simd_float4x4) {
-        let mesh = MeshResource.generateBox(size: simd_float3(0.2, 3, 0.2))
-        let material = SimpleMaterial(color: .blue, isMetallic: false)
-        pollEntity?.removeFromParent()
-        pollEntity = ModelEntity(mesh: mesh, materials: [material])
-        anchorEntity = AnchorEntity()
-        anchorEntity?.setTransformMatrix(location, relativeTo: nil)
-        arView.scene.anchors.append(anchorEntity!)
-        anchorEntity!.addChild(pollEntity!)
     }
     
     func removeRenderedContent() {
