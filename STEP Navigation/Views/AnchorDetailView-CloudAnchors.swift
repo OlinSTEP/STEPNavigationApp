@@ -1,14 +1,14 @@
 //
-//  AnchorDetailView.swift
+//  AnchorDetailView-CloudAnchors.swift
 //  STEP Navigation
 //
-//  Created by Paul Ruvolo on 4/5/23.
+//  Created by Evelyn on 4/24/23.
 //
 
 import SwiftUI
 import CoreLocation
 
-struct AnchorDetailView: View {
+struct AnchorDetailView-CloudAnchors: View {
     let anchorDetails: LocationDataModel
     
     
@@ -72,7 +72,20 @@ struct AnchorDetailView: View {
                 .buttonBorderShape(.capsule)
                 .controlSize(.large)
             }
+            
+            CapsuleButton()
+
         }
+        .navigationBarItems(
+            trailing:
+                Button(action: {
+                    print("pressed settings")
+                }) {
+                    Image(systemName: "gearshape.fill")
+                        .scaleEffect(1.5)
+                        .foregroundColor(AppColor.black)
+                }
+        )
     }
 }
 

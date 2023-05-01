@@ -42,6 +42,10 @@ struct LocationDataModelParser {
             }
         case .externalDoor:
             print("Decode external door file.")
+            // let json = try JSONSerialization.jsonObject(with: data, options: [])
+            // Temporary code for transferring to the realtime database
+            // FirebaseManager.shared.uploadOutdoorInfoToDB("Olin Doors", json as! [String: Any])
+            
             var doorsRaw: [Feature] = []
             doorsRaw = try decoder.decode(DoorRaw.self, from: data).features
             

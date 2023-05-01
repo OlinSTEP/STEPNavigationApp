@@ -42,6 +42,14 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    /// Writes the specified data to the realtime database. This is useful when importing data from JSONs.
+    /// - Parameters:
+    ///   - key: the key to store the data at (root/outdoor\_features/key
+    ///   - data: the values to store there
+    func uploadOutdoorInfoToDB(_ key: String, _ data: [String: Any]) {
+        Database.database().reference().child("outdoor_features").child(key).setValue(data)
+    }
+    
     func addConnection(anchorID1: String, anchor1Pose: simd_float4x4, anchorID2: String, anchor2Pose: simd_float4x4, breadCrumbs: [simd_float4x4], pathAnchors: [String: (CloudAnchorMetadata, simd_float4x4)]) {
         let ref = cloudAnchorRef.child("connections").child(anchorID1).child(anchorID2)
         ref.updateChildValues(
@@ -75,12 +83,14 @@ class FirebaseManager: ObservableObject {
                   let longitude = geoLocation["longitude"] else {
                 return
             }
+            // TODO: Might not need this anymore
             let anchorTypeString = (keyValuePairs["type"] as? String) ?? "Generic Destination"
-            // TODO: connect the particular type to the anchor type
-            let anchorType = AnchorType.indoorDestination
-            DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), name: anchorName, cloudAnchorID: snapshot.key))
-            self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: anchorType)
-            self.pathGraph.cloudNodes.insert(snapshot.key)
+            let anchorCategory = (keyValuePairs["category"] as? String) ?? ""
+            if let anchorType = AnchorType(rawValue: anchorCategory) {
+                DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), name: anchorName, cloudAnchorID: snapshot.key))
+                self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: anchorType)
+                self.pathGraph.cloudNodes.insert(snapshot.key)
+            }
         }
         cloudAnchorRef.child("connections").observe(.childAdded) { snapshot in
             self.handleConnections(snapshot: snapshot)

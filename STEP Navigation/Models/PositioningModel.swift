@@ -45,6 +45,7 @@ class PositioningModel: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     private var garSession: GARSession?
     private var latestGARAnchors: [GARAnchor]? = nil
+    private var outdoorAnchors: [UUID: GARAnchor] = [:]
     public static var shared = PositioningModel()
     private var manualAlignment: simd_float4x4? {
         didSet {
@@ -133,6 +134,12 @@ extension PositioningModel: ARSessionDelegate {
         }
         do {
             if let garFrame = try garSession?.update(frame) {
+                for anchor in garFrame.anchors {
+                    if let outdoorAnchor = outdoorAnchors[anchor.identifier] {
+                        rendererHelper.anchorEntity?.setTransformMatrix(anchor.transform, relativeTo: nil)
+                        print("terrain position", anchor.transform.translation)
+                    }
+                }
                 latestGARAnchors = garFrame.anchors
                 var shouldDoCloudAnchorAlignment = false
                 for anchor in garFrame.updatedAnchors {
@@ -148,7 +155,6 @@ extension PositioningModel: ARSessionDelegate {
                 if let cameraGeospatialTransform = garFrame.earth?.cameraGeospatialTransform {
                     print("horizontalAccuracy \(cameraGeospatialTransform.horizontalAccuracy)")
                     currentLatLon = cameraGeospatialTransform.coordinate
-                    // NOTE: Don't check in
                     if cameraGeospatialTransform.horizontalAccuracy < 3.0 {
                         geoLocalizationAccuracy = .high
                     } else if cameraGeospatialTransform.horizontalAccuracy < 8.0 {
@@ -168,8 +174,22 @@ extension PositioningModel: ARSessionDelegate {
         rendererHelper.renderKeypoint(at: location, withInitialAlignment: manualAlignment)
     }
     
+    func renderOutdoorLocation(at location: simd_float4x4) {
+        rendererHelper.renderPoll(at: location)
+    }
+    
     func addTerrainAnchor(at location: CLLocationCoordinate2D, withName name: String)->GARAnchor? {
-        // TODO: fill in
+        guard let garSession = garSession else {
+            return nil
+        }
+        do {
+            let newAnchor = try garSession.createAnchorOnTerrain(coordinate: location, altitudeAboveTerrain: 0.0, eastUpSouthQAnchor: simd_quatf())
+            outdoorAnchors[newAnchor.identifier] = newAnchor
+            renderOutdoorLocation(at: newAnchor.transform)
+            return newAnchor
+        } catch {
+            
+        }
         return nil
     }
     
@@ -196,6 +216,7 @@ class RendererHelper {
     let arView: ARView
     var anchorEntity: AnchorEntity?
     var keypointEntity: ModelEntity?
+    var pollEntity: ModelEntity?
     
     init(arView: ARView) {
         self.arView = arView
@@ -214,6 +235,17 @@ class RendererHelper {
             arView.scene.anchors.append(anchorEntity!)
         }
         anchorEntity!.addChild(keypointEntity!)
+    }
+    
+    func renderPoll(at location: simd_float4x4) {
+        let mesh = MeshResource.generateBox(size: simd_float3(0.2, 3, 0.2))
+        let material = SimpleMaterial(color: .blue, isMetallic: false)
+        pollEntity?.removeFromParent()
+        pollEntity = ModelEntity(mesh: mesh, materials: [material])
+        anchorEntity = AnchorEntity()
+        anchorEntity?.setTransformMatrix(location, relativeTo: nil)
+        arView.scene.anchors.append(anchorEntity!)
+        anchorEntity!.addChild(pollEntity!)
     }
     
     func removeRenderedContent() {

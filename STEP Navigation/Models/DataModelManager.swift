@@ -93,6 +93,85 @@ class DataModelManager: ObservableObject {
         return locations
     }
     
+    
+    /**
+            Returns a set containing all outdoor within the specified distance from the specified location.
+         
+            - parameter model: the models to search through
+            - parameter location: The location to use as the center point for the distance calculation.
+            - parameter maxDistance: The maximum distance in meters.
+         
+            - returns: A list of all possible anchor categories
+    */
+    private func getNearbyOutdoorDestinationTypes(models: Set<LocationDataModel>, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [AnchorType] {
+        var reachableTypesAsSet = Set<AnchorType>()
+        for model in models {
+            if model.getLocationCoordinate().distance(from: location) <= maxDistance + withBuffer &&
+                !model.getAnchorType().isIndoors {
+                reachableTypesAsSet.insert(model.getAnchorType())
+            }
+        }
+        return Array(reachableTypesAsSet)
+    }
+    
+    /**
+            Returns a set containing all indoor categories within the specified distance from the specified location.
+         
+            - parameter model: the models to search through
+            - parameter location: The location to use as the center point for the distance calculation.
+            - parameter maxDistance: The maximum distance in meters.
+         
+            - returns: A list of all possible anchor categories
+    */
+    private func getNearbyIndoorDestinationTypes(models: Set<LocationDataModel>, location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [AnchorType] {
+        var categoriesAsSet = Set<AnchorType>()
+        var startingLocations: [LocationDataModel] = []
+        for model in models {
+            if model.getLocationCoordinate().distance(from: location) <= maxDistance + withBuffer {
+                // possible start location
+                startingLocations.append(model)
+            }
+        }
+        for startingLocation in startingLocations {
+            let reachableSet = NavigationManager.shared.getReachability(from: startingLocation, outOf: models)
+            for reachable in reachableSet {
+                if reachable.getAnchorType().isIndoors {
+                    categoriesAsSet.insert(reachable.getAnchorType())
+                }
+            }
+        }
+        return Array(categoriesAsSet)
+    }
+
+    
+    /**
+            Returns a set containing all location data models within the specified distance from the specified location.
+         
+            - parameter location: The location to use as the center point for the distance calculation.
+            - parameter maxDistance: The maximum distance in meters.
+         
+            - returns: A list of all possible anchor categories
+    */
+    func getNearbyDestinationCategories(location: CLLocationCoordinate2D, maxDistance: CLLocationDistance, withBuffer: CLLocationDistance = 0.0) -> [AnchorType] {
+        var allCategories: [AnchorType] = []
+        let allModels = getAllDataModels()
+        allCategories += getNearbyIndoorDestinationTypes(models: allModels, location: location, maxDistance: maxDistance, withBuffer: withBuffer)
+        allCategories += getNearbyOutdoorDestinationTypes(models: allModels, location: location, maxDistance: maxDistance, withBuffer: withBuffer)
+        return allCategories
+    }
+    
+    private func getAllDataModels()->Set<LocationDataModel> {
+        // TODO is this slow?
+        let start = Date()
+        var allModels = Set<LocationDataModel>()
+        for (_, models) in allLocationModels {
+            allModels.formUnion(models)
+        }
+        
+        print("time \(-start.timeIntervalSinceNow)")
+        return allModels
+    }
+    
     /**
             Returns a set containing all location data models within the specified distance from the specified location.
          
