@@ -92,6 +92,8 @@
 		82A016962A0057A400EAA526 /* GeospatialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016952A0057A400EAA526 /* GeospatialData.swift */; };
 		82A016972A0057AB00EAA526 /* GeospatialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016952A0057A400EAA526 /* GeospatialData.swift */; };
 		82A016992A0057FC00EAA526 /* PathRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016862A00164900EAA526 /* PathRecorder.swift */; };
+		82A0169B2A017C0800EAA526 /* PerkinsOutdoors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */; };
+		82A0169C2A017C0E00EAA526 /* PerkinsOutdoors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */; };
 		82E69C9929F3278E002E2671 /* PathPlannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E69C9829F3278E002E2671 /* PathPlannerModel.swift */; };
 		82F2E43229FC5FD200781E75 /* ChooseStartAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2E43129FC5FD200781E75 /* ChooseStartAnchorView.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
@@ -169,6 +171,7 @@
 		829F7B6829F2C2AB00B59EE0 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		82A016862A00164900EAA526 /* PathRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathRecorder.swift; sourceTree = "<group>"; };
 		82A016952A0057A400EAA526 /* GeospatialData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeospatialData.swift; sourceTree = "<group>"; };
+		82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerkinsOutdoors.geojson; sourceTree = "<group>"; };
 		82E69C9829F3278E002E2671 /* PathPlannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathPlannerModel.swift; sourceTree = "<group>"; };
 		82F2E43129FC5FD200781E75 /* ChooseStartAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseStartAnchorView.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
@@ -233,6 +236,7 @@
 			isa = PBXGroup;
 			children = (
 				130862C129E488B800CADE79 /* testBusStops.json */,
+				82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */,
 				130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */,
 				130E7C4829E36E36004B1E81 /* mbtaBusStops.json */,
 				130862BF29E4874400CADE79 /* testDoors.geojson */,
@@ -539,6 +543,7 @@
 				825F1F4929E9C8380043BD98 /* StartRecording.aiff in Resources */,
 				8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */,
 				825F1F4B29E9C8380043BD98 /* ClewErrorSound.wav in Resources */,
+				82A0169B2A017C0800EAA526 /* PerkinsOutdoors.geojson in Resources */,
 				8241735529DE0C70001599B1 /* Assets.xcassets in Resources */,
 				130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */,
 				825F1F4829E9C8380043BD98 /* ClewSuccessSound.wav in Resources */,
@@ -555,6 +560,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82A016942A00377300EAA526 /* mbtaBusStops.json in Resources */,
+				82A0169C2A017C0E00EAA526 /* PerkinsOutdoors.geojson in Resources */,
 				825F1F3A29E9B7920043BD98 /* Preview Assets.xcassets in Resources */,
 				825F1F3729E9B7920043BD98 /* Assets.xcassets in Resources */,
 				82A016922A00189700EAA526 /* GoogleService-Info.plist in Resources */,
