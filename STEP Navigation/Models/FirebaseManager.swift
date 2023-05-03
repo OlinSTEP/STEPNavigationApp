@@ -21,7 +21,7 @@ class FirebaseManager: ObservableObject {
         if SettingsManager.shared.mappingSubFolder.isEmpty {
             return Database.database().reference().child("cloud_anchors")
         } else {
-            return Database.database().reference().child("cloud_anchors").child(SettingsManager.shared.mappingSubFolder)
+            return Database.database().reference().child(SettingsManager.shared.mappingSubFolder).child("cloud_anchors")
         }
     }
     
@@ -32,7 +32,9 @@ class FirebaseManager: ObservableObject {
     
     func storeCloudAnchor(identifier: String, metadata: CloudAnchorMetadata) {
         let ref = cloudAnchorRef
-        ref.updateChildValues([identifier: metadata.asDict()])
+        ref.updateChildValues([identifier: metadata.asDict()]) { (error, metadata) in
+            print(error?.localizedDescription)
+        }
     }
     
     func deleteCloudAnchor(id: String) {
