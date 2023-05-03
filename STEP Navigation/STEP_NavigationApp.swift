@@ -12,6 +12,7 @@ struct STEP_NavigationApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
+                .environmentObject(SettingsManager.shared)
         }
     }
 }

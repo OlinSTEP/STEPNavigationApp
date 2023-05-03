@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SettingsManager {
+class SettingsManager: ObservableObject {
     public static var shared = SettingsManager()
     
     /// if non-empty, put all mapping content in a subfolder
@@ -31,7 +31,7 @@ class SettingsManager {
     @objc func updateDisplayFromDefaults() {
         let defaults = UserDefaults.standard
         
-        mappingSubFolder = defaults.string(forKey: "mappingSubfolder") ?? ""
+        mappingSubFolder = defaults.string(forKey: "mappingSubFolder") ?? ""
     }
     
     /// Register settings bundle
