@@ -60,7 +60,7 @@ struct AnchorDetailView: View {
                 if anchorDetails.getAnchorType().isIndoors {
                     NavigationLink (destination: ChooseStartAnchorView(destinationAnchorDetails: anchorDetails), label: {
                         Text("Find Start Anchor")
-                            .font(.title)
+                            .font(.title2)
                             .bold()
                             .frame(maxWidth: 300)
                             .foregroundColor(AppColor.black)

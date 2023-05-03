@@ -28,7 +28,7 @@ struct LocalAnchorListView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("\(anchorType.rawValue) Anchors")
+                Text("\(anchorType.rawValue)s")
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
@@ -65,60 +65,12 @@ struct LocalAnchorListView: View {
         }
         .background(AppColor.accent)
         
-        if anchorType == .indoorDestination {
-            Section(header: Text("FROM").font(.title).fontWeight(.heavy)) {
-                ChooseAnchorComponentView(anchorSelectionType: .startOfIndoorRoute,
-                                          anchors: $anchors,
-                                          allAnchors: $allAnchors,
-                                          chosenAnchor: $chosenStart, outdoorsSelected: $outdoorsSelectedAsStart,
-                                          otherAnchor: $chosenEnd)
-            }
-            Section(header: Text("TO").font(.title).fontWeight(.heavy)) {
-                ChooseAnchorComponentView(anchorSelectionType: .endOfIndoorRoute,
-                                          anchors: $anchors,
-                                          allAnchors: $allAnchors,
-                                          chosenAnchor: $chosenEnd,
-                                          outdoorsSelected: $outdoorsSelectedAsStart,
-                                          otherAnchor: $chosenStart)
-            }
-            if let chosenStart = chosenStart, let chosenEnd = chosenEnd {
-                NavigationLink (destination: CloudAnchorsDetailView(startAnchorDetails: chosenStart, destinationAnchorDetails: chosenEnd), label: {
-                    Text("Next")
-                        .font(.title)
-                        .bold()
-                        .frame(maxWidth: 300)
-                        .foregroundColor(AppColor.black)
-                })
-                .padding(.bottom, 20)
-                .padding(.top, 20)
-                .tint(AppColor.accent)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
-            } else if outdoorsSelectedAsStart, let chosenEnd = chosenEnd {
-                // TODO: need to figure out the detail view for this
-                NavigationLink (destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: chosenEnd), label: {
-                    Text("Navigate")
-                        .font(.title)
-                        .bold()
-                        .frame(maxWidth: 300)
-                        .foregroundColor(AppColor.black)
-                })
-                .padding(.bottom, 20)
-                .padding(.top, 20)
-                .tint(AppColor.accent)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
-            }
-        } else {
-            ChooseAnchorComponentView(anchorSelectionType: .destinationOutdoors,
-                                      anchors: $anchors,
-                                      allAnchors: $allAnchors,
-                                      chosenAnchor: $chosenEnd,
-                                      outdoorsSelected: $outdoorsSelectedAsStart,
-                                      otherAnchor: $chosenStart)
-        }
+        ChooseAnchorComponentView(anchorSelectionType: .destinationOutdoors,
+                                  anchors: $anchors,
+                                  allAnchors: $allAnchors,
+                                  chosenAnchor: $chosenEnd,
+                                  outdoorsSelected: $outdoorsSelectedAsStart,
+                                  otherAnchor: $chosenStart)
     }
     /// Compute the notion of "close enough" to display to the user.  This is a buffer distance added on top of the distance the user has already selected from the UI
     /// - Parameter accuracy: the current localization accuracy
@@ -195,30 +147,33 @@ struct ChooseAnchorComponentView: View {
             }
             
         } else {
-            ScrollView {
                 VStack {
                     // TODO: this is pretty unwieldy (code sharing is pretty low here).  Maybe we should create a separate view type?
+                    ScrollView {
                     if anchorSelectionType == .startOfIndoorRoute {
                         Button(action: {
                             outdoorsSelected.wrappedValue.toggle()
                             chosenAnchor.wrappedValue = nil
                         }) {
                             HStack {
-                                Text("Outside")
+                                Text("Start Outside")
                                     .font(.title)
                                     .bold()
                                     .padding(30)
                                     .multilineTextAlignment(.leading)
                                 Spacer()
                             }
-                            .frame(maxWidth: .infinity)
-                            .frame(minHeight: 100)
-                            .background(outdoorsSelected.wrappedValue ? AppColor.accent : AppColor.grey)
-                            .cornerRadius(20)
-                            .padding(.horizontal)
-                            .accessibilityAddTraits(outdoorsSelected.wrappedValue ? [.isSelected] : [])
-                        }
+                            .foregroundColor(outdoorsSelected.wrappedValue ? AppColor.black : AppColor.grey)                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: 140)
+                        .background(outdoorsSelected.wrappedValue ? AppColor.accent : AppColor.black)
+                        .cornerRadius(20)
+                        .padding(.horizontal)
+                        .accessibilityAddTraits(outdoorsSelected.wrappedValue ? [.isSelected] : [])
+                        .padding(.top, 20)
+
                     }
+
                     ForEach(0..<candidateAnchors.count, id: \.self) { idx in
                         if anchorSelectionType == .destinationOutdoors {
                             NavigationLink (
@@ -236,10 +191,11 @@ struct ChooseAnchorComponentView: View {
                                     .frame(minHeight: 140)
                                     .foregroundColor(AppColor.black)
                                 })
-                            .background(AppColor.accent)
-                            .cornerRadius(20)
-                            .padding(.horizontal)
-                            
+                                .background(AppColor.accent)
+                                .cornerRadius(20)
+                                .padding(.horizontal)
+                                .padding(.top, 20)
+                    
                         } else {
                             if isReachable[idx] {
                                 VStack {
@@ -262,41 +218,17 @@ struct ChooseAnchorComponentView: View {
                                             Spacer()
                                         }
                                         .frame(maxWidth: .infinity)
-                                        .frame(minHeight: 100)
+                                        .frame(minHeight: 140)
                                         .background(chosenAnchor.wrappedValue == candidateAnchors[idx] ? AppColor.accent : AppColor.grey)
                                     }
                                 }
                                 .cornerRadius(20)
                                 .padding(.horizontal)
                                 .accessibilityAddTraits(chosenAnchor.wrappedValue == candidateAnchors[idx] ? [.isSelected] : [])
-
+                                .padding(.top, 20)
                             }
                         }
                     }
-                    
-                    //
-                    //                        anchor in
-                    //                        Toggle("test", isOn: anchor.isSelected)
-                    //                        NavigationLink (
-                    //                            destination: AnchorDetailView(anchorDetails: anchor),
-                    //                            label: {
-                    //                                HStack {
-                    //                                    Text(anchor.getName())
-                    //                                        .font(.title)
-                    //                                        .bold()
-                    //                                        .padding(30)
-                    //                                        .multilineTextAlignment(.leading)
-                    //                                    Spacer()
-                    //                                }
-                    //                                .frame(maxWidth: .infinity)
-                    //                                .frame(minHeight: 140)
-                    //                                .foregroundColor(AppColor.black)
-                    //                            })
-                    //                        .background(AppColor.grey)
-                    //                        .cornerRadius(20)
-                    //                        .padding(.horizontal)
-                    //                    }
-                    //                    .padding(.top, 20)
                 }
                 Spacer()
             }

@@ -18,6 +18,19 @@ struct ChooseStartAnchorView: View {
     
     var body: some View {
         VStack {
+            HStack {
+                Text("Choose Start Anchor")
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.horizontal)
+                
+                Spacer()
+            }
+            .padding(.vertical, 20)
+        }
+        .background(AppColor.accent)
+        
+        VStack {
             ChooseAnchorComponentView(anchorSelectionType: .startOfIndoorRoute,
                                       anchors: $anchors,
                                       allAnchors: $anchors,
@@ -33,6 +46,7 @@ struct ChooseStartAnchorView: View {
                         .foregroundColor(AppColor.black)
                 })
                 .padding(.bottom, 20)
+                .padding(.top, 10)
                 .tint(AppColor.accent)
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
