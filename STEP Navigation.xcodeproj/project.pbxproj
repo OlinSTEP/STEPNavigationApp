@@ -94,6 +94,10 @@
 		82A016992A0057FC00EAA526 /* PathRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016862A00164900EAA526 /* PathRecorder.swift */; };
 		82A0169B2A017C0800EAA526 /* PerkinsOutdoors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */; };
 		82A0169C2A017C0E00EAA526 /* PerkinsOutdoors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */; };
+		82A0169E2A02D28500EAA526 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169D2A02D28500EAA526 /* Settings.bundle */; };
+		82A0169F2A02D2BC00EAA526 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169D2A02D28500EAA526 /* Settings.bundle */; };
+		82A016A12A02D3CE00EAA526 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016A02A02D3CE00EAA526 /* SettingsManager.swift */; };
+		82A016A22A02D3CE00EAA526 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016A02A02D3CE00EAA526 /* SettingsManager.swift */; };
 		82E69C9929F3278E002E2671 /* PathPlannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E69C9829F3278E002E2671 /* PathPlannerModel.swift */; };
 		82F2E43229FC5FD200781E75 /* ChooseStartAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2E43129FC5FD200781E75 /* ChooseStartAnchorView.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
@@ -172,6 +176,8 @@
 		82A016862A00164900EAA526 /* PathRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathRecorder.swift; sourceTree = "<group>"; };
 		82A016952A0057A400EAA526 /* GeospatialData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeospatialData.swift; sourceTree = "<group>"; };
 		82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerkinsOutdoors.geojson; sourceTree = "<group>"; };
+		82A0169D2A02D28500EAA526 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		82A016A02A02D3CE00EAA526 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		82E69C9829F3278E002E2671 /* PathPlannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathPlannerModel.swift; sourceTree = "<group>"; };
 		82F2E43129FC5FD200781E75 /* ChooseStartAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseStartAnchorView.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
@@ -281,6 +287,7 @@
 				8241735429DE0C70001599B1 /* Assets.xcassets */,
 				8241735629DE0C70001599B1 /* Preview Content */,
 				829F7B6829F2C2AB00B59EE0 /* Localizable.strings */,
+				82A0169D2A02D28500EAA526 /* Settings.bundle */,
 			);
 			path = "STEP Navigation";
 			sourceTree = "<group>";
@@ -337,6 +344,7 @@
 				825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */,
 				829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */,
 				82A016952A0057A400EAA526 /* GeospatialData.swift */,
+				82A016A02A02D3CE00EAA526 /* SettingsManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -545,6 +553,7 @@
 				825F1F4B29E9C8380043BD98 /* ClewErrorSound.wav in Resources */,
 				82A0169B2A017C0800EAA526 /* PerkinsOutdoors.geojson in Resources */,
 				8241735529DE0C70001599B1 /* Assets.xcassets in Resources */,
+				82A0169F2A02D2BC00EAA526 /* Settings.bundle in Resources */,
 				130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */,
 				825F1F4829E9C8380043BD98 /* ClewSuccessSound.wav in Resources */,
 				82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */,
@@ -565,6 +574,7 @@
 				825F1F3729E9B7920043BD98 /* Assets.xcassets in Resources */,
 				82A016922A00189700EAA526 /* GoogleService-Info.plist in Resources */,
 				82A016932A00376600EAA526 /* Olin_College_Doors.geojson in Resources */,
+				82A0169E2A02D28500EAA526 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,6 +597,7 @@
 				8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */,
 				82A016962A0057A400EAA526 /* GeospatialData.swift in Sources */,
 				8241737029DE1415001599B1 /* TextFeedbackAdapter.swift in Sources */,
+				82A016A12A02D3CE00EAA526 /* SettingsManager.swift in Sources */,
 				825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */,
 				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
 				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,
@@ -651,6 +662,7 @@
 				82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */,
 				82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */,
 				82A0167D2A0015AA00EAA526 /* NavigationManager.swift in Sources */,
+				82A016A22A02D3CE00EAA526 /* SettingsManager.swift in Sources */,
 				82A016872A00164900EAA526 /* PathRecorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

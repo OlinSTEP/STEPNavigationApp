@@ -18,7 +18,11 @@ class FirebaseManager: ObservableObject {
     let pathGraph = PathGraph()
     
     var cloudAnchorRef: DatabaseReference {
-        return Database.database().reference().child("cloud_anchors")
+        if SettingsManager.shared.mappingSubFolder.isEmpty {
+            return Database.database().reference().child("cloud_anchors")
+        } else {
+            return Database.database().reference().child("cloud_anchors").child(SettingsManager.shared.mappingSubFolder)
+        }
     }
     
     private init() {
@@ -41,14 +45,6 @@ class FirebaseManager: ObservableObject {
         Storage.storage().reference().child("take2logs").child("\(uniqueId).log").putData(data) { (metadata, error) in
             print("error \(error)")
         }
-    }
-    
-    /// Writes the specified data to the realtime database. This is useful when importing data from JSONs.
-    /// - Parameters:
-    ///   - key: the key to store the data at (root/outdoor\_features/key
-    ///   - data: the values to store there
-    func uploadOutdoorInfoToDB(_ key: String, _ data: [String: Any]) {
-        Database.database().reference().child("outdoor_features").child(key).setValue(data)
     }
     
     func addConnection(anchorID1: String, anchor1Pose: simd_float4x4, anchorID2: String, anchor2Pose: simd_float4x4, breadCrumbs: [simd_float4x4], pathAnchors: [String: (CloudAnchorMetadata, simd_float4x4)]) {
