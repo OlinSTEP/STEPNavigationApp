@@ -61,6 +61,43 @@
 		826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994829E87EA10070290B /* ARCoreCredentials.swift */; };
 		829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */; };
 		829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 829F7B6829F2C2AB00B59EE0 /* Localizable.strings */; };
+		82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */; };
+		82A0166F2A00151C00EAA526 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 82A0166E2A00151C00EAA526 /* FirebaseDatabase */; };
+		82A016712A00152300EAA526 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 82A016702A00152300EAA526 /* FirebaseStorage */; };
+		82A016732A00152F00EAA526 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 82A016722A00152F00EAA526 /* SwiftGraph */; };
+		82A016752A00153400EAA526 /* ARCoreCloudAnchors in Frameworks */ = {isa = PBXBuildFile; productRef = 82A016742A00153400EAA526 /* ARCoreCloudAnchors */; };
+		82A016772A00153D00EAA526 /* ARCoreGeospatial in Frameworks */ = {isa = PBXBuildFile; productRef = 82A016762A00153D00EAA526 /* ARCoreGeospatial */; };
+		82A016792A00154600EAA526 /* ARCoreGARSession in Frameworks */ = {isa = PBXBuildFile; productRef = 82A016782A00154600EAA526 /* ARCoreGARSession */; };
+		82A0167B2A00155000EAA526 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 82A0167A2A00155000EAA526 /* FirebaseAnalytics */; };
+		82A0167C2A00158D00EAA526 /* PositioningModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737829DE1478001599B1 /* PositioningModel.swift */; };
+		82A0167D2A0015AA00EAA526 /* NavigationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F4E29E9CB350043BD98 /* NavigationManager.swift */; };
+		82A0167E2A0015B800EAA526 /* TextFeedbackAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736F29DE1415001599B1 /* TextFeedbackAdapter.swift */; };
+		82A016822A00160400EAA526 /* AnnouncementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */; };
+		82A016832A00161200EAA526 /* MapGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5029E9CBA70043BD98 /* MapGraph.swift */; };
+		82A016842A00161E00EAA526 /* MultiSegmentPathBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */; };
+		82A016872A00164900EAA526 /* PathRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016862A00164900EAA526 /* PathRecorder.swift */; };
+		82A016882A0016B400EAA526 /* simd_extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F3F29E9C65F0043BD98 /* simd_extensions.swift */; };
+		82A016892A00173400EAA526 /* AllPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737329DE1440001599B1 /* AllPaths.swift */; };
+		82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4029E23494004B1E81 /* LocationDataModel.swift */; };
+		82A0168B2A00177000EAA526 /* DataModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4229E236BD004B1E81 /* DataModelManager.swift */; };
+		82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */; };
+		82A0168D2A00178B00EAA526 /* CloudAnchorAligner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5229E9CF130043BD98 /* CloudAnchorAligner.swift */; };
+		82A0168E2A00179600EAA526 /* PathLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5429E9CF490043BD98 /* PathLogger.swift */; };
+		82A0168F2A00179E00EAA526 /* HapticFeedbackAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736B29DE13F4001599B1 /* HapticFeedbackAdapter.swift */; };
+		82A016902A0017A700EAA526 /* SoundEffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */; };
+		82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994829E87EA10070290B /* ARCoreCredentials.swift */; };
+		82A016922A00189700EAA526 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 82659CA329DF5CB3007546A1 /* GoogleService-Info.plist */; };
+		82A016932A00376600EAA526 /* Olin_College_Doors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */; };
+		82A016942A00377300EAA526 /* mbtaBusStops.json in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4829E36E36004B1E81 /* mbtaBusStops.json */; };
+		82A016962A0057A400EAA526 /* GeospatialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016952A0057A400EAA526 /* GeospatialData.swift */; };
+		82A016972A0057AB00EAA526 /* GeospatialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016952A0057A400EAA526 /* GeospatialData.swift */; };
+		82A016992A0057FC00EAA526 /* PathRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016862A00164900EAA526 /* PathRecorder.swift */; };
+		82A0169B2A017C0800EAA526 /* PerkinsOutdoors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */; };
+		82A0169C2A017C0E00EAA526 /* PerkinsOutdoors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */; };
+		82A0169E2A02D28500EAA526 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169D2A02D28500EAA526 /* Settings.bundle */; };
+		82A0169F2A02D2BC00EAA526 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169D2A02D28500EAA526 /* Settings.bundle */; };
+		82A016A12A02D3CE00EAA526 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016A02A02D3CE00EAA526 /* SettingsManager.swift */; };
+		82A016A22A02D3CE00EAA526 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016A02A02D3CE00EAA526 /* SettingsManager.swift */; };
 		82E69C9929F3278E002E2671 /* PathPlannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E69C9829F3278E002E2671 /* PathPlannerModel.swift */; };
 		82F2E43229FC5FD200781E75 /* ChooseStartAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2E43129FC5FD200781E75 /* ChooseStartAnchorView.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
@@ -136,6 +173,11 @@
 		826C994829E87EA10070290B /* ARCoreCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCoreCredentials.swift; sourceTree = "<group>"; };
 		829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementManager.swift; sourceTree = "<group>"; };
 		829F7B6829F2C2AB00B59EE0 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
+		82A016862A00164900EAA526 /* PathRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathRecorder.swift; sourceTree = "<group>"; };
+		82A016952A0057A400EAA526 /* GeospatialData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeospatialData.swift; sourceTree = "<group>"; };
+		82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerkinsOutdoors.geojson; sourceTree = "<group>"; };
+		82A0169D2A02D28500EAA526 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		82A016A02A02D3CE00EAA526 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		82E69C9829F3278E002E2671 /* PathPlannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathPlannerModel.swift; sourceTree = "<group>"; };
 		82F2E43129FC5FD200781E75 /* ChooseStartAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseStartAnchorView.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
@@ -174,6 +216,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82A0167B2A00155000EAA526 /* FirebaseAnalytics in Frameworks */,
+				82A016792A00154600EAA526 /* ARCoreGARSession in Frameworks */,
+				82A0166F2A00151C00EAA526 /* FirebaseDatabase in Frameworks */,
+				82A016712A00152300EAA526 /* FirebaseStorage in Frameworks */,
+				82A016772A00153D00EAA526 /* ARCoreGeospatial in Frameworks */,
+				82A016732A00152F00EAA526 /* SwiftGraph in Frameworks */,
+				82A016752A00153400EAA526 /* ARCoreCloudAnchors in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				130862C129E488B800CADE79 /* testBusStops.json */,
+				82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */,
 				130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */,
 				130E7C4829E36E36004B1E81 /* mbtaBusStops.json */,
 				130862BF29E4874400CADE79 /* testDoors.geojson */,
@@ -207,6 +257,7 @@
 				130862B729E479C500CADE79 /* STEP NavigationTests */,
 				825F1F3129E9B7910043BD98 /* STEP Mapping */,
 				8241734E29DE0C6F001599B1 /* Products */,
+				82A0166D2A00151C00EAA526 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -236,6 +287,7 @@
 				8241735429DE0C70001599B1 /* Assets.xcassets */,
 				8241735629DE0C70001599B1 /* Preview Content */,
 				829F7B6829F2C2AB00B59EE0 /* Localizable.strings */,
+				82A0169D2A02D28500EAA526 /* Settings.bundle */,
 			);
 			path = "STEP Navigation";
 			sourceTree = "<group>";
@@ -291,6 +343,8 @@
 				825F1F5429E9CF490043BD98 /* PathLogger.swift */,
 				825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */,
 				829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */,
+				82A016952A0057A400EAA526 /* GeospatialData.swift */,
+				82A016A02A02D3CE00EAA526 /* SettingsManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -308,6 +362,7 @@
 		825F1F3129E9B7910043BD98 /* STEP Mapping */ = {
 			isa = PBXGroup;
 			children = (
+				82A016852A00163900EAA526 /* Models */,
 				825F1F3229E9B7910043BD98 /* STEP_MappingApp.swift */,
 				825F1F3429E9B7910043BD98 /* ContentView.swift */,
 				825F1F3629E9B7920043BD98 /* Assets.xcassets */,
@@ -342,6 +397,21 @@
 				825F1F4529E9C8380043BD98 /* StopRecording.aiff */,
 			);
 			path = "Sound Effects";
+			sourceTree = "<group>";
+		};
+		82A0166D2A00151C00EAA526 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		82A016852A00163900EAA526 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				82A016862A00164900EAA526 /* PathRecorder.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -404,6 +474,15 @@
 			dependencies = (
 			);
 			name = "STEP Mapping";
+			packageProductDependencies = (
+				82A0166E2A00151C00EAA526 /* FirebaseDatabase */,
+				82A016702A00152300EAA526 /* FirebaseStorage */,
+				82A016722A00152F00EAA526 /* SwiftGraph */,
+				82A016742A00153400EAA526 /* ARCoreCloudAnchors */,
+				82A016762A00153D00EAA526 /* ARCoreGeospatial */,
+				82A016782A00154600EAA526 /* ARCoreGARSession */,
+				82A0167A2A00155000EAA526 /* FirebaseAnalytics */,
+			);
 			productName = "STEP Mapping";
 			productReference = 825F1F3029E9B7910043BD98 /* STEP Mapping.app */;
 			productType = "com.apple.product-type.application";
@@ -472,7 +551,9 @@
 				825F1F4929E9C8380043BD98 /* StartRecording.aiff in Resources */,
 				8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */,
 				825F1F4B29E9C8380043BD98 /* ClewErrorSound.wav in Resources */,
+				82A0169B2A017C0800EAA526 /* PerkinsOutdoors.geojson in Resources */,
 				8241735529DE0C70001599B1 /* Assets.xcassets in Resources */,
+				82A0169F2A02D2BC00EAA526 /* Settings.bundle in Resources */,
 				130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */,
 				825F1F4829E9C8380043BD98 /* ClewSuccessSound.wav in Resources */,
 				82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */,
@@ -487,8 +568,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82A016942A00377300EAA526 /* mbtaBusStops.json in Resources */,
+				82A0169C2A017C0E00EAA526 /* PerkinsOutdoors.geojson in Resources */,
 				825F1F3A29E9B7920043BD98 /* Preview Assets.xcassets in Resources */,
 				825F1F3729E9B7920043BD98 /* Assets.xcassets in Resources */,
+				82A016922A00189700EAA526 /* GoogleService-Info.plist in Resources */,
+				82A016932A00376600EAA526 /* Olin_College_Doors.geojson in Resources */,
+				82A0169E2A02D28500EAA526 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -509,7 +595,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */,
+				82A016962A0057A400EAA526 /* GeospatialData.swift in Sources */,
 				8241737029DE1415001599B1 /* TextFeedbackAdapter.swift in Sources */,
+				82A016A12A02D3CE00EAA526 /* SettingsManager.swift in Sources */,
 				825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */,
 				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
 				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,
@@ -533,6 +621,7 @@
 				8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */,
 				A8D886C229EEE550003E05E7 /* ExitNavigationAlertView.swift in Sources */,
 				826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */,
+				82A016992A0057FC00EAA526 /* PathRecorder.swift in Sources */,
 				130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */,
 				A8D886CD29F86346003E05E7 /* ListTemplate.swift in Sources */,
 				825F1F5529E9CF490043BD98 /* PathLogger.swift in Sources */,
@@ -553,8 +642,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */,
+				82A0167C2A00158D00EAA526 /* PositioningModel.swift in Sources */,
+				82A016972A0057AB00EAA526 /* GeospatialData.swift in Sources */,
+				82A016832A00161200EAA526 /* MapGraph.swift in Sources */,
+				82A0168D2A00178B00EAA526 /* CloudAnchorAligner.swift in Sources */,
+				82A016822A00160400EAA526 /* AnnouncementManager.swift in Sources */,
+				82A016882A0016B400EAA526 /* simd_extensions.swift in Sources */,
+				82A016892A00173400EAA526 /* AllPaths.swift in Sources */,
+				82A016842A00161E00EAA526 /* MultiSegmentPathBuilder.swift in Sources */,
+				82A016902A0017A700EAA526 /* SoundEffectManager.swift in Sources */,
 				825F1F3529E9B7910043BD98 /* ContentView.swift in Sources */,
+				82A0167E2A0015B800EAA526 /* TextFeedbackAdapter.swift in Sources */,
+				82A0168F2A00179E00EAA526 /* HapticFeedbackAdapter.swift in Sources */,
+				82A0168E2A00179600EAA526 /* PathLogger.swift in Sources */,
+				82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */,
 				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,
+				82A0168B2A00177000EAA526 /* DataModelManager.swift in Sources */,
+				82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */,
+				82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */,
+				82A0167D2A0015AA00EAA526 /* NavigationManager.swift in Sources */,
+				82A016A22A02D3CE00EAA526 /* SettingsManager.swift in Sources */,
+				82A016872A00164900EAA526 /* PathRecorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -812,17 +921,23 @@
 				DEVELOPMENT_TEAM = 787TUDMR8Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is used for mpaping";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Locatoin is needed for mapping";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-Mapping";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -842,17 +957,23 @@
 				DEVELOPMENT_TEAM = 787TUDMR8Q;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "The camera is used for mpaping";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Locatoin is needed for mapping";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "edu.occamlab.STEP-Mapping";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -964,6 +1085,41 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 82659CB329DF60B5007546A1 /* XCRemoteSwiftPackageReference "SwiftGraph" */;
 			productName = SwiftGraph;
+		};
+		82A0166E2A00151C00EAA526 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		82A016702A00152300EAA526 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		82A016722A00152F00EAA526 /* SwiftGraph */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CB329DF60B5007546A1 /* XCRemoteSwiftPackageReference "SwiftGraph" */;
+			productName = SwiftGraph;
+		};
+		82A016742A00153400EAA526 /* ARCoreCloudAnchors */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */;
+			productName = ARCoreCloudAnchors;
+		};
+		82A016762A00153D00EAA526 /* ARCoreGeospatial */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */;
+			productName = ARCoreGeospatial;
+		};
+		82A016782A00154600EAA526 /* ARCoreGARSession */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */;
+			productName = ARCoreGARSession;
+		};
+		82A0167A2A00155000EAA526 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

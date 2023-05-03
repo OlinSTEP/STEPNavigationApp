@@ -12,6 +12,7 @@ struct STEP_MappingApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(SettingsManager.shared)
         }
     }
 }

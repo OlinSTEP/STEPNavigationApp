@@ -14,10 +14,15 @@ import FirebaseStorage
 class FirebaseManager: ObservableObject {
     public static var shared = FirebaseManager()
     @Published var mapAnchors: [String: CloudAnchorMetadata] = [:]
+    var outdoorFeatures: [String: CLLocationCoordinate2D] = [:]
     let pathGraph = PathGraph()
     
     var cloudAnchorRef: DatabaseReference {
-        return Database.database().reference().child("cloud_anchors")
+        if SettingsManager.shared.mappingSubFolder.isEmpty {
+            return Database.database().reference().child("cloud_anchors")
+        } else {
+            return Database.database().reference().child("cloud_anchors").child(SettingsManager.shared.mappingSubFolder)
+        }
     }
     
     private init() {
@@ -40,14 +45,6 @@ class FirebaseManager: ObservableObject {
         Storage.storage().reference().child("take2logs").child("\(uniqueId).log").putData(data) { (metadata, error) in
             print("error \(error)")
         }
-    }
-    
-    /// Writes the specified data to the realtime database. This is useful when importing data from JSONs.
-    /// - Parameters:
-    ///   - key: the key to store the data at (root/outdoor\_features/key
-    ///   - data: the values to store there
-    func uploadOutdoorInfoToDB(_ key: String, _ data: [String: Any]) {
-        Database.database().reference().child("outdoor_features").child(key).setValue(data)
     }
     
     func addConnection(anchorID1: String, anchor1Pose: simd_float4x4, anchorID2: String, anchor2Pose: simd_float4x4, breadCrumbs: [simd_float4x4], pathAnchors: [String: (CloudAnchorMetadata, simd_float4x4)]) {
@@ -80,14 +77,26 @@ class FirebaseManager: ObservableObject {
             guard let geospatialTransform = keyValuePairs["geospatialTransform"] as? [String: Any],
                   let geoLocation = geospatialTransform["location"] as? [String: Double],
                   let latitude = geoLocation["latitude"],
-                  let longitude = geoLocation["longitude"] else {
+                  let longitude = geoLocation["longitude"],
+                  let geospatialData = GeospatialData(fromDict: geospatialTransform) else {
                 return
             }
             let anchorCategory = (keyValuePairs["category"] as? String) ?? ""
             let associatedOutdoorFeature = (keyValuePairs["associatedOutdoorFeature"] as? String) ?? ""
             let anchorType = AnchorType(rawValue: anchorCategory) ?? .indoorDestination
-            DataModelManager.shared.addDataModel(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: associatedOutdoorFeature,  coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), name: anchorName, cloudAnchorID: snapshot.key))
-            self.mapAnchors[snapshot.key] = CloudAnchorMetadata(name: anchorName, type: anchorType)
+            DataModelManager.shared.addDataModel(
+                LocationDataModel(anchorType: anchorType,
+                                  associatedOutdoorFeature: associatedOutdoorFeature,
+                                  coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                                  name: anchorName,
+                                  cloudAnchorID: snapshot.key)
+            )
+            self.mapAnchors[snapshot.key] = CloudAnchorMetadata(
+                name: anchorName,
+                type: anchorType,
+                associatedOutdoorFeature: associatedOutdoorFeature,
+                geospatialTransform: geospatialData
+            )
             self.pathGraph.cloudNodes.insert(snapshot.key)
         }
         cloudAnchorRef.child("connections").observe(.childAdded) { snapshot in
@@ -96,6 +105,22 @@ class FirebaseManager: ObservableObject {
         cloudAnchorRef.child("connections").observe(.childChanged) { snapshot in
             self.handleConnections(snapshot: snapshot)
         }
+        Database.database().reference().child("outdoor_features").observe(.childAdded) { snapshot  in
+            guard let value = snapshot.value as? [String: Any],
+                  let features = value["features"] as? [[String:Any]] else {
+                return
+            }
+            for feature in features {
+                guard let properties = feature["properties"] as? [String: Any],
+                      let name = properties["Name"] as? String,
+                      let geometry = feature["geometry"] as? [String: Any],
+                      let coordinates = geometry["coordinates"] as? [Double] else {
+                    continue
+                }
+                self.outdoorFeatures[name] = CLLocationCoordinate2D(latitude: coordinates[0], longitude: coordinates[1])
+            }
+        }
+        
     }
     
     func handleConnections(snapshot: DataSnapshot) {

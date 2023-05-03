@@ -18,6 +18,13 @@ extension simd_float4x4 {
         self.columns.3 = simd_float4(translation, 1.0)
     }
     
+    init(translation: simd_float3, rotation: simd_quatf) {
+        self = simd_float4x4(rotation)
+        self.columns.3.x = translation.x
+        self.columns.3.y = translation.y
+        self.columns.3.z = translation.z
+    }
+    
     init(translation: simd_float3, cameraYaw: Float) {
         // cameraYaw = 0 corresponds to aligning the -z axis of the phone to the x-axis of the world
         self = matrix_identity_float4x4

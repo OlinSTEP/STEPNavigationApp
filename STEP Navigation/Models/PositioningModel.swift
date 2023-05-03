@@ -27,9 +27,15 @@ enum GeoLocationAccuracy: Int {
 struct CloudAnchorMetadata {
     let name: String
     let type: AnchorType
+    let associatedOutdoorFeature: String
+    let geospatialTransform: GeospatialData
     
     func asDict()->[String: Any] {
-        return ["name": name, "type": type.rawValue]
+        return ["name": name,
+                "type": type.rawValue,
+                "category": type.rawValue,
+                "associatedOutdoorFeature": associatedOutdoorFeature,
+                "geospatialTransform": geospatialTransform.asDict()]
     }
 }
 
@@ -45,7 +51,16 @@ class PositioningModel: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     private var garSession: GARSession?
     private var latestGARAnchors: [GARAnchor]? = nil
+    var qualityChecker: Timer?
     public static var shared = PositioningModel()
+    @Published var currentQuality: GARFeatureMapQuality?
+    
+    private var pendingCloudAnchorMetadata: [UUID: CloudAnchorMetadata] = [:]
+    
+    private var poseBuffer: [simd_float4x4] = []
+    static let poseBufferMaxLength = 30
+    static let poseBufferLookbackForCloudAnchorAssessment = 15
+    
     private var manualAlignment: simd_float4x4? {
         didSet {
             if let newValue = manualAlignment {
@@ -65,6 +80,9 @@ class PositioningModel: NSObject, ObservableObject {
     @Published var currentLatLon: CLLocationCoordinate2D?
     var cameraTransform: simd_float4x4? {
         return arView.session.currentFrame?.camera.transform
+    }
+    var cameraGeoSpatialTransform: GARGeospatialTransform? {
+        return garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform
     }
     
     private override init() {
@@ -131,6 +149,18 @@ class PositioningModel: NSObject, ObservableObject {
         }
     }
     
+    func currentLocation(ofCloudAnchor id: String)->simd_float4x4? {
+        guard let latestGARAnchors = latestGARAnchors else {
+            return nil
+        }
+        for anchor in latestGARAnchors {
+            if anchor.cloudIdentifier == id {
+                return anchor.transform
+            }
+        }
+        return nil
+    }
+    
     func currentLocation(ofGARAnchor id: UUID)->simd_float4x4? {
         guard let latestGARAnchors = latestGARAnchors else {
             return nil
@@ -147,7 +177,14 @@ class PositioningModel: NSObject, ObservableObject {
         do {
             try garSession?.resolveCloudAnchor(cloudAnchorID)
         } catch {
-            //AnnouncementManager.shared.announce(announcement: "Unable to resolve cloud anchor")
+            print("error \(error.localizedDescription)")
+        }
+    }
+    
+    func estimateFeatureMapQualityForHosting(pose: simd_float4x4) {
+        do {
+            currentQuality = try garSession?.estimateFeatureMapQualityForHosting(pose)
+        } catch {
         }
     }
 }
@@ -157,6 +194,7 @@ extension PositioningModel: ARSessionDelegate {
         PathLogger.shared.logPose(frame.camera.transform, timestamp: frame.timestamp)
         if frame.camera.trackingState == .normal && garSession == nil {
             startGARSession()
+            monitorQuality()
         }
         do {
             if let garFrame = try garSession?.update(frame) {
@@ -221,6 +259,76 @@ extension PositioningModel: ARSessionDelegate {
             resolveCloudAnchor(byID: cloudAnchorID)
         }
     }
+    
+    func createCloudAnchor(afterDelay delay: Double, withName name: String) {
+        guard !name.isEmpty else {
+            AnnouncementManager.shared.announce(announcement: "Please enter an anchor name")
+            return
+        }
+        AnnouncementManager.shared.announce(announcement: "Creating cloud anchor in \(round(delay)) seconds")
+        guard let cameraTransform = self.arView.session.currentFrame?.camera.transform,
+              let geoSpatialTransfrom = garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform else {
+            return
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            self.createCloudAnchor(
+                atPose: cameraTransform.alignY(),
+                withMetadata: CloudAnchorMetadata(
+                    name: name,
+                    type: .indoorDestination,
+                    associatedOutdoorFeature: "",
+                    geospatialTransform: GeospatialData(arCoreGeospatial: geoSpatialTransfrom))
+            )
+        }
+    }
+    
+    func createCloudAnchorFromBufferedPose(withMetadata metadata: CloudAnchorMetadata)->(GARAnchor, ARAnchor)? {
+        if poseBuffer.isEmpty {
+            return nil
+        }
+        let poseIndex = max(0, poseBuffer.count - Self.poseBufferLookbackForCloudAnchorAssessment)
+        let poseToUseForQualityEstimation = poseBuffer[poseIndex].alignY()
+        return createCloudAnchor(atPose: poseToUseForQualityEstimation, withMetadata: metadata)
+    }
+    
+    func monitorQuality() {
+        qualityChecker?.invalidate()
+        qualityChecker = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            guard let cameraTransform = self.arView.session.currentFrame?.camera.transform,
+                  let geoSpatialTransfrom = self.garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform else {
+                return
+            }
+            // TODO: not the best data structure
+            self.poseBuffer.append(cameraTransform)
+            if self.poseBuffer.count > Self.poseBufferMaxLength {
+                // equivalent to pop front
+                self.poseBuffer = Array(self.poseBuffer[1...])
+            }
+            do {
+                let poseIndex = max(0, self.poseBuffer.count - Self.poseBufferLookbackForCloudAnchorAssessment)
+                let poseToUseForQualityEstimation = self.poseBuffer[poseIndex]
+                self.estimateFeatureMapQualityForHosting(pose: poseToUseForQualityEstimation)
+            } catch {
+                
+            }
+        }
+    }
+    
+    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata)->(GARAnchor, ARAnchor)? {
+        let newAnchor = ARAnchor(transform: pose)
+        arView.session.add(anchor: newAnchor)
+        do {
+            AnnouncementManager.shared.announce(announcement: "Trying to host anchor")
+            if let newGARAnchor = try garSession?.hostCloudAnchor(newAnchor) {
+                pendingCloudAnchorMetadata[newGARAnchor.identifier] = metadata
+                return (newGARAnchor, newAnchor)
+            }
+        } catch {
+            print("host cloud anchor failed \(error.localizedDescription)")
+        }
+        return nil
+    }
 }
 
 extension PositioningModel: GARSessionDelegate {
@@ -230,6 +338,34 @@ extension PositioningModel: GARSessionDelegate {
             resolvedCloudAnchors.insert(cloudIdentifier)
             manualAlignment = cloudAnchorAligner.adjust(currentAlignment: manualAlignment)
         }
+    }
+    
+    /// This function is called whenever a cloud anchor has been successfully hosted by Google's ARCore library.  This gives our app a chance to store the newly created anchor in various datastructures or databases.
+    /// - Parameters:
+    ///   - session: the GAR session associated with the anchor
+    ///   - garAnchor: the GARAnchor itself (this will have the cloudIdentifier, which is the way to refer to this anchor across session, as well as the anchor identifier, which s the way to refer to the anchor within this session)
+    func session(_ session: GARSession, didHost garAnchor:GARAnchor) {
+        guard let metadata = pendingCloudAnchorMetadata[garAnchor.identifier] else {
+            AnnouncementManager.shared.announce(announcement: "Unexpectedly hosted an anchor without metadata")
+            return
+        }
+        guard let cloudIdentifier = garAnchor.cloudIdentifier else {
+            return
+        }
+        pendingCloudAnchorMetadata.removeValue(forKey: garAnchor.identifier)
+        switch metadata.type {
+        case .indoorDestination:
+           FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
+        default:
+            PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: garAnchor.transform)
+        }
+        AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
+    }
+    
+    
+    func session(_ session: GARSession, didFailToHost garAnchor: GARAnchor) {
+        AnnouncementManager.shared.announce(announcement: "Failed to host anchor")
+        pendingCloudAnchorMetadata.removeValue(forKey: garAnchor.identifier)
     }
 }
 

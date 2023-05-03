@@ -33,6 +33,14 @@ class DataModelManager: ObservableObject {
         }
         
         do {
+            let doors = try LocationDataModelParser.parse(from: "PerkinsOutdoors", fileType: "geojson", anchorType: .externalDoor)
+            multiAddDataModel(doors, anchorType: .externalDoor)
+        }
+        catch {
+            print("Error parsing PerkinsOutdoors")
+        }
+        
+        do {
             let busStops = try LocationDataModelParser.parse(from: "mbtaBusStops", fileType: "json", anchorType: .busStop)
             multiAddDataModel(busStops, anchorType: .busStop)
         }
