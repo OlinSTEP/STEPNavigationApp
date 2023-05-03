@@ -28,6 +28,18 @@ class NavigationManager: ObservableObject {
     /// haptic feedback timer
     var followingCrumbs: Timer?
     
+    /// a ring buffer used to keep the last 50 positions of the phone
+    var locationRingBuffer = RingBuffer<simd_float3>(capacity: 50)
+    /// a ring buffer used to keep the last 100 headings of the phone
+    var headingRingBuffer = RingBuffer<Float>(capacity: 50)
+    
+    /// A threshold to determine when the phone rotated too much to update the angle offset
+    let angleDeviationThreshold : Float = 0.2
+    /// The minimum distance traveled in the floor plane in order to update the angle offset
+    let requiredDistance : Float = 0.3
+    /// A threshold to determine when a path is too curvy to update the angle offset
+    let linearDeviationThreshold: Float = 0.05
+    
     /// The delay between haptic feedback pulses in seconds
     static let FEEDBACKDELAY = 0.4
     
@@ -250,6 +262,8 @@ class NavigationManager: ObservableObject {
         // TODO: we may not be cleaning up the cloud anchors appropriately
         PositioningModel.shared.removeRenderedContent()
         // TODO: we may not be cleaning up old cloud anchors
+        locationRingBuffer.clear()
+        headingRingBuffer.clear()
         PositioningModel.shared.resetAlignment()
         hapticTimer?.invalidate()
         HapticFeedbackAdapter.shared.stopHaptics()
@@ -259,8 +273,69 @@ class NavigationManager: ObservableObject {
         PathLogger.shared.uploadLog()
     }
     
+    /// Calculate the offset between the phone's heading (either its z-axis or y-axis projected into the floor plane) and the user's direction of travel.  This offset allows us to give directions based on the user's movement rather than the direction of the phone.
+    ///
+    /// - Returns: the offset
+    private func getHeadingOffset() -> Float? {
+        guard let startHeading = headingRingBuffer.get(0), let endHeading = headingRingBuffer.get(-1), let startPosition = locationRingBuffer.get(0), let endPosition = locationRingBuffer.get(-1) else {
+            return nil
+        }
+        // make sure the path was far enough in the ground plane
+        if sqrt(pow(startPosition.x - endPosition.x, 2) + pow(startPosition.z - endPosition.z, 2)) < requiredDistance {
+            return nil
+        }
+        
+        // make sure that the headings are all close to the start and end headings
+        for i in 0..<headingRingBuffer.capacity {
+            guard let currAngle = headingRingBuffer.get(i) else {
+                return nil
+            }
+            if abs(nav.getAngleDiff(angle1: currAngle, angle2: startHeading)) > angleDeviationThreshold || abs(nav.getAngleDiff(angle1: currAngle, angle2: endHeading)) > angleDeviationThreshold {
+                // the phone turned too much during the last second
+                return nil
+            }
+        }
+        // make sure the path is straight
+        let u = simd_normalize(endPosition - startPosition)
+        
+        for i in 0..<locationRingBuffer.capacity {
+            let d = locationRingBuffer.get(i)! - startPosition
+            let orthogonalVector = d - u*simd_dot(d, u)
+            if simd_length(orthogonalVector) > linearDeviationThreshold {
+                // the phone didn't move in a straight path during the last second
+                return nil
+            }
+        }
+        let movementAngle = atan2f((startPosition.x - endPosition.x), (startPosition.z - endPosition.z))
+        
+        let potentialOffset = nav.getAngleDiff(angle1: movementAngle, angle2: nav.averageAngle(a: startHeading, b: endHeading))
+        // check if the user is potentially moving backwards.  We only try to correct for this if the potentialOffset is in the range [0.75 pi, 1.25 pi]
+        if cos(potentialOffset) < -sqrt(2)/2 {
+            return potentialOffset - Float.pi
+        }
+        return potentialOffset
+    }
+    
+    /// update the offset between direction of travel and the orientation of the phone.  This supports a feature which allows the user to navigate with the phone pointed in a direction other than the direction of travel.  The feature cannot be accessed by users in the app store version.
+    func updateHeadingOffset() {
+        guard let curLocation = PositioningModel.shared.cameraTransform else {
+            return
+        }
+        // NOTE: currPhoneHeading is not the same as curLocation.location.yaw
+        let currPhoneHeading = getPhoneHeadingYaw(currentLocation: curLocation)
+        headingRingBuffer.insert(currPhoneHeading)
+        locationRingBuffer.insert(curLocation.translation)
+        
+        if let newOffset = getHeadingOffset(), cos(newOffset) > 0 {
+            nav.headingOffset = newOffset
+        }
+    }
+    
     /// send haptic feedback if the device is pointing towards the next keypoint.
     @objc func getHapticFeedback() {
+        
+        updateHeadingOffset()
+        
         if RouteNavigator.shared.isComplete {
             guard let curPos = PositioningModel.shared.cameraTransform?.translation,
                   let routeEndKeypoint = RouteNavigator.shared.lastKeypoint,

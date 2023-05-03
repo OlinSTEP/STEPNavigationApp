@@ -162,9 +162,6 @@ class Navigation {
     /// The offset between the user's direction of travel (assumed to be aligned with the front of their body and the phone's orientation)
     var headingOffset: Float?
     
-    /// control whether to apply the heading offset or not
-    public var useHeadingOffset = false
-    
     /// Determines position of the next keypoint relative to the iPhone's current position.
     ///
     /// - Parameters:
@@ -182,7 +179,7 @@ class Navigation {
         let keypointTargetHeight = isLastKeypoint ? lastKeypointTargetHeight : targetHeight
         let keypointTargetWidth = isLastKeypoint ? lastKeypointTargetWidth : targetWidth
 
-        let trueYaw  = getPhoneHeadingYaw(currentLocation: currentLocation) + (useHeadingOffset && headingOffset != nil ? headingOffset! : Float(0.0))
+        let trueYaw  = getPhoneHeadingYaw(currentLocation: currentLocation) + (SettingsManager.shared.adjustPhoneBodyOffset && headingOffset != nil ? headingOffset! : Float(0.0))
         // planar heading vector
         let planarHeading = simd_float3(sin(trueYaw), 0, cos(trueYaw))
         let delta = currentLocation.translation - nextLocation.translation
