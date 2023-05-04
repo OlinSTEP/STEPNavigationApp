@@ -60,6 +60,31 @@ class RingBuffer<Element> {
     var capacity: Int {
         return data.count
     }
+    public func max() -> Element? {
+           guard let first = data.first else {
+               return nil
+           }
+           var max = first
+           for i in 1..<data.count {
+               if let current = data[i], "\(current)" > "\(max)" {
+                   max = current
+               }
+           }
+           return max
+       }
+
+       public func min() -> Element? {
+           guard let first = data.first else {
+               return nil
+           }
+           var min = first
+           for i in 1..<data.count {
+               if let current = data[i], "\(current)" < "\(min)" {
+                   min = current
+               }
+           }
+           return min
+       }
 }
 
 
@@ -240,6 +265,9 @@ public final class LinkedList<T> {
     public func removeAll() {
         head = nil
     }
+    
+    
+    
     
     /// Function to remove a specific node.
     ///

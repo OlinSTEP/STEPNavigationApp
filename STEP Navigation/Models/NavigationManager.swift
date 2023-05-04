@@ -29,9 +29,9 @@ class NavigationManager: ObservableObject {
     var followingCrumbs: Timer?
     
     /// a ring buffer used to keep the last 50 positions of the phone
-    var locationRingBuffer = RingBuffer<simd_float3>(capacity: 50)
+    var locationRingBuffer = RingBuffer<simd_float3>(capacity: 100)
     /// a ring buffer used to keep the last 100 headings of the phone
-    var headingRingBuffer = RingBuffer<Float>(capacity: 50)
+    var headingRingBuffer = RingBuffer<Float>(capacity: 100)
     
     /// A threshold to determine when the phone rotated too much to update the angle offset
     let angleDeviationThreshold : Float = 0.2
@@ -316,6 +316,11 @@ class NavigationManager: ObservableObject {
         return potentialOffset
     }
     
+    func getDistance(startPosition:simd_float3, endPosition:simd_float3) -> Float{
+        return sqrt(pow(startPosition.x - endPosition.x, 2) + pow(startPosition.z - endPosition.z, 2))
+    }
+    
+    
     /// update the offset between direction of travel and the orientation of the phone.  This supports a feature which allows the user to navigate with the phone pointed in a direction other than the direction of travel.  The feature cannot be accessed by users in the app store version.
     func updateHeadingOffset() {
         guard let curLocation = PositioningModel.shared.cameraTransform else {
@@ -323,6 +328,30 @@ class NavigationManager: ObservableObject {
         }
         // NOTE: currPhoneHeading is not the same as curLocation.location.yaw
         let currPhoneHeading = getPhoneHeadingYaw(currentLocation: curLocation)
+        
+        if let startPosition = locationRingBuffer.get(0) {
+              let curPosition = curLocation.translation
+              if getDistance(startPosition: startPosition, endPosition: curPosition) < requiredDistance{
+                  // user has not moved in a while
+                  // if heading moveing around: clear ringBuffer, toggle navigation icon
+                  let numMax = headingRingBuffer.data.compactMap { $0 }.max() ?? 0
+                  let numMin = headingRingBuffer.data.compactMap { $0 }.min() ?? 0
+
+
+                  if numMax-numMin > 0.7{
+                      //user is lost
+                      if headingRingBuffer.capacity > 80{
+                          updateDirections()
+                          headingRingBuffer.clear()
+                          locationRingBuffer.clear()
+                      }
+                  }
+                  // else: do nothing
+                  
+              }
+          }
+
+        
         headingRingBuffer.insert(currPhoneHeading)
         locationRingBuffer.insert(curLocation.translation)
         
