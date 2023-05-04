@@ -29,9 +29,9 @@ class NavigationManager: ObservableObject {
     var followingCrumbs: Timer?
     
     /// a ring buffer used to keep the last 50 positions of the phone
-    var locationRingBuffer = RingBuffer<simd_float3>(capacity: 100)
+    var locationRingBuffer = RingBuffer<simd_float3>(capacity: 150)
     /// a ring buffer used to keep the last 100 headings of the phone
-    var headingRingBuffer = RingBuffer<Float>(capacity: 100)
+    var headingRingBuffer = RingBuffer<Float>(capacity: 150)
     
     /// A threshold to determine when the phone rotated too much to update the angle offset
     let angleDeviationThreshold : Float = 0.2
@@ -285,15 +285,15 @@ class NavigationManager: ObservableObject {
             return nil
         }
         
-        
+
         // make sure that the headings are all close to the start and end headings
         for i in 0..<headingRingBuffer.capacity {
             guard let currAngle = headingRingBuffer.get(i) else {
                 return nil
             }
-            let headingChange = nav.getAngleDiff(angle1: currAngle, angle2: startHeading)
             if abs(nav.getAngleDiff(angle1: currAngle, angle2: startHeading)) > angleDeviationThreshold || abs(nav.getAngleDiff(angle1: currAngle, angle2: endHeading)) > angleDeviationThreshold {
                 // the phone turned too much during the last second
+//                updateDirections()
                 return nil
             }
         }
@@ -342,10 +342,10 @@ class NavigationManager: ObservableObject {
 
                   if numMax-numMin > 0.7{
                       //user is lost
-                      if headingRingBuffer.capacity > 80{
+                      if headingRingBuffer.capacity > 100{
+                          updateDirections()
                           headingRingBuffer.clear()
                           locationRingBuffer.clear()
-                          updateDirections()
 
                       }
                   }
