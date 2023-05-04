@@ -113,8 +113,10 @@ enum AnchorType: String, CaseIterable, Identifiable {
     case externalDoor = "External Door"
     case bathroom = "Bathroom"
     case frontdesk = "Front Desk"
+    case junction = "Junction"
     case indoorDestination = "Indoor"
     case room = "Room"
+    case exit = "Exit"
     case waterFountain = "Water Fountain"
     case path = "path"
     
@@ -129,6 +131,10 @@ enum AnchorType: String, CaseIterable, Identifiable {
         case .room:
             return true
         case .indoorDestination:
+            return true
+        case .junction:
+            return true
+        case .exit:
             return true
         default:
             return false

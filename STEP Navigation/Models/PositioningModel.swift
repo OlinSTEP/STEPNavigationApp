@@ -16,9 +16,10 @@ import SwiftUI
 /// Currently, there is no defined standard for these values (they are determined on a View by View basis)
 enum GeoLocationAccuracy: Int {
     case none = 0
-    case low = 1
-    case medium = 2
-    case high = 3
+    case coarse = 1
+    case low = 2
+    case medium = 3
+    case high = 4
     
     func isAtLeastAsGoodAs(other: GeoLocationAccuracy)->Bool {
         return self.rawValue >= other.rawValue
@@ -47,14 +48,18 @@ struct CloudAnchorResolutionInfomation {
 }
 
 class PositioningModel: NSObject, ObservableObject {
+    public static var shared = PositioningModel()
+
     // this would host and manage the ARSession
-    let arView = ARView(frame: .zero)
+    let arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: false)
     private let locationManager = CLLocationManager()
     private var garSession: GARSession?
     private var latestGARAnchors: [GARAnchor]? = nil
     var qualityChecker: Timer?
-    public static var shared = PositioningModel()
     @Published var currentQuality: GARFeatureMapQuality?
+    @Published var resolvedCloudAnchors = Set<String>()
+    @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
+    @Published var currentLatLon: CLLocationCoordinate2D?
     
     private var pendingCloudAnchorMetadata: [UUID: CloudAnchorMetadata] = [:]
     
@@ -75,10 +80,7 @@ class PositioningModel: NSObject, ObservableObject {
     }
     private let rendererHelper: RendererHelper
     private var cloudAnchorAligner = CloudAnchorAligner()
-    @Published var resolvedCloudAnchors = Set<String>()
 
-    @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
-    @Published var currentLatLon: CLLocationCoordinate2D?
     var cameraTransform: simd_float4x4? {
         return arView.session.currentFrame?.camera.transform
     }
@@ -114,6 +116,25 @@ class PositioningModel: NSObject, ObservableObject {
             print("failed to create GARSession")
         }
     }
+    
+    func startPositioning() {
+        stopPositioning()
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.isAutoFocusEnabled = false
+        arView.session.run(configuration)
+    }
+    
+    func startCoarsePositioning() {
+        print("starting coarse positioning")
+        locationManager.delegate = self
+        locationManager.startUpdatingLocation()
+    }
+    
+    func stopPositioning() {
+        garSession = nil
+        arView.session.pause()
+        resetAlignment()
+    }
 
     func removeRenderedContent() {
         rendererHelper.removeRenderedContent()
@@ -121,6 +142,10 @@ class PositioningModel: NSObject, ObservableObject {
     
     func resetAlignment() {
         manualAlignment = nil
+        currentQuality = nil
+        currentLatLon = nil
+        geoLocalizationAccuracy = .none
+        resolvedCloudAnchors = []
         cloudAnchorAligner = CloudAnchorAligner()
     }
     
@@ -413,5 +438,16 @@ class RendererHelper {
             anchorEntity!.addChild(modelEntity)
         }
         arView.scene.anchors.append(anchorEntity!)
+    }
+}
+
+extension PositioningModel: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let mostRecentLocation = locations.last, garSession == nil else {
+            return
+        }
+        print("Updating with coarse localization")
+        currentLatLon = mostRecentLocation.coordinate
+        geoLocalizationAccuracy = .coarse
     }
 }

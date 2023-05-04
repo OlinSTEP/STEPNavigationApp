@@ -15,7 +15,7 @@ struct LocalizingView: View {
 
     let anchorType: AnchorType
     var minimumGeoLocationAccuracy: GeoLocationAccuracy {
-        return anchorType == .indoorDestination ? .low : .high
+        return .coarse
     }
     
     var body: some View {
@@ -74,7 +74,11 @@ struct LocalizingView: View {
                                 .foregroundColor(AppColor.white)
                                 .multilineTextAlignment(.leading)
                                 .padding(.horizontal)
-
+                        case .coarse:
+                            Text("Current Accuracy: Coarse (GPS Only)")
+                                .foregroundColor(AppColor.white)
+                                .multilineTextAlignment(.leading)
+                                .padding(.horizontal)
                         case .low:
                             Text("Current Accuracy: Low")
                                 .foregroundColor(AppColor.white)

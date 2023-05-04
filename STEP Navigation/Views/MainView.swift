@@ -10,7 +10,7 @@ import SwiftUI
 struct MainView: View {
     @ObservedObject var database = FirebaseManager.shared
     @ObservedObject var positionModel = PositioningModel.shared
-    let minimumGeoLocationAccuracy: GeoLocationAccuracy = .low
+    let minimumGeoLocationAccuracy: GeoLocationAccuracy = .coarse
     
     @State private var isAnimating = false
     
@@ -131,6 +131,9 @@ struct MainView: View {
             }
         }
         .background(AppColor.accent)
+        .onAppear() {
+            positionModel.startCoarsePositioning()
+        }
     }
     .accentColor(AppColor.black)
     }
