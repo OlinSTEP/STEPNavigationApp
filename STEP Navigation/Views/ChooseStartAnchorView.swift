@@ -10,7 +10,7 @@ import CoreLocation
 
 struct ChooseStartAnchorView: View {
     @State var destinationAnchorDetails: LocationDataModel?
-    @State var nearbyDistance: Double = 2000.0
+    @State var nearbyDistance: Double = 300.0
     @State var chosenStart: LocationDataModel?
     @State var outdoorsSelectedAsStart = false
     @ObservedObject var positionModel = PositioningModel.shared
@@ -27,6 +27,8 @@ struct ChooseStartAnchorView: View {
                 Spacer()
             }
             .padding(.vertical, 20)
+            
+            NearbyDistanceThresholdView(nearbyDistance: $nearbyDistance)
         }
         .background(AppColor.accent)
         
