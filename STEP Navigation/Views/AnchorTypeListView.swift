@@ -8,9 +8,43 @@
 import SwiftUI
 import CoreLocation
 
+struct NearbyDistanceThresholdView: View {
+    var nearbyDistance: Binding<Double>
+    @State var showPopup = false
+    var body: some View {
+        HStack {
+            Text("Within \(nearbyDistance.wrappedValue, specifier: "%.0f") meters")
+                .font(.title)
+                .padding(.leading)
+            if showPopup == false {
+                Image(systemName: "chevron.down")
+                    .accessibilityLabel("Open Slider")
+            } else {
+                Image(systemName: "chevron.up")
+                    .accessibilityLabel("Close Slider")
+            }
+            Spacer()
+        }
+        .padding(.bottom, 20)
+        .onTapGesture {
+            showPopup.toggle()
+        }
+        
+        if showPopup == true {
+            HStack {
+                Text("0").accessibility(hidden: true)
+                Slider(value: nearbyDistance, in: 0...1000, step: 10)
+                    .accessibility(value: Text("\(Int(nearbyDistance.wrappedValue)) meters"))
+                Text("1000").accessibility(hidden: true)
+            }
+            .frame(width: 300)
+            .padding(.bottom, 20)
+        }
+    }
+}
+
 struct AnchorTypeListView: View {        
     @State var nearbyDistance: Double = 300
-    @State var showPopup = false
     @State var hasLocalized = false
     @State var anchorTypes: [String] = []
     // Sets the appearance of the Navigation Bar using UIKit
@@ -38,33 +72,7 @@ struct AnchorTypeListView: View {
                 .padding(.top, 20)
                 .padding(.bottom, 0.5)
                 
-                HStack {
-                    Text("Within \(nearbyDistance, specifier: "%.0f") meters")
-                        .font(.title)
-                        .padding(.leading)
-                    if showPopup == false {
-                        Image(systemName: "chevron.down")
-                            .accessibilityLabel("Open Slider")
-                    } else {
-                        Image(systemName: "chevron.up")
-                            .accessibilityLabel("Close Slider")
-                    }
-                    Spacer()
-                }
-                .padding(.bottom, 20)
-                .onTapGesture {
-                    showPopup.toggle()
-                }
-                
-                if showPopup == true {
-                    HStack {
-                        Text("0")
-                        Slider(value: $nearbyDistance, in: 0...1000, step: 10)
-                        Text("1000")
-                    }
-                    .frame(width: 300)
-                    .padding(.bottom, 20)
-                }
+                NearbyDistanceThresholdView(nearbyDistance: $nearbyDistance)
             }
             .background(AppColor.accent)
             
