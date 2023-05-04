@@ -285,13 +285,22 @@ class NavigationManager: ObservableObject {
             return nil
         }
         
+        let expectedHeadingChange: Float = nav.getAngleDiff(angle1: startHeading, angle2: endHeading)
+        let maxAllowedHeadingDeviation: Float = 15 // set this to the maximum allowed deviation from the expected turn
+        
         // make sure that the headings are all close to the start and end headings
         for i in 0..<headingRingBuffer.capacity {
             guard let currAngle = headingRingBuffer.get(i) else {
                 return nil
             }
+            let headingChange = nav.getAngleDiff(angle1: currAngle, angle2: startHeading)
             if abs(nav.getAngleDiff(angle1: currAngle, angle2: startHeading)) > angleDeviationThreshold || abs(nav.getAngleDiff(angle1: currAngle, angle2: endHeading)) > angleDeviationThreshold {
                 // the phone turned too much during the last second
+                return nil
+            }
+            else if abs(headingChange - expectedHeadingChange) > maxAllowedHeadingDeviation{
+                // user is also lost
+                updateDirections()
                 return nil
             }
         }
