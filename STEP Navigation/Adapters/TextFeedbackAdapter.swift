@@ -228,8 +228,8 @@ class Navigation {
             
             return direction
         case .latLonBased:
-            //  Determine whether the phone is inside the bounding box of the keypoint
-            if (abs(xDiff) <= keypointTargetDepth && abs(yDiff) <= keypointTargetHeight && abs(zDiff) <= keypointTargetWidth) {
+            //  Determine whether the phone is inside the bounding box of the keypoint.  We ignore the y value since the elevation can be erroneously estimated by ARCore's addTerrainAnchor API
+            if (abs(xDiff) <= keypointTargetDepth && abs(zDiff) <= keypointTargetWidth) {
                 direction.targetState = .atTarget
             } else if (sqrtf(powf(Float(xDiff), 2) + powf(Float(zDiff), 2)) <= 4) {
                 direction.targetState = .closeToTarget

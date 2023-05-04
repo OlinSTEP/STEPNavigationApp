@@ -150,7 +150,9 @@ struct ChooseAnchorComponentView: View {
                 VStack {
                     // TODO: this is pretty unwieldy (code sharing is pretty low here).  Maybe we should create a separate view type?
                     ScrollView {
-                    if anchorSelectionType == .startOfIndoorRoute {
+                        if anchorSelectionType == .startOfIndoorRoute,
+                           let otherAnchor = otherAnchor.wrappedValue,
+                           NavigationManager.shared.getReachabilityFromOutdoors(outOf: [otherAnchor]).first == true {
                         Button(action: {
                             outdoorsSelected.wrappedValue.toggle()
                             chosenAnchor.wrappedValue = nil
