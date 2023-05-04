@@ -43,11 +43,11 @@ struct NavigatingView: View {
                             Button(action: {
                                 navigationManager.updateDirections()
                             }) {
-                                Image(systemName: "point.filled.topleft.down.curvedto.point.bottomright.up")
+                                Image(systemName: "waveform")
                                     .resizable()
-                                    .frame(width: 100, height: 100)
-                                    .foregroundColor(.green)
-                            }.accessibilityLabel("Get directions")
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(AppColor.accent)
+                            }.accessibilityLabel("Repeat Directions")
                             //                        Image(systemName: "pause.circle.fill")
                             //                            .resizable()
                             //                            .frame(width: 100, height: 100)
@@ -169,12 +169,27 @@ struct InformationPopup: View {
                         .multilineTextAlignment(.center)
                 }
             case .arrived:
-                HStack {
-                    Text("Arrived. You should be within one cane's length of your destination.")
-                        .foregroundColor(AppColor.white)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.leading)
+                VStack {
+                    HStack {
+                        Text("Arrived. You should be within one cane's length of your destination.")
+                            .foregroundColor(AppColor.white)
+                            .bold()
+                            .font(.title2)
+                            .multilineTextAlignment(.leading)
+                    }
+                    NavigationLink (destination: MainView(), label: {
+                        Text("Home")
+                            .font(.title)
+                            .bold()
+                            .frame(maxWidth: 300)
+                            .foregroundColor(AppColor.black)
+                    })
+                    .padding(.bottom, 20)
+                    .padding(.top, 10)
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
                 }
             }
         }
