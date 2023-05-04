@@ -98,6 +98,8 @@
 		82A0169F2A02D2BC00EAA526 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 82A0169D2A02D28500EAA526 /* Settings.bundle */; };
 		82A016A12A02D3CE00EAA526 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016A02A02D3CE00EAA526 /* SettingsManager.swift */; };
 		82A016A22A02D3CE00EAA526 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016A02A02D3CE00EAA526 /* SettingsManager.swift */; };
+		82A016A42A02E51800EAA526 /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016A32A02E51800EAA526 /* RingBuffer.swift */; };
+		82A016A52A02E51800EAA526 /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016A32A02E51800EAA526 /* RingBuffer.swift */; };
 		82E69C9929F3278E002E2671 /* PathPlannerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E69C9829F3278E002E2671 /* PathPlannerModel.swift */; };
 		82F2E43229FC5FD200781E75 /* ChooseStartAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2E43129FC5FD200781E75 /* ChooseStartAnchorView.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
@@ -178,6 +180,7 @@
 		82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerkinsOutdoors.geojson; sourceTree = "<group>"; };
 		82A0169D2A02D28500EAA526 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		82A016A02A02D3CE00EAA526 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		82A016A32A02E51800EAA526 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
 		82E69C9829F3278E002E2671 /* PathPlannerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathPlannerModel.swift; sourceTree = "<group>"; };
 		82F2E43129FC5FD200781E75 /* ChooseStartAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseStartAnchorView.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
@@ -383,6 +386,7 @@
 			isa = PBXGroup;
 			children = (
 				825F1F3F29E9C65F0043BD98 /* simd_extensions.swift */,
+				82A016A32A02E51800EAA526 /* RingBuffer.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -599,6 +603,7 @@
 				8241737029DE1415001599B1 /* TextFeedbackAdapter.swift in Sources */,
 				82A016A12A02D3CE00EAA526 /* SettingsManager.swift in Sources */,
 				825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */,
+				82A016A42A02E51800EAA526 /* RingBuffer.swift in Sources */,
 				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
 				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,
 				82F2E43229FC5FD200781E75 /* ChooseStartAnchorView.swift in Sources */,
@@ -655,6 +660,7 @@
 				825F1F3529E9B7910043BD98 /* ContentView.swift in Sources */,
 				82A0167E2A0015B800EAA526 /* TextFeedbackAdapter.swift in Sources */,
 				82A0168F2A00179E00EAA526 /* HapticFeedbackAdapter.swift in Sources */,
+				82A016A52A02E51800EAA526 /* RingBuffer.swift in Sources */,
 				82A0168E2A00179600EAA526 /* PathLogger.swift in Sources */,
 				82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */,
 				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,

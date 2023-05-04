@@ -13,6 +13,9 @@ class SettingsManager: ObservableObject {
     /// if non-empty, put all mapping content in a subfolder
     var mappingSubFolder = ""
     
+    /// true if we should adjust navigation based on phone / body offset
+    var adjustPhoneBodyOffset = false
+    
     private init() {
         createSettingsBundle()
     }
@@ -32,11 +35,15 @@ class SettingsManager: ObservableObject {
         let defaults = UserDefaults.standard
         
         mappingSubFolder = defaults.string(forKey: "mappingSubFolder") ?? ""
+        
+        adjustPhoneBodyOffset = defaults.bool(forKey: "adjustPhoneBodyOffset")
     }
     
     /// Register settings bundle
     func registerSettingsBundle(){
-        let appDefaults = ["mappingSubFolder": ""] as [String : Any]
+        let appDefaults = [
+            "mappingSubFolder": "",
+            "adjustPhoneBodyOffset": false] as [String : Any]
         UserDefaults.standard.register(defaults: appDefaults)
     }
 }
