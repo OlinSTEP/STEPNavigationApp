@@ -80,7 +80,7 @@ struct AnchorTypeListView: View {
                             NavigationLink (
                                 destination: LocalAnchorListView(anchorType:  anchorType, nearbyDistance: nearbyDistance),
                                 label: {
-                                    Text(anchorType.rawValue)
+                                    Text("\(anchorType.rawValue)s")
                                         .font(.largeTitle)
                                         .bold()
                                         .padding(30)
