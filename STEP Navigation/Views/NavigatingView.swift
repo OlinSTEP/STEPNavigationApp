@@ -70,17 +70,15 @@ struct NavigatingView: View {
         }.onReceive(positioningModel.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
         }.onReceive(positioningModel.$geoLocalizationAccuracy) { newValue in
-            guard newValue.isAtLeastAsGoodAs(other: .high), !didPrepareToNavigate else {
+            guard !didPrepareToNavigate else {
                 return
             }
             // plan path
-            if let startAnchorDetails = startAnchorDetails {
+            if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
                 PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
                 didPrepareToNavigate = true
                 checkLocalization(cloudAnchorsToCheck: positioningModel.resolvedCloudAnchors)
-            } else {
-                // TODO: need something more subtle here based on quality of outdoor localization
-                didLocalize = true
+            } else if newValue.isAtLeastAsGoodAs(other: .high) {                didLocalize = true
                 PathPlanner.shared.prepareToNavigateFromOutdoors(to: destinationAnchorDetails)
                 didPrepareToNavigate = true
                 navigationManager.startNavigating()
