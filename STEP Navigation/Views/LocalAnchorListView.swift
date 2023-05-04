@@ -79,6 +79,8 @@ struct LocalAnchorListView: View {
         switch accuracy {
         case .none:
             return 100.0
+        case .coarse:
+            return 200.0
         case .low:
             return 200.0
         case .medium:

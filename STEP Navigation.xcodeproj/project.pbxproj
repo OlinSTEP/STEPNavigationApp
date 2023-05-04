@@ -59,6 +59,7 @@
 		82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB429DF60B5007546A1 /* SwiftGraph */; };
 		826C994729E87C130070290B /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994629E87C130070290B /* ARViewContainer.swift */; };
 		826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994829E87EA10070290B /* ARCoreCredentials.swift */; };
+		8274AFF32A043A6800636699 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
 		829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */; };
 		829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 829F7B6829F2C2AB00B59EE0 /* Localizable.strings */; };
 		82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */; };
@@ -664,6 +665,7 @@
 				82A0168E2A00179600EAA526 /* PathLogger.swift in Sources */,
 				82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */,
 				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,
+				8274AFF32A043A6800636699 /* AppColor.swift in Sources */,
 				82A0168B2A00177000EAA526 /* DataModelManager.swift in Sources */,
 				82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */,
 				82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */,

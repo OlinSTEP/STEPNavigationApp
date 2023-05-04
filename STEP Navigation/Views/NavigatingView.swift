@@ -48,10 +48,6 @@ struct NavigatingView: View {
                                     .frame(width: 80, height: 80)
                                     .foregroundColor(AppColor.accent)
                             }.accessibilityLabel("Repeat Directions")
-                            //                        Image(systemName: "pause.circle.fill")
-                            //                            .resizable()
-                            //                            .frame(width: 100, height: 100)
-                            //                            .foregroundColor(.red)
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 140)
@@ -60,26 +56,35 @@ struct NavigatingView: View {
                 }
                 .padding(.vertical, 100)
             }.onAppear() {
-                // plan path
-                if let startAnchorDetails = startAnchorDetails {
-                    didLocalize = false
-                    PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
-                    didPrepareToNavigate = true
-                    checkLocalization(cloudAnchorsToCheck: positioningModel.resolvedCloudAnchors)
-                } else {
-                    // TODO: need something more subtle here based on quality of outdoor localization
-                    didLocalize = true
-                    PathPlanner.shared.prepareToNavigateFromOutdoors(to: destinationAnchorDetails)
-                    navigationManager.startNavigating()
-                }
+                // start up the positioning
+                didLocalize = false
+                didPrepareToNavigate = false
+                PositioningModel.shared.startPositioning()
                 if !didLocalize {
                     AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
                 }
             }.onDisappear() {
+                PositioningModel.shared.stopPositioning()
                 NavigationManager.shared.stopNavigating()
             }
         }.onReceive(positioningModel.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
+        }.onReceive(positioningModel.$geoLocalizationAccuracy) { newValue in
+            guard newValue.isAtLeastAsGoodAs(other: .high), !didPrepareToNavigate else {
+                return
+            }
+            // plan path
+            if let startAnchorDetails = startAnchorDetails {
+                PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
+                didPrepareToNavigate = true
+                checkLocalization(cloudAnchorsToCheck: positioningModel.resolvedCloudAnchors)
+            } else {
+                // TODO: need something more subtle here based on quality of outdoor localization
+                didLocalize = true
+                PathPlanner.shared.prepareToNavigateFromOutdoors(to: destinationAnchorDetails)
+                didPrepareToNavigate = true
+                navigationManager.startNavigating()
+            }
         }.onReceive(navigationManager.$navigationDirection) {
             newValue in
             hideNavTimer?.invalidate()
