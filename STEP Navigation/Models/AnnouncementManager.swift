@@ -79,7 +79,9 @@ class AnnouncementManager: NSObject {
         if UIAccessibility.isVoiceOverRunning {
             // use the VoiceOver API instead of text to speech
             currentAnnouncement = announcement
-            UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: announcement)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: announcement)
+            }
         } else if voiceFeedback {
             let audioSession = AVAudioSession.sharedInstance()
             do {
