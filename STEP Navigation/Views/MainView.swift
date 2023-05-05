@@ -38,6 +38,11 @@ struct MainView: View {
             .navigationBarBackButtonHidden()
             .background(AppColor.accent)
 
+        ZStack {
+            Rectangle()
+                .fill(AppColor.white)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
             if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                 if let currentLatLon = positionModel.currentLatLon {
                     VStack {
@@ -122,11 +127,12 @@ struct MainView: View {
                 .padding()
             }
         }
-        .accentColor(AppColor.black)
         .background(AppColor.accent)
         .onAppear() {
             positionModel.startCoarsePositioning()
         }
+    }
+    .accentColor(AppColor.black)
     }
 }
         

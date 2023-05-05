@@ -127,9 +127,16 @@ class PositioningModel: NSObject, ObservableObject {
     func startCoarsePositioning() {
         locationManager.delegate = self
         // in case we have already positioned, use it here
-        if let location = locationManager.location, -location.timestamp.timeIntervalSinceNow < 120.0 {
-            currentLatLon = location.coordinate
-            geoLocalizationAccuracy = .coarse
+        if let location = locationManager.location, -location.timestamp.timeIntervalSinceNow < 1000.0 {
+            // we do this on a delay to give the view a chance to observe this change
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                guard self.geoLocalizationAccuracy == .none else {
+                    return
+                }
+                self.currentLatLon = location.coordinate
+                self.geoLocalizationAccuracy = .coarse
+
+            }
         }
         locationManager.startUpdatingLocation()
     }
