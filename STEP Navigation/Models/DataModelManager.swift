@@ -123,6 +123,14 @@ class DataModelManager: ObservableObject {
         return locations
     }
     
+    func getIndoorLocations() -> Set<LocationDataModel> {
+        var allIndoorLocations: Set<LocationDataModel> = []
+        
+        for type in AnchorType.allCases {
+            allIndoorLocations.formUnion(getLocationsByType(anchorType: type))
+        }
+        return allIndoorLocations
+    }
     
     /**
             Returns a set containing all outdoor within the specified distance from the specified location.

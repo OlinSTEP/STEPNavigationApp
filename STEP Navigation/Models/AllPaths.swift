@@ -47,11 +47,10 @@ class PathPlanner {
             return
         }
         let firstCloudAnchor = cloudAnchors[1]
-        for model in DataModelManager.shared.getLocationsByType(anchorType: .indoorDestination) {
+        for model in DataModelManager.shared.getIndoorLocations() {
             if model.getCloudAnchorID() == firstCloudAnchor,
                let outdoorFeature = model.getAssociatedOutdoorFeature(),
                let outdoorDataModel = DataModelManager.shared.getLocationDataModel(byName: outdoorFeature) {
-                
                 NavigationManager.shared.computeMultisegmentPath(cloudAnchors, outsideStart: outdoorDataModel.getLocationCoordinate())
                 return
             }

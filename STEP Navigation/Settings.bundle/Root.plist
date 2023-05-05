@@ -10,6 +10,16 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
+			<string>Provide Directions Automatically When User Appears Lost</string>
+			<key>Key</key>
+			<string>automaticDirectionsWhenUserIsLost</string>
+			<key>DefaultValue</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
 			<string>Adjust phone body offset</string>
 			<key>Key</key>
 			<string>adjustPhoneBodyOffset</string>

@@ -331,7 +331,7 @@ class NavigationManager: ObservableObject {
         // NOTE: currPhoneHeading is not the same as curLocation.location.yaw
         let currPhoneHeading = getPhoneHeadingYaw(currentLocation: curLocation)
         
-        if let startPosition = locationRingBuffer.get(0) {
+        if SettingsManager.shared.automaticDirectionsWhenUserIsLost, let startPosition = locationRingBuffer.get(0) {
               let curPosition = curLocation.translation
               if getDistance(startPosition: startPosition, endPosition: curPosition) < requiredDistance{
                   // user has not moved in a while
@@ -402,7 +402,7 @@ class NavigationManager: ObservableObject {
     }
     
     func updateDirections() {
-        guard let curLocation = PositioningModel.shared.cameraTransform, let nextKeypoint = RouteNavigator.shared.nextKeypoint else {
+        guard let curLocation = PositioningModel.shared.cameraTransform, RouteNavigator.shared.nextKeypoint != nil else {
             // TODO: might want to indicate that something is wrong to the user
             return
         }
