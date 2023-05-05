@@ -106,11 +106,6 @@ struct AnchorTypeListView: View {
                 Spacer()
             }
         }
-//        }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
-//            if newValue != .none && anchorTypes.isEmpty {
-//                anchorTypes = DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance)
-//            }
-//        }
     }
 }
 
