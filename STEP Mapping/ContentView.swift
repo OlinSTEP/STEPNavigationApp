@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import RealityKit
 import Charts
 import ARCoreGeospatial
 import ARCore
@@ -581,15 +580,6 @@ struct WalkToSecondAnchor: View {
     }
 }
 
-struct ARViewContainer: UIViewRepresentable {
-    
-    func makeUIView(context: Context) -> ARView {
-        return PositioningModel.shared.arView
-    }
-    
-    func updateUIView(_ uiView: ARView, context: Context) {}
-    
-}
 
 #if DEBUG
 struct ContentView_Previews : PreviewProvider {

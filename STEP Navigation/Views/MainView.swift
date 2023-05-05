@@ -39,12 +39,9 @@ struct MainView: View {
             .background(AppColor.accent)
 
         ZStack {
-            ZStack {
-                ARViewContainer()
-                Rectangle()
-                    .fill(AppColor.white)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
+            Rectangle()
+                .fill(AppColor.white)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                 if let currentLatLon = positionModel.currentLatLon {

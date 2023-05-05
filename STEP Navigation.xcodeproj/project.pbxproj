@@ -20,7 +20,6 @@
 		8241735529DE0C70001599B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735429DE0C70001599B1 /* Assets.xcassets */; };
 		8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735729DE0C70001599B1 /* Preview Assets.xcassets */; };
 		8241736229DE1398001599B1 /* LocalAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736129DE1398001599B1 /* LocalAnchorListView.swift */; };
-		8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736329DE13A5001599B1 /* LocalizingView.swift */; };
 		8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736729DE13B8001599B1 /* AnchorDetailView.swift */; };
 		8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736929DE13BF001599B1 /* NavigatingView.swift */; };
 		8241736C29DE13F4001599B1 /* HapticFeedbackAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736B29DE13F4001599B1 /* HapticFeedbackAdapter.swift */; };
@@ -60,6 +59,7 @@
 		826C994729E87C130070290B /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994629E87C130070290B /* ARViewContainer.swift */; };
 		826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994829E87EA10070290B /* ARCoreCredentials.swift */; };
 		8274AFF32A043A6800636699 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
+		8274AFF42A055C0600636699 /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994629E87C130070290B /* ARViewContainer.swift */; };
 		829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */; };
 		829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 829F7B6829F2C2AB00B59EE0 /* Localizable.strings */; };
 		82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */; };
@@ -141,7 +141,6 @@
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8241735729DE0C70001599B1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		8241736129DE1398001599B1 /* LocalAnchorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAnchorListView.swift; sourceTree = "<group>"; };
-		8241736329DE13A5001599B1 /* LocalizingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizingView.swift; sourceTree = "<group>"; };
 		8241736729DE13B8001599B1 /* AnchorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetailView.swift; sourceTree = "<group>"; };
 		8241736929DE13BF001599B1 /* NavigatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigatingView.swift; sourceTree = "<group>"; };
 		8241736B29DE13F4001599B1 /* HapticFeedbackAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedbackAdapter.swift; sourceTree = "<group>"; };
@@ -311,7 +310,6 @@
 				A8D886CB29F82E4C003E05E7 /* ListTemplate.swift */,
 				A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */,
 				8241736129DE1398001599B1 /* LocalAnchorListView.swift */,
-				8241736329DE13A5001599B1 /* LocalizingView.swift */,
 				8241736929DE13BF001599B1 /* NavigatingView.swift */,
 				A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */,
 				826C994629E87C130070290B /* ARViewContainer.swift */,
@@ -624,7 +622,6 @@
 				825F1F4029E9C65F0043BD98 /* simd_extensions.swift in Sources */,
 				130E7C4129E23494004B1E81 /* LocationDataModel.swift in Sources */,
 				825F1F4D29E9CACE0043BD98 /* MapDataModel.swift in Sources */,
-				8241736429DE13A5001599B1 /* LocalizingView.swift in Sources */,
 				A8D886C229EEE550003E05E7 /* ExitNavigationAlertView.swift in Sources */,
 				826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */,
 				82A016992A0057FC00EAA526 /* PathRecorder.swift in Sources */,
@@ -662,6 +659,7 @@
 				82A0167E2A0015B800EAA526 /* TextFeedbackAdapter.swift in Sources */,
 				82A0168F2A00179E00EAA526 /* HapticFeedbackAdapter.swift in Sources */,
 				82A016A52A02E51800EAA526 /* RingBuffer.swift in Sources */,
+				8274AFF42A055C0600636699 /* ARViewContainer.swift in Sources */,
 				82A0168E2A00179600EAA526 /* PathLogger.swift in Sources */,
 				82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */,
 				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,

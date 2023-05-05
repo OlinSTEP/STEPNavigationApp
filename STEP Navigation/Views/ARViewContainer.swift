@@ -9,14 +9,14 @@
 
 import Foundation
 import SwiftUI
-import RealityKit
+import ARKit
 
 struct ARViewContainer: UIViewRepresentable {
     
-    func makeUIView(context: Context) -> ARView {
+    func makeUIView(context: Context) -> ARSCNView {
         return PositioningModel.shared.arView
     }
     
-    func updateUIView(_ uiView: ARView, context: Context) {}
+    func updateUIView(_ uiView: ARSCNView, context: Context) {}
     
 }

@@ -19,7 +19,6 @@ struct NavigatingView: View {
     @State var didLocalize = false
     @State var didPrepareToNavigate = false
     @State var navigationDirection: String = ""
-    @ObservedObject var positioningModel = PositioningModel.shared
     @ObservedObject var navigationManager = NavigationManager.shared
     
     var body: some View {
@@ -67,9 +66,9 @@ struct NavigatingView: View {
                 PositioningModel.shared.stopPositioning()
                 NavigationManager.shared.stopNavigating()
             }
-        }.onReceive(positioningModel.$resolvedCloudAnchors) { newValue in
+        }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
-        }.onReceive(positioningModel.$geoLocalizationAccuracy) { newValue in
+        }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
             guard !didPrepareToNavigate else {
                 return
             }
@@ -77,7 +76,7 @@ struct NavigatingView: View {
             if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
                 PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
                 didPrepareToNavigate = true
-                checkLocalization(cloudAnchorsToCheck: positioningModel.resolvedCloudAnchors)
+                checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
             } else if newValue.isAtLeastAsGoodAs(other: .high) {                didLocalize = true
                 PathPlanner.shared.prepareToNavigateFromOutdoors(to: destinationAnchorDetails)
                 didPrepareToNavigate = true
