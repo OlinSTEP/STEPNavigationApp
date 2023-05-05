@@ -7,7 +7,6 @@
 
 import Foundation
 import ARKit
-import RealityKit
 import ARCoreGeospatial
 import ARCoreCloudAnchors
 import SwiftUI
@@ -51,7 +50,7 @@ class PositioningModel: NSObject, ObservableObject {
     public static var shared = PositioningModel()
 
     // this would host and manage the ARSession
-    let arView = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: false)
+    let arView = ARSCNView(frame: .zero)
     private let locationManager = CLLocationManager()
     private var garSession: GARSession?
     private var latestGARAnchors: [GARAnchor]? = nil
@@ -72,7 +71,7 @@ class PositioningModel: NSObject, ObservableObject {
             if let newValue = manualAlignment {
                 DispatchQueue.main.async {
                     if RouteNavigator.shared.nextKeypoint?.mode != .latLonBased {
-                        self.rendererHelper.anchorEntity?.setTransformMatrix(newValue, relativeTo: nil)
+                        self.rendererHelper.anchorNode?.simdTransform = newValue
                     }
                 }
             }
@@ -240,7 +239,7 @@ extension PositioningModel: ARSessionDelegate {
                    nextKeypoint.mode == .latLonBased {
                     for anchor in latestGARAnchors ?? [] {
                         if anchor.identifier == nextKeypoint.id {
-                            rendererHelper.anchorEntity?.setTransformMatrix(anchor.transform, relativeTo: nil)
+                            rendererHelper.anchorNode?.simdTransform = anchor.transform
                         }
                     }
                 }
@@ -407,48 +406,32 @@ extension PositioningModel: GARSessionDelegate {
 }
 
 class RendererHelper {
-    let arView: ARView
-    var anchorEntity: AnchorEntity?
-    var keypointEntity: ModelEntity?
-    var pollEntity: ModelEntity?
+    let arView: ARSCNView
+    var anchorNode: SCNNode?
+    var keypointNode: SCNNode?
     
-    init(arView: ARView) {
+    init(arView: ARSCNView) {
         self.arView = arView
     }
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
-        let mesh = MeshResource.generateBox(size: 0.5)
-        let material = SimpleMaterial(color: UIColor(AppColor.accent), isMetallic: false)
-        keypointEntity?.removeFromParent()
-        keypointEntity = ModelEntity(mesh: mesh, materials: [material])
-        keypointEntity!.position = location.translation
-        if anchorEntity == nil {
-            anchorEntity = AnchorEntity()
-            arView.scene.anchors.append(anchorEntity!)
+        let mesh = SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0)
+        mesh.firstMaterial?.diffuse.contents = UIColor(AppColor.accent)
+        keypointNode?.removeFromParentNode()
+        keypointNode = SCNNode(geometry: mesh)
+        keypointNode!.simdPosition = location.translation
+        if anchorNode == nil {
+            anchorNode = SCNNode()
+            arView.scene.rootNode.addChildNode(anchorNode!)
         }
         let initialTransform = alignment ?? matrix_identity_float4x4
-        anchorEntity?.setTransformMatrix(initialTransform, relativeTo: nil)
-        anchorEntity!.addChild(keypointEntity!)
+        anchorNode?.simdTransform = initialTransform
+        anchorNode!.addChildNode(keypointNode!)
     }
     
     func removeRenderedContent() {
-        anchorEntity?.removeFromParent()
-        anchorEntity = nil
-    }
-    
-    func render(path poses: [simd_float4x4]) {
-        if anchorEntity == nil {
-            anchorEntity = AnchorEntity()
-            arView.scene.anchors.append(anchorEntity!)
-        }
-        let mesh = MeshResource.generateBox(size: 0.2)
-        let material = SimpleMaterial(color: .red, isMetallic: false)
-        for pose in poses {
-            let modelEntity = ModelEntity(mesh: mesh, materials: [material])
-            modelEntity.position = pose.translation
-            anchorEntity!.addChild(modelEntity)
-        }
-        arView.scene.anchors.append(anchorEntity!)
+        anchorNode?.removeFromParentNode()
+        anchorNode = nil
     }
 }
 
