@@ -79,6 +79,7 @@ class AnnouncementManager: NSObject {
         if UIAccessibility.isVoiceOverRunning {
             // use the VoiceOver API instead of text to speech
             currentAnnouncement = announcement
+            // insert delay to make sure the announcement is properly read.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: announcement)
             }
