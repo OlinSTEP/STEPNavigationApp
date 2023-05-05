@@ -16,6 +16,9 @@ class SettingsManager: ObservableObject {
     /// true if we should adjust navigation based on phone / body offset
     var adjustPhoneBodyOffset = false
     
+    /// true if we should provide the user with guidance when they appear to be lost
+    var automaticDirectionsWhenUserIsLost = false
+    
     private init() {
         createSettingsBundle()
     }
@@ -35,15 +38,18 @@ class SettingsManager: ObservableObject {
         let defaults = UserDefaults.standard
         
         mappingSubFolder = defaults.string(forKey: "mappingSubFolder") ?? ""
-        
         adjustPhoneBodyOffset = defaults.bool(forKey: "adjustPhoneBodyOffset")
+        automaticDirectionsWhenUserIsLost = defaults.bool(forKey: "automaticDirectionsWhenUserIsLost")
+
     }
     
     /// Register settings bundle
     func registerSettingsBundle(){
-        let appDefaults = [
+        let appDefaults: [String: Any] = [
             "mappingSubFolder": "",
-            "adjustPhoneBodyOffset": false] as [String : Any]
+            "adjustPhoneBodyOffset": false,
+            "automaticDirectionsWhenUserIsLost": false
+        ]
         UserDefaults.standard.register(defaults: appDefaults)
     }
 }

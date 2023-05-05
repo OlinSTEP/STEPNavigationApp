@@ -76,6 +76,8 @@ struct ContentView : View {
             case .navigating(let anchorID1, let anchorID2, let path):
                 Navigating(from: anchorID1, to: anchorID2, withPath: path)
             }
+        }.onAppear() {
+            PositioningModel.shared.startPositioning()
         }
     }
 }
