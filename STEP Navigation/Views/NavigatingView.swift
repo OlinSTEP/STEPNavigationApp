@@ -20,6 +20,7 @@ struct NavigatingView: View {
     @State var didPrepareToNavigate = false
     @State var navigationDirection: String = ""
     @ObservedObject var navigationManager = NavigationManager.shared
+    @ObservedObject var routeNavigator = RouteNavigator.shared
     
     var body: some View {
         ZStack {
