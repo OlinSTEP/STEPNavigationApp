@@ -37,6 +37,7 @@ class PathLogger {
     private var hasUploadedData = false
     
     func startLoggingData() {
+        hasUploadedData = false
         isLoggingData = true
     }
     

@@ -186,8 +186,9 @@ class NavigationManager: ObservableObject {
         return stops
     }
     
-    func computePathToOutdoorMarker(outsideStart: CLLocationCoordinate2D) {
-        if let garAnchor = PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") {
+    func computePathToOutdoorMarker(_ end : LocationDataModel) {
+        RouteNavigator.shared.routeNameForLogging = "outside_\(end.getName())_\(UUID().uuidString)"
+        if let garAnchor = PositioningModel.shared.addTerrainAnchor(at: end.getLocationCoordinate(), withName: "crossover") {
             let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
             RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint])
         }

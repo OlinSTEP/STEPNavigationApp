@@ -36,10 +36,10 @@ class PathPlanner {
     
     func prepareToNavigateFromOutdoors(to end: LocationDataModel) {
         guard let cloudAnchorID = end.getCloudAnchorID() else {
-            NavigationManager.shared.computePathToOutdoorMarker(outsideStart: end.getLocationCoordinate())
+            NavigationManager.shared.computePathToOutdoorMarker(end)
+            PathLogger.shared.startLoggingData()
             return
         }
-        PathLogger.shared.startLoggingData()
         cloudAnchors = NavigationManager.shared.computePathBetween("outdoors", cloudAnchorID)
         // we should have at least 2 nodes in this path (the first is the special node "outdoors" and
         // the second is the first cloud anchor
@@ -52,6 +52,7 @@ class PathPlanner {
                let outdoorFeature = model.getAssociatedOutdoorFeature(),
                let outdoorDataModel = DataModelManager.shared.getLocationDataModel(byName: outdoorFeature) {
                 NavigationManager.shared.computeMultisegmentPath(cloudAnchors, outsideStart: outdoorDataModel.getLocationCoordinate())
+                PathLogger.shared.startLoggingData()
                 return
             }
         }
