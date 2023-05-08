@@ -132,7 +132,6 @@
 		130E7C3B29E106BA004B1E81 /* STEP-Navigation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "STEP-Navigation-Info.plist"; sourceTree = SOURCE_ROOT; };
 		130E7C4029E23494004B1E81 /* LocationDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataModel.swift; sourceTree = "<group>"; };
 		130E7C4229E236BD004B1E81 /* DataModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelManager.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		130E7C4429E25322004B1E81 /* ModelTestingByHand.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ModelTestingByHand.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataModelParser.swift; sourceTree = "<group>"; };
 		130E7C4829E36E36004B1E81 /* mbtaBusStops.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mbtaBusStops.json; sourceTree = "<group>"; };
 		130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Olin_College_Doors.geojson; sourceTree = "<group>"; };
@@ -332,7 +331,6 @@
 				8241737A29DE187E001599B1 /* AdjustmentModel.swift */,
 				130E7C4029E23494004B1E81 /* LocationDataModel.swift */,
 				130E7C4229E236BD004B1E81 /* DataModelManager.swift */,
-				130E7C4429E25322004B1E81 /* ModelTestingByHand.playground */,
 				825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */,
 				130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */,
 				8241737829DE1478001599B1 /* PositioningModel.swift */,
