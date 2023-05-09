@@ -6,18 +6,11 @@
 //
 
 import Foundation
+import ARKit
 import ARCore
-
-enum NavigationType {
-    case none
-    case asTheCrowFlies
-    case route
-}
 
 class PathPlanner {
     public static var shared = PathPlanner()
-    private var crowFliesGoal: GARAnchor?
-    private var navigationType: NavigationType = .none
     private var cloudAnchors: [String] = []
     
     private init() {
@@ -62,14 +55,6 @@ class PathPlanner {
     func navigate(from start: LocationDataModel, to end: LocationDataModel) {
         NavigationManager.shared.startNavigating()
     }
-    
-    func getGoalForAsTheCrowFlies()->GARAnchor? {
-        if navigationType == .asTheCrowFlies {
-            return crowFliesGoal
-        }
-        return nil
-    }
-    
 }
 
 
