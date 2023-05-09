@@ -37,6 +37,15 @@
       }
     },
     {
+      "identity" : "geofire-objc",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/occamLab/geofire-objc",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8c690f1209fcc774a56af324dd99177971ebbcb9"
+      }
+    },
+    {
       "identity" : "googleappmeasurement",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",

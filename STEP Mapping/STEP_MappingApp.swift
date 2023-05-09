@@ -13,6 +13,9 @@ struct STEP_MappingApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(SettingsManager.shared)
+                .onAppear() {
+                    FirebaseManager.shared.setMode(mode: .mapping)
+                }
         }
     }
 }

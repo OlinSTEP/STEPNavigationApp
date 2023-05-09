@@ -5,17 +5,28 @@
 //  Created by Paul Ruvolo on 3/30/23.
 //
 
+import ARKit
 import Foundation
 import FirebaseCore
 import FirebaseDatabase
-import ARKit
 import FirebaseStorage
 import FirebaseFirestore
+import GeoFireUtils
+
+enum FirebaseMode {
+    case mapping
+    case navigation
+}
 
 class FirebaseManager: ObservableObject {
     public static var shared = FirebaseManager()
     @Published var mapAnchors: [String: CloudAnchorMetadata] = [:]
     var outdoorFeatures: [String: CLLocationCoordinate2D] = [:]
+    private var connectionObserver: ListenerRegistration?
+    private var cloudAnchorObserver: ListenerRegistration?
+    private var lastQueryLocation: CLLocationCoordinate2D?
+    private var mode: FirebaseMode = .mapping
+
     let pathGraph = PathGraph()
     
     private let db: Firestore
@@ -37,7 +48,17 @@ class FirebaseManager: ObservableObject {
     private init() {
         FirebaseApp.configure()
         db = Firestore.firestore()
-        createObservers()
+    }
+    
+    func setMode(mode: FirebaseMode) {
+        self.mode = mode
+        if mode == .mapping {
+            observeAllCloudAnchors()
+            observeAllConnections()
+        } else {
+            // TODO: really don't want to have to observe all the connections, but instead pull the path when needed
+            observeAllConnections()
+        }
     }
     
     /// Store the cloud anchor in the database.  The identifier is assumed to be the cloudAnchorID returned
@@ -130,8 +151,47 @@ class FirebaseManager: ObservableObject {
         )
     }
     
-    func createObservers() {
-        cloudAnchorCollection.addSnapshotListener() { snapshot, error  in
+    func queryNearbyAnchors(to center: CLLocationCoordinate2D, withRadius radiusInM: Double) {
+        guard mode == .navigation else {
+            return
+        }
+        if let lastQueryLocation = lastQueryLocation, center.distance(from: lastQueryLocation) < 100.0 {
+            // too close, no need to query again
+            return
+        }
+        lastQueryLocation = center
+        // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
+        // a separate query for each pair. There can be up to 9 pairs of bounds
+        // depending on overlap, but in most cases there are 4.
+        let queryBounds = GFUtils.queryBounds(forLocation: center,
+                                              withRadius: radiusInM)
+        let queries = queryBounds.map { bound -> Query in
+            return cloudAnchorCollection
+                .order(by: "geohash")
+                .start(at: [bound.startValue])
+                .end(at: [bound.endValue])
+        }
+        for query in queries {
+            query.getDocuments() { (snapshot, error) in
+                guard let documents = snapshot?.documents else {
+                    print("Unable to fetch snapshot data. \(String(describing: error))")
+                    return
+                }
+                for document in documents {
+                    if let (cloudMetadata, dataModel) = self.parseCloudAnchor(id: document.documentID, document.data()) {
+                        // we could wind up adding the same model multiple times, but that is okay
+                        self.mapAnchors[document.documentID] = cloudMetadata
+                        DataModelManager.shared.addDataModel(dataModel)
+                        self.pathGraph.cloudNodes.insert(document.documentID)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func observeAllCloudAnchors() {
+        cloudAnchorObserver?.remove()
+        cloudAnchorObserver = cloudAnchorCollection.addSnapshotListener() { snapshot, error  in
             guard let snapshot = snapshot else {
                 print("Error fetching snapshots: \(error!)")
                 return
@@ -157,7 +217,11 @@ class FirebaseManager: ObservableObject {
                 }
             }
         }
-        connectionCollection.addSnapshotListener() { (snapshot, error) in
+    }
+    
+    private func observeAllConnections() {
+        connectionObserver?.remove()
+        connectionObserver = connectionCollection.addSnapshotListener() { (snapshot, error) in
             guard let snapshot = snapshot else {
                 print("Error fetching snapshots: \(error!)")
                 return
