@@ -13,22 +13,33 @@ import FirebaseStorage
 import FirebaseFirestore
 import GeoFireUtils
 
+/// The mode of operation for the database manager.  This is used to set the scope of some of the database listeners (e.g., how much data to prefetch).
 enum FirebaseMode {
     case mapping
     case navigation
 }
 
+/// Manages the data stored in Firebase.  Currently, this includes both Firebase Realtime Database along with Firestore.  In the future, we hope to migrate all data away from Realtime Database.
 class FirebaseManager: ObservableObject {
+    /// The singleton instance of this class
     public static var shared = FirebaseManager()
+    /// Keeps track of the cloud anchor IDs (keys) and associated metadata.  This variable can be observed by views
     @Published var mapAnchors: [String: CloudAnchorMetadata] = [:]
+    /// Maps outdoor features to location
     var outdoorFeatures: [String: CLLocationCoordinate2D] = [:]
+    /// Keeps track of new cloud anchor connections that get added to the database
     private var connectionObserver: ListenerRegistration?
+    /// Keeps track of new cloud anchors that get added to the database
     private var cloudAnchorObserver: ListenerRegistration?
+    /// Keeps track of the location at which we last probed for nearby destinations
     private var lastQueryLocation: CLLocationCoordinate2D?
+    /// The mode the database is currently operating within.  This mode is useful for setting various listeners.
     private var mode: FirebaseMode = .mapping
-
-    let pathGraph = PathGraph()
     
+    /// The graph used to encode relationships between cloud anchors and compute shortest paths
+    let mapGraph = MapGraph()
+    
+    /// A connection to the Firestore database
     private let db: Firestore
     private var cloudAnchorCollection: CollectionReference {
         if SettingsManager.shared.mappingSubFolder.isEmpty {
@@ -91,11 +102,11 @@ class FirebaseManager: ObservableObject {
         }
         // TODO: I'm not sure if this structure of serially downloading the path edges is slow
         let nodePair = NodePair(from: firstEdge.0, to: firstEdge.1)
-        guard pathGraph.connections[nodePair] == nil else {
+        guard mapGraph.connections[nodePair] == nil else {
             // download the rest
             return download(edges: Array(edges[1...]), completionHandler: completionHandler)
         }
-        guard let lightweightEdge = pathGraph.lightweightConnections[nodePair] else {
+        guard let lightweightEdge = mapGraph.lightweightConnections[nodePair] else {
             return completionHandler(false)
         }
         connectionCollection.document(lightweightEdge.pathID).getDocument() { (snapshot, error) in
@@ -228,10 +239,10 @@ class FirebaseManager: ObservableObject {
                         // we could wind up adding the same model multiple times, but that is okay
                         self.mapAnchors[document.documentID] = cloudMetadata
                         DataModelManager.shared.addDataModel(dataModel)
-                        self.pathGraph.cloudNodes.insert(document.documentID)
+                        self.mapGraph.cloudNodes.insert(document.documentID)
                         for (toID, simpleEdge) in lightweightConnections {
                             print("added lightweight \(document.documentID) to \(toID)")
-                            self.pathGraph.addLightweightConnection(from: document.documentID, to: toID, withEdge: simpleEdge)
+                            self.mapGraph.addLightweightConnection(from: document.documentID, to: toID, withEdge: simpleEdge)
                         }
                     }
                 }
@@ -252,22 +263,22 @@ class FirebaseManager: ObservableObject {
                     if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()) {
                         self.mapAnchors[diff.document.documentID] = cloudMetadata
                         DataModelManager.shared.addDataModel(dataModel)
-                        self.pathGraph.cloudNodes.insert(diff.document.documentID)
+                        self.mapGraph.cloudNodes.insert(diff.document.documentID)
                         for (toID, simpleEdge) in lightweightConnections {
-                            self.pathGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
+                            self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
                         }
                     }
                 case .removed:
                     if DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
                         self.mapAnchors.removeValue(forKey: diff.document.documentID)
-                        self.pathGraph.cloudNodes.remove(diff.document.documentID)
+                        self.mapGraph.cloudNodes.remove(diff.document.documentID)
                     }
                 case .modified:
                     if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()), DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
                         self.mapAnchors[diff.document.documentID] = cloudMetadata
                         DataModelManager.shared.addDataModel(dataModel)
                         for (toID, simpleEdge) in lightweightConnections {
-                            self.pathGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
+                            self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
                         }
                     }
                 }
@@ -340,13 +351,13 @@ class FirebaseManager: ObservableObject {
             dict[cloudIdentifier] = simd_float4x4(fromColumnMajorArray: columnMajor)
         }
         print("adding edge \(startID) \(endID)")
-        pathGraph.connections[NodePair(from: startID, to: endID)] = ComplexEdge(startAnchorTransform: fromPose,
+        mapGraph.connections[NodePair(from: startID, to: endID)] = ComplexEdge(startAnchorTransform: fromPose,
                         endAnchorTransform: endPose,
                         path: pathPoses,
                         pathAnchors: pathAnchorsAsDict)
         // Add the reverse edge if none exists yet.  If we have an actual reverse edge than this would not run
-        if pathGraph.connections[NodePair(from: endID, to: startID)] == nil {
-            pathGraph.connections[NodePair(from: endID, to: startID)] = ComplexEdge(startAnchorTransform: endPose,
+        if mapGraph.connections[NodePair(from: endID, to: startID)] == nil {
+            mapGraph.connections[NodePair(from: endID, to: startID)] = ComplexEdge(startAnchorTransform: endPose,
                             endAnchorTransform: fromPose,
                             path: pathPoses.reversed(),
                             pathAnchors: pathAnchorsAsDict)

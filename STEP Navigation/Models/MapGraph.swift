@@ -49,7 +49,7 @@ struct ComplexEdge {
     }
 }
 
-class PathGraph {
+class MapGraph {
     var cloudNodes = Set<String>()
     var lightweightConnections: [NodePair<String, String>: SimpleEdge] = [:]
     var connections: [NodePair<String, String>: ComplexEdge] = [:]
