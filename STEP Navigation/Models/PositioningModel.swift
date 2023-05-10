@@ -10,6 +10,7 @@ import ARKit
 import ARCoreGeospatial
 import ARCoreCloudAnchors
 import SwiftUI
+import GeoFireUtils
 
 /// This is a coarse metric of how well we have localized the user with respect to their latitude and longitude.
 /// Currently, there is no defined standard for these values (they are determined on a View by View basis)
@@ -32,11 +33,14 @@ struct CloudAnchorMetadata {
     let geospatialTransform: GeospatialData
     
     func asDict()->[String: Any] {
+        // Compute the GeoHash for a lat/lng point
+        let hash = GFUtils.geoHash(forLocation: geospatialTransform.location)
         return ["name": name,
                 "type": type.rawValue,
                 "category": type.rawValue,
                 "associatedOutdoorFeature": associatedOutdoorFeature,
-                "geospatialTransform": geospatialTransform.asDict()]
+                "geospatialTransform": geospatialTransform.asDict(),
+                "geohash": hash]
     }
 }
 
@@ -134,7 +138,7 @@ class PositioningModel: NSObject, ObservableObject {
                 }
                 self.currentLatLon = location.coordinate
                 self.geoLocalizationAccuracy = .coarse
-
+                FirebaseManager.shared.queryNearbyAnchors(to: location.coordinate, withRadius: 1000.0)
             }
         }
         locationManager.startUpdatingLocation()
@@ -442,6 +446,7 @@ extension PositioningModel: CLLocationManagerDelegate {
         }
         print("Updating with coarse localization")
         currentLatLon = mostRecentLocation.coordinate
+        FirebaseManager.shared.queryNearbyAnchors(to: mostRecentLocation.coordinate, withRadius: 1000.0)
         geoLocalizationAccuracy = .coarse
     }
 }

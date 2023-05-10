@@ -16,6 +16,12 @@ struct NodePair<T: Hashable, U: Hashable>: Hashable {
   let to: U
 }
 
+struct SimpleEdge {
+    let pathID: String
+    let cost: Float
+    let isReversed: Bool
+}
+
 struct ComplexEdge {
     let startAnchorTransform: simd_float4x4
     let endAnchorTransform: simd_float4x4
@@ -45,11 +51,13 @@ struct ComplexEdge {
 
 class PathGraph {
     var cloudNodes = Set<String>()
+    var lightweightConnections: [NodePair<String, String>: SimpleEdge] = [:]
     var connections: [NodePair<String, String>: ComplexEdge] = [:]
     
     func reset() {
         cloudNodes = Set<String>()
         connections = [:]
+        lightweightConnections = [:]
     }
     
     func printEdges() {
@@ -62,15 +70,14 @@ class PathGraph {
         cloudNodes.insert(node)
     }
     
-    func deleteConnections(from startNode: String) {
-        var keysToRemove = Set<NodePair<String, String>>()
-        for nodePair in connections.keys {
-            if nodePair.from == startNode {
-                keysToRemove.insert(nodePair)
-            }
-        }
-        for key in keysToRemove {
-            connections.removeValue(forKey: key)
+    func addLightweightConnection(from fromID: String, to toID: String, withEdge simpleEdge: SimpleEdge) {
+        lightweightConnections[NodePair(from: fromID, to: toID)] = simpleEdge
+        // add reverse edge if it doesn't exist yet
+        if lightweightConnections[NodePair(from: toID, to: fromID)] == nil {
+            let reversed = SimpleEdge(pathID: simpleEdge.pathID,
+                                      cost: simpleEdge.cost,
+                                      isReversed: true)
+            lightweightConnections[NodePair(from: toID, to: fromID)] = reversed
         }
     }
 }

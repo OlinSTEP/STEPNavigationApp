@@ -30,6 +30,10 @@
 		8241737629DE144C001599B1 /* DatabaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737529DE144C001599B1 /* DatabaseModel.swift */; };
 		8241737929DE1478001599B1 /* PositioningModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737829DE1478001599B1 /* PositioningModel.swift */; };
 		8241737B29DE187E001599B1 /* AdjustmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241737A29DE187E001599B1 /* AdjustmentModel.swift */; };
+		8242B02B2A0AB70C0042953F /* GeoFire in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B02A2A0AB70C0042953F /* GeoFire */; };
+		8242B02D2A0AB70C0042953F /* GeoFireUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B02C2A0AB70C0042953F /* GeoFireUtils */; };
+		8242B02F2A0AB75B0042953F /* GeoFire in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B02E2A0AB75B0042953F /* GeoFire */; };
+		8242B0312A0AB75B0042953F /* GeoFireUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B0302A0AB75B0042953F /* GeoFireUtils */; };
 		825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */; };
 		825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */; };
 		825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F3229E9B7910043BD98 /* STEP_MappingApp.swift */; };
@@ -60,6 +64,8 @@
 		826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994829E87EA10070290B /* ARCoreCredentials.swift */; };
 		8274AFF32A043A6800636699 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
 		8274AFF42A055C0600636699 /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994629E87C130070290B /* ARViewContainer.swift */; };
+		82829AD02A0A8D48005A1BC6 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 82829ACF2A0A8D48005A1BC6 /* FirebaseFirestore */; };
+		82829AD22A0A8D54005A1BC6 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 82829AD12A0A8D54005A1BC6 /* FirebaseFirestore */; };
 		829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */; };
 		829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 829F7B6829F2C2AB00B59EE0 /* Localizable.strings */; };
 		82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */; };
@@ -207,8 +213,11 @@
 				82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */,
 				82659CA929DF5FC8007546A1 /* FirebaseDatabase in Frameworks */,
 				82659CA729DF5FC8007546A1 /* FirebaseAnalytics in Frameworks */,
+				8242B02B2A0AB70C0042953F /* GeoFire in Frameworks */,
+				8242B02D2A0AB70C0042953F /* GeoFireUtils in Frameworks */,
 				82659CB029DF5FFC007546A1 /* ARCoreGARSession in Frameworks */,
 				82659CAB29DF5FC8007546A1 /* FirebaseStorage in Frameworks */,
+				82829AD22A0A8D54005A1BC6 /* FirebaseFirestore in Frameworks */,
 				82659CAE29DF5FFC007546A1 /* ARCoreCloudAnchors in Frameworks */,
 				82659CB229DF5FFC007546A1 /* ARCoreGeospatial in Frameworks */,
 			);
@@ -221,8 +230,11 @@
 				82A0167B2A00155000EAA526 /* FirebaseAnalytics in Frameworks */,
 				82A016792A00154600EAA526 /* ARCoreGARSession in Frameworks */,
 				82A0166F2A00151C00EAA526 /* FirebaseDatabase in Frameworks */,
+				8242B02F2A0AB75B0042953F /* GeoFire in Frameworks */,
+				8242B0312A0AB75B0042953F /* GeoFireUtils in Frameworks */,
 				82A016712A00152300EAA526 /* FirebaseStorage in Frameworks */,
 				82A016772A00153D00EAA526 /* ARCoreGeospatial in Frameworks */,
+				82829AD02A0A8D48005A1BC6 /* FirebaseFirestore in Frameworks */,
 				82A016732A00152F00EAA526 /* SwiftGraph in Frameworks */,
 				82A016752A00153400EAA526 /* ARCoreCloudAnchors in Frameworks */,
 			);
@@ -457,6 +469,9 @@
 				82659CAF29DF5FFC007546A1 /* ARCoreGARSession */,
 				82659CB129DF5FFC007546A1 /* ARCoreGeospatial */,
 				82659CB429DF60B5007546A1 /* SwiftGraph */,
+				82829AD12A0A8D54005A1BC6 /* FirebaseFirestore */,
+				8242B02A2A0AB70C0042953F /* GeoFire */,
+				8242B02C2A0AB70C0042953F /* GeoFireUtils */,
 			);
 			productName = "STEP Navigation";
 			productReference = 8241734D29DE0C6F001599B1 /* STEP Navigation.app */;
@@ -483,6 +498,9 @@
 				82A016762A00153D00EAA526 /* ARCoreGeospatial */,
 				82A016782A00154600EAA526 /* ARCoreGARSession */,
 				82A0167A2A00155000EAA526 /* FirebaseAnalytics */,
+				82829ACF2A0A8D48005A1BC6 /* FirebaseFirestore */,
+				8242B02E2A0AB75B0042953F /* GeoFire */,
+				8242B0302A0AB75B0042953F /* GeoFireUtils */,
 			);
 			productName = "STEP Mapping";
 			productReference = 825F1F3029E9B7910043BD98 /* STEP Mapping.app */;
@@ -523,6 +541,7 @@
 				82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				82659CAC29DF5FFC007546A1 /* XCRemoteSwiftPackageReference "arcore-ios-sdk" */,
 				82659CB329DF60B5007546A1 /* XCRemoteSwiftPackageReference "SwiftGraph" */,
+				8242B0292A0AB70C0042953F /* XCRemoteSwiftPackageReference "geofire-objc" */,
 			);
 			productRefGroup = 8241734E29DE0C6F001599B1 /* Products */;
 			projectDirPath = "";
@@ -1028,6 +1047,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		8242B0292A0AB70C0042953F /* XCRemoteSwiftPackageReference "geofire-objc" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/occamLab/geofire-objc";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -1055,6 +1082,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8242B02A2A0AB70C0042953F /* GeoFire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8242B0292A0AB70C0042953F /* XCRemoteSwiftPackageReference "geofire-objc" */;
+			productName = GeoFire;
+		};
+		8242B02C2A0AB70C0042953F /* GeoFireUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8242B0292A0AB70C0042953F /* XCRemoteSwiftPackageReference "geofire-objc" */;
+			productName = GeoFireUtils;
+		};
+		8242B02E2A0AB75B0042953F /* GeoFire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8242B0292A0AB70C0042953F /* XCRemoteSwiftPackageReference "geofire-objc" */;
+			productName = GeoFire;
+		};
+		8242B0302A0AB75B0042953F /* GeoFireUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8242B0292A0AB70C0042953F /* XCRemoteSwiftPackageReference "geofire-objc" */;
+			productName = GeoFireUtils;
+		};
 		82659CA629DF5FC8007546A1 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -1089,6 +1136,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 82659CB329DF60B5007546A1 /* XCRemoteSwiftPackageReference "SwiftGraph" */;
 			productName = SwiftGraph;
+		};
+		82829ACF2A0A8D48005A1BC6 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		82829AD12A0A8D54005A1BC6 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82659CA529DF5FC8007546A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 		82A0166E2A00151C00EAA526 /* FirebaseDatabase */ = {
 			isa = XCSwiftPackageProductDependency;

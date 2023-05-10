@@ -6,38 +6,34 @@
 //
 
 import Foundation
+import ARKit
 import ARCore
-
-enum NavigationType {
-    case none
-    case asTheCrowFlies
-    case route
-}
 
 class PathPlanner {
     public static var shared = PathPlanner()
-    private var crowFliesGoal: GARAnchor?
-    private var navigationType: NavigationType = .none
     private var cloudAnchors: [String] = []
     
     private init() {
         
     }
     
-    func prepareToNavigate(from start: LocationDataModel, to end: LocationDataModel) {
+    func prepareToNavigate(from start: LocationDataModel, to end: LocationDataModel, completionHandler: @escaping (Bool)->()) {
         guard let cloudAnchorID1 = start.getCloudAnchorID(), let cloudAnchorID2 = end.getCloudAnchorID() else {
             // Note: this shouldn't happen
-            return
+            return completionHandler(false)
         }
         PathLogger.shared.startLoggingData()
         cloudAnchors = NavigationManager.shared.computePathBetween(cloudAnchorID1, cloudAnchorID2)
-        NavigationManager.shared.computeMultisegmentPath(cloudAnchors)
+        NavigationManager.shared.computeMultisegmentPath(cloudAnchors, outsideStart: nil) { wasSuccessful in
+            completionHandler(wasSuccessful)
+        }
     }
     
-    func prepareToNavigateFromOutdoors(to end: LocationDataModel) {
+    func startNavigatingFromOutdoors(to end: LocationDataModel) {
         guard let cloudAnchorID = end.getCloudAnchorID() else {
             NavigationManager.shared.computePathToOutdoorMarker(end)
             PathLogger.shared.startLoggingData()
+            NavigationManager.shared.startNavigating()
             return
         }
         cloudAnchors = NavigationManager.shared.computePathBetween("outdoors", cloudAnchorID)
@@ -51,8 +47,13 @@ class PathPlanner {
             if model.getCloudAnchorID() == firstCloudAnchor,
                let outdoorFeature = model.getAssociatedOutdoorFeature(),
                let outdoorDataModel = DataModelManager.shared.getLocationDataModel(byName: outdoorFeature) {
-                NavigationManager.shared.computeMultisegmentPath(cloudAnchors, outsideStart: outdoorDataModel.getLocationCoordinate())
-                PathLogger.shared.startLoggingData()
+                NavigationManager.shared.computeMultisegmentPath(cloudAnchors, outsideStart: outdoorDataModel.getLocationCoordinate()) { wasSuccessful in
+                    guard wasSuccessful else {
+                        return
+                    }
+                    PathLogger.shared.startLoggingData()
+                    NavigationManager.shared.startNavigating()
+                }
                 return
             }
         }
@@ -62,14 +63,6 @@ class PathPlanner {
     func navigate(from start: LocationDataModel, to end: LocationDataModel) {
         NavigationManager.shared.startNavigating()
     }
-    
-    func getGoalForAsTheCrowFlies()->GARAnchor? {
-        if navigationType == .asTheCrowFlies {
-            return crowFliesGoal
-        }
-        return nil
-    }
-    
 }
 
 

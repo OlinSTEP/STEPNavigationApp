@@ -92,6 +92,21 @@ class DataModelManager: ObservableObject {
         return indoorLocations
     }
     
+    /// Delete the data model based on the specified id
+    /// - Parameter byCloudAnchorID: the cloud anchorID associated with the data model to delete
+    /// TODO: this is a bad linear search.  Need to have a better way to get the element (e.g., if we hashed on just the ID or something of that nature)
+    func deleteDataModel(byCloudAnchorID id: String)->Bool {
+        for var (_, models) in allLocationModels {
+            for model in models {
+                if model.getCloudAnchorID() == id {
+                    models.remove(model)
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
     /**
      Returns a set of all AnchorTypes currently in the system
      */

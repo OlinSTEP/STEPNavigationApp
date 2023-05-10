@@ -13,6 +13,9 @@ struct STEP_NavigationApp: App {
         WindowGroup {
             MainView()
                 .environmentObject(SettingsManager.shared)
+                .onAppear() {
+                    FirebaseManager.shared.setMode(mode: .navigation)
+                }
         }
     }
 }
