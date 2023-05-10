@@ -8,7 +8,7 @@
 import SwiftUI
 import Charts
 import ARCoreGeospatial
-import ARCore
+import ARCoreCloudAnchors
 
 enum MainScreenType {
     case createAnchor
