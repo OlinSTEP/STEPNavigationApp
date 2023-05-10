@@ -132,7 +132,7 @@ class NavigationManager: ObservableObject {
     private func makeWeightedGraph()->WeightedGraph<String, Float> {
         let currentLatLon = PositioningModel.shared.currentLatLon ?? CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
         let nodes = FirebaseManager.shared.pathGraph.cloudNodes + ["outdoors"]
-        let edges = FirebaseManager.shared.pathGraph.connections
+        let edges = FirebaseManager.shared.pathGraph.lightweightConnections
         let anchorGraph = WeightedGraph<String, Float>(vertices: Array(nodes))
         for (nodeInfo, edgeInfo) in edges {
             guard nodes.contains(nodeInfo.from), nodes.contains(nodeInfo.to) else {
@@ -178,9 +178,7 @@ class NavigationManager: ObservableObject {
     func computePathBetween(_ anchorID1: String, _ anchorID2: String)->[String] {
         let anchorGraph = makeWeightedGraph()
         // Note: from https://github.com/davecom/SwiftGraph
-        let (distances, pathDict) = anchorGraph.dijkstra(root: anchorID1, startDistance: 0)
-        // let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
-        // let totalDistance = nameDistance[anchorID2]
+        let (_, pathDict) = anchorGraph.dijkstra(root: anchorID1, startDistance: 0)
         let path: [WeightedEdge<Float>] = pathDictToPath(from: anchorGraph.indexOfVertex(anchorID1)!, to: anchorGraph.indexOfVertex(anchorID2)!, pathDict: pathDict)
         let stops: [String] = anchorGraph.edgesToVertices(edges: path)
         return stops
@@ -194,7 +192,7 @@ class NavigationManager: ObservableObject {
         }
     }
     
-    func computeMultisegmentPath(_ cloudAnchors: [String], outsideStart: CLLocationCoordinate2D?=nil) {
+    func computeMultisegmentPath(_ cloudAnchors: [String], outsideStart: CLLocationCoordinate2D?, completionHandler: @escaping (Bool)->()) {
         guard !cloudAnchors.isEmpty else {
             fatalError("the path unexpectedly has no cloud anchors")
         }
@@ -207,45 +205,55 @@ class NavigationManager: ObservableObject {
         }
         if finalCloudAnchors.count == 1 {
             // TODO: think of how to handle this case
-            return
+            return completionHandler(false)
         }
         var aligner = matrix_identity_float4x4
         var endTransformFromPreviousEdge: simd_float4x4?
         var landmarks: [String: simd_float4x4] = [:]
-        for (a_n, a_nplus1) in zip(finalCloudAnchors[0..<finalCloudAnchors.count-1],
-                finalCloudAnchors[1...]) {
-            guard let edge = FirebaseManager.shared.pathGraph.connections[NodePair(from: a_n, to: a_nplus1)] else {
-                FirebaseManager.shared.pathGraph.printEdges()
-                // AnnouncementManager.shared.announce(announcement: "unexpectedly didn't find connection")
-                return
+        
+        let edgePairs = zip(finalCloudAnchors[0..<finalCloudAnchors.count-1],
+                            finalCloudAnchors[1...])
+        // download the necessary edges for navigation
+        FirebaseManager.shared.download(edges: Array(edgePairs)) { wasSuccessful in
+            if !wasSuccessful {
+                AnnouncementManager.shared.announce(announcement: "Unable to download path")
+                return completionHandler(false)
             }
-            if let endTransformFromPreviousEdge = endTransformFromPreviousEdge {
-                aligner = endTransformFromPreviousEdge * edge.startAnchorTransform.alignY().inverse
+            for (a_n, a_nplus1) in edgePairs {
+                guard let edge = FirebaseManager.shared.pathGraph.connections[NodePair(from: a_n, to: a_nplus1)] else {
+                    FirebaseManager.shared.pathGraph.printEdges()
+                    // AnnouncementManager.shared.announce(announcement: "unexpectedly didn't find connection")
+                    return
+                }
+                if let endTransformFromPreviousEdge = endTransformFromPreviousEdge {
+                    aligner = endTransformFromPreviousEdge * edge.startAnchorTransform.alignY().inverse
+                }
+                landmarks[a_n] = aligner * edge.startAnchorTransform.alignY()
+                landmarks[a_nplus1] = aligner * edge.endAnchorTransform.alignY()
+                poses.append(aligner * edge.startAnchorTransform.alignY())
+                poses += edge.path.map({aligner * $0})
+                for pathAnchors in edge.pathAnchors {
+                    landmarks[pathAnchors.key] = aligner * pathAnchors.value.alignY()
+                }
+                endTransformFromPreviousEdge = aligner * edge.endAnchorTransform.alignY()
+                poses.append(endTransformFromPreviousEdge!)
             }
-            landmarks[a_n] = aligner * edge.startAnchorTransform.alignY()
-            landmarks[a_nplus1] = aligner * edge.endAnchorTransform.alignY()
-            poses.append(aligner * edge.startAnchorTransform.alignY())
-            poses += edge.path.map({aligner * $0})
-            for pathAnchors in edge.pathAnchors {
-                landmarks[pathAnchors.key] = aligner * pathAnchors.value.alignY()
-            }
-            endTransformFromPreviousEdge = aligner * edge.endAnchorTransform.alignY()
-            poses.append(endTransformFromPreviousEdge!)
-        }
-        let routeKeypoints = MultiSegmentPathBuilder(crumbs: poses, manualKeypointIndices: []).keypoints
-        if let outsideStart = outsideStart,
-           let garAnchor = PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") {
+            let routeKeypoints = MultiSegmentPathBuilder(crumbs: poses, manualKeypointIndices: []).keypoints
+            if let outsideStart = outsideStart,
+               let garAnchor = PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") {
 
-            let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
-            RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint] + routeKeypoints)
-        } else {
-            RouteNavigator.shared.setRouteKeypoints(kps: routeKeypoints)
-        }
-        PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
-        if outsideStart != nil {
-            RouteNavigator.shared.routeNameForLogging = "outside_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
-        } else {
-            RouteNavigator.shared.routeNameForLogging = "\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.first!)!)_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
+                let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
+                RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint] + routeKeypoints)
+            } else {
+                RouteNavigator.shared.setRouteKeypoints(kps: routeKeypoints)
+            }
+            if outsideStart != nil {
+                RouteNavigator.shared.routeNameForLogging = "outside_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
+            } else {
+                RouteNavigator.shared.routeNameForLogging = "\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.first!)!)_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
+            }
+            PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
+            return completionHandler(true)
         }
     }
 

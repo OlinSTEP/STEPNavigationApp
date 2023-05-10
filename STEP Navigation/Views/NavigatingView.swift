@@ -75,13 +75,21 @@ struct NavigatingView: View {
             }
             // plan path
             if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
-                PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
-                didPrepareToNavigate = true
-                checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
-            } else if newValue.isAtLeastAsGoodAs(other: .high) {                didLocalize = true
-                PathPlanner.shared.prepareToNavigateFromOutdoors(to: destinationAnchorDetails)
-                didPrepareToNavigate = true
-                navigationManager.startNavigating()
+                if !didPrepareToNavigate {
+                    didPrepareToNavigate = true
+                    PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
+                        guard wasSuccesful else {
+                            return
+                        }
+                        checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
+                    }
+                }
+            } else if newValue.isAtLeastAsGoodAs(other: .high) {
+                didLocalize = true
+                if !didPrepareToNavigate {
+                    didPrepareToNavigate = true
+                    PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
+                }
             }
         }.onReceive(navigationManager.$navigationDirection) {
             newValue in
@@ -110,11 +118,8 @@ struct NavigatingView: View {
     }
     
     private func checkLocalization(cloudAnchorsToCheck: Set<String>) {
+        print("cloud", startAnchorDetails?.getCloudAnchorID(), " did localize \(didLocalize)")
         if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), cloudAnchorsToCheck.contains(startCloudID), !didLocalize {
-            if !didPrepareToNavigate {
-                PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails)
-                didPrepareToNavigate = true
-            }
             didLocalize = true
             PathPlanner.shared.navigate(from: startAnchorDetails, to: destinationAnchorDetails)
         }

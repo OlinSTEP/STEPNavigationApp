@@ -52,11 +52,10 @@ class FirebaseManager: ObservableObject {
     
     func setMode(mode: FirebaseMode) {
         self.mode = mode
+        // if we are in the mapping mode then we download all of the cloud anchors and observe all connections (this is best for when you are editing data)
         if mode == .mapping {
+            // TODO: we need to be careful not to download too much of our database in the mapping case
             observeAllCloudAnchors()
-            observeAllConnections()
-        } else {
-            // TODO: really don't want to have to observe all the connections, but instead pull the path when needed
             observeAllConnections()
         }
     }
@@ -68,8 +67,44 @@ class FirebaseManager: ObservableObject {
     ///   - metadata: the data to store with the cloud anchor
     ///   TODO: need to support geo hash
     func storeCloudAnchor(identifier: String, metadata: CloudAnchorMetadata) {
-        cloudAnchorCollection.document(identifier).setData(metadata.asDict()) { error in
-            print(error?.localizedDescription)
+       cloudAnchorCollection.document(identifier).setData(metadata.asDict()) { error in
+            print("error: \(error?.localizedDescription ?? "none")")
+        }
+    }
+    
+    /// Update the cloud anchor in the database.  The identifier is assumed to be the cloudAnchorID returned
+    /// by ARCore
+    /// - Parameters:
+    ///   - identifier: the ARCore Cloud Anchor ID
+    ///   - metadata: the data to store with the cloud anchor
+    ///   TODO: need to support geo hash
+    func updateCloudAnchor(identifier: String, metadata: CloudAnchorMetadata) {
+        self.cloudAnchorCollection.document(identifier).updateData(metadata.asDict()) { error in
+            print("error: \(error?.localizedDescription ?? "none")")
+        }
+    }
+    
+    func download(edges: [(String, String)], completionHandler: @escaping  (Bool)->()) {
+        guard let firstEdge = edges.first else {
+            // we got all of the edges
+            return completionHandler(true)
+        }
+        // TODO: I'm not sure if this structure of serially downloading the path edges is slow
+        let nodePair = NodePair(from: firstEdge.0, to: firstEdge.1)
+        guard pathGraph.connections[nodePair] == nil else {
+            // download the rest
+            return download(edges: Array(edges[1...]), completionHandler: completionHandler)
+        }
+        guard let lightweightEdge = pathGraph.lightweightConnections[nodePair] else {
+            return completionHandler(false)
+        }
+        connectionCollection.document(lightweightEdge.pathID).getDocument() { (snapshot, error) in
+            guard let document = snapshot, let data = document.data() else {
+                print("error: \(error?.localizedDescription ?? "none")")
+                return completionHandler(false)
+            }
+            self.addConnection(id: document.documentID, snapshot: data)
+            return self.download(edges: Array(edges[1...]), completionHandler: completionHandler)
         }
     }
     
@@ -79,9 +114,9 @@ class FirebaseManager: ObservableObject {
     
     func uploadLog(data: Data) {
         let uniqueId = RouteNavigator.shared.routeNameForLogging ?? UUID().uuidString
-        print("UPLOADING LOG \(RouteNavigator.shared.routeNameForLogging)")
+        print("UPLOADING LOG \(RouteNavigator.shared.routeNameForLogging ?? "nil")")
         Storage.storage().reference().child("take2logs").child("\(uniqueId).log").putData(data) { (metadata, error) in
-            print("error \(error)")
+            print("error: \(error?.localizedDescription ?? "none")")
         }
     }
     
@@ -123,7 +158,7 @@ class FirebaseManager: ObservableObject {
         return mapAnchors.sorted(by: { $0.0 > $1.0 }).first?.key
     }
     
-    private func parseCloudAnchor(id: String, _ data: [String: Any])->(CloudAnchorMetadata, LocationDataModel)? {
+    private func parseCloudAnchor(id: String, _ data: [String: Any])->(CloudAnchorMetadata, LocationDataModel, [String: SimpleEdge])? {
         guard let anchorName = data["name"] as? String else {
             return nil
         }
@@ -137,6 +172,15 @@ class FirebaseManager: ObservableObject {
         let anchorTypeString = (data["category"] as? String) ?? ""
         let associatedOutdoorFeature = (data["associatedOutdoorFeature"] as? String) ?? ""
         let anchorType = AnchorType(rawValue: anchorTypeString) ?? .indoorDestination
+        var simpleConnections: [String: SimpleEdge] = [:]
+        for connection in (data["connections"] as? [[String: Any]]) ?? [] {
+            guard let pathID = connection["pathID"] as? String,
+                  let toID = connection["toID"] as? String,
+                  let weight = connection["weight"] as? Double else {
+                continue
+            }
+            simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight), isReversed: false)
+        }
         return (
             CloudAnchorMetadata(
             name: anchorName,
@@ -147,7 +191,8 @@ class FirebaseManager: ObservableObject {
                               associatedOutdoorFeature: associatedOutdoorFeature,
                               coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                               name: anchorName,
-                              cloudAnchorID: id)
+                              cloudAnchorID: id),
+            simpleConnections
         )
     }
     
@@ -177,12 +222,17 @@ class FirebaseManager: ObservableObject {
                     print("Unable to fetch snapshot data. \(String(describing: error))")
                     return
                 }
+                print("querying \(documents.count)")
                 for document in documents {
-                    if let (cloudMetadata, dataModel) = self.parseCloudAnchor(id: document.documentID, document.data()) {
+                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: document.documentID, document.data()) {
                         // we could wind up adding the same model multiple times, but that is okay
                         self.mapAnchors[document.documentID] = cloudMetadata
                         DataModelManager.shared.addDataModel(dataModel)
                         self.pathGraph.cloudNodes.insert(document.documentID)
+                        for (toID, simpleEdge) in lightweightConnections {
+                            print("added lightweight \(document.documentID) to \(toID)")
+                            self.pathGraph.addLightweightConnection(from: document.documentID, to: toID, withEdge: simpleEdge)
+                        }
                     }
                 }
             }
@@ -199,10 +249,13 @@ class FirebaseManager: ObservableObject {
             snapshot.documentChanges.forEach { diff in
                 switch diff.type {
                 case .added:
-                    if let (cloudMetadata, dataModel) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()) {
+                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()) {
                         self.mapAnchors[diff.document.documentID] = cloudMetadata
                         DataModelManager.shared.addDataModel(dataModel)
                         self.pathGraph.cloudNodes.insert(diff.document.documentID)
+                        for (toID, simpleEdge) in lightweightConnections {
+                            self.pathGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
+                        }
                     }
                 case .removed:
                     if DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
@@ -210,9 +263,12 @@ class FirebaseManager: ObservableObject {
                         self.pathGraph.cloudNodes.remove(diff.document.documentID)
                     }
                 case .modified:
-                    if let (cloudMetadata, dataModel) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()), DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
+                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()), DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
                         self.mapAnchors[diff.document.documentID] = cloudMetadata
                         DataModelManager.shared.addDataModel(dataModel)
+                        for (toID, simpleEdge) in lightweightConnections {
+                            self.pathGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
+                        }
                     }
                 }
             }
@@ -262,7 +318,6 @@ class FirebaseManager: ObservableObject {
     
     func addConnection(id: String, snapshot: [String: Any]) {
         // delete existing connections and repopulate (TODO: this is causing issues with our bidirectional treatment of edges).  We might have to do this at another part of the app
-        // pathGraph.deleteConnections(from: snapshot.key)
         guard let startID = snapshot["fromID"] as? String,
               let endID = snapshot["toID"] as? String,
               let fromPoseArray = snapshot["fromPose"] as? [Double],

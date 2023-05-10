@@ -16,11 +16,9 @@ enum MainScreenType {
     case findFirstAnchorToFormConnection(anchorID1: String, anchorID2: String)
     case walkToSecondAnchor(anchorID1: String, anchorID2: String)
     case findSecondAnchorToFormConnection(anchorID1: String, anchorID2: String)
-    case navigateBetweenAnchors
     case deleteCloudAnchor
     case editAnchor
     case editingAnchor(anchorID: String)
-    case navigating(from: String, to: String, withPath: [String])
     var isOnMainScreen: Bool {
         if case .createAnchor = self {
             return true
@@ -68,12 +66,8 @@ struct ContentView : View {
                 WalkToSecondAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
             case .findSecondAnchorToFormConnection(let anchorID1, let anchorID2):
                 FindSecondAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
-            case .navigateBetweenAnchors:
-                NavigateBetweenAnchors()
             case .deleteCloudAnchor:
                 DeleteCloudAnchor()
-            case .navigating(let anchorID1, let anchorID2, let path):
-                Navigating(from: anchorID1, to: anchorID2, withPath: path)
             }
         }.onAppear() {
             PositioningModel.shared.startPositioning()
@@ -133,7 +127,7 @@ struct EditingAnchorView: View {
                                             type: AnchorType(rawValue: newCategory) ?? .indoorDestination,
                                             associatedOutdoorFeature: newAssociatedOutdoorFeature,
                                             geospatialTransform: metadata.geospatialTransform)
-                    FirebaseManager.shared.storeCloudAnchor(identifier: anchorID, metadata: newMetadata)
+                    FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
                     MainUIStateContainer.shared.currentScreen = .createAnchor
                 }
             }
@@ -193,9 +187,6 @@ struct CreateAnchor: View {
             Button("Connect Two Anchors") {
                 MainUIStateContainer.shared.currentScreen = .connectAnchor
             }
-            Button("Navigate Between Two Anchors") {
-                MainUIStateContainer.shared.currentScreen = .navigateBetweenAnchors
-            }
             Button("Delete an Anchor") {
                 MainUIStateContainer.shared.currentScreen = .deleteCloudAnchor
             }
@@ -254,38 +245,6 @@ struct FindSecondAnchor: View {
         }
         .background(Color.orange)
         .padding()
-    }
-}
-
-struct Navigating: View {
-    @ObservedObject var positioningModel = PositioningModel.shared
-    @State var didStartNavigating = false
-    @State private var showingPopover = false
-    let from: String
-    let to: String
-    let withPath: [String]
-    
-    var body : some View {
-        VStack {
-            Button("Show Route") {
-                showingPopover.toggle()
-            }
-            ForEach(withPath, id: \.self) { anchorID in
-                Text(FirebaseManager.shared.getCloudAnchorName(byID: anchorID)!)
-            }
-        }
-        .background(Color.orange)
-        .padding()
-        .onReceive(positioningModel.$resolvedCloudAnchors) { newAnchors in
-            if !didStartNavigating && newAnchors.contains(from) {
-                didStartNavigating.toggle()
-                NavigationManager.shared.computeMultisegmentPath(withPath)
-                NavigationManager.shared.startNavigating()
-            }
-        }
-        .popover(isPresented: $showingPopover) {
-            RoutePreview()
-        }
     }
 }
 
@@ -373,43 +332,6 @@ struct Arrow: ChartSymbolShape {
     }
 }
 
-struct NavigateBetweenAnchors: View {
-    @State var anchorID1 = FirebaseManager.shared.firstCloudAnchor ?? ""
-    @State var anchorID2 = FirebaseManager.shared.firstCloudAnchor ?? ""
-    @ObservedObject var firebaseManager = FirebaseManager.shared
-    
-    var body: some View {
-        VStack {
-            Picker("Anchor 1", selection: $anchorID1) {
-                ForEach(FirebaseManager.shared.mapAnchors.sorted(by: { $0.0 > $1.0 }), id: \.key) { cloudAnchorID, mapAnchorMetadata in
-                    Text(mapAnchorMetadata.name)
-                        .tag(cloudAnchorID)
-                }
-            }
-            .pickerStyle(WheelPickerStyle())
-            Picker("Anchor 2", selection: $anchorID2) {
-                ForEach(FirebaseManager.shared.mapAnchors.sorted(by: { $0.0 > $1.0 }), id: \.key) { cloudAnchorID, mapAnchorMetadata in
-                    Text(mapAnchorMetadata.name)
-                        .tag(cloudAnchorID)
-                }
-            }
-            .pickerStyle(WheelPickerStyle())
-            Button("Navigate") {
-                guard anchorID1 != anchorID2 else {
-                    AnnouncementManager.shared.announce(announcement: "Navigating two and from the same point of interest is not currently supported")
-                    return
-                }
-                let cloudAnchors = NavigationManager.shared.computePathBetween(anchorID1, anchorID2)
-                for cloudAnchor in cloudAnchors {
-                    PositioningModel.shared.resolveCloudAnchor(byID: cloudAnchor)
-                }
-                MainUIStateContainer.shared.currentScreen = .navigating(from: anchorID1, to: anchorID2, withPath: cloudAnchors)
-            }
-        }
-        .background(Color.orange)
-        .padding()
-    }
-}
 
 struct DeleteCloudAnchor: View {
     @State var anchorID = FirebaseManager.shared.firstCloudAnchor ?? ""
