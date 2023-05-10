@@ -131,8 +131,8 @@ class NavigationManager: ObservableObject {
     /// - Returns: the weighted SwiftGraph
     private func makeWeightedGraph()->WeightedGraph<String, Float> {
         let currentLatLon = PositioningModel.shared.currentLatLon ?? CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-        let nodes = FirebaseManager.shared.pathGraph.cloudNodes + ["outdoors"]
-        let edges = FirebaseManager.shared.pathGraph.lightweightConnections
+        let nodes = FirebaseManager.shared.mapGraph.cloudNodes + ["outdoors"]
+        let edges = FirebaseManager.shared.mapGraph.lightweightConnections
         let anchorGraph = WeightedGraph<String, Float>(vertices: Array(nodes))
         for (nodeInfo, edgeInfo) in edges {
             guard nodes.contains(nodeInfo.from), nodes.contains(nodeInfo.to) else {
@@ -220,8 +220,8 @@ class NavigationManager: ObservableObject {
                 return completionHandler(false)
             }
             for (a_n, a_nplus1) in edgePairs {
-                guard let edge = FirebaseManager.shared.pathGraph.connections[NodePair(from: a_n, to: a_nplus1)] else {
-                    FirebaseManager.shared.pathGraph.printEdges()
+                guard let edge = FirebaseManager.shared.mapGraph.connections[NodePair(from: a_n, to: a_nplus1)] else {
+                    FirebaseManager.shared.mapGraph.printEdges()
                     // AnnouncementManager.shared.announce(announcement: "unexpectedly didn't find connection")
                     return
                 }
@@ -263,7 +263,7 @@ class NavigationManager: ObservableObject {
         prevKeypointPosition = PositioningModel.shared.cameraTransform ?? matrix_identity_float4x4
         hapticTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: (#selector(getHapticFeedback)), userInfo: nil, repeats: true)
         followingCrumbs = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: (#selector(self.followCrumb)), userInfo: nil, repeats: true)
-        HapticFeedbackAdapter.shared.startEndOfRouteHaptics()
+        HapticFeedbackAdapter.shared.startHaptics()
         PositioningModel.shared.renderKeypoint(RouteNavigator.shared.nextKeypoint!)
     }
     

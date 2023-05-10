@@ -9,7 +9,10 @@ import Foundation
 import ARKit
 import CoreHaptics
 
+/// Provides an interface that allows navigation instructions to be provided to the
+/// user in the form of haptic feedback.
 class HapticFeedbackAdapter {
+    /// The handle to the singleton instance of this class
     public static var shared = HapticFeedbackAdapter()
     
     /// record whether we've started the end of route haptics
@@ -19,10 +22,13 @@ class HapticFeedbackAdapter {
     /// Controls the dynamic haptic pattern at the end of the route
     var hapticPlayer: CHHapticAdvancedPatternPlayer?
     
+    /// this shouldn't be called directly (instead use the singleton instance)
     private init() {
         
     }
     
+    /// Adjust the haptics based on the provided intensity
+    /// - Parameter intensity: an intensity value in the range of 0.0 to 1.0
     func adjustHaptics(intensity: Float) {
         do {
             try hapticPlayer?.sendParameters([CHHapticDynamicParameter(parameterID: .hapticIntensityControl, value: intensity, relativeTime: 0.0)], atTime: 0.0)
@@ -31,10 +37,16 @@ class HapticFeedbackAdapter {
         }
     }
     
+    /// Adjust the intensity of the haptics based on the relative position of the user and the goal.
+    /// The intensity will be greater when the user is closer to the goal.
+    /// - Parameters:
+    ///   - pos: The user's position projected onto the X-Z plane of the ARSession
+    ///   - goal: The goal position projected onto the X-Z plane of the ARSession
     func adjustHaptics(pos: simd_float2, goal: simd_float2) {
         adjustHaptics(intensity: max(0.0, 1.0 - simd_distance(pos, goal)))
     }
     
+    /// Stop the haptics immediately
     func stopHaptics() {
         do {
             try hapticPlayer?.stop(atTime: 0.0)
@@ -43,7 +55,8 @@ class HapticFeedbackAdapter {
         }
     }
     
-    func startEndOfRouteHaptics() {
+    /// Start the haptic engine and allow for subsequent calls to adjustHaptics to be effective.
+    func startHaptics() {
         do {
             hapticEngine = try CHHapticEngine()
             hapticEngine?.start() { error in
