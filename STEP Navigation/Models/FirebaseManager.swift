@@ -57,7 +57,6 @@ class FirebaseManager: ObservableObject {
     }
     
     private init() {
-        FirebaseApp.configure()
         db = Firestore.firestore()
     }
     

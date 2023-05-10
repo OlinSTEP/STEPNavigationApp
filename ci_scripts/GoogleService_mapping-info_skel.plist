@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>956432485698-nh4c6pbr9vtdr53lboju2dko5vli665d.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.956432485698-nh4c6pbr9vtdr53lboju2dko5vli665d</string>
+	<key>API_KEY</key>
+	<string>GOOGLE_SERVICE_KEY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>956432485698</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>edu.occamlab.STEP-Mapping</string>
+	<key>PROJECT_ID</key>
+	<string>stepnavigation</string>
+	<key>STORAGE_BUCKET</key>
+	<string>stepnavigation.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:956432485698:ios:96a1da7c8392ca4a1b4cdb</string>
+	<key>DATABASE_URL</key>
+	<string>https://stepnavigation-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
