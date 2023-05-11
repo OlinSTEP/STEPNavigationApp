@@ -39,38 +39,45 @@ struct ContentView : View {
     @StateObject var firebaseManager = FirebaseManager.shared
     @ObservedObject var uiState = MainUIStateContainer.shared
     @ObservedObject var navigationManager = NavigationManager.shared
+    @ObservedObject var authHandler = AuthHandler.shared
     
     var body: some View {
-        ZStack {
-            ARViewContainer().edgesIgnoringSafeArea(.all)
-            if !uiState.currentScreen.isOnMainScreen {
-                VStack {
-                    Button("Back to main screen") {
-                        uiState.currentScreen = .createAnchor
+        if authHandler.currentUID == nil {
+            SignInWithApple()
+                .frame(width: 280, height: 60)
+                .onTapGesture(perform: authHandler.startSignInWithAppleFlow)
+        } else {
+            ZStack {
+                ARViewContainer().edgesIgnoringSafeArea(.all)
+                if !uiState.currentScreen.isOnMainScreen {
+                    VStack {
+                        Button("Back to main screen") {
+                            uiState.currentScreen = .createAnchor
+                        }
+                        Spacer()
                     }
-                    Spacer()
                 }
+                switch uiState.currentScreen {
+                case .createAnchor:
+                    CreateAnchor()
+                case .connectAnchor:
+                    ConnectAnchorView()
+                case .editAnchor:
+                    EditAnchorView()
+                case .editingAnchor(let anchorID):
+                    EditingAnchorView(anchorID: anchorID)
+                case .findFirstAnchorToFormConnection(let anchorID1, let anchorID2):
+                    FindFirstAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
+                case .walkToSecondAnchor(let anchorID1, let anchorID2):
+                    WalkToSecondAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
+                case .findSecondAnchorToFormConnection(let anchorID1, let anchorID2):
+                    FindSecondAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
+                case .deleteCloudAnchor:
+                    DeleteCloudAnchor()
+                }
+            }.onAppear() {
+                PositioningModel.shared.startPositioning()
             }
-            switch uiState.currentScreen {
-            case .createAnchor:
-                CreateAnchor()
-            case .connectAnchor:
-                ConnectAnchorView()
-            case .editAnchor:
-                EditAnchorView()
-            case .editingAnchor(let anchorID):
-                EditingAnchorView(anchorID: anchorID)
-            case .findFirstAnchorToFormConnection(let anchorID1, let anchorID2):
-                FindFirstAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
-            case .walkToSecondAnchor(let anchorID1, let anchorID2):
-                WalkToSecondAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
-            case .findSecondAnchorToFormConnection(let anchorID1, let anchorID2):
-                FindSecondAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
-            case .deleteCloudAnchor:
-                DeleteCloudAnchor()
-            }
-        }.onAppear() {
-            PositioningModel.shared.startPositioning()
         }
     }
 }
