@@ -13,21 +13,25 @@ import AuthenticationServices
 import SwiftUI
 
 
-import SwiftUI
-import AuthenticationServices
+/// This class interacts with both the Apple Sign-In capability and FirebaseAuth.  The class has a field that can be observed in order to get the currently logged-in user (nil if no login).
 class AuthHandler: NSObject, ObservableObject, ASAuthorizationControllerDelegate {
+    /// The handle to the singleton instance of this class
     public static var shared = AuthHandler()
     // Unhashed nonce.
-    fileprivate var currentNonce: String?
+    private var currentNonce: String?
+    private let firebaseAuth = Auth.auth()
+    
+    /// the current user ID.  If the user is not properly authenticated, this value will be nil.  This ID is a Firebase user ID (not specific to any particular authentication provider)
     @Published var currentUID: String?
-    let firebaseAuth = Auth.auth()
-
+    
+    /// default initializer (this should not be called directly)
     private override init() {
         currentUID = firebaseAuth.currentUser?.uid
         super.init()
         createAuthListener()
     }
     
+    /// This function responds to authentication state changes so the information in `currentUID`
     private func createAuthListener() {
         firebaseAuth.addStateDidChangeListener() { (auth, user) in
             self.currentUID = user?.uid
