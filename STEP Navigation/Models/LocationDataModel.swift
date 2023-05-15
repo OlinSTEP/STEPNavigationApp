@@ -20,17 +20,20 @@ struct LocationDataModel: Hashable {
     private let notes: String?
     /// the name of the data model
     private let name: String
+    /// the identifier for this data model
+    private let id: String
     /// the cloud anchor identifier of the data model (or nil if none exists)
     private let cloudAnchorID: String?
-    
     
     /**
         Initializes a new location data model.
      
         - parameter anchorType: The type of the anchor.
+        - parameter associatedOutdoorFeature: The id of the associated outdoor feature (or nil if N/A)
         - parameter coordinates: the latitude and longitude of the model
         - parameter notes: Any additional notes about the location.
         - parameter name: The name of the location.
+        - parameter id: The identifier for this data model
         - parameter cloudAnchorID: the anchor id associated with this model
     */
     init(anchorType: AnchorType,
@@ -38,12 +41,14 @@ struct LocationDataModel: Hashable {
          coordinates: CLLocationCoordinate2D,
          notes: String? = "",
          name: String,
+         id: String,
          cloudAnchorID: String?=nil) {
         self.anchorType = anchorType
         self.associatedOutdoorFeature = associatedOutdoorFeature
         self.coordinates = coordinates
         self.notes = notes
         self.name = name
+        self.id = id
         self.cloudAnchorID = cloudAnchorID
     }
     
@@ -103,6 +108,12 @@ struct LocationDataModel: Hashable {
     /// - Returns: the cloud identifier or nil if none exists.
     func getCloudAnchorID() -> String? {
         return self.cloudAnchorID
+    }
+    
+    /// Return the model identifier
+    /// - Returns: the identifier
+    func getID() -> String {
+        return self.id
     }
     
     /// Return the outdoor feature associated with this data model

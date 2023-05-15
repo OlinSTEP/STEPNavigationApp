@@ -3,7 +3,7 @@
 "name": "Perkins Outdoor Landmarks",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
-{ "type": "Feature", "properties": { "Name": "Howe Bus Stop" }, "geometry": { "type": "Point", "coordinates": [ -71.1748590639545, 42.36153578733207, 58.222413532784202 ] } },
-{ "type": "Feature", "properties": { "Name": "Perkins Health Center" }, "geometry": { "type": "Point", "coordinates": [ -71.17508202317451, 42.361669260288856, 58.222413532784202 ] } }
+{ "type": "Feature", "id": "E5889CD9-FA1B-40BA-AA3C-1D0C4A41D54E", "properties": { "Name": "Howe Bus Stop" }, "geometry": { "type": "Point", "coordinates": [ -71.1748590639545, 42.36153578733207, 58.222413532784202 ] } },
+{ "type": "Feature", "id": "7D228E27-3AB9-4443-AB27-DED59046E3BE", "properties": { "Name": "Perkins Health Center" }, "geometry": { "type": "Point", "coordinates": [ -71.17508202317451, 42.361669260288856, 58.222413532784202 ] } }
 ]
 }

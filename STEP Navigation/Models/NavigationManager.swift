@@ -146,7 +146,7 @@ class NavigationManager: ObservableObject {
             if let cloudID = indoorLocation.getCloudAnchorID(),
                let associatedOutdoorFeature = indoorLocation.getAssociatedOutdoorFeature(),
                // TODO: we really need the identifier to be persistent (not named based)
-               let searchLatLon = DataModelManager.shared.getLocationDataModel(byName: associatedOutdoorFeature) {
+               let searchLatLon = DataModelManager.shared.getLocationDataModel(byID: associatedOutdoorFeature) {
                 anchorGraph.addEdge(from: "outdoors", to: cloudID, weight: Float(currentLatLon.distance(from: searchLatLon.getLocationCoordinate())), directed: true)
             }
         }

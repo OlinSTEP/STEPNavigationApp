@@ -35,25 +35,22 @@ struct LocationDataModelParser {
             var stopsRaw: [BusStop] = []
             stopsRaw = try decoder.decode([BusStop].self, from: data)
             
-            for i in 0...stopsRaw.count-1 {
+            for i in 0..<stopsRaw.count {
                 let stop = stopsRaw[i]
                 let coordinates = CLLocationCoordinate2D(latitude: stop.Latitude, longitude: stop.Longitude)
-                locationModels.insert(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: nil, coordinates: coordinates, name: stop.Stop_name))
+                // TODO: construct a real ID for the bus stops
+                locationModels.insert(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: nil, coordinates: coordinates, name: stop.Stop_name, id: UUID().uuidString))
             }
         case .externalDoor:
             print("Decode external door file.")
-            // let json = try JSONSerialization.jsonObject(with: data, options: [])
-            // Temporary code for transferring to the realtime database
-            // FirebaseManager.shared.uploadOutdoorInfoToDB("Olin Doors", json as! [String: Any])
-            
             var doorsRaw: [Feature] = []
             doorsRaw = try decoder.decode(DoorRaw.self, from: data).features
             
-            for i in 0...doorsRaw.count-1 {
+            for i in 0..<doorsRaw.count {
                 let door = doorsRaw[i]
                 let name = door.properties.name
                 let coordinates = CLLocationCoordinate2D(latitude: door.geometry.coordinates[1], longitude: door.geometry.coordinates[0])
-                locationModels.insert(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: nil, coordinates: coordinates, name: name))
+                locationModels.insert(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: nil, coordinates: coordinates, name: name, id: door.id))
             }
         default:
             print("Not valid anchor type \(anchorType)")
@@ -92,6 +89,7 @@ struct CRSProperties: Codable {
 
 struct Feature: Codable {
     let type: String
+    let id: String
     let properties: FeatureProperties
     let geometry: Geometry
 }

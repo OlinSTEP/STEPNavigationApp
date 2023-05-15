@@ -117,9 +117,9 @@ struct EditingAnchorView: View {
                 Text("Associated Outdoor Feature")
                 Spacer()
                 Picker("Associated Outdoor", selection: $newAssociatedOutdoorFeature) {
-                    Text("")
-                    ForEach(FirebaseManager.shared.outdoorFeatures.keys.sorted(), id: \.self) { outdoorFeature in
-                        Text(outdoorFeature)
+                    Text("").tag("")
+                    ForEach(FirebaseManager.shared.outdoorFeatures.keys.sorted(by: { $0 < $1 }), id: \.self) { outdoorFeatureID  in
+                        Text(FirebaseManager.shared.outdoorFeatures[outdoorFeatureID]!.0).tag(outdoorFeatureID)
                     }
                 }
             }

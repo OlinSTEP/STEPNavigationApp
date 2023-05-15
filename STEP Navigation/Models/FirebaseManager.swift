@@ -25,8 +25,8 @@ class FirebaseManager: ObservableObject {
     public static var shared = FirebaseManager()
     /// Keeps track of the cloud anchor IDs (keys) and associated metadata.  This variable can be observed by views
     @Published var mapAnchors: [String: CloudAnchorMetadata] = [:]
-    /// Maps outdoor features to location
-    var outdoorFeatures: [String: CLLocationCoordinate2D] = [:]
+    /// Maps outdoor feature ID to name and location
+    var outdoorFeatures: [String: (String, CLLocationCoordinate2D)] = [:]
     /// Keeps track of new cloud anchor connections that get added to the database
     private var connectionObserver: ListenerRegistration?
     /// Keeps track of new cloud anchors that get added to the database
@@ -235,6 +235,7 @@ class FirebaseManager: ObservableObject {
                               associatedOutdoorFeature: associatedOutdoorFeature,
                               coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                               name: anchorName,
+                              id: id,       // note: the cloudAnchorID is the same in this case
                               cloudAnchorID: id),
             simpleConnections
         )
@@ -357,11 +358,12 @@ class FirebaseManager: ObservableObject {
             for feature in features {
                 guard let properties = feature["properties"] as? [String: Any],
                       let name = properties["Name"] as? String,
+                      let id = feature["id"] as? String,
                       let geometry = feature["geometry"] as? [String: Any],
                       let coordinates = geometry["coordinates"] as? [Double] else {
                     continue
                 }
-                self.outdoorFeatures[name] = CLLocationCoordinate2D(latitude: coordinates[0], longitude: coordinates[1])
+                self.outdoorFeatures[id] = (name, CLLocationCoordinate2D(latitude: coordinates[0], longitude: coordinates[1]))
             }
         }
     }

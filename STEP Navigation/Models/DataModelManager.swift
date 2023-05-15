@@ -22,6 +22,8 @@ class DataModelManager: ObservableObject {
     // Dictionary that stores all the location models
     private var allLocationModels = [AnchorType: Set<LocationDataModel>]()
     
+    private var idMap: [String: LocationDataModel] = [:]
+    
     ///The private initializer, should not be called directly
     private init() {
         do {
@@ -29,7 +31,7 @@ class DataModelManager: ObservableObject {
             multiAddDataModel(doors, anchorType: .externalDoor)
         }
         catch {
-            print("Error parsing Olin_College_Doors")
+            print("Error parsing Olin_College_Doors \(error)")
         }
         
         do {
@@ -59,6 +61,7 @@ class DataModelManager: ObservableObject {
     func addDataModel(_ dataModel: LocationDataModel) {
         var models = allLocationModels[dataModel.getAnchorType()] ?? []
         models.insert(dataModel)
+        idMap[dataModel.getID()] = dataModel
         allLocationModels[dataModel.getAnchorType()] = models
     }
     
@@ -70,8 +73,10 @@ class DataModelManager: ObservableObject {
     func multiAddDataModel(_ dataModels: Set<LocationDataModel>, anchorType: AnchorType) {
         var models = allLocationModels[anchorType] ?? []
         models.formUnion(dataModels)
+        for model in models {
+            idMap[model.getID()] = model
+        }
         allLocationModels[anchorType] = models
-        
     }
     
     /**
@@ -102,6 +107,7 @@ class DataModelManager: ObservableObject {
             for model in models {
                 if model.getCloudAnchorID() == id {
                     models.remove(model)
+                    idMap.removeValue(forKey: model.getID())
                     return true
                 }
             }
@@ -115,19 +121,11 @@ class DataModelManager: ObservableObject {
         return Set(allLocationModels.keys + [.indoorDestination])
     }
     
-    /// Lookup a data model by name
+    /// Lookup a location data model associated by ID
     /// - Parameter name: the name of the data model
     /// - Returns: the ``LocationDataModel`` object or nil if none exists.  If two or more models match, the behavior of this function is undefined.
-    func getLocationDataModel(byName name: String)->LocationDataModel? {
-        // TODO: this is very wasteful
-        for (_, models) in allLocationModels {
-            for model in models {
-                if model.getName() == name {
-                    return model
-                }
-            }
-        }
-        return nil
+    func getLocationDataModel(byID id: String)->LocationDataModel? {
+        return idMap[id]
     }
      
     /**
