@@ -121,7 +121,7 @@ struct NavigatingView: View {
         print("cloud", startAnchorDetails?.getCloudAnchorID(), " did localize \(didLocalize)")
         if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), cloudAnchorsToCheck.contains(startCloudID), !didLocalize {
             didLocalize = true
-            PathPlanner.shared.navigate(from: startAnchorDetails, to: destinationAnchorDetails)
+            navigationManager.startNavigating()
         }
     }
     let popupEntry: String = "Testing Text"

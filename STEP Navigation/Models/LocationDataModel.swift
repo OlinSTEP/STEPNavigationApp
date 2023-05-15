@@ -8,15 +8,19 @@
 import Foundation
 import CoreLocation
 
-/**
-    A struct that represents a location data model where an anchor can be created.
-*/
+/// A struct that represents a location data model where an anchor can be created.
 struct LocationDataModel: Hashable {
+    /// the type of the anchor
     private let anchorType: AnchorType
+    /// the name of the associated outodor feature (or nil if none exists)
     private let associatedOutdoorFeature: String?
+    /// the latitude / longitude for the data model
     private let coordinates: CLLocationCoordinate2D
+    /// the notes for the data model
     private let notes: String?
+    /// the name of the data model
     private let name: String
+    /// the cloud anchor identifier of the data model (or nil if none exists)
     private let cloudAnchorID: String?
     
     
@@ -71,55 +75,71 @@ struct LocationDataModel: Hashable {
             lhs.name == rhs.name
     }
     
+    /// Returns the anchor type
+    /// - Returns: the anchor type of this model
     func getAnchorType() -> AnchorType {
         return self.anchorType
     }
     
+    /// Return the location of the model
+    /// - Returns: the location of the model as a latitude / longitude pair.
     func getLocationCoordinate() -> CLLocationCoordinate2D {
         return self.coordinates
     }
     
+    /// Return the name of the model
+    /// - Returns: the name of the model
     func getName() -> String {
         return self.name
     }
     
+    /// Return the associated notes
+    /// - Returns: the associated notes or nil if none exist
     func getNotes() -> String? {
         return self.notes
     }
     
+    /// Return the associated cloud identifier
+    /// - Returns: the cloud identifier or nil if none exists.
     func getCloudAnchorID() -> String? {
         return self.cloudAnchorID
     }
     
+    /// Return the outdoor feature associated with this data model
+    /// - Returns: the name of the associated outdoor feature
     func getAssociatedOutdoorFeature() -> String? {
         return self.associatedOutdoorFeature
     }
 }
 
-/**
-An enum representing the different types of anchors that can be used to categorize `LocationDataModel` objects.
- 
-- case busStop: Represents a bus stop anchor type.
-- case externalDoor: Represents an external door anchor type.
-- case bathroom: Represents a bathroom anchor type.
-- case frontdesk: Represents a front desk anchor type.
-*/
+/// An enum representing the different types of anchors that can be used to categorize `LocationDataModel` objects.
 enum AnchorType: String, CaseIterable, Identifiable {
     var id: String {
         return rawValue
     }
     
+    /// Represents a bus stop anchor type.
     case busStop = "Bus Stop"
+    /// Represents an external door anchor type.
     case externalDoor = "External Door"
+    /// Represents a bathroom anchor type.
     case bathroom = "Bathroom"
+    /// Represents a front desk anchor type.
     case frontdesk = "Front Desk"
+    /// Represents a junction anchor type (e.g., a hallway intersection)
     case junction = "Junction"
+    /// Represents a generic indoor destination.  This is a placeholder value for when the specific category has not yet been set.
     case indoorDestination = "Indoor"
+    /// Represents a room destination that doesn't fall into a more specific category
     case room = "Room"
+    /// Represents a destination that is at the exit of the building
     case exit = "Exit"
+    /// Represents a water fountain anchor type
     case waterFountain = "Water Fountain"
+    /// Represents an anchor type that is part of a path (not a destination in and of itself)
     case path = "path"
     
+    /// True if and only if the category corresponds to an indoor feature (i.e., not latitude / longitude based)
     var isIndoors: Bool {
         switch self {
         case .bathroom:
@@ -140,5 +160,4 @@ enum AnchorType: String, CaseIterable, Identifiable {
             return false
         }
     }
-//    case indoorDestination = "Indoors (temporary category)"
 }

@@ -9,18 +9,19 @@
 import Foundation
 import ARKit
 
+/// The keypoint type
 enum KeypointType {
+    /// A latLonBased keypoint is positioned using the ARCoreGeospatial API.
     case latLonBased
+    /// A cloud anchor based keypoint is based on the location of the associated cloud anchors as tracked by the ARCoreCloudAnchor API.  The keypoint itself does not correspond to a cloud anchor, but its positioned relative to cloud anchor is known.
     case cloudAnchorBased
 }
 
 /// Struct to store position and orientation of a keypoint
-///
-/// Contains:
-/// * `location` (`LocationInfo`)
-/// * `orientation` (`Vector3` from `VectorMath`)
 public struct KeypointInfo: Identifiable {
+    /// The unique identifier of the keypoint
     public let id: UUID
+    /// the type of keypoint (either latitude longitude based or cloud anchor based)
     let mode: KeypointType
     /// the location of the keypoint
     public var location: simd_float4x4
@@ -53,6 +54,7 @@ class MultiSegmentPathBuilder {
     /// The crumbs that make up the desired path. These should be ordered with respect to the user's intended direction of travel (start to end versus end to start)
     private var crumbs: [simd_float4x4]
     
+    /// These indices specify which crumbs shoudl be used as keypoints
     private var manualKeypointIndices: [Int]
     
     /// Initializes the PathFinder class and determines the value of `pathWidth`
@@ -67,7 +69,7 @@ class MultiSegmentPathBuilder {
         pathWidth = 0.3
     }
     
-    /// a list of `KeypointInfo` objects representing the important turns in the path.
+    /// a list of ``KeypointInfo`` objects representing the important turns in the path.
     public var keypoints: [KeypointInfo] {
         get {
             if manualKeypointIndices.count != 0 {
