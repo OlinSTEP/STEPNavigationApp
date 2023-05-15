@@ -87,16 +87,23 @@ class PathRecorder {
         }
     }
     
+    /// Add the specified cloud anchor to the path recording
+    /// - Parameters:
+    ///   - identifier: the cloud identifier (returned from ARCore)
+    ///   - metadata: the metadata describing the cloud anchor
+    ///   - currentPose: the pose of the cloud anchor as specified in the corresponding `GARAnchor`
     func addCloudAnchor(identifier: String, metadata: CloudAnchorMetadata, currentPose: simd_float4x4) {
         cloudAnchors[identifier] = (metadata, currentPose)
     }
     
+    /// Stop recording the path.
     func stopRecordingPath() {
         recordingTimer?.invalidate()
         cloudAnchorTimer?.invalidate()
         qualityTimer?.invalidate()
     }
     
+    /// Upload the path data to Firebase
     func toFirebase() {
         guard let startAnchorID = startAnchorID, let stopAnchorID = stopAnchorID, let anchor1Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: startAnchorID), let anchor2Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: stopAnchorID) else {
             return

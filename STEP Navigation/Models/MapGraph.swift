@@ -19,7 +19,6 @@ struct NodePair<T: Hashable, U: Hashable>: Hashable {
 struct SimpleEdge {
     let pathID: String
     let cost: Float
-    let isReversed: Bool
 }
 
 struct ComplexEdge {
@@ -75,8 +74,7 @@ class MapGraph {
         // add reverse edge if it doesn't exist yet
         if lightweightConnections[NodePair(from: toID, to: fromID)] == nil {
             let reversed = SimpleEdge(pathID: simpleEdge.pathID,
-                                      cost: simpleEdge.cost,
-                                      isReversed: true)
+                                      cost: simpleEdge.cost)
             lightweightConnections[NodePair(from: toID, to: fromID)] = reversed
         }
     }

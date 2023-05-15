@@ -35,12 +35,12 @@ class FirebaseManager: ObservableObject {
     private var lastQueryLocation: CLLocationCoordinate2D?
     /// The mode the database is currently operating within.  This mode is useful for setting various listeners.
     private var mode: FirebaseMode = .mapping
-    
     /// The graph used to encode relationships between cloud anchors and compute shortest paths
     let mapGraph = MapGraph()
-    
     /// A connection to the Firestore database
     private let db: Firestore
+    
+    /// a handle to the cloud anchor collection.  This handle is affected by the the mapping sub folder setting.
     private var cloudAnchorCollection: CollectionReference {
         if SettingsManager.shared.mappingSubFolder.isEmpty {
             return db.collection("cloud_anchors")
@@ -48,6 +48,8 @@ class FirebaseManager: ObservableObject {
             return db.collection("\(SettingsManager.shared.mappingSubFolder)_cloud_anchors")
         }
     }
+    
+    /// a handle to the connection collection.  This handle is affected by the the mapping sub folder setting.
     private var connectionCollection: CollectionReference {
         if SettingsManager.shared.mappingSubFolder.isEmpty {
             return db.collection("connections")
@@ -56,10 +58,20 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    /// The first cloud anchor that is currently cached in the `FirebaseManager` object.  The notion of first is determined by alphabetically ordering the cloud identifiers
+    var firstCloudAnchor: String? {
+        return mapAnchors.sorted(by: { $0.0 > $1.0 }).first?.key
+    }
+    
+    /// The private init method (this should not be called directly)
     private init() {
         db = Firestore.firestore()
     }
     
+    /// Sets the mode for the database.
+    /// When in .mapping mode: all data is downloaded from the database (which is not optimal).  This choice was made to allow all data to be edited.
+    /// When in .navigation mode: data is downloaded as needed.
+    /// - Parameter mode: the mode to set
     func setMode(mode: FirebaseMode) {
         self.mode = mode
         // if we are in the mapping mode then we download all of the cloud anchors and observe all connections (this is best for when you are editing data)
@@ -94,6 +106,10 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    /// Download the path data from Firestore corresponding to the specified edges.
+    /// - Parameters:
+    ///   - edges: The edges to download specified as a list of String tuples.  Each tuple contains the start cloud anchor ID and end cloud anchor ID for the requested edge.
+    ///   - completionHandler: a completion handler to call when the the downloads finish.  The success of the downloads is communicated via the Boolean input to the completion handler (`true` for success and `false` for failure).
     func download(edges: [(String, String)], completionHandler: @escaping  (Bool)->()) {
         guard let firstEdge = edges.first else {
             // we got all of the edges
@@ -118,10 +134,14 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    /// Delete the specified cloud anchor
+    /// - Parameter id: the identifier of the cloud anchor ID to delete.
     func deleteCloudAnchor(id: String) {
         cloudAnchorCollection.document(id).delete()
     }
     
+    /// Upload the log data to the storage bucket
+    /// - Parameter data: the data to upload
     func uploadLog(data: Data) {
         let uniqueId = RouteNavigator.shared.routeNameForLogging ?? UUID().uuidString
         print("UPLOADING LOG \(RouteNavigator.shared.routeNameForLogging ?? "nil")")
@@ -130,7 +150,20 @@ class FirebaseManager: ObservableObject {
         }
     }
     
-    func addConnection(anchorID1: String, anchor1Pose: simd_float4x4, anchorID2: String, anchor2Pose: simd_float4x4, breadCrumbs: [simd_float4x4], pathAnchors: [String: (CloudAnchorMetadata, simd_float4x4)]) {
+    /// Add a connection between the specified nodes and store it in Firebase.
+    /// - Parameters:
+    ///   - anchorID1: the anchor ID that the connection is starting from
+    ///   - anchor1Pose: the pose of corresponding to `anchorID1` (this should be in the current session's world tracking coordinate system)
+    ///   - anchorID2: the anchor ID that the connection is ending at
+    ///   - anchor2Pose: the pose of corresponding to `anchorID2` (this should be in the current session's world tracking coordinate system)
+    ///   - breadCrumbs: the sequence of poses connecting the starting to the ending anchor
+    ///   - pathAnchors: the cloud anchors that were recorded as part of the path.  Each key in this dictionary is a cloud identifier and the values are a tuple containing the cloud anchor metadata and the cloud anchor pose.
+    func addConnection(anchorID1: String,
+                       anchor1Pose: simd_float4x4,
+                       anchorID2: String,
+                       anchor2Pose: simd_float4x4,
+                       breadCrumbs: [simd_float4x4],
+                       pathAnchors: [String: (CloudAnchorMetadata, simd_float4x4)]) {
         // we'll create an identifier to refer to the path and then link it to the cloud anchors
         // TODO: add transaction
         let id = UUID().uuidString
@@ -164,10 +197,11 @@ class FirebaseManager: ObservableObject {
 
     }
     
-    var firstCloudAnchor: String? {
-        return mapAnchors.sorted(by: { $0.0 > $1.0 }).first?.key
-    }
-    
+    /// Parse the data from Firebase containing the cloud anchor
+    /// - Parameters:
+    ///   - id: the cloud anchor identifier
+    ///   - data: the key-value pairs stored in the Firestore database corresponding to the cloud anchor
+    /// - Returns: A tuple containing the cloud anchor metadata, the location data model, and a dictionary of ``SimpleEdge`` objects where the key for each edge is the cloud anchor identifier that the edge points to.
     private func parseCloudAnchor(id: String, _ data: [String: Any])->(CloudAnchorMetadata, LocationDataModel, [String: SimpleEdge])? {
         guard let anchorName = data["name"] as? String else {
             return nil
@@ -189,7 +223,7 @@ class FirebaseManager: ObservableObject {
                   let weight = connection["weight"] as? Double else {
                 continue
             }
-            simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight), isReversed: false)
+            simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight))
         }
         return (
             CloudAnchorMetadata(
@@ -206,6 +240,10 @@ class FirebaseManager: ObservableObject {
         )
     }
     
+    /// Query for all cloud anchors within a current distance of the specified coordinate.  The results of the query are cached in the `FirebaseManager` object and its associated attributes.  This function will not query again if a the last query that was executed was within 100m of the requested point.
+    /// - Parameters:
+    ///   - center: the reference point for the query
+    ///   - radiusInM: the distance from the query allowable to be included.
     func queryNearbyAnchors(to center: CLLocationCoordinate2D, withRadius radiusInM: Double) {
         guard mode == .navigation else {
             return
@@ -249,6 +287,7 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    /// Create a snapshot listener for all the cloud anchors.
     private func observeAllCloudAnchors() {
         cloudAnchorObserver?.remove()
         cloudAnchorObserver = cloudAnchorCollection.addSnapshotListener() { snapshot, error  in
@@ -285,6 +324,7 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    /// Create a snapshot listener for all of the connection objects in the database
     private func observeAllConnections() {
         connectionObserver?.remove()
         connectionObserver = connectionCollection.addSnapshotListener() { (snapshot, error) in
@@ -326,7 +366,11 @@ class FirebaseManager: ObservableObject {
         }
     }
     
-    func addConnection(id: String, snapshot: [String: Any]) {
+    /// This is a private function used to parse data from Firebase into the appropriate connection objects.
+    /// - Parameters:
+    ///   - id: the UUID (encoded as a string) for the connection.  This identifier is used to associate the cloud anchors with the path.
+    ///   - snapshot: the key-value pairs of the connection.
+    private func addConnection(id: String, snapshot: [String: Any]) {
         // delete existing connections and repopulate (TODO: this is causing issues with our bidirectional treatment of edges).  We might have to do this at another part of the app
         guard let startID = snapshot["fromID"] as? String,
               let endID = snapshot["toID"] as? String,
@@ -363,19 +407,16 @@ class FirebaseManager: ObservableObject {
         }
     }
     
-    func getCloudAnchorID(byName name: String)->String? {
-        for (id, metadata) in mapAnchors {
-            if metadata.name == name {
-                return id
-            }
-        }
-        return nil
-    }
-    
+    /// Get the name of the cloud anchor based on its identifier.  If the cloud anchor has not been downloaded already, this will return nil
+    /// - Parameter id: the cloud anchor identifier
+    /// - Returns: the cloud anchor name (or nil if the cloud anchor is not found)
     func getCloudAnchorName(byID id: String)->String? {
         return mapAnchors[id]?.name
     }
     
+    /// Get the cloud anchor metadata based on its identifier.  If hte cloud anchor has not been downloaded already, this will return nil
+    /// - Parameter id: the cloud anchor identifier
+    /// - Returns: the metadata for the cloud anchor
     func getCloudAnchorMetadata(byID id: String)->CloudAnchorMetadata? {
         return mapAnchors[id]
     }
