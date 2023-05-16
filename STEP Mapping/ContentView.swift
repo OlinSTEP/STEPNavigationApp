@@ -118,8 +118,8 @@ struct EditingAnchorView: View {
                 Spacer()
                 Picker("Associated Outdoor", selection: $newAssociatedOutdoorFeature) {
                     Text("").tag("")
-                    ForEach(FirebaseManager.shared.outdoorFeatures.keys.sorted(by: { $0 < $1 }), id: \.self) { outdoorFeatureID  in
-                        Text(FirebaseManager.shared.outdoorFeatures[outdoorFeatureID]!.0).tag(outdoorFeatureID)
+                    ForEach(DataModelManager.shared.getLocationsByType(anchorType: .externalDoor).sorted(by: { $0.getName() < $1.getName() })) { outdoorFeature in
+                        Text(outdoorFeature.getName()).tag(outdoorFeature.id)
                     }
                 }
             }

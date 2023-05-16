@@ -15,7 +15,9 @@ import GeoFireUtils
 
 /// The mode of operation for the database manager.  This is used to set the scope of some of the database listeners (e.g., how much data to prefetch).
 enum FirebaseMode {
+    /// mapping mode (load all data so it can be edited if needed).  TODO: make this more efficient at some point.
     case mapping
+    /// navigation mode (load data only as the user requests it)
     case navigation
 }
 
@@ -25,8 +27,6 @@ class FirebaseManager: ObservableObject {
     public static var shared = FirebaseManager()
     /// Keeps track of the cloud anchor IDs (keys) and associated metadata.  This variable can be observed by views
     @Published var mapAnchors: [String: CloudAnchorMetadata] = [:]
-    /// Maps outdoor feature ID to name and location
-    var outdoorFeatures: [String: (String, CLLocationCoordinate2D)] = [:]
     /// Keeps track of new cloud anchor connections that get added to the database
     private var connectionObserver: ListenerRegistration?
     /// Keeps track of new cloud anchors that get added to the database
@@ -345,25 +345,6 @@ class FirebaseManager: ObservableObject {
                     // TODO: support deleting connections
                     break
                 }
-            }
-        }
-        // TODO: support the creation of a graph without the full path data
-        
-        // TODO: these might need to be migrated to Firestore also
-        Database.database().reference().child("outdoor_features").observe(.childAdded) { snapshot  in
-            guard let value = snapshot.value as? [String: Any],
-                  let features = value["features"] as? [[String:Any]] else {
-                return
-            }
-            for feature in features {
-                guard let properties = feature["properties"] as? [String: Any],
-                      let name = properties["Name"] as? String,
-                      let id = feature["id"] as? String,
-                      let geometry = feature["geometry"] as? [String: Any],
-                      let coordinates = geometry["coordinates"] as? [Double] else {
-                    continue
-                }
-                self.outdoorFeatures[id] = (name, CLLocationCoordinate2D(latitude: coordinates[0], longitude: coordinates[1]))
             }
         }
     }

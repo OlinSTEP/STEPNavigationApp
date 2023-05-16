@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 /// A struct that represents a location data model where an anchor can be created.
-struct LocationDataModel: Hashable {
+struct LocationDataModel: Hashable, Identifiable {
     /// the type of the anchor
     private let anchorType: AnchorType
     /// the name of the associated outodor feature (or nil if none exists)
@@ -21,7 +21,7 @@ struct LocationDataModel: Hashable {
     /// the name of the data model
     private let name: String
     /// the identifier for this data model
-    private let id: String
+    let id: String
     /// the cloud anchor identifier of the data model (or nil if none exists)
     private let cloudAnchorID: String?
     
@@ -108,12 +108,6 @@ struct LocationDataModel: Hashable {
     /// - Returns: the cloud identifier or nil if none exists.
     func getCloudAnchorID() -> String? {
         return self.cloudAnchorID
-    }
-    
-    /// Return the model identifier
-    /// - Returns: the identifier
-    func getID() -> String {
-        return self.id
     }
     
     /// Return the outdoor feature associated with this data model

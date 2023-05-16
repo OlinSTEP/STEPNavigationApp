@@ -61,7 +61,7 @@ class DataModelManager: ObservableObject {
     func addDataModel(_ dataModel: LocationDataModel) {
         var models = allLocationModels[dataModel.getAnchorType()] ?? []
         models.insert(dataModel)
-        idMap[dataModel.getID()] = dataModel
+        idMap[dataModel.id] = dataModel
         allLocationModels[dataModel.getAnchorType()] = models
     }
     
@@ -74,7 +74,7 @@ class DataModelManager: ObservableObject {
         var models = allLocationModels[anchorType] ?? []
         models.formUnion(dataModels)
         for model in models {
-            idMap[model.getID()] = model
+            idMap[model.id] = model
         }
         allLocationModels[anchorType] = models
     }
@@ -107,7 +107,7 @@ class DataModelManager: ObservableObject {
             for model in models {
                 if model.getCloudAnchorID() == id {
                     models.remove(model)
-                    idMap.removeValue(forKey: model.getID())
+                    idMap.removeValue(forKey: model.id)
                     return true
                 }
             }
