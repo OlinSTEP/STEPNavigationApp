@@ -11,10 +11,11 @@ import AudioToolbox
 import AVFoundation
 import UIKit
 
+/// This class manages providing announcements to the user using text to speech.  It will use VoiceOver when
+/// that is enabled and the `AVSpeechSynthesizer` otherwise.
 class AnnouncementManager: NSObject {
+    /// The shared handle to the singleton object of this class
     public static var shared = AnnouncementManager()
-    
-    var voiceFeedback: Bool = true
     
     /// When VoiceOver is not active, we use AVSpeechSynthesizer for speech feedback
     let synth = AVSpeechSynthesizer()
@@ -25,12 +26,7 @@ class AnnouncementManager: NSObject {
     /// The announcement that should be read immediately after this one finishes
     private var nextAnnouncement: String?
     
-    /// The root container view that contains the announcement ribbon (must be set in order for announcements to be shown visually)
-    var announcementText: UILabel?
-    
-    /// times when an announcement should be removed.  These announcements are displayed on the `announcementText` label.
-    private var announcementRemovalTimer: Timer?
-    
+    /// The private initializer (this should not be called directly)
     private override init() {
         super.init()
         // create listeners to ensure that the isReadingAnnouncement flag is reset properly
@@ -70,12 +66,6 @@ class AnnouncementManager: NSObject {
             return
         }
         
-        announcementText?.isHidden = false
-        announcementText?.text = announcement
-        announcementRemovalTimer?.invalidate()
-        announcementRemovalTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { timer in
-            self.announcementText?.isHidden = true
-        }
         if UIAccessibility.isVoiceOverRunning {
             // use the VoiceOver API instead of text to speech
             currentAnnouncement = announcement
@@ -83,7 +73,7 @@ class AnnouncementManager: NSObject {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: announcement)
             }
-        } else if voiceFeedback {
+        } else {
             let audioSession = AVAudioSession.sharedInstance()
             do {
                 try audioSession.setCategory(AVAudioSession.Category.playback)

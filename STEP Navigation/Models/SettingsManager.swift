@@ -7,7 +7,9 @@
 
 import Foundation
 
+/// This class manages the settings of the app
 class SettingsManager: ObservableObject {
+    /// The shared handle to the singleton instance of this class
     public static var shared = SettingsManager()
     
     /// if non-empty, put all mapping content in a subfolder
@@ -19,11 +21,12 @@ class SettingsManager: ObservableObject {
     /// true if we should provide the user with guidance when they appear to be lost
     var automaticDirectionsWhenUserIsLost = false
     
+    /// The private initializer.  This should not be called directly.
     private init() {
         createSettingsBundle()
     }
     
-    /// Configure Settings Bundle
+    /// Configure Settings Bundle and add observer for settings changes.
     func createSettingsBundle() {
         registerSettingsBundle()
         updateDisplayFromDefaults()

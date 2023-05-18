@@ -9,20 +9,26 @@
 import Foundation
 import AVFoundation
 
+/// A class that manages playing system sounds as well as custom audio files
 class SoundEffectManager {
+    /// a handle to the shared singleton instance of SoundEffectManager
     public static var shared = SoundEffectManager()
+    /// a player for the success sound
     private var successSound: AVAudioPlayer?
+    /// a player for the meh sound
     private var mehSound: AVAudioPlayer?
+    /// a player for the error sound
     private var errorSound: AVAudioPlayer?
-    private var tambourineSound: AVAudioPlayer?
 
     /// audio players for playing system sounds through an `AVAudioSession` (this allows them to be audible even when the rocker switch is muted.
     var audioPlayers: [Int: AVAudioPlayer] = [:]
-
+    
+    /// the private initializer (don't call this directly)
     private init() {
         loadSoundEffects()
     }
     
+    /// Load the sound effects and prepare the audio players
     private func loadSoundEffects() {
         if let successPath = Bundle.main.path(forResource: "ClewSuccessSound", ofType:"wav") {
             do {
@@ -51,15 +57,6 @@ class SoundEffectManager {
                 print("error \(error)")
             }
         }
-        if let tambourinePath = Bundle.main.path(forResource: "tamb_tap_short", ofType:"wav") {
-            do {
-                let url = URL(fileURLWithPath: tambourinePath)
-                tambourineSound = try AVAudioPlayer(contentsOf: url)
-                tambourineSound?.prepareToPlay()
-            } catch {
-                print("error \(error)")
-            }
-        }
         /// Create the audio player objdcts for the various app sounds.  Creating them ahead of time helps reduce latency when playing them later.
         do {
             audioPlayers[1103] = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: "/System/Library/Audio/UISounds/Tink.caf"))
@@ -77,39 +74,28 @@ class SoundEffectManager {
         }
     }
     
-    func isWearingBinauralHeadphones()->Bool {
-        let currentRoute = AVAudioSession.sharedInstance().currentRoute
-        for output in currentRoute.outputs.filter({output in Set([AVAudioSession.Port.headphones, AVAudioSession.Port.bluetoothA2DP]).contains(output.portType)}) {
-            if let channels = output.channels, channels.count >= 2 {
-                return true
-            }
-        }
-        return false
-    }
-    
+    ///  Set the audio session to a mode where the sound will play even if the silent switch is on
     private func overrideSilentMode() {
         try? AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
         try? AVAudioSession.sharedInstance().setActive(true)
     }
     
+    /// Plays a chime sound indicating that a stask has completed successfully
     func success() {
         overrideSilentMode()
         successSound?.play()
     }
     
+    /// Plays a thunking sound that conveys that something has gone wrong
     func error() {
         overrideSilentMode()
         errorSound?.play()
     }
     
+    /// Plays a chime that indicates incremental progress
     func meh() {
         overrideSilentMode()
         mehSound?.play()
-    }
-    
-    func tambourine() {
-        overrideSilentMode()
-        tambourineSound?.play()
     }
     
     /// Play the specified system sound.  If the system sound has been preloaded as an audio player, then play using the AVAudioSession.  If there is no corresponding player, use the `AudioServicesPlaySystemSound` function.

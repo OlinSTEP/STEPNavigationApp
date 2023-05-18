@@ -9,45 +9,39 @@ import Foundation
 import ARKit
 import ARCoreGeospatial
 
-struct Breadcrumb {
-    var pose: simd_float4x4
-    var leftWall: Bool
-    var rightWall: Bool
-    
-    
-    func toDictionary() -> [String: Any] {
-        return [
-            "pose": pose.toColumnMajor(),
-            "leftWall": leftWall,
-            "rightWall": rightWall
-        ]
-    }
-}
-
+/// Record breadcrumbs (sequence of poses) along with cloud anchors recorded along the path
 class PathRecorder {
+    /// The shared singleton instance of this class
     public static var shared = PathRecorder()
-    var breadCrumbs: [simd_float4x4] = []
-    var cloudAnchors: [String: (CloudAnchorMetadata, simd_float4x4)] = [:]
-    var recordingTimer: Timer?
-    var cloudAnchorTimer: Timer?
-    var qualityTimer: Timer?
+    /// The sequence of poses that make up this path
+    private (set) var breadCrumbs: [simd_float4x4] = []
+    /// The cloud anchors created along this path (the key is the cloud identifier and the value consists of the
+    /// cloud anchor metadata and itse pose in the recording session)
+    private (set) var cloudAnchors: [String: (CloudAnchorMetadata, simd_float4x4)] = [:]
+    /// A timer used to periodically capture poses
+    private var recordingTimer: Timer?
+    /// A timer used to periodically host cloud anchors
+    private var cloudAnchorTimer: Timer?
+    /// A timer used to periodically record the quality of the path cloud anchor
+    private var qualityTimer: Timer?
+    /// The cloud identifier of the starting cloud anchor of this path
     var startAnchorID: String?
+    /// The cloud identifier of the starting cloud anchor of this path
     var stopAnchorID: String?
-    var leftWallEnabled: Bool?;
-    var rightWallEnabled: Bool?;
-
+    
+    /// The private initializer (this should not be called directly)
     private init() {
     }
     
-    func updateLeftWallEnabled(_ isEnabled: Bool) {
-        leftWallEnabled = isEnabled
+    ///Start recording path breadcrumbs and hosting path cloud anchors
+    func startRecording() {
+        startRecordingPath(withFrequency: 0.2)
+        startRecordingCloudAnchors(withFrequency: 1/20.0)
     }
     
-    func updateRightWallEnabled(_ isEnabled: Bool) {
-        rightWallEnabled = isEnabled
-    }
-    
-    func startRecordingPath(withFrequency hz: Double) {
+    /// Start recording the path with the specified frequency of pose capture.
+    /// - Parameter hz: this is the frquency with which to capture poses to store as breadcrumbs.
+    private func startRecordingPath(withFrequency hz: Double) {
         breadCrumbs = []
         cloudAnchors = [:]
         // just in case
@@ -59,17 +53,13 @@ class PathRecorder {
             guard let currentPose = PositioningModel.shared.cameraTransform else {
                 return
             }
-
-            print("left \(self.leftWallEnabled ?? false)")
-            print("right \(self.rightWallEnabled ?? false)")
-
-            // removing this for now
-            let breadcrumb = Breadcrumb(pose: currentPose, leftWall: self.leftWallEnabled ?? false, rightWall: self.rightWallEnabled ?? false)
             self.breadCrumbs.append(currentPose)
         }
     }
-
-    func startRecordingCloudAnchors(withFrequency hz: Double) {
+    
+    /// Start recording cloud anchors at the specified frequency
+    /// - Parameter hz: this is the frequency with which to initiate a host anchor request.  Cloud anchors uses about 30 seconds of data (as specified in Google's own documentation)
+    private func startRecordingCloudAnchors(withFrequency hz: Double) {
         qualityTimer = Timer.scheduledTimer(withTimeInterval: 1.0,
                                             repeats: true) { timer in
             // use current transform?

@@ -377,17 +377,11 @@ class FirebaseManager: ObservableObject {
             dict[cloudIdentifier] = simd_float4x4(fromColumnMajorArray: columnMajor)
         }
         print("adding edge \(startID) \(endID)")
-        mapGraph.connections[NodePair(from: startID, to: endID)] = ComplexEdge(startAnchorTransform: fromPose,
-                        endAnchorTransform: endPose,
-                        path: pathPoses,
-                        pathAnchors: pathAnchorsAsDict)
-        // Add the reverse edge if none exists yet.  If we have an actual reverse edge than this would not run
-        if mapGraph.connections[NodePair(from: endID, to: startID)] == nil {
-            mapGraph.connections[NodePair(from: endID, to: startID)] = ComplexEdge(startAnchorTransform: endPose,
-                            endAnchorTransform: fromPose,
-                            path: pathPoses.reversed(),
-                            pathAnchors: pathAnchorsAsDict)
-        }
+        let newEdge = ComplexEdge(startAnchorTransform: fromPose,
+                                  endAnchorTransform: endPose,
+                                  path: pathPoses,
+                                  pathAnchors: pathAnchorsAsDict)
+        FirebaseManager.shared.mapGraph.addConnection(from: startID, to: endID, withEdge: newEdge)
     }
     
     /// Get the name of the cloud anchor based on its identifier.  If the cloud anchor has not been downloaded already, this will return nil
