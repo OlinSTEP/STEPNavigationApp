@@ -35,7 +35,7 @@ class PathRecorder {
     
     ///Start recording path breadcrumbs and hosting path cloud anchors
     func startRecording() {
-        startRecordingPath(withFrequency: 0.2)
+        startRecordingPath(withFrequency: 5.0)
         startRecordingCloudAnchors(withFrequency: 1/20.0)
     }
     
