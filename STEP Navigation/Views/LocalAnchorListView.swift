@@ -9,8 +9,6 @@ import SwiftUI
 import CoreLocation
 
 struct LocalAnchorListView: View {
-//    @EnvironmentObject private var anchorData: AnchorData
-//    let anchorType: AnchorDetails.AnchorType
     let anchorType: AnchorType
     let location: CLLocationCoordinate2D? = PositioningModel.shared.currentLatLon
     

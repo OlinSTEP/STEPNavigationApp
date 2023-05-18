@@ -9,8 +9,11 @@ import Foundation
 import SwiftGraph
 import ARKit
 
+/// This class manages the process of navigating a multisegment or singlesegment route
 class NavigationManager: ObservableObject {
+    /// the shared handle to the singleton instance of this class
     public static var shared = NavigationManager()
+    /// this object provides geometric calculations necessary to provide directions
     let nav = Navigation()
     /// The time of last sound feedback
     var soundTimer: Date!
@@ -27,12 +30,10 @@ class NavigationManager: ObservableObject {
     
     /// haptic feedback timer
     var followingCrumbs: Timer?
-    
     /// a ring buffer used to keep the last 50 positions of the phone
     var locationRingBuffer = RingBuffer<simd_float3>(capacity: 150)
     /// a ring buffer used to keep the last 100 headings of the phone
     var headingRingBuffer = RingBuffer<Float>(capacity: 150)
-    
     /// A threshold to determine when the phone rotated too much to update the angle offset
     let angleDeviationThreshold : Float = 0.2
     /// The minimum distance traveled in the floor plane in order to update the angle offset
@@ -43,12 +44,16 @@ class NavigationManager: ObservableObject {
     /// The delay between haptic feedback pulses in seconds
     static let FEEDBACKDELAY = 0.4
     
+    /// The default initializer (this should not be called directly)
     private init() {
         
     }
     
+    /// Compute the reachability out of a pool of data models from the outdoors
+    /// - Parameter pool: the pool to test for reachability
+    /// - Returns: an array of Booleans where the ith element is true if an and only if `pool[i]` can be reached from outdoors
     func getReachabilityFromOutdoors(outOf pool: [LocationDataModel])->[Bool] {
-        let anchorGraph = makeWeightedGraph()
+        let anchorGraph = FirebaseManager.shared.mapGraph.weightedGraph
         let (distances, _) = anchorGraph.dijkstra(root: "outdoors", startDistance: 0)
         let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
         return pool.map({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil })
@@ -58,12 +63,12 @@ class NavigationManager: ObservableObject {
     /// - Parameters:
     ///   - start: the start location
     ///   - pool: the potential destinations
-    /// - Returns: a boolean Array such that array[i] is true iff destination i is recahable from start
+    /// - Returns: a boolean Array such that `array[i]` is true iff destination `i` is reachable from start
     func getReachability(from start: LocationDataModel, outOf pool: [LocationDataModel])->[Bool] {
         guard let cloudID = start.getCloudAnchorID() else {
             return []
         }
-        let anchorGraph = makeWeightedGraph()
+        let anchorGraph = FirebaseManager.shared.mapGraph.weightedGraph
         let (distances, _) = anchorGraph.dijkstra(root: cloudID, startDistance: 0)
         let nameDistance: [String: Float?] = distanceArrayToVertexDict(distances: distances, graph: anchorGraph)
         return pool.map({ nameDistance[$0.getCloudAnchorID() ?? ""]! != nil && start != $0 })
@@ -78,7 +83,7 @@ class NavigationManager: ObservableObject {
     ///       start locations.
     func getReachability(from startLocations: [LocationDataModel], outOf pool: Set<LocationDataModel>)->Set<LocationDataModel> {
         var reachableCloudAnchorIDs = Set<String>()
-        let anchorGraph = makeWeightedGraph()
+        let anchorGraph = FirebaseManager.shared.mapGraph.weightedGraph
         let cloudAnchorIDsInPool = pool.compactMap({ $0.getCloudAnchorID() })
 
         for start in startLocations {
@@ -112,7 +117,7 @@ class NavigationManager: ObservableObject {
         var reachableCloudAnchorIDs = Set<String>()
         let cloudAnchorIDsInPool = pool.compactMap({ $0.getCloudAnchorID() })
         // TODO: need to avoid recreating the graph constantly
-        let anchorGraph = makeWeightedGraph()
+        let anchorGraph = FirebaseManager.shared.mapGraph.weightedGraph
         let reachableNodes = anchorGraph.findAllBfs(from: cloudID) { v in
             cloudAnchorIDsInPool.contains(v)
         }
@@ -124,33 +129,6 @@ class NavigationManager: ObservableObject {
         return pool.filter({
             reachableCloudAnchorIDs.contains($0.getCloudAnchorID() ?? "")
         })
-    }
-    
-    /// Creates the weighted graph from the currently recorded nodes and edges.
-    /// Note: this doesn't auto update with Firebase changes
-    /// - Returns: the weighted SwiftGraph
-    private func makeWeightedGraph()->WeightedGraph<String, Float> {
-        let currentLatLon = PositioningModel.shared.currentLatLon ?? CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-        let nodes = FirebaseManager.shared.mapGraph.cloudNodes + ["outdoors"]
-        let edges = FirebaseManager.shared.mapGraph.lightweightConnections
-        let anchorGraph = WeightedGraph<String, Float>(vertices: Array(nodes))
-        for (nodeInfo, edgeInfo) in edges {
-            guard nodes.contains(nodeInfo.from), nodes.contains(nodeInfo.to) else {
-                continue
-            }
-            anchorGraph.addEdge(from: nodeInfo.from, to: nodeInfo.to, weight: edgeInfo.cost, directed: true)
-        }
-        let indoorLocations = DataModelManager.shared.getAllIndoorLocationModels()
-
-        for indoorLocation in indoorLocations {
-            if let cloudID = indoorLocation.getCloudAnchorID(),
-               let associatedOutdoorFeature = indoorLocation.getAssociatedOutdoorFeature(),
-               // TODO: we really need the identifier to be persistent (not named based)
-               let searchLatLon = DataModelManager.shared.getLocationDataModel(byName: associatedOutdoorFeature) {
-                anchorGraph.addEdge(from: "outdoors", to: cloudID, weight: Float(currentLatLon.distance(from: searchLatLon.getLocationCoordinate())), directed: true)
-            }
-        }
-        return anchorGraph
     }
     
     /// A utility function for printing the nodes and edges of a graph.  This function
@@ -176,7 +154,7 @@ class NavigationManager: ObservableObject {
     ///   - anchorID2: the ending cloud anchor ID
     /// - Returns: a list of cloud anchor IDs that are on the route.  These should be passed to ARCore for resolving
     func computePathBetween(_ anchorID1: String, _ anchorID2: String)->[String] {
-        let anchorGraph = makeWeightedGraph()
+        let anchorGraph = FirebaseManager.shared.mapGraph.weightedGraph
         // Note: from https://github.com/davecom/SwiftGraph
         let (_, pathDict) = anchorGraph.dijkstra(root: anchorID1, startDistance: 0)
         let path: [WeightedEdge<Float>] = pathDictToPath(from: anchorGraph.indexOfVertex(anchorID1)!, to: anchorGraph.indexOfVertex(anchorID2)!, pathDict: pathDict)
@@ -184,6 +162,8 @@ class NavigationManager: ObservableObject {
         return stops
     }
     
+    /// Compute the keypoints to arrive at the specified location model from outdoors
+    /// - Parameter end: the outdoor location to arrive
     func computePathToOutdoorMarker(_ end : LocationDataModel) {
         RouteNavigator.shared.routeNameForLogging = "outside_\(end.getName())_\(UUID().uuidString)"
         if let garAnchor = PositioningModel.shared.addTerrainAnchor(at: end.getLocationCoordinate(), withName: "crossover") {
@@ -192,6 +172,21 @@ class NavigationManager: ObservableObject {
         }
     }
     
+    /// Given a list of cloud anchors to serve as waypoints along the route, generate a multisegment
+    /// path to traverse the route.  The returned path consists of keypoints, which may or may not
+    /// coincide with the specified cloud anchor waypoints.  The locations of the keypoints are
+    /// determined by the Ramer-Douglas-Peucker Algorithm.  This function is asynchronous since
+    /// it will dynamically download the paths that connect each cloud anchor (the downloads are
+    /// themselves asynchrnous).  A completion handler is provided so that this function can
+    /// communicate when it is done to the caller (with a Boolean value indicating success (true)
+    /// or failure (false)).
+    /// - Parameters:
+    ///   - cloudAnchors: the cloud anchors to traverse along the routes
+    ///   - outsideStart: If the route begins by reaching latitude / longitude points, this will
+    ///           this will contain the coordinates (nil if not applicable)
+    ///   - completionHandler: a completion handler to call when the operation is complete
+    ///           the input argument to the handler is true if the operations was successful and
+    ///           false otherwise.
     func computeMultisegmentPath(_ cloudAnchors: [String], outsideStart: CLLocationCoordinate2D?, completionHandler: @escaping (Bool)->()) {
         guard !cloudAnchors.isEmpty else {
             fatalError("the path unexpectedly has no cloud anchors")
@@ -267,6 +262,7 @@ class NavigationManager: ObservableObject {
         PositioningModel.shared.renderKeypoint(RouteNavigator.shared.nextKeypoint!)
     }
     
+    /// Stop navigating.  This will clear out various data structures and stop feedback to the user.
     func stopNavigating() {
         // TODO: we may not be cleaning up the cloud anchors appropriately
         PositioningModel.shared.removeRenderedContent()
@@ -302,7 +298,6 @@ class NavigationManager: ObservableObject {
             }
             if abs(nav.getAngleDiff(angle1: currAngle, angle2: startHeading)) > angleDeviationThreshold || abs(nav.getAngleDiff(angle1: currAngle, angle2: endHeading)) > angleDeviationThreshold {
                 // the phone turned too much during the last second
-//                updateDirections()
                 return nil
             }
         }
@@ -327,6 +322,11 @@ class NavigationManager: ObservableObject {
         return potentialOffset
     }
     
+    /// Get the distance between two 3D points after projecting into the x-z plane (the floor plane)
+    /// - Parameters:
+    ///   - startPosition: the starting position
+    ///   - endPosition: the ending position
+    /// - Returns: the distance in the x-z plane between the two positions measured in meters
     func getDistance(startPosition:simd_float3, endPosition:simd_float3) -> Float{
         return sqrt(pow(startPosition.x - endPosition.x, 2) + pow(startPosition.z - endPosition.z, 2))
     }
@@ -410,6 +410,7 @@ class NavigationManager: ObservableObject {
         }
     }
     
+    /// Update the directions based on the user's current progress along the route
     func updateDirections() {
         guard let curLocation = PositioningModel.shared.cameraTransform, RouteNavigator.shared.nextKeypoint != nil else {
             // TODO: might want to indicate that something is wrong to the user

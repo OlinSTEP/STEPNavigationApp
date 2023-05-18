@@ -90,7 +90,7 @@ struct AnchorDetailView: View {
 }
 
 struct AnchorDetailView_Previews: PreviewProvider {
-    @State static var anchorDetails = LocationDataModel(anchorType: .externalDoor, coordinates: CLLocationCoordinate2D(latitude: 42, longitude: -71), name: "Test Door")
+    @State static var anchorDetails = LocationDataModel(anchorType: .externalDoor, coordinates: CLLocationCoordinate2D(latitude: 42, longitude: -71), name: "Test Door", id: UUID().uuidString)
     
     static var previews: some View {
         AnchorDetailView(anchorDetails: anchorDetails)

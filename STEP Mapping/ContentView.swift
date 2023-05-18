@@ -117,9 +117,9 @@ struct EditingAnchorView: View {
                 Text("Associated Outdoor Feature")
                 Spacer()
                 Picker("Associated Outdoor", selection: $newAssociatedOutdoorFeature) {
-                    Text("")
-                    ForEach(FirebaseManager.shared.outdoorFeatures.keys.sorted(), id: \.self) { outdoorFeature in
-                        Text(outdoorFeature)
+                    Text("").tag("")
+                    ForEach(DataModelManager.shared.getLocationsByType(anchorType: .externalDoor).sorted(by: { $0.getName() < $1.getName() })) { outdoorFeature in
+                        Text(outdoorFeature.getName()).tag(outdoorFeature.id)
                     }
                 }
             }
@@ -419,57 +419,13 @@ struct ConnectAnchorView: View {
     }
 }
 
-
-struct WallButton: View {
-    var title: String
-    @Binding var isEnabled: Bool
-
-    var body: some View {
-        Text(title)
-            .padding()
-            .foregroundColor(isEnabled ? .green : .gray)
-            .background(isEnabled ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-            .cornerRadius(8)
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { _ in isEnabled = true }
-                    .onEnded { _ in isEnabled = false }
-            )
-    }
-}
-
 struct WalkToSecondAnchor: View {
     let anchorID1: String
     let anchorID2: String
     @ObservedObject var positioningModel = PositioningModel.shared
-    @State var leftWallEnabled = false
-    @State var rightWallEnabled = false
-    
-    var leftWallBinding: Binding<Bool> {
-        Binding<Bool>(
-            get: { leftWallEnabled },
-            set: { newValue in
-                leftWallEnabled = newValue
-                PathRecorder.shared.updateLeftWallEnabled(newValue)
-            }
-        )
-    }
-
-    var rightWallBinding: Binding<Bool> {
-        Binding<Bool>(
-            get: { rightWallEnabled },
-            set: { newValue in
-                rightWallEnabled = newValue
-                PathRecorder.shared.updateRightWallEnabled(newValue)
-            }
-        )
-    }
-
-
-    
+   
     var body: some View {
         HStack{
-            WallButton(title: "left wall", isEnabled: leftWallBinding)
             VStack {
                 if let currentQuality = PositioningModel.shared.currentQuality {
                     switch currentQuality {
@@ -489,23 +445,9 @@ struct WalkToSecondAnchor: View {
                     MainUIStateContainer.shared.currentScreen = .findSecondAnchorToFormConnection(anchorID1: anchorID1, anchorID2: anchorID2)
                 }
             }
-            
-            WallButton(title: "right wall", isEnabled: rightWallBinding)
-
-                  
         }.onAppear() {
-            PathRecorder.shared.startRecordingPath(withFrequency: 1.0)
-            PathRecorder.shared.startRecordingCloudAnchors(withFrequency: 1/20.0)
+            PathRecorder.shared.startRecording()
         }
-
-        .onChange(of: leftWallEnabled) { newValue in
-            leftWallBinding.wrappedValue = newValue
-        }
-        .onChange(of: rightWallEnabled) { newValue in
-            rightWallBinding.wrappedValue = newValue
-        }
-    
-
     }
 }
 

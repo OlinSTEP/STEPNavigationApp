@@ -121,7 +121,7 @@ struct NavigatingView: View {
         print("cloud", startAnchorDetails?.getCloudAnchorID(), " did localize \(didLocalize)")
         if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), cloudAnchorsToCheck.contains(startCloudID), !didLocalize {
             didLocalize = true
-            PathPlanner.shared.navigate(from: startAnchorDetails, to: destinationAnchorDetails)
+            navigationManager.startNavigating()
         }
     }
     let popupEntry: String = "Testing Text"
@@ -223,6 +223,6 @@ struct InformationPopup: View {
 
 struct NavigatingView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: LocationDataModel(anchorType: .busStop, associatedOutdoorFeature: nil, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1"))
+        NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: LocationDataModel(anchorType: .busStop, associatedOutdoorFeature: nil, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1", id: UUID().uuidString))
     }
 }

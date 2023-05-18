@@ -15,21 +15,23 @@ import CoreLocation
  
  The class provides methods to retrieve data models by anchor type, location, and distance. It also provides a method to return all data models in the dictionary.
  */
-
 class DataModelManager: ObservableObject {
+    /// The shared handle to the single instance of this class.
     public static var shared = DataModelManager()
     
-    @Published var nearbyLocations: [LocationDataModel] = []
     // Dictionary that stores all the location models
     private var allLocationModels = [AnchorType: Set<LocationDataModel>]()
     
+    private var idMap: [String: LocationDataModel] = [:]
+    
+    ///The private initializer, should not be called directly
     private init() {
         do {
             let doors = try LocationDataModelParser.parse(from: "Olin_College_Doors", fileType: "geojson", anchorType: .externalDoor)
             multiAddDataModel(doors, anchorType: .externalDoor)
         }
         catch {
-            print("Error parsing Olin_College_Doors")
+            print("Error parsing Olin_College_Doors \(error)")
         }
         
         do {
@@ -59,6 +61,7 @@ class DataModelManager: ObservableObject {
     func addDataModel(_ dataModel: LocationDataModel) {
         var models = allLocationModels[dataModel.getAnchorType()] ?? []
         models.insert(dataModel)
+        idMap[dataModel.id] = dataModel
         allLocationModels[dataModel.getAnchorType()] = models
     }
     
@@ -70,18 +73,22 @@ class DataModelManager: ObservableObject {
     func multiAddDataModel(_ dataModels: Set<LocationDataModel>, anchorType: AnchorType) {
         var models = allLocationModels[anchorType] ?? []
         models.formUnion(dataModels)
+        for model in models {
+            idMap[model.id] = model
+        }
         allLocationModels[anchorType] = models
-        
     }
     
     /**
         Returns dictionary with all location models
-        Note: this is primiarly used for debuggina and should not be used in finalized code
+        Note: this is primiarly used for debugging and should not be used in finalized code
      */
     func getAllLocationModels() -> [AnchorType: Set<LocationDataModel>] {
         return allLocationModels
     }
     
+    /// Get all of the data models that are associated with an ``AnchorType`` that is indoors.
+    /// - Returns: The set of all applicable models
     func getAllIndoorLocationModels() -> Set<LocationDataModel> {
         var indoorLocations = Set<LocationDataModel>()
         for anchorType in AnchorType.allCases {
@@ -100,6 +107,7 @@ class DataModelManager: ObservableObject {
             for model in models {
                 if model.getCloudAnchorID() == id {
                     models.remove(model)
+                    idMap.removeValue(forKey: model.id)
                     return true
                 }
             }
@@ -107,44 +115,30 @@ class DataModelManager: ObservableObject {
         return false
     }
     
-    /**
-     Returns a set of all AnchorTypes currently in the system
-     */
+    /// Returns a set of all AnchorTypes currently in the system
+    /// - Returns: the anchor types that exist
     func getAnchorTypes() -> Set<AnchorType> {
         return Set(allLocationModels.keys + [.indoorDestination])
     }
     
-    func getLocationDataModel(byName name: String)->LocationDataModel? {
-        // TODO: this is very wasteful
-        for (_, models) in allLocationModels {
-            for model in models {
-                if model.getName() == name {
-                    return model
-                }
-            }
-        }
-        return nil
+    /// Lookup a location data model associated by ID
+    /// - Parameter name: the name of the data model
+    /// - Returns: the ``LocationDataModel`` object or nil if none exists.  If two or more models match, the behavior of this function is undefined.
+    func getLocationDataModel(byID id: String)->LocationDataModel? {
+        return idMap[id]
     }
      
     /**
       Returns set of all locations of a given anchorType
       
       - parameter anchorType: The type of anchor.
-      
       - returns: A set containing all location data models of the specified anchor type.
       */
     func getLocationsByType(anchorType: AnchorType) -> Set<LocationDataModel> {
-        guard let locations = allLocationModels[anchorType] else { return Set<LocationDataModel>() }
-        return locations
-    }
-    
-    func getIndoorLocations() -> Set<LocationDataModel> {
-        var allIndoorLocations: Set<LocationDataModel> = []
-        
-        for type in AnchorType.allCases {
-            allIndoorLocations.formUnion(getLocationsByType(anchorType: type))
+        guard let locations = allLocationModels[anchorType] else {
+            return []
         }
-        return allIndoorLocations
+        return locations
     }
     
     /**
@@ -209,6 +203,8 @@ class DataModelManager: ObservableObject {
         return allCategories
     }
     
+    /// Get all of the data models as one set
+    /// - Returns: a set of all data models
     private func getAllDataModels()->Set<LocationDataModel> {
         // TODO is this slow?
         let start = Date()
@@ -255,8 +251,13 @@ class DataModelManager: ObservableObject {
 }
 
 extension CLLocationCoordinate2D {
+    /// Computes the distance between this latitude longitude coordinate pair and another
+    /// - Parameter other: the other lat / lon coordinate
+    /// - Returns: the distance between the two coordinates
     func distance(from other: CLLocationCoordinate2D)->Double {
-        return CLLocation(latitude: latitude, longitude: longitude).distance(from: CLLocation(latitude: other.latitude,
-                                                                                       longitude: other.longitude))
+        return CLLocation(latitude: latitude,
+                          longitude: longitude)
+                    .distance(from: CLLocation(latitude: other.latitude,
+                                               longitude: other.longitude))
     }
 }
