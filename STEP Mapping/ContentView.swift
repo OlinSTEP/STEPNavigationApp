@@ -87,6 +87,7 @@ struct EditingAnchorView: View {
     @State var newAnchorName: String
     @State var newCategory: String
     @State var newAssociatedOutdoorFeature: String
+    @State var newIsReadable: Bool
     let metadata: CloudAnchorMetadata
     
     init(anchorID: String) {
@@ -95,6 +96,7 @@ struct EditingAnchorView: View {
         newAnchorName = metadata.name
         newAssociatedOutdoorFeature = metadata.associatedOutdoorFeature
         newCategory = metadata.type.rawValue
+        newIsReadable = metadata.isReadable
     }
     
     var body: some View {
@@ -104,6 +106,7 @@ struct EditingAnchorView: View {
                 Spacer()
                 TextField("Name", text: $newAnchorName)
             }
+            Toggle("Is Readable", isOn: $newIsReadable)
             HStack {
                 Text("Category")
                 Spacer()
@@ -133,7 +136,8 @@ struct EditingAnchorView: View {
                         CloudAnchorMetadata(name: newAnchorName,
                                             type: AnchorType(rawValue: newCategory) ?? .indoorDestination,
                                             associatedOutdoorFeature: newAssociatedOutdoorFeature,
-                                            geospatialTransform: metadata.geospatialTransform)
+                                            geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
+                                            isReadable: newIsReadable)
                     FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
                     MainUIStateContainer.shared.currentScreen = .createAnchor
                 }

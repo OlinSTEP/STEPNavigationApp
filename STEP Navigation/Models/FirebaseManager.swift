@@ -216,6 +216,8 @@ class FirebaseManager: ObservableObject {
         let anchorTypeString = (data["category"] as? String) ?? ""
         let associatedOutdoorFeature = (data["associatedOutdoorFeature"] as? String) ?? ""
         let anchorType = AnchorType(rawValue: anchorTypeString) ?? .indoorDestination
+        let creatorUID = (data["creatorUID"] as? String) ?? ""
+        let isReadable = (data["isReadable"] as? Bool) ?? true
         var simpleConnections: [String: SimpleEdge] = [:]
         for connection in (data["connections"] as? [[String: Any]]) ?? [] {
             guard let pathID = connection["pathID"] as? String,
@@ -226,11 +228,12 @@ class FirebaseManager: ObservableObject {
             simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight))
         }
         return (
-            CloudAnchorMetadata(
-            name: anchorName,
-            type: anchorType,
-            associatedOutdoorFeature: associatedOutdoorFeature,
-            geospatialTransform: geospatialData),
+            CloudAnchorMetadata(name: anchorName,
+                                type: anchorType,
+                                associatedOutdoorFeature: associatedOutdoorFeature,
+                                geospatialTransform: geospatialData, creatorUID: creatorUID,
+                                isReadable: isReadable
+            ),
             LocationDataModel(anchorType: anchorType,
                               associatedOutdoorFeature: associatedOutdoorFeature,
                               coordinates: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
