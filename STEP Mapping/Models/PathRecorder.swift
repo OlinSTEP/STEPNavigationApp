@@ -22,8 +22,6 @@ class PathRecorder {
     private var recordingTimer: Timer?
     /// A timer used to periodically host cloud anchors
     private var cloudAnchorTimer: Timer?
-    /// A timer used to periodically record the quality of the path cloud anchor
-    private var qualityTimer: Timer?
     /// The cloud identifier of the starting cloud anchor of this path
     var startAnchorID: String?
     /// The cloud identifier of the starting cloud anchor of this path
@@ -60,20 +58,14 @@ class PathRecorder {
     /// Start recording cloud anchors at the specified frequency
     /// - Parameter hz: this is the frequency with which to initiate a host anchor request.  Cloud anchors uses about 30 seconds of data (as specified in Google's own documentation)
     private func startRecordingCloudAnchors(withFrequency hz: Double) {
-        qualityTimer = Timer.scheduledTimer(withTimeInterval: 1.0,
-                                            repeats: true) { timer in
-            // use current transform?
-            guard let currentPose = PositioningModel.shared.cameraTransform else {
-                return
-            }
-            PositioningModel.shared.estimateFeatureMapQualityForHosting(pose: currentPose)
-        }
         cloudAnchorTimer = Timer.scheduledTimer(withTimeInterval: 1/hz, repeats: true) { timer in
             guard let geospatialTransform = PositioningModel.shared.cameraGeoSpatialTransform else {
                 return
             }
             // NOTE: the geospatial transform is not buffered in the same way as the pose
-            let _ = PositioningModel.shared.createCloudAnchorFromBufferedPose(withMetadata: CloudAnchorMetadata(name: "", type: .path, associatedOutdoorFeature: "", geospatialTransform: GeospatialData(arCoreGeospatial: geospatialTransform)))
+            let _ = PositioningModel.shared.createCloudAnchorFromBufferedPose(
+                withMetadata: CloudAnchorMetadata(name: "", type: .path, associatedOutdoorFeature: "", geospatialTransform: GeospatialData(arCoreGeospatial: geospatialTransform), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true)
+            )
         }
     }
     
@@ -90,7 +82,6 @@ class PathRecorder {
     func stopRecordingPath() {
         recordingTimer?.invalidate()
         cloudAnchorTimer?.invalidate()
-        qualityTimer?.invalidate()
     }
     
     /// Upload the path data to Firebase

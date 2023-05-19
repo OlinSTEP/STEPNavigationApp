@@ -161,7 +161,7 @@ class MapGraph {
             anchorGraph.addEdge(from: nodeInfo.from, to: nodeInfo.to, weight: edgeInfo.cost, directed: true)
         }
         let indoorLocations = DataModelManager.shared.getAllIndoorLocationModels()
-
+        
         for indoorLocation in indoorLocations {
             if let cloudID = indoorLocation.getCloudAnchorID(),
                let associatedOutdoorFeature = indoorLocation.getAssociatedOutdoorFeature(),
@@ -173,5 +173,4 @@ class MapGraph {
         cachedWeightedGraph = anchorGraph
         return anchorGraph
     }
-    
 }
