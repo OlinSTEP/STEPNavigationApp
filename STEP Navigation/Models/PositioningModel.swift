@@ -101,7 +101,9 @@ class PositioningModel: NSObject, ObservableObject {
     /// the current latitude and longitude
     @Published var currentLatLon: CLLocationCoordinate2D?
     
-    /// A buffer of previous poses that provide us with suitable history for estimate cloud anchor quality
+    /// set to true if you want to download the street scape data and print it to the console
+    static let debugStreetscape = false
+    /// A buffer of previoxus poses that provide us with suitable history for estimate cloud anchor quality
     private var poseBuffer: [simd_float4x4] = []
     /// the maximum length of the pose buffer
     private static let poseBufferMaxLength = 30
@@ -151,7 +153,7 @@ class PositioningModel: NSObject, ObservableObject {
             let configuration = GARSessionConfiguration()
             configuration.cloudAnchorMode = .enabled
             configuration.geospatialMode = .enabled
-            configuration.streetscapeGeometryMode = .enabled
+            configuration.streetscapeGeometryMode = Self.debugStreetscape ? .enabled : .disabled
             garSession?.setConfiguration(configuration, error: &error)
             print("gar set configuration error \(error?.localizedDescription ?? "none")")
         } catch {
@@ -430,6 +432,27 @@ class PositioningModel: NSObject, ObservableObject {
             print("host cloud anchor failed \(error.localizedDescription)")
         }
     }
+    
+    /// Print some debug information about the street scape (warning produces a lot of output each frame).  Only high quality street scapes are printed currently.
+    /// - Parameter garFrame: a frame from the ARCore session
+    private func serializeStreetscape(_ garFrame: GARFrame) {
+        for geometries in garFrame.streetscapeGeometries ?? [] {
+            if geometries.quality == .buildingLOD_2 {
+                print("vertices")
+                print("[")
+                for point in UnsafeBufferPointer(start: geometries.mesh.vertices, count: Int(geometries.mesh.vertexCount)) {
+                    print("[\(point.x), \(point.y), \(point.z)]")
+                }
+                print("]")
+                print("triangles")
+                print("[")
+                for triangle in UnsafeBufferPointer(start: geometries.mesh.triangles, count: Int(geometries.mesh.triangleCount)) {
+                    print("[\(triangle.indices.0), \(triangle.indices.1), \(triangle.indices.2)]")
+                }
+                print("]")
+            }
+        }
+    }
 }
 
 extension PositioningModel: ARSessionDelegate {
@@ -458,6 +481,9 @@ extension PositioningModel: ARSessionDelegate {
                             rendererHelper.keypointNode?.simdTransform = anchor.transform
                         }
                     }
+                }
+                if Self.debugStreetscape {
+                    serializeStreetscape(garFrame)
                 }
                 var shouldDoCloudAnchorAlignment = false
                 for anchor in garFrame.updatedAnchors {
