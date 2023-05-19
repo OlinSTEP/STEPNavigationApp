@@ -181,7 +181,9 @@ class FirebaseManager: ObservableObject {
                  let cloudIdentifier = anchorItem.0
                  let anchorPose = anchorItem.1.1
                  dict[cloudIdentifier] = anchorPose.toColumnMajor()
-             }
+             },
+             "creatorUID": AuthHandler.shared.currentUID ?? "",
+             "isReadable": true
             ]
         ) { error in
             print("error: \(error?.localizedDescription ?? "none")")
@@ -262,6 +264,7 @@ class FirebaseManager: ObservableObject {
         // depending on overlap, but in most cases there are 4.
         let queryBounds = GFUtils.queryBounds(forLocation: center,
                                               withRadius: radiusInM)
+        // TODO: when we start enforcing security rules, we'll need to fix these queries so they can only return documents that are readable to the user
         let queries = queryBounds.map { bound -> Query in
             return cloudAnchorCollection
                 .order(by: "geohash")
@@ -367,6 +370,9 @@ class FirebaseManager: ObservableObject {
               let pathArrays = snapshot["path"] as? [Double] else {
             return
         }
+        // TODO: we don't do anything with these values right now
+        let creatorUID = (snapshot["creatorUID"] as? String) ?? ""
+        let isReadable = (snapshot["isReadable"] as? Bool) ?? true
         let pathAnchors = (snapshot["pathAnchors"] as? [String: [Double]]) ?? [:]
         var pathPoses: [simd_float4x4] = []
         for i in stride(from: 0, to: pathArrays.count, by: 16) {
