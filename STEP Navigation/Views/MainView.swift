@@ -51,7 +51,7 @@ struct MainView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     
                     if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
-                        if let currentLatLon = positionModel.currentLatLon {
+                        if positionModel.currentLatLon != nil {
                             VStack {
                                 VStack {
                                     HStack {

@@ -19,6 +19,16 @@ func mod(_ a: Int, _ n: Int) -> Int {
     return r >= 0 ? r : r + n
 }
 
+class ComparableRingBuffer<Element: Comparable>: RingBuffer<Element> {
+    public func max() -> Element? {
+        return data.compactMap({$0}).max()
+    }
+
+    public func min() -> Element? {
+        return data.compactMap({$0}).min()
+    }
+}
+
 /// A generic RingBuffer that supports some basic operations
 class RingBuffer<Element> {
     /// The most recently used slot
@@ -60,31 +70,6 @@ class RingBuffer<Element> {
     var capacity: Int {
         return data.count
     }
-    public func max() -> Element? {
-           guard let first = data.first else {
-               return nil
-           }
-           var max = first
-           for i in 1..<data.count {
-               if let current = data[i], "\(current)" > "\(max)" {
-                   max = current
-               }
-           }
-           return max
-       }
-
-       public func min() -> Element? {
-           guard let first = data.first else {
-               return nil
-           }
-           var min = first
-           for i in 1..<data.count {
-               if let current = data[i], "\(current)" < "\(min)" {
-                   min = current
-               }
-           }
-           return min
-       }
 }
 
 

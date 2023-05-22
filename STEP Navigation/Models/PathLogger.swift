@@ -54,7 +54,7 @@ class PathLogger {
                      "poseTimestamp": poseTimestamps,
                      "cloudAnchorResolutions": cloudAnchorResolutions.map({$0.asDict()}),
                      "cloudAnchorLandmarks": Array((cloudAnchorLandmarks ?? [:]).keys)
-                    ]
+                    ] as [String : Any]
                    )
         FirebaseManager.shared.uploadLog(data: data)
         hasUploadedData = true

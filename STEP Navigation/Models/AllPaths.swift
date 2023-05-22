@@ -42,9 +42,10 @@ class PathPlanner {
     /// - Parameter end: the indoor location to navigate to
     func startNavigatingFromOutdoors(to end: LocationDataModel) {
         guard let cloudAnchorID = end.getCloudAnchorID() else {
-            NavigationManager.shared.computePathToOutdoorMarker(end)
-            PathLogger.shared.startLoggingData()
-            NavigationManager.shared.startNavigating()
+            NavigationManager.shared.computePathToOutdoorMarker(end) {
+                PathLogger.shared.startLoggingData()
+                NavigationManager.shared.startNavigating()
+            }
             return
         }
         cloudAnchors = NavigationManager.shared.computePathBetween("outdoors", cloudAnchorID)

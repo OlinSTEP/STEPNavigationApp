@@ -33,7 +33,7 @@ class NavigationManager: ObservableObject {
     /// a ring buffer used to keep the last 50 positions of the phone
     var locationRingBuffer = RingBuffer<simd_float3>(capacity: 150)
     /// a ring buffer used to keep the last 100 headings of the phone
-    var headingRingBuffer = RingBuffer<Float>(capacity: 150)
+    var headingRingBuffer = ComparableRingBuffer<Float>(capacity: 150)
     /// A threshold to determine when the phone rotated too much to update the angle offset
     let angleDeviationThreshold : Float = 0.2
     /// The minimum distance traveled in the floor plane in order to update the angle offset
@@ -164,11 +164,15 @@ class NavigationManager: ObservableObject {
     
     /// Compute the keypoints to arrive at the specified location model from outdoors
     /// - Parameter end: the outdoor location to arrive
-    func computePathToOutdoorMarker(_ end : LocationDataModel) {
+    func computePathToOutdoorMarker(_ end : LocationDataModel, completionHandler: @escaping ()->()) {
         RouteNavigator.shared.routeNameForLogging = "outside_\(end.getName())_\(UUID().uuidString)"
-        if let garAnchor = PositioningModel.shared.addTerrainAnchor(at: end.getLocationCoordinate(), withName: "crossover") {
+        PositioningModel.shared.addTerrainAnchor(at: end.getLocationCoordinate(), withName: "crossover") { garAnchor, anchorState in
+            guard anchorState == .success, let garAnchor = garAnchor else {
+                return
+            }
             let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
             RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint])
+            completionHandler()
         }
     }
     
@@ -234,21 +238,24 @@ class NavigationManager: ObservableObject {
                 poses.append(endTransformFromPreviousEdge!)
             }
             let routeKeypoints = MultiSegmentPathBuilder(crumbs: poses, manualKeypointIndices: []).keypoints
-            if let outsideStart = outsideStart,
-               let garAnchor = PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") {
-
-                let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
-                RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint] + routeKeypoints)
+            if let outsideStart = outsideStart {
+                PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") { garAnchor, state in
+                    guard state == .success, let garAnchor = garAnchor else {
+                        return completionHandler(false)
+                    }
+                    
+                    let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
+                    RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint] + routeKeypoints)
+                    RouteNavigator.shared.routeNameForLogging = "outside_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
+                    PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
+                    return completionHandler(true)
+                }
             } else {
                 RouteNavigator.shared.setRouteKeypoints(kps: routeKeypoints)
-            }
-            if outsideStart != nil {
-                RouteNavigator.shared.routeNameForLogging = "outside_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
-            } else {
                 RouteNavigator.shared.routeNameForLogging = "\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.first!)!)_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
+                PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
+                return completionHandler(true)
             }
-            PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
-            return completionHandler(true)
         }
     }
 

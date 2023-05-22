@@ -74,7 +74,7 @@ struct GeospatialData {
             "eastUpSouthQTarget": ["axis": [eastUpSouthQTarget.axis.x,
                                             eastUpSouthQTarget.axis.y,
                                             eastUpSouthQTarget.axis.z],
-                                   "angle": eastUpSouthQTarget.angle]
+                                   "angle": eastUpSouthQTarget.angle] as [String : Any]
         ]
     }
 }

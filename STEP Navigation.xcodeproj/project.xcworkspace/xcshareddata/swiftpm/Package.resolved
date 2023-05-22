@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google-ar/arcore-ios-sdk",
       "state" : {
-        "revision" : "03978f8995dedc66773c59ad823aa825f8856a6b",
-        "version" : "1.36.0"
+        "revision" : "774f726163f0861698ef56c30b2c9e757eb01e8a",
+        "version" : "1.37.0"
       }
     },
     {

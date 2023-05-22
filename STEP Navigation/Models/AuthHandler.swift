@@ -36,7 +36,7 @@ class AuthHandler: NSObject, ObservableObject, ASAuthorizationControllerDelegate
     private func createAuthListener() {
         firebaseAuth.addStateDidChangeListener() { (auth, user) in
             self.currentUID = user?.uid
-            print("currentUID \(self.currentUID)")
+            print("currentUID \(self.currentUID ?? "nil")")
         }
     }
     

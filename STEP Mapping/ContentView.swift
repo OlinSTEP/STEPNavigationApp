@@ -174,9 +174,10 @@ struct EditAnchorView: View {
 
 struct CreateAnchor: View {
     @State private var anchorName: String = ""
+    @State private var currentQuality: GARFeatureMapQuality?
     var body: some View {
         VStack {
-            if let currentQuality = PositioningModel.shared.currentQuality {
+            if let currentQuality = currentQuality {
                 switch currentQuality {
                 case .insufficient:
                     Text("Anchor quality insufficient")
@@ -204,6 +205,9 @@ struct CreateAnchor: View {
         }
         .background(Color.orange)
         .padding()
+        .onReceive(PositioningModel.shared.$currentQuality) { newValue in
+            currentQuality = newValue
+        }
     }
 }
 
