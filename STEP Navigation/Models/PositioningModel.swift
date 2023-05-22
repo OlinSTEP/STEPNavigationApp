@@ -100,9 +100,6 @@ class PositioningModel: NSObject, ObservableObject {
     @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
     /// the current latitude and longitude
     @Published var currentLatLon: CLLocationCoordinate2D?
-    
-    /// set to true if you want to download the street scape data and print it to the console
-    static let debugStreetscape = false
     /// A buffer of previous poses that provide us with suitable history for estimate cloud anchor quality
     private var poseBuffer: [simd_float4x4] = []
     /// the maximum length of the pose buffer
@@ -153,7 +150,7 @@ class PositioningModel: NSObject, ObservableObject {
             let configuration = GARSessionConfiguration()
             configuration.cloudAnchorMode = .enabled
             configuration.geospatialMode = .enabled
-            configuration.streetscapeGeometryMode = Self.debugStreetscape ? .enabled : .disabled
+            configuration.streetscapeGeometryMode = SettingsManager.shared.visualizeStreetscapeData ? .enabled : .disabled
             garSession?.setConfiguration(configuration, error: &error)
             print("gar set configuration error \(error?.localizedDescription ?? "none")")
         } catch {
@@ -481,8 +478,15 @@ extension PositioningModel: ARSessionDelegate {
                         }
                     }
                 }
-                if Self.debugStreetscape {
-                    serializeStreetscape(garFrame)
+                if SettingsManager.shared.visualizeStreetscapeData {
+                    for geometry in garFrame.streetscapeGeometries ?? [] {
+                        if geometry.type == .building {
+                            rendererHelper.renderStreetscapeMesh(geometries: geometry, color: .cyan)
+                        } else {
+                            rendererHelper.renderStreetscapeMesh(geometries: geometry, color: .black)
+                        }
+                    }
+                    //serializeStreetscape(garFrame)
                 }
                 var shouldDoCloudAnchorAlignment = false
                 for anchor in garFrame.updatedAnchors {
@@ -520,10 +524,38 @@ class RendererHelper {
     var anchorNode: SCNNode?
     /// The node used to render the keypoint
     var keypointNode: SCNNode?
+    /// The streetscape meshes that have been rendered
+    var renderedStreetscapes: [UUID: SCNNode] = [:]
     
     init(arView: ARSCNView) {
         self.arView = arView
     }
+    
+    func renderStreetscapeMesh(geometries: GARStreetscapeGeometry, color: UIColor) {
+        if renderedStreetscapes[geometries.identifier] == nil {
+            var vertices: [SCNVector3] = []
+            var triangles: [UInt32] = []
+            for point in UnsafeBufferPointer(start: geometries.mesh.vertices, count: Int(geometries.mesh.vertexCount)) {
+                vertices.append(SCNVector3(point.x, point.y, point.z))
+            }
+            let geometrySource = SCNGeometrySource(vertices: vertices)
+            for triangle in UnsafeBufferPointer(start: geometries.mesh.triangles, count: Int(geometries.mesh.triangleCount)) {
+                triangles.append(triangle.indices.0)
+                triangles.append(triangle.indices.1)
+                triangles.append(triangle.indices.2)
+            }
+            let geometryElement = SCNGeometryElement(indices: triangles, primitiveType: .triangles)
+            let geometryFinal = SCNGeometry(sources: [geometrySource], elements: [geometryElement])
+            let node = SCNNode(geometry: geometryFinal)
+            node.geometry?.firstMaterial?.diffuse.contents = color
+            node.geometry?.firstMaterial?.fillMode = .lines
+            PositioningModel.shared.arView.scene.rootNode.addChildNode(node)
+            print("adding new node")
+            renderedStreetscapes[geometries.identifier] = node
+        }
+        renderedStreetscapes[geometries.identifier]!.simdTransform = geometries.meshTransform
+    }
+    
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
         let mesh = SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0)
@@ -544,6 +576,10 @@ class RendererHelper {
     func removeRenderedContent() {
         anchorNode?.removeFromParentNode()
         anchorNode = nil
+        for streetscape in renderedStreetscapes.values {
+            streetscape.removeFromParentNode()
+        }
+        renderedStreetscapes = [:]
     }
 }
 
