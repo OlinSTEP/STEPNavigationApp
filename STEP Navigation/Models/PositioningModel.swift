@@ -103,7 +103,7 @@ class PositioningModel: NSObject, ObservableObject {
     
     /// set to true if you want to download the street scape data and print it to the console
     static let debugStreetscape = false
-    /// A buffer of previoxus poses that provide us with suitable history for estimate cloud anchor quality
+    /// A buffer of previous poses that provide us with suitable history for estimate cloud anchor quality
     private var poseBuffer: [simd_float4x4] = []
     /// the maximum length of the pose buffer
     private static let poseBufferMaxLength = 30
@@ -339,8 +339,7 @@ class PositioningModel: NSObject, ObservableObject {
     func monitorQuality() {
         qualityChecker?.invalidate()
         qualityChecker = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            guard let cameraTransform = self.arView.session.currentFrame?.camera.transform,
-                  let geoSpatialTransfrom = self.garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform else {
+            guard let cameraTransform = self.arView.session.currentFrame?.camera.transform else {
                 return
             }
             // TODO: not the best data structure

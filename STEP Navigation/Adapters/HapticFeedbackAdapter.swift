@@ -61,7 +61,7 @@ class HapticFeedbackAdapter {
             hapticEngine = try CHHapticEngine()
             hapticEngine?.start() { error in
                 if error != nil {
-                    print("error \(error?.localizedDescription)")
+                    print("error \(error?.localizedDescription ?? "none")")
                     return
                 }
                 let events = [CHHapticEvent(eventType: .hapticContinuous, parameters: [

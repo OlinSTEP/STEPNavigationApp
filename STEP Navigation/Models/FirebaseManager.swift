@@ -371,8 +371,8 @@ class FirebaseManager: ObservableObject {
             return
         }
         // TODO: we don't do anything with these values right now
-        let creatorUID = (snapshot["creatorUID"] as? String) ?? ""
-        let isReadable = (snapshot["isReadable"] as? Bool) ?? true
+        let _ = (snapshot["creatorUID"] as? String) ?? ""
+        let _ = (snapshot["isReadable"] as? Bool) ?? true
         let pathAnchors = (snapshot["pathAnchors"] as? [String: [Double]]) ?? [:]
         var pathPoses: [simd_float4x4] = []
         for i in stride(from: 0, to: pathArrays.count, by: 16) {

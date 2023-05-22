@@ -33,7 +33,7 @@ class NavigationManager: ObservableObject {
     /// a ring buffer used to keep the last 50 positions of the phone
     var locationRingBuffer = RingBuffer<simd_float3>(capacity: 150)
     /// a ring buffer used to keep the last 100 headings of the phone
-    var headingRingBuffer = RingBuffer<Float>(capacity: 150)
+    var headingRingBuffer = ComparableRingBuffer<Float>(capacity: 150)
     /// A threshold to determine when the phone rotated too much to update the angle offset
     let angleDeviationThreshold : Float = 0.2
     /// The minimum distance traveled in the floor plane in order to update the angle offset

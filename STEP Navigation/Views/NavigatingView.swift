@@ -118,7 +118,6 @@ struct NavigatingView: View {
     }
     
     private func checkLocalization(cloudAnchorsToCheck: Set<String>) {
-        print("cloud", startAnchorDetails?.getCloudAnchorID(), " did localize \(didLocalize)")
         if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), cloudAnchorsToCheck.contains(startCloudID), !didLocalize {
             didLocalize = true
             navigationManager.startNavigating()
