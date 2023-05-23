@@ -9,17 +9,18 @@ import SwiftUI
 import CoreLocation
 
 struct LocalAnchorListView: View {
+    @ObservedObject var positionModel = PositioningModel.shared
+
     let anchorType: AnchorType
-    let location: CLLocationCoordinate2D? = PositioningModel.shared.currentLatLon
     
     private let listBackgroundColor = AppColor.grey
     private let listTextColor = AppColor.black
     
+    @State var lastQueryLocation: CLLocationCoordinate2D?
     @State var nearbyDistance: Double
     @State var chosenStart: LocationDataModel?
     @State var chosenEnd: LocationDataModel?
     @State var outdoorsSelectedAsStart = false
-    @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
     @State var allAnchors: [LocationDataModel] = []
     
@@ -37,6 +38,10 @@ struct LocalAnchorListView: View {
             guard let latLon = latLon else {
                 return
             }
+            guard lastQueryLocation == nil || lastQueryLocation!.distance(from: latLon) > 5.0 else {
+                return
+            }
+            lastQueryLocation = latLon
             anchors = Array(
                 DataModelManager.shared.getNearbyLocations(
                     for: anchorType,

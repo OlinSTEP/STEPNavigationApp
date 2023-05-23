@@ -21,6 +21,9 @@ class SettingsManager: ObservableObject {
     /// true if we should provide the user with guidance when they appear to be lost
     var automaticDirectionsWhenUserIsLost = false
     
+    /// true if we should visualize streetscape data (requires resetting the app for the setting to take effect)
+    var visualizeStreetscapeData = false
+    
     /// The private initializer.  This should not be called directly.
     private init() {
         createSettingsBundle()
@@ -43,7 +46,7 @@ class SettingsManager: ObservableObject {
         mappingSubFolder = defaults.string(forKey: "mappingSubFolder") ?? ""
         adjustPhoneBodyOffset = defaults.bool(forKey: "adjustPhoneBodyOffset")
         automaticDirectionsWhenUserIsLost = defaults.bool(forKey: "automaticDirectionsWhenUserIsLost")
-
+        visualizeStreetscapeData = defaults.bool(forKey: "visualizeStreetscapeData")
     }
     
     /// Register settings bundle
@@ -51,7 +54,8 @@ class SettingsManager: ObservableObject {
         let appDefaults: [String: Any] = [
             "mappingSubFolder": "",
             "adjustPhoneBodyOffset": false,
-            "automaticDirectionsWhenUserIsLost": false
+            "automaticDirectionsWhenUserIsLost": false,
+            "visualizeStreetscapeData": false
         ]
         UserDefaults.standard.register(defaults: appDefaults)
     }

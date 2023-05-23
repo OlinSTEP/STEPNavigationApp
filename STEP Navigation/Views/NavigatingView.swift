@@ -75,14 +75,12 @@ struct NavigatingView: View {
             }
             // plan path
             if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
-                if !didPrepareToNavigate {
-                    didPrepareToNavigate = true
-                    PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
-                        guard wasSuccesful else {
-                            return
-                        }
-                        checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
+                didPrepareToNavigate = true
+                PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
+                    guard wasSuccesful else {
+                        return
                     }
+                    checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
                 }
             } else if newValue.isAtLeastAsGoodAs(other: .high) {
                 didLocalize = true
