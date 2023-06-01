@@ -19,11 +19,16 @@ func mod(_ a: Int, _ n: Int) -> Int {
     return r >= 0 ? r : r + n
 }
 
+/// A ring bufffer that supports additional operations by virtue of only storing elements that conform to `Comparable`
 class ComparableRingBuffer<Element: Comparable>: RingBuffer<Element> {
+    /// Return the maximum element
+    /// - Returns: the maximum element or `nil` if the buffer is empty
     public func max() -> Element? {
         return data.compactMap({$0}).max()
     }
-
+    
+    /// Return the minimum element
+    /// - Returns: the minimum element or `nil` if the buffer is empty
     public func min() -> Element? {
         return data.compactMap({$0}).min()
     }
@@ -73,8 +78,9 @@ class RingBuffer<Element> {
 }
 
 
-// SOURCE: https://github.com/raywenderlich/swift-algorithm-club/tree/master/Linked%20List
-// license: All content is licensed under the terms of the MIT open source license.
+/// A linked list implementation
+/// SOURCE: https://github.com/raywenderlich/swift-algorithm-club/tree/master/Linked%20List
+/// license: All content is licensed under the terms of the MIT open source license.
 public final class LinkedList<T> {
     /// Linked List's Node Class Declaration
     public class LinkedListNode<T> {

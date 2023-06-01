@@ -9,7 +9,7 @@ import Foundation
 import SwiftGraph
 import ARKit
 
-/// This class manages the process of navigating a multisegment or singlesegment route
+/// This class manages the process of navigating a multisegment or single segment route
 class NavigationManager: ObservableObject {
     /// the shared handle to the singleton instance of this class
     public static var shared = NavigationManager()
