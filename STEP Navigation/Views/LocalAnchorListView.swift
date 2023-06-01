@@ -114,6 +114,8 @@ struct ChooseAnchorComponentView: View {
     var otherAnchor : Binding<LocationDataModel?>
     var outdoorsSelected: Binding<Bool>
     
+    @AccessibilityFocusState var focusedOnNavigate
+    
     init(anchorSelectionType: AnchorSelectionType,
          anchors: Binding<[LocationDataModel]>,
          allAnchors: Binding<[LocationDataModel]>,
@@ -240,11 +242,5 @@ struct ChooseAnchorComponentView: View {
                 Spacer()
             }
         }
-    }
-}
-
-struct AnchorListView_Previews: PreviewProvider {
-    static var previews: some View {
-        LocalAnchorListView(anchorType: .busStop, nearbyDistance: 100)
     }
 }

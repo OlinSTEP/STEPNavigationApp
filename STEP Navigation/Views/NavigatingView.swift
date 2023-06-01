@@ -22,6 +22,8 @@ struct NavigatingView: View {
     @ObservedObject var navigationManager = NavigationManager.shared
     @ObservedObject var routeNavigator = RouteNavigator.shared
     
+    @AccessibilityFocusState var focusOnPopup
+    
     var body: some View {
         ZStack {
             ARViewContainer()
@@ -106,12 +108,14 @@ struct NavigatingView: View {
                     .font(.title2)
                     .onTapGesture {
                         showingConfirmation = true
+                        focusOnPopup = true
                     }
             }
         }
         
         if showingConfirmation {
             ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
+                .accessibilityFocused($focusOnPopup)
         }
     }
     
@@ -215,11 +219,5 @@ struct InformationPopup: View {
         case meters = "meters"
         case feet = "feet"
         case none = ""
-    }
-}
-
-struct NavigatingView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: LocationDataModel(anchorType: .busStop, associatedOutdoorFeature: nil, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1", id: UUID().uuidString))
     }
 }

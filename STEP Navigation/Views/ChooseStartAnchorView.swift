@@ -15,7 +15,7 @@ struct ChooseStartAnchorView: View {
     @State var outdoorsSelectedAsStart = false
     @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
-    
+        
     var body: some View {
         VStack {
             HStack {
@@ -27,8 +27,6 @@ struct ChooseStartAnchorView: View {
                 Spacer()
             }
             .padding(.vertical, 20)
-            
-            NearbyDistanceThresholdView(nearbyDistance: $nearbyDistance)
         }
         .background(AppColor.accent)
         

@@ -56,9 +56,3 @@ struct ExitNavigationAlertView: View {
         .cornerRadius(20)
     }
 }
-
-//struct ExitNavigationAlertView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ExitNavigationAlertView(showingConfirmation: Binding<Bool>(true))
-//    }
-//}

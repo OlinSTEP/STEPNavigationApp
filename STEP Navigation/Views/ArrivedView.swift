@@ -76,9 +76,3 @@ struct ArrivedView: View {
         }
     }
 }
-
-//struct ArrivedView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ArrivedView()
-//    }
-//}
