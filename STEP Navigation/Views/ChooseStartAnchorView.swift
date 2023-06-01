@@ -52,6 +52,8 @@ struct ChooseStartAnchorView: View {
                 .buttonBorderShape(.capsule)
                 .controlSize(.large)
             }
+        }.onChange(of: chosenStart) { newValue in
+            print("HERE WE ARE")
         }.onReceive(positionModel.$currentLatLon) { latLon in
             guard let latLon = latLon else {
                 return

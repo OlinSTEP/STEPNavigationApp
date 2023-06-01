@@ -45,11 +45,19 @@ struct NavigatingView: View {
                             Button(action: {
                                 navigationManager.updateDirections()
                             }) {
-                                Image(systemName: "waveform")
+                                Image(systemName: "repeat")
                                     .resizable()
                                     .frame(width: 80, height: 80)
                                     .foregroundColor(AppColor.accent)
                             }.accessibilityLabel("Repeat Directions")
+                            Button(action: {
+                                print("pressed pause")
+                            }) {
+                                Image(systemName: "pause")
+                                    .resizable()
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(AppColor.accent)
+                            }.accessibilityLabel("Pause Directions")
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 140)
@@ -69,6 +77,20 @@ struct NavigatingView: View {
                 PositioningModel.shared.stopPositioning()
                 NavigationManager.shared.stopNavigating()
             }
+            
+            if showHelp {
+                //note: I am currently force unwrapping these. this is probably a bad idea??
+                AnchorDetailView2PopUp(anchorDetailsStart: startAnchorDetails!, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showHelp)
+                    .accessibilityFocused($focusOnPopup)
+                    .accessibilityAddTraits(.isModal)
+            }
+            
+            if showingConfirmation {
+                ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
+                    .accessibilityFocused($focusOnPopup)
+                    .accessibilityAddTraits(.isModal)
+            }
+            
         }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
         }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
@@ -111,11 +133,15 @@ struct NavigatingView: View {
                         focusOnPopup = true
                     }
             }
-        }
-        
-        if showingConfirmation {
-            ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
-                .accessibilityFocused($focusOnPopup)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Text("Help")
+                    .bold()
+                    .font(.title2)
+                    .onTapGesture {
+                        showHelp = true
+                        focusOnPopup = true
+                    }
+            }
         }
     }
     
@@ -127,6 +153,8 @@ struct NavigatingView: View {
     }
     let popupEntry: String = "Testing Text"
     @State var showingConfirmation = false
+    @State var showHelp = false
+
 }
 
 struct InformationPopup: View {

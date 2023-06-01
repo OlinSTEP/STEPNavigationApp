@@ -126,7 +126,6 @@ struct AnchorTypeListView: View {
                     ForEach(anchorTypes, id: \.self) {
                         anchorType in
                         if anchorType != .indoorDestination {
-                            //currently pass .bathroom into the navigationLink; need to pass in the anchorType instead, but since the anchor type is currently a string (I think?) it can't be passed through
                             NavigationLink (
                                 destination: LocalAnchorListView(anchorType:  anchorType, nearbyDistance: nearbyDistance),
                                 label: {
@@ -146,8 +145,9 @@ struct AnchorTypeListView: View {
                     .padding(.top, 20)
                 }
                 Spacer()
-                NearbyDistanceThresholdView(nearbyDistance: $nearbyDistance, focusOnNearbyDistanceValue: $focusOnNearbyDistanceValue)
-
+                if nearbyDistance < 1000 {
+                    NearbyDistanceThresholdView(nearbyDistance: $nearbyDistance, focusOnNearbyDistanceValue: $focusOnNearbyDistanceValue)
+                }
             }
         }
     }
