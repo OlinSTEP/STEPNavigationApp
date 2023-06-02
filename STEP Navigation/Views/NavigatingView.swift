@@ -14,6 +14,7 @@ import CoreLocation
 var hideNavTimer: Timer?
 
 struct NavigatingView: View {
+    
     let startAnchorDetails: LocationDataModel?
     let destinationAnchorDetails: LocationDataModel
     @State var didLocalize = false
@@ -61,7 +62,7 @@ struct NavigatingView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 140)
-                        .background(AppColor.black)
+                        .background(AppColor.dark)
                     }
                 }
                 .padding(.vertical, 100)
@@ -124,21 +125,21 @@ struct NavigatingView: View {
         .background(AppColor.accent)
         .navigationBarBackButtonHidden()
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Text("Exit")
-                    .bold()
-                    .font(.title2)
-                    .onTapGesture {
-                        showingConfirmation = true
-                        focusOnPopup = true
-                    }
-            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Text("Help")
                     .bold()
                     .font(.title2)
                     .onTapGesture {
                         showHelp = true
+                        focusOnPopup = true
+                    }
+            }
+            ToolbarItem(placement: .navigationBarLeading) {
+                Text("Exit")
+                    .bold()
+                    .font(.title2)
+                    .onTapGesture {
+                        showingConfirmation = true
                         focusOnPopup = true
                     }
             }
@@ -154,7 +155,6 @@ struct NavigatingView: View {
     let popupEntry: String = "Testing Text"
     @State var showingConfirmation = false
     @State var showHelp = false
-
 }
 
 struct InformationPopup: View {
@@ -168,7 +168,7 @@ struct InformationPopup: View {
             case .waitingToLocalize:
                 HStack {
                     Text("Trying to align to your route. Scan your phone around to recognize your surroundings.")
-                        .foregroundColor(AppColor.white)
+                        .foregroundColor(AppColor.light)
                         .bold()
                         .font(.title2)
                         .multilineTextAlignment(.center)
@@ -176,7 +176,7 @@ struct InformationPopup: View {
             case .userNote:
                 HStack {
                     Text("User Note")
-                        .foregroundColor(AppColor.white)
+                        .foregroundColor(AppColor.light)
                         .bold()
                         .font(.title2)
                         .multilineTextAlignment(.leading)
@@ -184,7 +184,7 @@ struct InformationPopup: View {
                 }
                 HStack {
                     Text(popupEntry)
-                        .foregroundColor(AppColor.white)
+                        .foregroundColor(AppColor.light)
                         .font(.title2)
                         .multilineTextAlignment(.leading)
                     Spacer()
@@ -192,7 +192,7 @@ struct InformationPopup: View {
             case .distanceAway:
                 HStack {
                     Text("\(popupEntry) \(units.rawValue) away")
-                        .foregroundColor(AppColor.white)
+                        .foregroundColor(AppColor.light)
                         .bold()
                         .font(.title2)
                         .multilineTextAlignment(.center)
@@ -200,7 +200,7 @@ struct InformationPopup: View {
             case .direction:
                 HStack {
                     Text("\(popupEntry)")
-                        .foregroundColor(AppColor.white)
+                        .foregroundColor(AppColor.light)
                         .bold()
                         .font(.title2)
                         .multilineTextAlignment(.center)
@@ -209,7 +209,7 @@ struct InformationPopup: View {
                 VStack {
                     HStack {
                         Text("Arrived. You should be within one cane's length of your destination.")
-                            .foregroundColor(AppColor.white)
+                            .foregroundColor(AppColor.light)
                             .bold()
                             .font(.title2)
                             .multilineTextAlignment(.leading)
@@ -219,7 +219,7 @@ struct InformationPopup: View {
                             .font(.title)
                             .bold()
                             .frame(maxWidth: 300)
-                            .foregroundColor(AppColor.black)
+                            .foregroundColor(AppColor.dark)
                     })
                     .padding(.bottom, 20)
                     .padding(.top, 10)
@@ -232,7 +232,7 @@ struct InformationPopup: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(AppColor.black)
+        .background(AppColor.dark)
     }
     
     enum PopupType: CaseIterable {

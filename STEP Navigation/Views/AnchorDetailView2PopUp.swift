@@ -12,7 +12,7 @@ struct AnchorDetailView2PopUp: View {
     let anchorDetailsStart: LocationDataModel
     let anchorDetailsEnd: LocationDataModel
     
-    var showHelp: Binding<Bool>
+    @Binding var showHelp: Bool
     
     var body: some View {
         VStack {
@@ -121,23 +121,9 @@ struct AnchorDetailView2PopUp: View {
                 .padding(.bottom, 5)
             }
             Spacer()
-            Button {
-                showHelp.wrappedValue = false
-            } label: {
-                Text("Dismiss")
-                    .font(.title2)
-                    .bold()
-                    .frame(maxWidth: 300)
-                    .foregroundColor(AppColor.black)
-            }
-            .padding(.bottom, 20)
-            .padding(.top, 20)
-            .tint(AppColor.accent)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.large)
+            SmallButtonComponent_Button(label: "Dismiss", popupTrigger: $showHelp)
         }
-        .background(AppColor.white)
+        .background(AppColor.light)
     }
 }
 

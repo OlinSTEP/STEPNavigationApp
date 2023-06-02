@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExitNavigationAlertView: View {
-    var showingConfirmation: Binding<Bool>
+    @Binding var showingConfirmation: Bool
     
     var body: some View {
         VStack {
@@ -19,40 +19,20 @@ struct ExitNavigationAlertView: View {
                 Text("This will end the navigation session.")
                     .font(.title3)
             }
-            .padding()
+            .padding(.vertical, 10)
+            .padding(.horizontal)
+            
             VStack {
-                NavigationLink (destination: MainView(), label: {
-                    Text("Exit")
-                        .font(.title2)
-                        .bold()
-                        .frame(maxWidth: 300)
-                        .foregroundColor(AppColor.black)
-                })
-                .padding(.bottom, 5)
-                .tint(AppColor.accent)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
-                
-                Button(role: .cancel) {
-                    showingConfirmation.wrappedValue = false
-                } label: {
-                    Text("Cancel")
-                        .padding(.horizontal, 50)
-                        .bold()
-                        .font(.title2)
-                        .frame(maxWidth: 300)
-                        .foregroundColor(AppColor.black)
-                }
-                .tint(AppColor.grey)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
+                SmallButtonComponent_NavigationLink(destination: {
+                                    MainView()
+                                }, label: "Exit")
+                .padding(.bottom, 2)
+                SmallButtonComponent_Button(label: "Cancel", labelColor: AppColor.dark, backgroundColor: AppColor.grey, popupTrigger: $showingConfirmation, role: .cancel)
             }
             .padding()
         }
         .frame(width: 360, height: 250)
-        .background(AppColor.white)
+        .background(AppColor.light)
         .cornerRadius(20)
     }
 }

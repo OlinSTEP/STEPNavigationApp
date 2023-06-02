@@ -64,7 +64,7 @@ struct ArrivedView: View {
                         .font(.title)
                         .bold()
                         .frame(maxWidth: 300)
-                        .foregroundColor(AppColor.black)
+                        .foregroundColor(AppColor.dark)
                 })
                 .padding(.bottom, 20)
                 .tint(AppColor.accent)

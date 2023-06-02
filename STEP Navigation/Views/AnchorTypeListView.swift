@@ -33,7 +33,7 @@ struct NearbyDistanceThresholdView: View {
                     .font(.title2)
                     .bold()
                     .frame(maxWidth: 300)
-                    .foregroundColor(AppColor.black)
+                    .foregroundColor(AppColor.dark)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)
@@ -76,7 +76,7 @@ struct NearbyDistanceThresholdView: View {
 }
 
 struct AnchorTypeListView: View {        
-    @State var nearbyDistance: Double = 50
+    @State var nearbyDistance: Double = 100
     @State var hasLocalized = false
     @State var anchorTypes: [String] = []
     
@@ -92,32 +92,11 @@ struct AnchorTypeListView: View {
     
     var body: some View {
         let anchorTypes = PositioningModel.shared.currentLatLon != nil ? DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance) : []
+        
         // Navigation Stack determines the Navigation Bar
         NavigationStack {
-            VStack {
-                // Sets the title text
-                HStack {
-                    Text("Destinations")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.horizontal)
-                    Spacer()
-                }
-                .padding(.top, 20)
-                .padding(.bottom, 0.5)
-                
-                HStack {
-                    Text("Within \($nearbyDistance.wrappedValue, specifier: "%.0f") meters")
-                        .font(.title)
-                        .padding(.leading)
-                        .accessibilityFocused($focusOnNearbyDistanceValue)
-                    Spacer()
-                }
-                .padding(.bottom, 20)
-
-            }
-            .background(AppColor.accent)
-            
+            var nearbyDistanceString = String(format: "%.0f", $nearbyDistance.wrappedValue) //calculating the nearbyDistance and turning it into a string to pass into ScreenTitleComponent
+            ScreenTitleComponent(titleText: "Destinations", subtitleText: "Within \(nearbyDistanceString) meters")
             
             // The scroll view contains the main body of text
             ScrollView {
@@ -126,20 +105,9 @@ struct AnchorTypeListView: View {
                     ForEach(anchorTypes, id: \.self) {
                         anchorType in
                         if anchorType != .indoorDestination {
-                            NavigationLink (
-                                destination: LocalAnchorListView(anchorType:  anchorType, nearbyDistance: nearbyDistance),
-                                label: {
-                                    Text("\(anchorType.rawValue)s")
-                                        .font(.largeTitle)
-                                        .bold()
-                                        .padding(30)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(minHeight: 140)
-                                        .foregroundColor(AppColor.black)
-                                })
-                            .background(AppColor.accent)
-                            .cornerRadius(20)
-                            .padding(.horizontal)
+                            LargeButtonComponent_NavigationLink(destination: {
+                                LocalAnchorListView(anchorType: anchorType, nearbyDistance: nearbyDistance)
+                            }, label: "\(anchorType.rawValue)s")
                         }
                     }
                     .padding(.top, 20)

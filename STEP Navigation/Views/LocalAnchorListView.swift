@@ -14,7 +14,7 @@ struct LocalAnchorListView: View {
     let anchorType: AnchorType
     
     private let listBackgroundColor = AppColor.grey
-    private let listTextColor = AppColor.black
+    private let listTextColor = AppColor.dark
     
     @State var lastQueryLocation: CLLocationCoordinate2D?
     @State var nearbyDistance: Double
@@ -25,16 +25,8 @@ struct LocalAnchorListView: View {
     @State var allAnchors: [LocationDataModel] = []
     
     var body: some View {
-        VStack {
-            HStack {
-                Text("\(anchorType.rawValue)s")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.horizontal)
-                Spacer()
-            }
-            .padding(.vertical, 20)
-        }.onReceive(positionModel.$currentLatLon) { latLon in
+        ScreenTitleComponent(titleText: "\(anchorType.rawValue)s")
+            .onReceive(positionModel.$currentLatLon) { latLon in
             guard let latLon = latLon else {
                 return
             }
@@ -143,72 +135,33 @@ struct ChooseAnchorComponentView: View {
     var body: some View {
         let candidateAnchors: [LocationDataModel] = otherAnchor.wrappedValue != nil ? allAnchors.wrappedValue : anchors.wrappedValue
         let isReachable = getReachabilityMask(candidateAnchors: candidateAnchors)
-        if candidateAnchors.isEmpty {
-            VStack {
-                Spacer()
-                Text("Nothing nearby. Try widening your search radius.")
-                    .font(.title)
-                    .padding()
-                    .multilineTextAlignment(.center)
-                Spacer()
-            }
-            
-        } else {
-                VStack {
-                    // TODO: this is pretty unwieldy (code sharing is pretty low here).  Maybe we should create a separate view type?
-                    ScrollView {
-                        if anchorSelectionType == .startOfIndoorRoute,
-                           let otherAnchor = otherAnchor.wrappedValue,
-                           NavigationManager.shared.getReachabilityFromOutdoors(outOf: [otherAnchor]).first == true {
-                        Button(action: {
-                            outdoorsSelected.wrappedValue.toggle()
-                            chosenAnchor.wrappedValue = nil
-                        }) {
-                            HStack {
-                                Text("Start Outside")
-                                    .font(.title)
-                                    .bold()
-                                    .padding(30)
-                                    .multilineTextAlignment(.leading)
-                                Spacer()
-                            }
-                            .foregroundColor(outdoorsSelected.wrappedValue ? AppColor.black : AppColor.grey)                        }
-                        .frame(maxWidth: .infinity)
-                        .frame(minHeight: 140)
-                        .background(outdoorsSelected.wrappedValue ? AppColor.accent : AppColor.black)
-                        .cornerRadius(20)
-                        .padding(.horizontal)
+
+        VStack {
+            ScrollView {
+                
+                if anchorSelectionType == .startOfIndoorRoute,
+                   let otherAnchor = otherAnchor.wrappedValue,
+                   NavigationManager.shared.getReachabilityFromOutdoors(outOf: [otherAnchor]).first == true {
+                    LargeButtonComponent_Button(label: "Start Outside", labelColor: outdoorsSelected.wrappedValue ? AppColor.dark : AppColor.grey, backgroundColor: outdoorsSelected.wrappedValue ? AppColor.accent : AppColor.dark, action: {
+                        outdoorsSelected.wrappedValue.toggle()
+                        chosenAnchor.wrappedValue = nil
+                    })
                         .accessibilityAddTraits(outdoorsSelected.wrappedValue ? [.isSelected] : [])
-                        .padding(.top, 20)
+                        .padding(.vertical, 10)
 
                     }
+                
+                ForEach(0..<candidateAnchors.count, id: \.self) { idx in
+                    if anchorSelectionType == .destinationOutdoors {
+                        LargeButtonComponent_NavigationLink(destination: {
+                                AnchorDetailView(anchorDetails: candidateAnchors[idx])
+                        }, label: "\(candidateAnchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+                        .padding(.vertical, 10)
 
-                    ForEach(0..<candidateAnchors.count, id: \.self) { idx in
-                        if anchorSelectionType == .destinationOutdoors {
-                            NavigationLink (
-                                destination: AnchorDetailView(anchorDetails: candidateAnchors[idx]),
-                                label: {
-                                    HStack {
-                                        Text(candidateAnchors[idx].getName())
-                                            .font(.title)
-                                            .bold()
-                                            .padding(30)
-                                            .multilineTextAlignment(.leading)
-                                        Spacer()
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .frame(minHeight: 140)
-                                    .foregroundColor(AppColor.black)
-                                })
-                                .background(AppColor.accent)
-                                .cornerRadius(20)
-                                .padding(.horizontal)
-                                .padding(.top, 20)
-                    
                         } else {
                             if isReachable[idx] {
                                 VStack {
-                                    Button {
+                                    LargeButtonComponent_Button(label: "\(candidateAnchors[idx].getName())", backgroundColor: chosenAnchor.wrappedValue == candidateAnchors[idx] ? AppColor.accent : AppColor.grey, action: {
                                         if anchorSelectionType == .startOfIndoorRoute {
                                             outdoorsSelected.wrappedValue = false
                                         }
@@ -217,30 +170,16 @@ struct ChooseAnchorComponentView: View {
                                         } else {
                                             chosenAnchor.wrappedValue = candidateAnchors[idx]
                                         }
-                                    } label: {
-                                        HStack {
-                                            Text(candidateAnchors[idx].getName())
-                                                .font(.title)
-                                                .bold()
-                                                .padding(30)
-                                                .multilineTextAlignment(.leading)
-                                            Spacer()
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                        .frame(minHeight: 140)
-                                        .background(chosenAnchor.wrappedValue == candidateAnchors[idx] ? AppColor.accent : AppColor.grey)
-                                    }
+                                    })
+                                    .accessibilityAddTraits(chosenAnchor.wrappedValue == candidateAnchors[idx] ? [.isSelected] : [])
+                                    .padding(.vertical, 10)
                                 }
-                                .cornerRadius(20)
-                                .padding(.horizontal)
-                                .accessibilityAddTraits(chosenAnchor.wrappedValue == candidateAnchors[idx] ? [.isSelected] : [])
-                                .padding(.top, 20)
                             }
                         }
                     }
                 }
                 Spacer()
             }
-        }
+            .padding(.top, 10)
     }
 }

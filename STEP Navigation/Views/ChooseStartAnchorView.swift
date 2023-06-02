@@ -17,18 +17,7 @@ struct ChooseStartAnchorView: View {
     @State var anchors: [LocationDataModel] = []
         
     var body: some View {
-        VStack {
-            HStack {
-                Text("Choose Start Anchor")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.horizontal)
-                
-                Spacer()
-            }
-            .padding(.vertical, 20)
-        }
-        .background(AppColor.accent)
+        ScreenTitleComponent(titleText:"Choose Start Anchor")
         
         VStack {
             ChooseAnchorComponentView(anchorSelectionType: .startOfIndoorRoute,
@@ -38,19 +27,9 @@ struct ChooseStartAnchorView: View {
                                       otherAnchor: $destinationAnchorDetails)
             Spacer()
             if chosenStart != nil || outdoorsSelectedAsStart {
-                NavigationLink (destination: NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: destinationAnchorDetails!), label: {
-                    Text("Navigate")
-                        .font(.title)
-                        .bold()
-                        .frame(maxWidth: 300)
-                        .foregroundColor(AppColor.black)
-                })
-                .padding(.bottom, 20)
-                .padding(.top, 10)
-                .tint(AppColor.accent)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
+                SmallButtonComponent_NavigationLink(destination: {
+                    NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: destinationAnchorDetails!)
+                                }, label: "Navigate")
             }
         }.onChange(of: chosenStart) { newValue in
             print("HERE WE ARE")

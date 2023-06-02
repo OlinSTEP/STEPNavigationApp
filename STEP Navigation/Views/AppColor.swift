@@ -14,12 +14,12 @@ struct AppColor {
                                        green: 231/255,
                                        blue: 231/255,
                                        opacity: 1)
-  static let black: Color = Color(.sRGB,
+  static let dark: Color = Color(.sRGB,
                                        red: 34/255,
                                        green: 34/255,
                                        blue: 34/255,
                                        opacity: 1)
-  static let white: Color = Color(.sRGB,
+  static let light: Color = Color(.sRGB,
                                        red: 255/255,
                                        green: 255/255,
                                        blue: 255/255,
