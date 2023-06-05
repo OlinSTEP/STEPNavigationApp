@@ -7,7 +7,9 @@
 
 import SwiftUI
 
+///This struct displays a confirmation  popup when a user attempts to exit the navigation session.
 struct ExitPopup: View {
+    /// Binding to a boolean value that indicates whether the confirmation popup is showing.
     @Binding var showingConfirmation: Bool
     
     var body: some View {

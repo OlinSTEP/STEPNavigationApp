@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreLocation
 
+///  This struct manages a help popup that displays the details of the user's start locations, end locations and their distances.
 struct HelpPopup: View {
     let anchorDetailsStart: LocationDataModel?
     let anchorDetailsEnd: LocationDataModel
