@@ -32,12 +32,12 @@ struct NavigatingView: View {
                 Spacer()
                 VStack {
                     if !didLocalize {
-                        InformationPopup(popupEntry: "", popupType: .waitingToLocalize, units: .none) //what is this? why do we still have units and stuff?
+                        InformationPopupComponent(popupType: .waitingToLocalize)
                     } else {
                         if RouteNavigator.shared.keypoints?.isEmpty == true {
-                            InformationPopup(popupEntry: "", popupType: .arrived, units: .none)
+                            InformationPopupComponent(popupType: .arrived)
                         } else if !navigationDirection.isEmpty {
-                            InformationPopup(popupEntry: navigationDirection, popupType: .direction, units: .none)
+                            InformationPopupComponent(popupType: .direction(directionText: navigationDirection))
                         }
                     }
                     Spacer()
@@ -157,95 +157,43 @@ struct NavigatingView: View {
     @State var showHelp = false
 }
 
-struct InformationPopup: View {
-    let popupEntry: String
-    let popupType: PopupType
-    let units: Units
-    
-    var body: some View {
-        VStack {
-            switch popupType {
-            case .waitingToLocalize:
-                HStack {
-                    Text("Trying to align to your route. Scan your phone around to recognize your surroundings.")
-                        .foregroundColor(AppColor.light)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.center)
-                }
-            case .userNote:
-                HStack {
-                    Text("User Note")
-                        .foregroundColor(AppColor.light)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-                HStack {
-                    Text(popupEntry)
-                        .foregroundColor(AppColor.light)
-                        .font(.title2)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-            case .distanceAway:
-                HStack {
-                    Text("\(popupEntry) \(units.rawValue) away")
-                        .foregroundColor(AppColor.light)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.center)
-                }
-            case .direction:
-                HStack {
-                    Text("\(popupEntry)")
-                        .foregroundColor(AppColor.light)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.center)
-                }
-            case .arrived:
-                VStack {
-                    HStack {
-                        Text("Arrived. You should be within one cane's length of your destination.")
-                            .foregroundColor(AppColor.light)
-                            .bold()
-                            .font(.title2)
-                            .multilineTextAlignment(.leading)
-                    }
-                    NavigationLink (destination: MainView(), label: {
-                        Text("Home")
-                            .font(.title)
-                            .bold()
-                            .frame(maxWidth: 300)
-                            .foregroundColor(AppColor.dark)
-                    })
-                    .padding(.bottom, 20)
-                    .padding(.top, 10)
-                    .tint(AppColor.accent)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(AppColor.dark)
-    }
-    
-    enum PopupType: CaseIterable {
-        case waitingToLocalize
-        case userNote
-        case distanceAway
-        case arrived
-        case direction
-    }
-    
-    enum Units: String, CaseIterable {
-        case meters = "meters"
-        case feet = "feet"
-        case none = ""
-    }
-}
+//struct InformationPopup: View {
+//    let popupType: PopupType
+//
+//    var body: some View {
+//        VStack {
+//            HStack {
+//                Text(popupType.messageText)
+//                    .foregroundColor(AppColor.light)
+//                    .bold()
+//                    .font(.title2)
+//                    .multilineTextAlignment(.center)
+//            }
+//            if case .arrived = popupType {
+//                SmallButtonComponent_NavigationLink(destination: {
+//                    MainView()
+//                }, label: "Home")
+//            }
+//        }
+//        .frame(maxWidth: .infinity)
+//        .padding()
+//        .background(AppColor.dark)
+//    }
+//
+//    enum PopupType {
+//        case waitingToLocalize
+//        case arrived
+//        case direction(directionText: String)
+//
+//        var messageText: String {
+//            switch self {
+//            case .arrived:
+//                return "Arrived. You should be within one cane's length of your destination."
+//            case . waitingToLocalize:
+//                return "Trying to align to your route. Scan your phone around to recognize your surroundings."
+//            case .direction(let directionText):
+//                return directionText
+//            }
+//        }
+//    }
+//}
