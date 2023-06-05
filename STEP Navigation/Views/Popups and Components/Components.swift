@@ -281,7 +281,6 @@ struct AnchorDetailsComponent: View {
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
-                    .padding(.top)
                 Spacer()
             }
             

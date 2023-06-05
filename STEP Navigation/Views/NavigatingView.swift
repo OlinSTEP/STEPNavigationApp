@@ -80,14 +80,13 @@ struct NavigatingView: View {
             }
             
             if showHelp {
-                //note: I am currently force unwrapping these. this is probably a bad idea??
-                AnchorDetailView2PopUp(anchorDetailsStart: startAnchorDetails!, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showHelp)
+                HelpPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showHelp)
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
             }
             
             if showingConfirmation {
-                ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
+                ExitPopup(showingConfirmation: $showingConfirmation)
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
             }

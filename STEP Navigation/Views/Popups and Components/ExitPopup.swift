@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ExitNavigationAlertView: View {
+struct ExitPopup: View {
     @Binding var showingConfirmation: Bool
     
     var body: some View {

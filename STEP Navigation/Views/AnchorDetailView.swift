@@ -17,6 +17,7 @@ struct AnchorDetailView: View {
                 let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
                 let formattedDistance = String(format: "%.0f", distance)
                 AnchorDetailsComponent(title: anchorDetails.getName(), distanceAway: formattedDistance)
+                    .padding(.top)
             }
             Spacer()
             if anchorDetails.getAnchorType().isIndoors {
