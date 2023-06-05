@@ -264,8 +264,55 @@ struct InformationPopupComponent: View {
 
 
 struct AnchorDetailsComponent: View {
+    let title: String
+    let distanceAway: String
+    let locationNotes: String?
+    
+    init(title: String, distanceAway: String, locationNotes: String? = "No notes available for this location.") {
+        self.title = title
+        self.distanceAway = distanceAway
+        self.locationNotes = locationNotes
+    }
+    
     var body: some View {
-        Text("Blank")
+        VStack {
+            HStack {
+                Text(title)
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.horizontal)
+                    .padding(.top)
+                Spacer()
+            }
+            
+            HStack {
+                    Text("\(distanceAway) meters away")
+                        .font(.title)
+                        .padding(.horizontal)
+                Spacer()
+            }
+            VStack {
+                HStack {
+                    Text("Location Notes")
+                        .font(.title2)
+                        .bold()
+                        .padding(.bottom, 1)
+                        .multilineTextAlignment(.leading)
+                    Spacer()
+                }
+                ScrollView {
+                    HStack {
+                        if let locationNotes = locationNotes {
+                            Text(locationNotes)
+                        }
+                        Spacer()
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 2)
+        }
+        
     }
 }
 

@@ -138,7 +138,6 @@ struct ChooseAnchorComponentView: View {
 
         VStack {
             ScrollView {
-                
                 if anchorSelectionType == .startOfIndoorRoute,
                    let otherAnchor = otherAnchor.wrappedValue,
                    NavigationManager.shared.getReachabilityFromOutdoors(outOf: [otherAnchor]).first == true {
