@@ -221,8 +221,15 @@ struct LargeButtonComponent_Button: View {
     }
 }
 
+/// This struct is responsible for the presentation of various types of informational popups based on the type of popup.
 struct InformationPopupComponent: View {
     let popupType: PopupType
+    
+    /// Init Method
+    /// - Parameter popupType:this is a parameter that shows the type of popup
+    init(popupType: PopupType) {
+        self.popupType = popupType
+    }
     
     var body: some View {
         VStack {
@@ -244,6 +251,11 @@ struct InformationPopupComponent: View {
         .background(AppColor.dark)
     }
     
+    /// This enumeration represents the different types of popups that can be presented.
+    ///
+    /// - `waitingToLocalize`:The popup type when the app is aligning the route.
+    /// - `arrived`: The popup type when the user arrives at the last cloud anchor.
+    /// - `direction`: The popup type when the application is providing a direction, which holds a string value                 representing the direction text.
     enum PopupType {
         case waitingToLocalize
         case arrived
@@ -263,11 +275,17 @@ struct InformationPopupComponent: View {
 }
 
 
+/// This struct displays the details of the cloud anchor.
 struct AnchorDetailsComponent: View {
     let title: String
     let distanceAway: String
     let locationNotes: String?
     
+    /// Init Method
+    /// - Parameters:
+    ///   - title: Name of the destination.
+    ///   - distanceAway: Distance away from the destination.
+    ///   - locationNotes: Optional notes for the location.
     init(title: String, distanceAway: String, locationNotes: String? = "No notes available for this location.") {
         self.title = title
         self.distanceAway = distanceAway
