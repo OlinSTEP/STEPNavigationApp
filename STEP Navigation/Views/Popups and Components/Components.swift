@@ -46,9 +46,27 @@ struct ScreenTitleComponent: View {
     }
 }
 
-struct CustomHeaderButtonComponent: View {
-    var body: some View {
-        Text("Blank")
+struct CustomHeaderButtonComponent: ToolbarContent {
+    let label: String
+    let placement: ToolbarItemPlacement
+    let onTapGesture: () -> Void
+    
+    init(label: String, placement: ToolbarItemPlacement, onTapGesture: @escaping () -> Void) {
+        self.label = label
+        self.placement = placement
+        self.onTapGesture = onTapGesture
+    }
+    
+    @ViewBuilder
+    var body: some ToolbarContent {
+        ToolbarItem(placement: placement) {
+            Text(label)
+                .bold()
+                .font(.title2)
+                .onTapGesture {
+                    onTapGesture()
+                }
+        }
     }
 }
 
@@ -333,8 +351,25 @@ struct AnchorDetailsComponent: View {
     }
 }
 
-struct ActionBarComponent: View {
+struct ActionBarButtonComponent: View {
+    let action: () -> Void
+    let iconSystemName: String
+    let color: Color?
+    let accessibilityLabel: String
+    
+    init(action: @escaping () -> Void, iconSystemName: String, color: Color? = AppColor.accent, accessibilityLabel: String) {
+        self.action = action
+        self.iconSystemName = iconSystemName
+        self.color = color
+        self.accessibilityLabel = accessibilityLabel
+    }
+    
     var body: some View {
-        Text("Blank")
+        Button(action: action) {
+            Image(systemName: iconSystemName)
+                .resizable()
+                .frame(width: 80, height: 80)
+                .foregroundColor(color)
+        }.accessibilityLabel(accessibilityLabel)
     }
 }

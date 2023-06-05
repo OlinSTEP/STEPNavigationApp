@@ -55,7 +55,6 @@
 		82659CB529DF60B5007546A1 /* SwiftGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 82659CB429DF60B5007546A1 /* SwiftGraph */; };
 		826C994729E87C130070290B /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994629E87C130070290B /* ARViewContainer.swift */; };
 		826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994829E87EA10070290B /* ARCoreCredentials.swift */; };
-		8274AFF32A043A6800636699 /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */; };
 		8274AFF42A055C0600636699 /* ARViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826C994629E87C130070290B /* ARViewContainer.swift */; };
 		82811EE52A0C32B900D1BE96 /* AuthHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82811EE42A0C32B900D1BE96 /* AuthHandler.swift */; };
 		82811EE62A0C32B900D1BE96 /* AuthHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82811EE42A0C32B900D1BE96 /* AuthHandler.swift */; };
@@ -307,7 +306,6 @@
 				A8FF1A1129E062DD002019E9 /* AnchorTypeListView.swift */,
 				8241736129DE1398001599B1 /* LocalAnchorListView.swift */,
 				8241736929DE13BF001599B1 /* NavigatingView.swift */,
-				A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */,
 				826C994629E87C130070290B /* ARViewContainer.swift */,
 				A8D886C529F741FD003E05E7 /* CloudAnchorsDetailView.swift */,
 				A8D886C729F7471D003E05E7 /* MainView.swift */,
@@ -412,6 +410,7 @@
 			children = (
 				A8D886C129EEE550003E05E7 /* ExitPopup.swift */,
 				A89CAA692A28EFC100E3A03D /* HelpPopup.swift */,
+				A8CB6EBC29DFB22F00EABD80 /* AppColor.swift */,
 				A8B7CB4D2A2A592E004468B8 /* Components.swift */,
 			);
 			path = "Popups and Components";
@@ -666,7 +665,6 @@
 				82A0168E2A00179600EAA526 /* PathLogger.swift in Sources */,
 				82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */,
 				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,
-				8274AFF32A043A6800636699 /* AppColor.swift in Sources */,
 				82A0168B2A00177000EAA526 /* DataModelManager.swift in Sources */,
 				82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */,
 				82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */,

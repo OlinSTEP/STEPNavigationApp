@@ -23,6 +23,8 @@ struct NavigatingView: View {
     @ObservedObject var navigationManager = NavigationManager.shared
     @ObservedObject var routeNavigator = RouteNavigator.shared
     
+    @State var showingConfirmation = false
+    @State var showingHelp = false
     @AccessibilityFocusState var focusOnPopup
     
     var body: some View {
@@ -42,23 +44,14 @@ struct NavigatingView: View {
                     }
                     Spacer()
                     if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
-                        HStack {
-                            Button(action: {
-                                navigationManager.updateDirections()
-                            }) {
-                                Image(systemName: "repeat")
-                                    .resizable()
-                                    .frame(width: 80, height: 80)
-                                    .foregroundColor(AppColor.accent)
-                            }.accessibilityLabel("Repeat Directions")
-                            Button(action: {
+                        HStack(spacing: 100) {
+                            ActionBarButtonComponent(action: {
                                 print("pressed pause")
-                            }) {
-                                Image(systemName: "pause")
-                                    .resizable()
-                                    .frame(width: 80, height: 80)
-                                    .foregroundColor(AppColor.accent)
-                            }.accessibilityLabel("Pause Directions")
+                            }, iconSystemName: "pause.circle.fill", accessibilityLabel: "Pause Navigation")
+                            
+                            ActionBarButtonComponent(action: {
+                                navigationManager.updateDirections()
+                            }, iconSystemName: "repeat", accessibilityLabel: "Repeat Directions")
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 140)
@@ -79,8 +72,8 @@ struct NavigatingView: View {
                 NavigationManager.shared.stopNavigating()
             }
             
-            if showHelp {
-                HelpPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showHelp)
+            if showingHelp {
+                HelpPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showingHelp)
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
             }
@@ -124,23 +117,13 @@ struct NavigatingView: View {
         .background(AppColor.accent)
         .navigationBarBackButtonHidden()
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Text("Help")
-                    .bold()
-                    .font(.title2)
-                    .onTapGesture {
-                        showHelp = true
-                        focusOnPopup = true
-                    }
+            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
+                showingConfirmation = true
+                focusOnPopup = true
             }
-            ToolbarItem(placement: .navigationBarLeading) {
-                Text("Exit")
-                    .bold()
-                    .font(.title2)
-                    .onTapGesture {
-                        showingConfirmation = true
-                        focusOnPopup = true
-                    }
+            CustomHeaderButtonComponent(label: "Help", placement: .navigationBarTrailing) {
+                showingHelp = true
+                focusOnPopup = true
             }
         }
     }
@@ -151,48 +134,4 @@ struct NavigatingView: View {
             navigationManager.startNavigating()
         }
     }
-    let popupEntry: String = "Testing Text"
-    @State var showingConfirmation = false
-    @State var showHelp = false
 }
-
-//struct InformationPopup: View {
-//    let popupType: PopupType
-//
-//    var body: some View {
-//        VStack {
-//            HStack {
-//                Text(popupType.messageText)
-//                    .foregroundColor(AppColor.light)
-//                    .bold()
-//                    .font(.title2)
-//                    .multilineTextAlignment(.center)
-//            }
-//            if case .arrived = popupType {
-//                SmallButtonComponent_NavigationLink(destination: {
-//                    MainView()
-//                }, label: "Home")
-//            }
-//        }
-//        .frame(maxWidth: .infinity)
-//        .padding()
-//        .background(AppColor.dark)
-//    }
-//
-//    enum PopupType {
-//        case waitingToLocalize
-//        case arrived
-//        case direction(directionText: String)
-//
-//        var messageText: String {
-//            switch self {
-//            case .arrived:
-//                return "Arrived. You should be within one cane's length of your destination."
-//            case . waitingToLocalize:
-//                return "Trying to align to your route. Scan your phone around to recognize your surroundings."
-//            case .direction(let directionText):
-//                return directionText
-//            }
-//        }
-//    }
-//}
