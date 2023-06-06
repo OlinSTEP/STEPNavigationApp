@@ -125,7 +125,7 @@ public func getPhoneHeadingYaw(currentLocation: simd_float4x4)->Float {
 class Navigation {
     
     /// DirectionText based on hapic/voice settings
-    var Directions: Dictionary<Int, String> {
+    var Directions: [Int: String] {
         return ClockDirections
     }
     
