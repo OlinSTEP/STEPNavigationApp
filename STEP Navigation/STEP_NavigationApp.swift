@@ -16,7 +16,7 @@ struct STEP_NavigationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            MainView()
+            GPSLocalizationView()
                 .environmentObject(SettingsManager.shared)
                 .onAppear() {
                     FirebaseManager.shared.setMode(mode: .navigation)

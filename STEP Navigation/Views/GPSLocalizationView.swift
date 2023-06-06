@@ -1,5 +1,5 @@
 //
-//  MainView.swift
+//  GPSLocalizationView.swift
 //  STEP Navigation
 //
 //  Created by Evelyn on 4/24/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 import AuthenticationServices
 
-struct MainView: View {
+struct GPSLocalizationView: View {
     @ObservedObject var database = FirebaseManager.shared
     @ObservedObject var positionModel = PositioningModel.shared
     @ObservedObject var authHandler = AuthHandler.shared
@@ -51,7 +51,7 @@ struct MainView: View {
                                     .padding(.horizontal)
                                     
                                     SmallButtonComponent_NavigationLink(destination: {
-                                                        AnchorTypeListView()
+                                                        DestinationTypesView()
                                                     }, label: "Next")
                                 }
                                 .frame(maxWidth: .infinity)

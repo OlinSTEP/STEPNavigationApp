@@ -7,14 +7,11 @@
 
 import SwiftUI
 import CoreLocation
-
-//TODO: add a statement that checks if the user has arrived, and if so, take them to the arrived view. Need to pass in destinationAnchorDetails into the arrived view.
-
-// TODO: ughh what to do about this global variable
-var hideNavTimer: Timer?
+import Foundation
+import ARKit
 
 struct NavigatingView: View {
-    
+    @State var hideNavTimer: Timer?
     let startAnchorDetails: LocationDataModel?
     let destinationAnchorDetails: LocationDataModel
     @State var didLocalize = false
@@ -37,7 +34,7 @@ struct NavigatingView: View {
                         InformationPopupComponent(popupType: .waitingToLocalize)
                     } else {
                         if RouteNavigator.shared.keypoints?.isEmpty == true {
-                            InformationPopupComponent(popupType: .arrived)
+                            InformationPopupComponent(popupType: .arrived(destinationAnchorDetails: destinationAnchorDetails))
                         } else if !navigationDirection.isEmpty {
                             InformationPopupComponent(popupType: .direction(directionText: navigationDirection))
                         }
@@ -83,7 +80,11 @@ struct NavigatingView: View {
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
             }
-            
+//        }.onReceive(routeNavigator.keypoints) { newKeypoints in
+//            if newKeypoints.count == 0 {
+//                // do some stuff
+//
+//            }
         }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
         }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
@@ -134,4 +135,14 @@ struct NavigatingView: View {
             navigationManager.startNavigating()
         }
     }
+}
+
+struct ARViewContainer: UIViewRepresentable {
+    
+    func makeUIView(context: Context) -> ARSCNView {
+        return PositioningModel.shared.arView
+    }
+    
+    func updateUIView(_ uiView: ARSCNView, context: Context) {}
+    
 }

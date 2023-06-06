@@ -1,75 +1,17 @@
 //
-//  Components.swift
+//  ButtonComponents.swift
 //  STEP Navigation
 //
-//  Created by Evelyn on 6/2/23.
+//  Created by Evelyn on 6/6/23.
 //
 
 import SwiftUI
 
-/// This struct manages the appearance of the titles for each screen.
-struct ScreenTitleComponent: View {
-    let titleText: String
-    let subtitleText: String?
-    
-    /// Init Method
-    /// - Parameters:
-    ///   - titleText: takes a string to create the main header title
-    ///   - subtitleText: takes an optional string to create the subheader title
-    init(titleText: String, subtitleText: String? = nil) {
-        self.titleText = titleText
-        self.subtitleText = subtitleText
-    }
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Text(titleText)
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.horizontal)
-                Spacer()
-            }
-            .padding(.bottom, subtitleText != nil ? 0.5 : 20)
-            
-            if let subtitleText = subtitleText {
-                HStack {
-                    Text(subtitleText)
-                        .font(.title2)
-                        .padding(.leading)
-                    Spacer()
-                }
-                .padding(.bottom, 20)
-            }
-        }
-        .background(AppColor.accent)
-    }
-}
-
-struct CustomHeaderButtonComponent: ToolbarContent {
-    let label: String
-    let placement: ToolbarItemPlacement
-    let onTapGesture: () -> Void
-    
-    init(label: String, placement: ToolbarItemPlacement, onTapGesture: @escaping () -> Void) {
-        self.label = label
-        self.placement = placement
-        self.onTapGesture = onTapGesture
-    }
-    
-    @ViewBuilder
-    var body: some ToolbarContent {
-        ToolbarItem(placement: placement) {
-            Text(label)
-                .bold()
-                .font(.title2)
-                .onTapGesture {
-                    onTapGesture()
-                }
-        }
-    }
-}
-
+// Components in this file:
+//  - Small Button _ Navigation Link
+//  - Small Button _ Button
+//  - Large Button _ Navigation Link
+//  - Large Button _ Button
 
 /// This struct manages the appearance of small button components that are navigation links. Their visual appearance is identical to the small button components that are buttons.
 struct SmallButtonComponent_NavigationLink<Destination: View>: View {
@@ -236,140 +178,5 @@ struct LargeButtonComponent_Button: View {
         .background(backgroundColor)
         .cornerRadius(20)
         .padding(.horizontal)
-    }
-}
-
-/// This struct is responsible for the presentation of various types of informational popups based on the type of popup.
-struct InformationPopupComponent: View {
-    let popupType: PopupType
-    
-    /// Init Method
-    /// - Parameter popupType:this is a parameter that shows the type of popup
-    init(popupType: PopupType) {
-        self.popupType = popupType
-    }
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Text(popupType.messageText)
-                    .foregroundColor(AppColor.light)
-                    .bold()
-                    .font(.title2)
-                    .multilineTextAlignment(.center)
-            }
-            if case .arrived = popupType {
-                SmallButtonComponent_NavigationLink(destination: {
-                    MainView()
-                }, label: "Home")
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(AppColor.dark)
-    }
-    
-    /// This enumeration represents the different types of popups that can be presented.
-    ///
-    /// - `waitingToLocalize`:The popup type when the app is aligning the route.
-    /// - `arrived`: The popup type when the user arrives at the last cloud anchor.
-    /// - `direction`: The popup type when the application is providing a direction, which holds a string value                 representing the direction text.
-    enum PopupType {
-        case waitingToLocalize
-        case arrived
-        case direction(directionText: String)
-        
-        var messageText: String {
-            switch self {
-            case .arrived:
-                return "Arrived. You should be within one cane's length of your destination."
-            case . waitingToLocalize:
-                return "Trying to align to your route. Scan your phone around to recognize your surroundings."
-            case .direction(let directionText):
-                return directionText
-            }
-        }
-    }
-}
-
-
-/// This struct displays the details of the cloud anchor.
-struct AnchorDetailsComponent: View {
-    let title: String
-    let distanceAway: String
-    let locationNotes: String?
-    
-    /// Init Method
-    /// - Parameters:
-    ///   - title: Name of the destination.
-    ///   - distanceAway: Distance away from the destination.
-    ///   - locationNotes: Optional notes for the location.
-    init(title: String, distanceAway: String, locationNotes: String? = "No notes available for this location.") {
-        self.title = title
-        self.distanceAway = distanceAway
-        self.locationNotes = locationNotes
-    }
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Text(title)
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.horizontal)
-                Spacer()
-            }
-            
-            HStack {
-                    Text("\(distanceAway) meters away")
-                        .font(.title)
-                        .padding(.horizontal)
-                Spacer()
-            }
-            VStack {
-                HStack {
-                    Text("Location Notes")
-                        .font(.title2)
-                        .bold()
-                        .padding(.bottom, 1)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-                ScrollView {
-                    HStack {
-                        if let locationNotes = locationNotes {
-                            Text(locationNotes)
-                        }
-                        Spacer()
-                    }
-                }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 2)
-        }
-        
-    }
-}
-
-struct ActionBarButtonComponent: View {
-    let action: () -> Void
-    let iconSystemName: String
-    let color: Color?
-    let accessibilityLabel: String
-    
-    init(action: @escaping () -> Void, iconSystemName: String, color: Color? = AppColor.accent, accessibilityLabel: String) {
-        self.action = action
-        self.iconSystemName = iconSystemName
-        self.color = color
-        self.accessibilityLabel = accessibilityLabel
-    }
-    
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: iconSystemName)
-                .resizable()
-                .frame(width: 80, height: 80)
-                .foregroundColor(color)
-        }.accessibilityLabel(accessibilityLabel)
     }
 }

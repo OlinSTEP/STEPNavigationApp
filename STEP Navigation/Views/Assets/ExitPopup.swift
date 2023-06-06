@@ -26,7 +26,7 @@ struct ExitPopup: View {
             
             VStack {
                 SmallButtonComponent_NavigationLink(destination: {
-                                    MainView()
+                                    GPSLocalizationView()
                                 }, label: "Exit")
                 .padding(.bottom, 2)
                 SmallButtonComponent_Button(label: "Cancel", labelColor: AppColor.dark, backgroundColor: AppColor.grey, popupTrigger: $showingConfirmation, role: .cancel)

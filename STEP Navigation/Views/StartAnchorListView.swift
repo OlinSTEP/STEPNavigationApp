@@ -1,5 +1,5 @@
 //
-//  ChooseStartAnchorView.swift
+//  StartAnchorListView.swift
 //  STEP Navigation
 //
 //  Created by Paul Ruvolo on 4/28/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 import CoreLocation
 
-struct ChooseStartAnchorView: View {
+struct StartAnchorListView: View {
     @State var destinationAnchorDetails: LocationDataModel?
     @State var nearbyDistance: Double = 300.0
     @State var chosenStart: LocationDataModel?
@@ -18,22 +18,20 @@ struct ChooseStartAnchorView: View {
         
     var body: some View {
         ScreenTitleComponent(titleText:"Choose Start Anchor")
-        
         VStack {
-            ChooseAnchorComponentView(anchorSelectionType: .startOfIndoorRoute,
-                                      anchors: $anchors,
-                                      allAnchors: $anchors,
-                                      chosenAnchor: $chosenStart, outdoorsSelected: $outdoorsSelectedAsStart,
-                                      otherAnchor: $destinationAnchorDetails)
+            AnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
+                                      anchors: anchors)
             Spacer()
-            if chosenStart != nil || outdoorsSelectedAsStart {
-                SmallButtonComponent_NavigationLink(destination: {
-                    NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: destinationAnchorDetails!)
-                                }, label: "Navigate")
-            }
-        }.onChange(of: chosenStart) { newValue in
+//            if chosenStart != nil || outdoorsSelectedAsStart {
+//                SmallButtonComponent_NavigationLink(destination: {
+//                    NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: destinationAnchorDetails!)
+//                                }, label: "Navigate")
+//            }
+        }
+        .onChange(of: chosenStart) { newValue in
             print("HERE WE ARE")
-        }.onReceive(positionModel.$currentLatLon) { latLon in
+        }
+        .onReceive(positionModel.$currentLatLon) { latLon in
             guard let latLon = latLon else {
                 return
             }
@@ -42,7 +40,7 @@ struct ChooseStartAnchorView: View {
                     for: .indoorDestination,
                     location: latLon,
                     maxDistance: CLLocationDistance(nearbyDistance),
-                    withBuffer: LocalAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                    withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
                 )
             )
             .sorted(by: {
