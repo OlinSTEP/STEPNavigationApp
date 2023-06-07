@@ -8,6 +8,13 @@
 import Foundation
 import ARKit
 import ARCoreGeospatial
+import Firebase
+import FirebaseDatabase
+import FirebaseStorage
+
+var firebaseRef: DatabaseReference!
+var firebaseStorage: Storage!
+var firebaseStorageRef: StorageReference!
 
 /// Record breadcrumbs (sequence of poses) along with cloud anchors recorded along the path
 class PathRecorder {
@@ -46,7 +53,7 @@ class PathRecorder {
         print("RESETTING")
         recordingTimer?.invalidate()
         cloudAnchorTimer?.invalidate()
-
+        
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 1/hz, repeats: true) { timer in
             guard let currentPose = PositioningModel.shared.cameraTransform else {
                 return
@@ -87,23 +94,65 @@ class PathRecorder {
     }
     
     /// Upload the path data to Firebase
-    func toFirebase() {
-        guard let startAnchorID = startAnchorID, let stopAnchorID = stopAnchorID, let anchor1Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: startAnchorID), let anchor2Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: stopAnchorID) else {
-            return
+    func toFirebase(){
+        
+        firebaseRef = Database.database(url: "https://stepnavigation-default-rtdb.firebaseio.com").reference()
+        firebaseStorage = Storage.storage()
+        firebaseStorageRef = firebaseStorage.reference()
+        
+        let filePath = "testing/idk5"
+        let mapId = "12345"
+        let locationData : [String : Any] = [:]
+        let planeDataList : [String : Any] = [:]
+        
+        let newCrumbs = breadCrumbs.map({ $0.toColumnMajor() }).reduce(into: []) { partialResult, newPose in
+            partialResult += newPose
         }
+        
         var finalAnchors: [String: (CloudAnchorMetadata, simd_float4x4)] = [:]
+        
         for (cloudIdentifier, anchorInfo) in cloudAnchors {
-            guard let currentPose = PositioningModel.shared.currentLocation(ofCloudAnchor: cloudIdentifier) else {
-                continue
+            if anchorInfo.0.type == .path {     // Note: the path anchors are not currently resolved, so they don't move around.  We should add them anyway
+                finalAnchors[cloudIdentifier] = anchorInfo
+            } else {
+                guard let currentPose = PositioningModel.shared.currentLocation(ofCloudAnchor: cloudIdentifier) else {
+                    continue
+                }
+                finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose)
             }
-            finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose)
         }
-        FirebaseManager.shared.addConnection(
-            anchorID1: startAnchorID,
-            anchor1Pose: anchor1Pose,
-            anchorID2: stopAnchorID,
-            anchor2Pose: anchor2Pose,
-            breadCrumbs: PathRecorder.shared.breadCrumbs,
-            pathAnchors: finalAnchors)
+        
+        ////            finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose)
+        let newAnchors =  finalAnchors.reduce(into: [String: [Float]]()) { dict, anchorItem in
+            let cloudIdentifier = anchorItem.0
+            let anchorPose = anchorItem.1.1
+            dict[cloudIdentifier] = anchorPose.toColumnMajor()
+        }
+        
+        let mapJsonFile: [String: Any] = ["map_id": mapId, "pose_data": newCrumbs, "anchors_data": newAnchors, "location_data": locationData, "plane_data": planeDataList]
+        
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
+            firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"])){ (metadata, error) in
+                // Write to maps node in database
+                
+                // Write to unprocessed maps node in database
+                firebaseRef.child("unprocessed_maps").child(String(describing: Auth.auth().currentUser!.uid)).child(mapId).setValue(filePath)
+            }
+            guard let startAnchorID = startAnchorID, let stopAnchorID = stopAnchorID, let anchor1Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: startAnchorID), let anchor2Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: stopAnchorID) else {
+                return
+            }
+
+            FirebaseManager.shared.addConnection(
+                anchorID1: startAnchorID,
+                anchor1Pose: anchor1Pose,
+                anchorID2: stopAnchorID,
+                anchor2Pose: anchor2Pose,
+                breadCrumbs: PathRecorder.shared.breadCrumbs,
+                pathAnchors: finalAnchors)
+        }
+        
     }
 }
+
+
