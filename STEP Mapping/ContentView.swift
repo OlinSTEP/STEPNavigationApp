@@ -11,6 +11,7 @@ import ARCoreGeospatial
 import ARCoreCloudAnchors
 
 enum MainScreenType {
+    case mainScreen
     case createAnchor
     case connectAnchor
     case findFirstAnchorToFormConnection(anchorID1: String, anchorID2: String)
@@ -20,7 +21,7 @@ enum MainScreenType {
     case editAnchor
     case editingAnchor(anchorID: String)
     var isOnMainScreen: Bool {
-        if case .createAnchor = self {
+        if case .mainScreen = self {
             return true
         }
         return false
@@ -28,7 +29,7 @@ enum MainScreenType {
 }
 
 class MainUIStateContainer: ObservableObject {
-    @Published var currentScreen: MainScreenType = .createAnchor
+    @Published var currentScreen: MainScreenType = .mainScreen
     public static var shared = MainUIStateContainer()
     private init() {
         
@@ -52,14 +53,16 @@ struct ContentView : View {
                 if !uiState.currentScreen.isOnMainScreen {
                     VStack {
                         Button("Back to main screen") {
-                            uiState.currentScreen = .createAnchor
+                            uiState.currentScreen = .mainScreen
                         }
                         Spacer()
                     }
                 }
                 switch uiState.currentScreen {
+                case .mainScreen:
+                    MainScreen()
                 case .createAnchor:
-                    CreateAnchor()
+                    CreateAnchorView()
                 case .connectAnchor:
                     ConnectAnchorView()
                 case .editAnchor:
@@ -75,8 +78,6 @@ struct ContentView : View {
                 case .deleteCloudAnchor:
                     DeleteCloudAnchor()
                 }
-            }.onAppear() {
-                PositioningModel.shared.startPositioning()
             }
         }
     }
@@ -172,9 +173,10 @@ struct EditAnchorView: View {
     }
 }
 
-struct CreateAnchor: View {
+struct CreateAnchorView: View {
     @State private var anchorName: String = ""
     @State private var currentQuality: GARFeatureMapQuality?
+    
     var body: some View {
         VStack {
             if let currentQuality = currentQuality {
@@ -190,8 +192,26 @@ struct CreateAnchor: View {
                 }
             }
             TextField("Anchor Name", text: $anchorName)
+            Button("Save Anchor") {
+                PositioningModel.shared.createCloudAnchor(afterDelay: 30.0, withName: anchorName) { wasSuccessful in
+                    MainUIStateContainer.shared.currentScreen = .mainScreen
+                }
+            }
+        }
+        .onReceive(PositioningModel.shared.$currentQuality) { newValue in
+            currentQuality = newValue
+        }
+        .onAppear() {
+            PositioningModel.shared.startPositioning()
+        }
+    }
+}
+
+struct MainScreen: View {
+    var body: some View {
+        VStack {
             Button("Add a Cloud Anchor") {
-                PositioningModel.shared.createCloudAnchor(afterDelay: 30.0, withName: anchorName)
+                MainUIStateContainer.shared.currentScreen = .createAnchor
             }
             Button("Edit a Cloud Anchor") {
                 MainUIStateContainer.shared.currentScreen = .editAnchor
@@ -205,8 +225,8 @@ struct CreateAnchor: View {
         }
         .background(Color.orange)
         .padding()
-        .onReceive(PositioningModel.shared.$currentQuality) { newValue in
-            currentQuality = newValue
+        .onAppear() {
+            PositioningModel.shared.stopPositioning()
         }
     }
 }
@@ -423,6 +443,9 @@ struct ConnectAnchorView: View {
         .padding()
         .onReceive(PositioningModel.shared.$currentQuality) { newQuality in
             currentQuality = newQuality
+        }
+        .onAppear() {
+            PositioningModel.shared.startPositioning()
         }
     }
 }

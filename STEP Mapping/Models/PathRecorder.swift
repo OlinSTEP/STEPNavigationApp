@@ -65,7 +65,9 @@ class PathRecorder {
             // NOTE: the geospatial transform is not buffered in the same way as the pose
             let _ = PositioningModel.shared.createCloudAnchorFromBufferedPose(
                 withMetadata: CloudAnchorMetadata(name: "", type: .path, associatedOutdoorFeature: "", geospatialTransform: GeospatialData(arCoreGeospatial: geospatialTransform), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true)
-            )
+            ) { wasSuccessful in
+                // TODO: handle this somehow
+            }
         }
     }
     
@@ -91,10 +93,11 @@ class PathRecorder {
         }
         var finalAnchors: [String: (CloudAnchorMetadata, simd_float4x4)] = [:]
         for (cloudIdentifier, anchorInfo) in cloudAnchors {
-            guard let currentPose = PositioningModel.shared.currentLocation(ofCloudAnchor: cloudIdentifier) else {
-                continue
+            if anchorInfo.0.type == .path { // these anchors are currently not resolved, so these are attached to the pose at which they were originally created
+                finalAnchors[cloudIdentifier] = anchorInfo
+            } else if let currentPose = PositioningModel.shared.currentLocation(ofCloudAnchor: cloudIdentifier) {
+                finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose)
             }
-            finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose)
         }
         FirebaseManager.shared.addConnection(
             anchorID1: startAnchorID,
