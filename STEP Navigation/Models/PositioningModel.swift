@@ -365,7 +365,8 @@ class PositioningModel: NSObject, ObservableObject {
     /// - Parameters:
     ///   - delay: the delay in seconds before creating the cloud anchor
     ///   - name: the name to associate with the cloud anchor
-    func createCloudAnchor(afterDelay delay: Double, withName name: String) {
+    ///   - completionHandler: called with true if the cloud anchor is successful created and false otherwise
+    func createCloudAnchor(afterDelay delay: Double, withName name: String, completionHandler: @escaping (Bool)->()) {
         guard !name.isEmpty else {
             AnnouncementManager.shared.announce(announcement: "Please enter an anchor name")
             return
@@ -383,49 +384,56 @@ class PositioningModel: NSObject, ObservableObject {
                     name: name,
                     type: .indoorDestination,
                     associatedOutdoorFeature: "",
-                    geospatialTransform: GeospatialData(arCoreGeospatial: geoSpatialTransfrom), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true)
+                    geospatialTransform: GeospatialData(arCoreGeospatial: geoSpatialTransfrom), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true),
+                completionHandler: completionHandler
             )
         }
     }
 
     /// Create a new cloud anchor using a pose from several seconds ago
-    /// - Parameter metadata: the metadata for the cloud anchor
-    func createCloudAnchorFromBufferedPose(withMetadata metadata: CloudAnchorMetadata) {
+    /// - Parameters:
+    ///     - metadata: the metadata for the cloud anchor
+    ///     - completionHandler: called with an input of true if the cloud anchor is successfully created and false otherwise
+    func createCloudAnchorFromBufferedPose(withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (Bool)->()) {
         guard !poseBuffer.isEmpty else {
             return
         }
         let poseIndex = max(0, poseBuffer.count - Self.poseBufferLookbackForCloudAnchorAssessment)
         let poseToUseForQualityEstimation = poseBuffer[poseIndex].alignY()
-        createCloudAnchor(atPose: poseToUseForQualityEstimation, withMetadata: metadata)
+        createCloudAnchor(atPose: poseToUseForQualityEstimation, withMetadata: metadata, completionHandler: completionHandler)
     }
     
     /// Create a new cloud anchor
     /// - Parameters:
     ///   - pose: the pose of the cloud anchor in the current tracking session
     ///   - metadata: the metadata to be associated with the cloud anchor
-    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata) {
+    ///   - completionHandler: called with an input of true if the cloud anchor is successfully created and false otherwise
+    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (Bool)->()) {
         let newAnchor = ARAnchor(transform: pose)
         arView.session.add(anchor: newAnchor)
         do {
             AnnouncementManager.shared.announce(announcement: "Trying to host anchor")
             try garSession?.hostCloudAnchor(newAnchor, ttlDays: 1) { cloudIdentifier, anchorState in
-            guard anchorState == .success else {
-                AnnouncementManager.shared.announce(announcement: "Failed to host anchor")
-                return
-            }
-            guard let cloudIdentifier = cloudIdentifier else {
-                return
-            }
-            switch metadata.type {
+                guard anchorState == .success else {
+                    AnnouncementManager.shared.announce(announcement: "Failed to host anchor")
+                    return completionHandler(false)
+                }
+                guard let cloudIdentifier = cloudIdentifier else {
+                    return completionHandler(false)
+                }
+                switch metadata.type {
                 case .indoorDestination:
-                   FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
+                    FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
                 default:
                     PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: pose)
+                    
                 }
                 AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
+                return completionHandler(true)
             }
         } catch {
             print("host cloud anchor failed \(error.localizedDescription)")
+            return completionHandler(false)
         }
     }
     
