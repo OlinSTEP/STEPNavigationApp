@@ -79,7 +79,8 @@ struct CloudAnchorResolutionInfomation {
 class PositioningModel: NSObject, ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = PositioningModel()
-
+    /// this object is used to detect april tags in ARFrames
+    let aprilTagDetector = AprilTagDetector()
     // this would host and manage the ARSession
     let arView = ARSCNView(frame: .zero)
     /// the location manager (used for asking for localization permission and for coarse positioning)
@@ -100,6 +101,8 @@ class PositioningModel: NSObject, ObservableObject {
     @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
     /// the current latitude and longitude
     @Published var currentLatLon: CLLocationCoordinate2D?
+    
+    var isDetectingAprilTags = false
     /// A buffer of previous poses that provide us with suitable history for estimate cloud anchor quality
     private var poseBuffer: [simd_float4x4] = []
     /// the maximum length of the pose buffer
@@ -457,6 +460,14 @@ class PositioningModel: NSObject, ObservableObject {
             }
         }
     }
+    
+    func getAprilTags(frame: ARFrame) {
+        isDetectingAprilTags = true
+        DispatchQueue.global(qos: .userInitiated).async {
+            let markers = self.aprilTagDetector.detectMarkers(inImage: frame.capturedImage)
+            self.isDetectingAprilTags = false
+        }
+    }
 }
 
 extension PositioningModel: ARSessionDelegate {
@@ -470,6 +481,10 @@ extension PositioningModel: ARSessionDelegate {
     ///   - session: the session currently used for tracking
     ///   - frame: the new frame
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        if !isDetectingAprilTags {
+            getAprilTags(frame: frame)
+        }
+        
         PathLogger.shared.logPose(frame.camera.transform, timestamp: frame.timestamp)
         if frame.camera.trackingState == .normal && garSession == nil {
             startGARSession()
