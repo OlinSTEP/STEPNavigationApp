@@ -103,7 +103,7 @@ struct InformationPopupComponent: View {
                 if let anchorDetails = popupType.additionalAnchorDetails {
                     SmallButtonComponent_NavigationLink(destination: {
                         AnchorDetailView(anchorDetails: anchorDetails, buttonLabel: "Home") {
-                            GPSLocalizationView()
+                            GPSLocalizationPopup()
                         .navigationBarBackButtonHidden()
                         }
                     }, label: "Go to Destination Details")

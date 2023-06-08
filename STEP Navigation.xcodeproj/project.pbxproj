@@ -103,10 +103,20 @@
 		82E1482A2A166636008E8642 /* PathRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016862A00164900EAA526 /* PathRecorder.swift */; };
 		82F2E43229FC5FD200781E75 /* StartAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2E43129FC5FD200781E75 /* StartAnchorListView.swift */; };
 		A80CDCAC2A2FA43E007FA7CE /* ButtonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCAB2A2FA43E007FA7CE /* ButtonComponents.swift */; };
+		A80CDCAD2A30F578007FA7CE /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* Colors.swift */; };
+		A80CDCAE2A30F58D007FA7CE /* NavigatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736929DE13BF001599B1 /* NavigatingView.swift */; };
+		A80CDCAF2A30F59F007FA7CE /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B7CB4D2A2A592E004468B8 /* Components.swift */; };
+		A80CDCB02A30F5A2007FA7CE /* ButtonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCAB2A2FA43E007FA7CE /* ButtonComponents.swift */; };
+		A80CDCB12A30F5A4007FA7CE /* Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89CAA692A28EFC100E3A03D /* Popups.swift */; };
+		A80CDCB22A30F5AA007FA7CE /* AnchorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736729DE13B8001599B1 /* AnchorDetailView.swift */; };
+		A80CDCB32A30F5AC007FA7CE /* DestinationTypesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */; };
+		A80CDCB42A30F5AE007FA7CE /* DestinationAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736129DE1398001599B1 /* DestinationAnchorListView.swift */; };
+		A80CDCB62A30F5B4007FA7CE /* StartAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2E43129FC5FD200781E75 /* StartAnchorListView.swift */; };
+		A80CDCB82A311E58007FA7CE /* RadarMapView_Dev.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView_Dev.swift */; };
+		A80CDCBA2A311E92007FA7CE /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
 		A89CAA6A2A28EFC100E3A03D /* Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89CAA692A28EFC100E3A03D /* Popups.swift */; };
 		A8B7CB4E2A2A592E004468B8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B7CB4D2A2A592E004468B8 /* Components.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* Colors.swift */; };
-		A8D886C829F7471D003E05E7 /* GPSLocalizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D886C729F7471D003E05E7 /* GPSLocalizationView.swift */; };
 		A8FF1A1229E062DD002019E9 /* DestinationTypesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */; };
 /* End PBXBuildFile section */
 
@@ -175,10 +185,11 @@
 		82A016A32A02E51800EAA526 /* RingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBuffer.swift; sourceTree = "<group>"; };
 		82F2E43129FC5FD200781E75 /* StartAnchorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartAnchorListView.swift; sourceTree = "<group>"; };
 		A80CDCAB2A2FA43E007FA7CE /* ButtonComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonComponents.swift; sourceTree = "<group>"; };
+		A80CDCB72A311E58007FA7CE /* RadarMapView_Dev.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarMapView_Dev.swift; sourceTree = "<group>"; };
+		A80CDCB92A311E92007FA7CE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		A89CAA692A28EFC100E3A03D /* Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popups.swift; sourceTree = "<group>"; };
 		A8B7CB4D2A2A592E004468B8 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
-		A8D886C729F7471D003E05E7 /* GPSLocalizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPSLocalizationView.swift; sourceTree = "<group>"; };
 		A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationTypesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -299,8 +310,9 @@
 				A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */,
 				8241736129DE1398001599B1 /* DestinationAnchorListView.swift */,
 				8241736929DE13BF001599B1 /* NavigatingView.swift */,
-				A8D886C729F7471D003E05E7 /* GPSLocalizationView.swift */,
 				82F2E43129FC5FD200781E75 /* StartAnchorListView.swift */,
+				A80CDCB72A311E58007FA7CE /* RadarMapView_Dev.swift */,
+				A80CDCB92A311E92007FA7CE /* HomeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -601,10 +613,11 @@
 				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
 				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,
 				82F2E43229FC5FD200781E75 /* StartAnchorListView.swift in Sources */,
+				A80CDCBA2A311E92007FA7CE /* HomeView.swift in Sources */,
 				8241737429DE1440001599B1 /* AllPaths.swift in Sources */,
 				A8FF1A1229E062DD002019E9 /* DestinationTypesView.swift in Sources */,
+				A80CDCB82A311E58007FA7CE /* RadarMapView_Dev.swift in Sources */,
 				82E1482A2A166636008E8642 /* PathRecorder.swift in Sources */,
-				A8D886C829F7471D003E05E7 /* GPSLocalizationView.swift in Sources */,
 				8241736C29DE13F4001599B1 /* HapticFeedbackAdapter.swift in Sources */,
 				825F1F5729E9CF7D0043BD98 /* FirebaseManager.swift in Sources */,
 				825F1F5129E9CBA70043BD98 /* MapGraph.swift in Sources */,
@@ -633,27 +646,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A80CDCAE2A30F58D007FA7CE /* NavigatingView.swift in Sources */,
 				82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */,
 				82A0167C2A00158D00EAA526 /* PositioningModel.swift in Sources */,
 				82A016972A0057AB00EAA526 /* GeospatialData.swift in Sources */,
 				82A016832A00161200EAA526 /* MapGraph.swift in Sources */,
 				82A0168D2A00178B00EAA526 /* CloudAnchorAligner.swift in Sources */,
+				A80CDCB62A30F5B4007FA7CE /* StartAnchorListView.swift in Sources */,
 				82A016822A00160400EAA526 /* AnnouncementManager.swift in Sources */,
+				A80CDCAF2A30F59F007FA7CE /* Components.swift in Sources */,
+				A80CDCB12A30F5A4007FA7CE /* Popups.swift in Sources */,
+				A80CDCAD2A30F578007FA7CE /* Colors.swift in Sources */,
 				82811EE62A0C32B900D1BE96 /* AuthHandler.swift in Sources */,
 				82A016882A0016B400EAA526 /* simd_extensions.swift in Sources */,
 				82A016892A00173400EAA526 /* AllPaths.swift in Sources */,
 				82A016842A00161E00EAA526 /* MultiSegmentPathBuilder.swift in Sources */,
+				A80CDCB42A30F5AE007FA7CE /* DestinationAnchorListView.swift in Sources */,
 				82A016902A0017A700EAA526 /* SoundEffectManager.swift in Sources */,
 				825F1F3529E9B7910043BD98 /* ContentView.swift in Sources */,
 				82A0167E2A0015B800EAA526 /* TextFeedbackAdapter.swift in Sources */,
 				82A0168F2A00179E00EAA526 /* HapticFeedbackAdapter.swift in Sources */,
 				82A016A52A02E51800EAA526 /* RingBuffer.swift in Sources */,
 				82A0168E2A00179600EAA526 /* PathLogger.swift in Sources */,
+				A80CDCB32A30F5AC007FA7CE /* DestinationTypesView.swift in Sources */,
 				82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */,
 				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,
 				82A0168B2A00177000EAA526 /* DataModelManager.swift in Sources */,
 				82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */,
+				A80CDCB02A30F5A2007FA7CE /* ButtonComponents.swift in Sources */,
 				82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */,
+				A80CDCB22A30F5AA007FA7CE /* AnchorDetailView.swift in Sources */,
 				82A0167D2A0015AA00EAA526 /* NavigationManager.swift in Sources */,
 				82A016A22A02D3CE00EAA526 /* SettingsManager.swift in Sources */,
 				82A016872A00164900EAA526 /* PathRecorder.swift in Sources */,
