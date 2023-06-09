@@ -16,12 +16,16 @@ var firebaseRef: DatabaseReference!
 var firebaseStorage: Storage!
 var firebaseStorageRef: StorageReference!
 
+struct PoseData {
+    var pose: simd_float4x4
+    var timestamp: Double
+}
 /// Record breadcrumbs (sequence of poses) along with cloud anchors recorded along the path
 class PathRecorder {
     /// The shared singleton instance of this class
     public static var shared = PathRecorder()
     /// The sequence of poses that make up this path
-    private (set) var breadCrumbs: [simd_float4x4] = []
+    private (set) var breadCrumbs: [PoseData] = []
     /// The cloud anchors created along this path (the key is the cloud identifier and the value consists of the
     /// cloud anchor metadata and itse pose in the recording session)
     private (set) var cloudAnchors: [String: (CloudAnchorMetadata, simd_float4x4)] = [:]
@@ -41,8 +45,9 @@ class PathRecorder {
     ///Start recording path breadcrumbs and hosting path cloud anchors
     func startRecording() {
         startRecordingPath(withFrequency: 5.0)
-        startRecordingCloudAnchors(withFrequency: 1/20.0)
+        //        startRecordingCloudAnchors(withFrequency: 1/20.0)
     }
+    
     
     /// Start recording the path with the specified frequency of pose capture.
     /// - Parameter hz: this is the frquency with which to capture poses to store as breadcrumbs.
@@ -58,7 +63,7 @@ class PathRecorder {
             guard let currentPose = PositioningModel.shared.cameraTransform else {
                 return
             }
-            self.breadCrumbs.append(currentPose)
+            self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0))
         }
     }
     
@@ -96,19 +101,17 @@ class PathRecorder {
     /// Upload the path data to Firebase
     func toFirebase(){
         
+        guard let startAnchorID = startAnchorID, let stopAnchorID = stopAnchorID, let anchor1Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: startAnchorID), let anchor2Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: stopAnchorID) else {
+            return
+        }
+        
         firebaseRef = Database.database(url: "https://stepnavigation-default-rtdb.firebaseio.com").reference()
         firebaseStorage = Storage.storage()
         firebaseStorageRef = firebaseStorage.reference()
         
-        let filePath = "testing/idk5"
-        let mapId = "12345"
-        let locationData : [String : Any] = [:]
-        let planeDataList : [String : Any] = [:]
-        
-        let newCrumbs = breadCrumbs.map({ $0.toColumnMajor() }).reduce(into: []) { partialResult, newPose in
-            partialResult += newPose
-        }
-        
+        let filePath = "testing/corrected.json"
+        let mapId = "corrected"
+
         var finalAnchors: [String: (CloudAnchorMetadata, simd_float4x4)] = [:]
         
         for (cloudIdentifier, anchorInfo) in cloudAnchors {
@@ -129,20 +132,40 @@ class PathRecorder {
             dict[cloudIdentifier] = anchorPose.toColumnMajor()
         }
         
-        let mapJsonFile: [String: Any] = ["map_id": mapId, "pose_data": newCrumbs, "anchors_data": newAnchors, "location_data": locationData, "plane_data": planeDataList]
+        let formattedAnchors = [
+            ["timestamp": 0,
+             "cloudIdentifier": startAnchorID,
+             "pose": anchor1Pose.toColumnMajor(),
+             "poseId": 1,
+            ],
+            [
+                "timestamp": 0,
+                "cloudIdentifier": stopAnchorID,
+                "pose": anchor2Pose.toColumnMajor(),
+                "poseId": breadCrumbs.count - 1
+            ]
+            
+            as [String : Any] as [String : Any] as [String : Any]]
+        
+        
+        let formattedPoses = breadCrumbs.enumerated().map{
+            [
+                "pose": $1.pose.toColumnMajor(),
+                "timestamp": $1.timestamp,
+                "id": $0,
+                "planes": [:] as [String:Any]
+            ] as [String: Any]
+        }
+        
+        let mapJsonFile: [String: Any] = ["tag_data": [], "map_id": mapId, "pose_data": formattedPoses, "cloud_data": formattedAnchors, "location_data": [], "plane_data": []]
         
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
             firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"])){ (metadata, error) in
-                // Write to maps node in database
-                
                 // Write to unprocessed maps node in database
                 firebaseRef.child("unprocessed_maps").child(String(describing: Auth.auth().currentUser!.uid)).child(mapId).setValue(filePath)
             }
-            guard let startAnchorID = startAnchorID, let stopAnchorID = stopAnchorID, let anchor1Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: startAnchorID), let anchor2Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: stopAnchorID) else {
-                return
-            }
-
+            
             FirebaseManager.shared.addConnection(
                 anchorID1: startAnchorID,
                 anchor1Pose: anchor1Pose,

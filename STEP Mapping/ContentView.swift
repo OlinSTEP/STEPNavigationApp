@@ -274,7 +274,7 @@ struct FindSecondAnchor: View {
             }
         }
         .popover(isPresented: $showingPopover) {
-            let keypoints = PathRecorder.shared.breadCrumbs.map({ KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: $0)})
+            let keypoints = PathRecorder.shared.breadCrumbs.map({ KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: $0.pose)})
             let currentPose = PositioningModel.shared.cameraTransform
             PathPlot(points: keypoints, currentTransform: currentPose)
         }

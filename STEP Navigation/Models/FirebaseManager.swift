@@ -162,7 +162,7 @@ class FirebaseManager: ObservableObject {
                        anchor1Pose: simd_float4x4,
                        anchorID2: String,
                        anchor2Pose: simd_float4x4,
-                       breadCrumbs: [simd_float4x4],
+                       breadCrumbs: [PoseData],
                        pathAnchors: [String: (CloudAnchorMetadata, simd_float4x4)]) {
         // we'll create an identifier to refer to the path and then link it to the cloud anchors
         // TODO: add transaction
@@ -174,7 +174,7 @@ class FirebaseManager: ObservableObject {
              "fromPose": anchor1Pose.toColumnMajor(),
              "toPose": anchor2Pose.toColumnMajor(),
              // Need to flatten this due to a limitation where nested arrays cannot be stored
-             "path": breadCrumbs.map({ $0.toColumnMajor() }).reduce(into: []) { partialResult, newPose in
+             "path": breadCrumbs.map({ $0.pose.toColumnMajor() }).reduce(into: []) { partialResult, newPose in
                  partialResult += newPose
              },
              "pathAnchors": pathAnchors.reduce(into: [String: [Float]]()) { dict, anchorItem in
@@ -189,7 +189,7 @@ class FirebaseManager: ObservableObject {
             print("error: \(error?.localizedDescription ?? "none")")
         }
         // add data to the the from node
-        let edgeWeight = ComplexEdge(startAnchorTransform: anchor1Pose, endAnchorTransform: anchor2Pose, path: breadCrumbs, pathAnchors: [:]).cost
+        let edgeWeight = ComplexEdge(startAnchorTransform: anchor1Pose, endAnchorTransform: anchor2Pose, path: breadCrumbs.map { $0.pose }, pathAnchors: [:]).cost
         cloudAnchorCollection.document(anchorID1).updateData([
             "connections": FieldValue.arrayUnion(
                 [["toID": anchorID2,
