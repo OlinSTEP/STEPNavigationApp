@@ -9,75 +9,103 @@ import SwiftUI
 struct RadarMapView_Dev: View {
     @State var focusedIndex: Int? = nil
     let circleDiameter: Double = 700
-
+    
+    static func getQualityColor(quality: Point.Quality) -> (dark: Color, light: Color) {
+        switch quality {
+        case .low:
+            return (dark: AppColor.darkred, light: AppColor.lightred)
+        case .medium:
+            return (dark: AppColor.darkyellow, light: AppColor.lightyellow)
+        case .high:
+            return (dark: AppColor.darkgreen, light: AppColor.lightgreen)
+        }
+    }
+    
     var body: some View {
-        let points = [
-            Point(distance: 0.5, angle: 30, name: "MAC Door (Near Parking Lot)"),
-            Point(distance: 0.89, angle: 70, name: "MAC Door (Near CC)"),
-            Point(distance: 0.91, angle: 80, name: "CC Door (Near MAC)"),
-            Point(distance: 0.85, angle: 120, name: "CC Door (Near Stairs)"),
-            Point(distance: 0.88, angle: 124, name: "Main Stair"),
-            Point(distance: 0.75, angle: 150, name: "Library")
-        ]
-        
-        ZStack {
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    RadarChartView(points: points, circleDiameter: circleDiameter, focusedIndex: $focusedIndex)
-                }
-            }
-            .ignoresSafeArea()
-            .background(AppColor.dark)
-            .onAppear {
-                UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation") // Forcing the rotation to portrait
-                AppDelegate.orientationLock = .landscapeRight // And making sure it stays that way
-            }
-            .onDisappear {
-                AppDelegate.orientationLock = .portrait // Unlocking the rotation when leaving the view
-            }
+            let points = [
+                Point(distance: 0.5, angle: 30, name: "MAC Door (Near Parking Lot)", quality: .low),
+                Point(distance: 0.89, angle: 70, name: "MAC Door (Near CC)", quality: .medium),
+                Point(distance: 0.91, angle: 80, name: "CC Door (Near MAC)", quality: .high),
+                Point(distance: 0.85, angle: 120, name: "CC Door (Near Stairs)", quality: .low),
+                Point(distance: 0.88, angle: 124, name: "Main Stair", quality: .low),
+                Point(distance: 0.75, angle: 150, name: "Library", quality: .medium)
+            ]
             
-            HStack {
+        let toolbarColor = focusedIndex != nil && focusedIndex! != 0 ? RadarMapView_Dev.getQualityColor(quality: points[focusedIndex!].quality).light : AppColor.accent
+
+            ZStack {
                 VStack {
-                    if let focusedIndex = focusedIndex {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        RadarChartView(points: points, circleDiameter: circleDiameter, focusedIndex: $focusedIndex)
+                    }
+                }
+                .ignoresSafeArea()
+                .background(AppColor.dark)
+                .onAppear {
+                    UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation") // Forcing the rotation to portrait
+                    AppDelegate.orientationLock = .landscapeRight // And making sure it stays that way
+                }
+                .onDisappear {
+                    AppDelegate.orientationLock = .portrait // Unlocking the rotation when leaving the view
+                }
+                
+                HStack {
+                    VStack(alignment: .leading) {
+                        if let focusedIndex = focusedIndex {
+                            HStack {
+                                Text(points[focusedIndex].name)
+                                    .font(.largeTitle)
+                                    .multilineTextAlignment(.leading)
+                                    .bold()
+                                    .accessibilityHidden(true)
+                                    .lineLimit(3)
+                                Spacer()
+                            }
+                            .frame(width: 236)
+
+                            HStack {
+                                Text("\(String(format: "%.0f", points[focusedIndex].adjustedDistance)) units away")
+                                    .font(.title)
+                                    .accessibilityHidden(true)
+                                    .lineLimit(1)
+                                Spacer()
+                            }
+                            .frame(width: 200)
+
+                            HStack {
+                                Text(points[focusedIndex].angleToClock)
+                                    .font(.title)
+                                    .accessibilityHidden(true)
+                                    .lineLimit(1)
+                                Spacer()
+                            }
+                            .frame(width: 180)
+
+                        }
+                        Spacer()
+                        
                         HStack {
-                            Text(points[focusedIndex].name)
-                                .font(.largeTitle)
-                                .multilineTextAlignment(.leading)
+                            Text("Traffic Circle Near Santos Bench")
+                                .font(.title3)
                                 .bold()
-                            Spacer()
-                        }
-                        HStack {
-                            Text("\(String(format: "%.0f", points[focusedIndex].adjustedDistance)) units away")
-                                .font(.title)
-                            Spacer()
-                        }
-                        HStack {
-                            Text(points[focusedIndex].angleToClock)
-                                .font(.title)
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(AppColor.accent)
+                                .lineLimit(3)
+                                .frame(width: 120)
+                                .accessibilityHidden(true)
                             Spacer()
                         }
                     }
+                    .frame(maxWidth: 200)
+                    .foregroundColor(AppColor.light)
                     Spacer()
-                    
-//                    HStack {
-//                        Text("Traffic Circle Near Santos Bench")
-//                            .font(.title3)
-//                            .bold()
-//                            .multilineTextAlignment(.leading)
-//                            .foregroundColor(AppColor.accent)
-//                        Spacer()
-//                    }
-//                    .frame(maxWidth: 120)
                 }
-                .frame(maxWidth: 200)
-                .foregroundColor(AppColor.light)
-                Spacer()
+                .padding()
             }
-            .padding()
-            
-        }
+            .toolbarBackground(toolbarColor, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
     }
 }
 
@@ -85,6 +113,7 @@ struct Point {
     var distance: Double
     var angle: Double
     var name: String
+    var quality: Quality
     
     var adjustedAngle: Double {
         return angle + 180
@@ -114,6 +143,13 @@ struct Point {
             return "Invalid Angle"
         }
     }
+    
+    enum Quality: String {
+        case
+            low = "Low",
+            medium = "Medium",
+            high = "High"
+    }
 }
 
 struct RadarChartView: View {
@@ -128,7 +164,6 @@ struct RadarChartView: View {
         let radius = circleDiameter / 2
         
         ZStack {
-            
             ZStack {
                 SemiCircle()
                     .foregroundColor(AppColor.light)
@@ -176,7 +211,7 @@ struct RadarChartView: View {
                     let distance = points[index].adjustedDistance
                     let radius = (distance / 180.0) * radius
                     
-                    let focusColor = isFocused ? AppColor.dark : AppColor.dark // Set the line color based on focus
+                    let focusColor = isFocused ? RadarMapView_Dev.getQualityColor(quality: points[index].quality).dark : AppColor.dark
                     
                     let lineEndX = centerX + (radius * cos(angle))
                     let lineEndY = centerY + (radius * sin(angle))
@@ -206,13 +241,11 @@ struct RadarChartView: View {
             }
             
             Circle()
-                .frame(width: 30, height: 30)
-                .offset(x: 0, y: (circleDiameter / 4))
-                .foregroundColor(AppColor.dark)
+                .frame(width: 50, height: 50)
+                .position(x: radius, y: radius)
+                .foregroundColor(AppColor.accent)
                 .accessibilityElement(children: .ignore)
-                .accessibility(label: Text("Traffice Circle near Santos Bench"))
-                .accessibility(value: Text("Orientation Anchor"))
-            
+                .accessibility(label: Text("Orientation Anchor: Traffice Circle near Santos Bench"))
         }
         .frame(width: circleDiameter, height: circleDiameter / 2)
     }
