@@ -344,7 +344,7 @@ class Navigation {
             return nil
         }
         // Set direction text for text label and VoiceOver
-        let xzNorm = sqrtf(powf(currentLocation.columns.3.x - nextKeypoint.location.translation.x, 2) + powf(currentLocation.columns.3.z - nextKeypoint.location.translation.z, 2))
+        let xzNorm = sqrtf(powf(NavigationManager.shared.prevKeypointPosition.translation.x - nextKeypoint.location.translation.x, 2) + powf(NavigationManager.shared.prevKeypointPosition.translation.z - nextKeypoint.location.translation.z, 2))
         let slope = (nextKeypoint.location.translation.y - NavigationManager.shared.prevKeypointPosition.translation.y) / xzNorm
         let yDistance = abs(nextKeypoint.location.translation.y - NavigationManager.shared.prevKeypointPosition.translation.y)
         var dir = ""
