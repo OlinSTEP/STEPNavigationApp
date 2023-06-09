@@ -6,11 +6,12 @@
 //
 
 import SwiftUI
-struct RadarMapView_Dev: View {
+struct RadarMapView: View {
     @State var focusedIndex: Int? = nil
     let circleDiameter: Double = 700
     
-    static func getQualityColor(quality: Point.Quality) -> (dark: Color, light: Color) {
+    
+    static func getQualityColor(quality: MapPointComponent.Quality) -> (dark: Color, light: Color) {
         switch quality {
         case .low:
             return (dark: AppColor.darkred, light: AppColor.lightred)
@@ -23,15 +24,15 @@ struct RadarMapView_Dev: View {
     
     var body: some View {
             let points = [
-                Point(distance: 0.5, angle: 30, name: "MAC Door (Near Parking Lot)", quality: .low),
-                Point(distance: 0.89, angle: 70, name: "MAC Door (Near CC)", quality: .medium),
-                Point(distance: 0.91, angle: 80, name: "CC Door (Near MAC)", quality: .high),
-                Point(distance: 0.85, angle: 120, name: "CC Door (Near Stairs)", quality: .low),
-                Point(distance: 0.88, angle: 124, name: "Main Stair", quality: .low),
-                Point(distance: 0.75, angle: 150, name: "Library", quality: .medium)
+                MapPointComponent(distance: 0.5, angle: 30, name: "MAC Door (Near Parking Lot)", quality: .low),
+                MapPointComponent(distance: 0.89, angle: 70, name: "MAC Door (Near CC)", quality: .medium),
+                MapPointComponent(distance: 0.91, angle: 80, name: "CC Door (Near MAC)", quality: .high),
+                MapPointComponent(distance: 0.85, angle: 120, name: "CC Door (Near Stairs)", quality: .low),
+                MapPointComponent(distance: 0.88, angle: 124, name: "Main Stair", quality: .low),
+                MapPointComponent(distance: 0.75, angle: 150, name: "Library", quality: .medium)
             ]
             
-        let toolbarColor = focusedIndex != nil && focusedIndex! != 0 ? RadarMapView_Dev.getQualityColor(quality: points[focusedIndex!].quality).light : AppColor.accent
+        let toolbarColor = focusedIndex != nil && focusedIndex! != 0 ? RadarMapView.getQualityColor(quality: points[focusedIndex!].quality).light : AppColor.accent
 
             ZStack {
                 VStack {
@@ -109,51 +110,8 @@ struct RadarMapView_Dev: View {
     }
 }
 
-struct Point {
-    var distance: Double
-    var angle: Double
-    var name: String
-    var quality: Quality
-    
-    var adjustedAngle: Double {
-        return angle + 180
-    }
-    
-    var adjustedDistance: Double {
-        return distance * 180
-    }
-    
-    var angleToClock: String {
-        switch angle {
-        case 0..<15:
-            return "9 o'clock"
-        case 15..<45:
-            return "10 o'clock"
-        case 45..<75:
-            return "11 o'clock"
-        case 75..<105:
-            return "12 o'clock"
-        case 105..<135:
-            return "1 o'clock"
-        case 135..<165:
-            return "2 o'clock"
-        case 165..<180:
-            return "3 o'clock"
-        default:
-            return "Invalid Angle"
-        }
-    }
-    
-    enum Quality: String {
-        case
-            low = "Low",
-            medium = "Medium",
-            high = "High"
-    }
-}
-
 struct RadarChartView: View {
-    var points: [Point]
+    var points: [MapPointComponent]
     @State var circleDiameter: Double
     
     @Binding var focusedIndex: Int?
@@ -211,7 +169,7 @@ struct RadarChartView: View {
                     let distance = points[index].adjustedDistance
                     let radius = (distance / 180.0) * radius
                     
-                    let focusColor = isFocused ? RadarMapView_Dev.getQualityColor(quality: points[index].quality).dark : AppColor.dark
+                    let focusColor = isFocused ? RadarMapView.getQualityColor(quality: points[index].quality).dark : AppColor.dark
                     
                     let lineEndX = centerX + (radius * cos(angle))
                     let lineEndY = centerY + (radius * sin(angle))
@@ -236,6 +194,19 @@ struct RadarChartView: View {
                             path.addLine(to: CGPoint(x: lineEndX, y: lineEndY))
                         }
                         .stroke(focusColor, lineWidth: 4)
+                        
+                        Star(corners: 5, smoothness: 0.5)
+                            .fill(focusColor)
+                            .frame(width: dotSize + 20, height: dotSize + 20)
+                            .position(x: dotX, y: dotY)
+                            .foregroundColor(focusColor)
+                            .accessibilityHidden(true)
+                        
+//                        Rectangle()
+//                            .frame(width: dotSize, height: dotSize)
+//                            .position(x: dotX, y: dotY)
+//                            .foregroundColor(focusColor)
+//                            .accessibilityHidden(true)
                     }
                 }
             }
@@ -248,17 +219,5 @@ struct RadarChartView: View {
                 .accessibility(label: Text("Orientation Anchor: Traffice Circle near Santos Bench"))
         }
         .frame(width: circleDiameter, height: circleDiameter / 2)
-    }
-}
-
-struct SemiCircle: Shape {
-    func path(in rect: CGRect) -> Path {
-        Path {
-            $0.move(to: CGPoint(x: 0, y: rect.maxY))
-            $0.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-            $0.addArc(center: CGPoint(x: rect.maxX, y: rect.maxY), radius: rect.maxY, startAngle: Angle(degrees: 180), endAngle: Angle(degrees: 270), clockwise: false)
-            $0.addArc(center: CGPoint(x: rect.maxX, y: rect.maxY), radius: rect.maxY, startAngle: Angle(degrees: 270), endAngle: Angle(degrees: 360), clockwise: false)
-            $0.move(to: CGPoint(x: 0, y: rect.maxY))
-        }
     }
 }

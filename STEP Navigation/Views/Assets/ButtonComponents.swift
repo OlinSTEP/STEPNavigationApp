@@ -39,13 +39,14 @@ struct SmallButtonComponent_NavigationLink<Destination: View>: View {
                 Text(label)
                     .font(.title2)
                     .bold()
-                    .frame(maxWidth: 300)
+                    .frame(maxWidth: .infinity)
                     .foregroundColor(labelColor)
             })
             .tint(backgroundColor)
             .buttonStyle(.borderedProminent)
             .buttonBorderShape(.capsule)
             .controlSize(.large)
+            .padding(.horizontal)
     }
 }
 
@@ -81,13 +82,14 @@ struct SmallButtonComponent_Button: View {
             Text(label)
                 .font(.title2)
                 .bold()
-                .frame(maxWidth: 300)
+                .frame(maxWidth: .infinity)
                 .foregroundColor(labelColor)
         }
         .tint(backgroundColor)
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.capsule)
         .controlSize(.large)
+        .padding(.horizontal)
     }
 }
 

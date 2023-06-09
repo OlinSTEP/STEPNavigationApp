@@ -1,17 +1,15 @@
 //
-//  AnchorDetailView.swift
+//  AnchorDetailView_MultipleButtons.swift
 //  STEP Navigation
 //
-//  Created by Paul Ruvolo on 4/5/23.
+//  Created by Evelyn on 6/9/23.
 //
 
 import SwiftUI
 import CoreLocation
 
-struct AnchorDetailView<Destination: View>: View {
+struct AnchorDetailView_Manage: View {
     let anchorDetails: LocationDataModel
-    let buttonLabel: String
-    let buttonDestination: () -> Destination
     
     var body: some View {
         VStack {
@@ -22,7 +20,15 @@ struct AnchorDetailView<Destination: View>: View {
                     .padding(.top)
             }
             Spacer()
-            SmallButtonComponent_NavigationLink(destination: buttonDestination, label: buttonLabel)
+            VStack(spacing: 10) {
+                SmallButtonComponent_NavigationLink(destination: {
+                    AnchorDetailEditView(buttonText: "Testing")
+                }, label: "Edit")
+                SmallButtonComponent_NavigationLink(destination: {
+                    ConnectingView()
+                }, label: "Connect")
+//                SmallButtonComponent_Button(label: "Delete", popupTrigger: Binding<Bool>)
+            }
         }
     }
 }

@@ -1,17 +1,15 @@
 //
-//  AnchorDetailView.swift
+//  AnchorDetailView_ArrivedView.swift
 //  STEP Navigation
 //
-//  Created by Paul Ruvolo on 4/5/23.
+//  Created by Evelyn on 6/9/23.
 //
 
 import SwiftUI
 import CoreLocation
 
-struct AnchorDetailView<Destination: View>: View {
-    let anchorDetails: LocationDataModel
-    let buttonLabel: String
-    let buttonDestination: () -> Destination
+struct AnchorDetailView_ArrivedView: View {
+    let anchorDetails = LocationDataModel(anchorType: .frontdesk, coordinates: CLLocationCoordinate2D(latitude: 42.0, longitude: -71.0), name: "Sample Destination", id: UUID().uuidString)
     
     var body: some View {
         VStack {
@@ -22,7 +20,7 @@ struct AnchorDetailView<Destination: View>: View {
                     .padding(.top)
             }
             Spacer()
-            SmallButtonComponent_NavigationLink(destination: buttonDestination, label: buttonLabel)
+            SmallButtonComponent_NavigationLink(destination: { HomeView() }, label: "Home")
         }
     }
 }

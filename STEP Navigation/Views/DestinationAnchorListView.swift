@@ -22,7 +22,6 @@ struct DestinationAnchorListView: View {
     @State var chosenEnd: LocationDataModel?
     @State var outdoorsSelectedAsStart = false
     @State var anchors: [LocationDataModel] = []
-    @State var allAnchors: [LocationDataModel] = []
     
     var body: some View {
         ScreenTitleComponent(titleText: "\(anchorType.rawValue)s")
@@ -47,7 +46,7 @@ struct DestinationAnchorListView: View {
             })
         }
         .background(AppColor.accent)
-        AnchorListComponent(anchorSelectionType: anchorType.isIndoors ? .indoorEndingPoint : .outdoorEndingPoint,
+        NavigateAnchorListComponent(anchorSelectionType: anchorType.isIndoors ? .indoorEndingPoint : .outdoorEndingPoint,
                                   anchors: anchors)
     }
     /// Compute the notion of "close enough" to display to the user.  This is a buffer distance added on top of the distance the user has already selected from the UI

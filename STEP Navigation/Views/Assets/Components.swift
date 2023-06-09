@@ -230,7 +230,7 @@ struct ActionBarButtonComponent: View {
 }
 
 /// This type is used to specify to the ChooseAnchorComponentView whether we are choosing the anchor in the context of indoor or outdoor navigation.  Further, if indoors, we differentiate between the start and end of a route
-struct AnchorListComponent: View {
+struct NavigateAnchorListComponent: View {
     var anchors: [LocationDataModel]
     let anchorSelectionType: AnchorSelectionType
     
@@ -305,6 +305,20 @@ enum AnchorSelectionType {
     case indoorStartingPoint(selectedDestination: LocationDataModel)
     case indoorEndingPoint
     case outdoorEndingPoint
+}
+
+struct MappingAnchorListComponent: View {
+    let anchors: [LocationDataModel]
+    var body: some View {
+        VStack(spacing: 20) {
+            ForEach(0..<anchors.count, id: \.self) { idx in
+                LargeButtonComponent_NavigationLink(destination: {
+                    AnchorDetailView_Manage(anchorDetails: anchors[idx])
+                }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+            }
+        }
+        .padding(.vertical, 20)
+    }
 }
 
 struct NearbyDistanceThresholdComponent: View {

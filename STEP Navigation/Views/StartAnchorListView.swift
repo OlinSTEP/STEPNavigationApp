@@ -19,7 +19,7 @@ struct StartAnchorListView: View {
     var body: some View {
         ScreenTitleComponent(titleText:"Choose Start Anchor")
         VStack {
-            AnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
+            NavigateAnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
                                       anchors: anchors)
             Spacer()
 //            if chosenStart != nil || outdoorsSelectedAsStart {

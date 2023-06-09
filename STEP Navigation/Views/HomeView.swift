@@ -26,7 +26,7 @@ struct HomeView: View {
                     .navigationBarBackButtonHidden()
                     .padding(.top, 60)
                     .background(AppColor.accent)
-                VStack {
+                ScrollView {
                     if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                         if positionModel.currentLatLon == nil {
                             GPSLocalizationPopup()
@@ -36,14 +36,23 @@ struct HomeView: View {
                                     DestinationTypesView()
                                 }, label: "Navigate a Route")
                                 LargeButtonComponent_NavigationLink(destination: {
-                                    RadarMapView_Dev()
+                                    RadarMapView()
                                 }, label: "Explore your Surroundings")
+                                LargeButtonComponent_NavigationLink(destination: {
+                                    ManageAnchorsListView()
+                                }, label: "Manage Anchors")
+                                LargeButtonComponent_NavigationLink(destination: {
+                                    SettingsView()
+                                }, label: "Settings")
+                                LargeButtonComponent_NavigationLink(destination: {
+                                    AnchorDetailView_ArrivedView()
+                                }, label: "Skip to Arrived View")
                             }
                             .padding(.top, 20)
                         }
                     }
-                    Spacer()
                 }
+                Spacer()
             }
             .onAppear() {
                 positionModel.startCoarsePositioning()
