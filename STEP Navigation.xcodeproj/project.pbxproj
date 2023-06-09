@@ -14,7 +14,9 @@
 		130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */; };
 		130E7C4929E36E36004B1E81 /* mbtaBusStops.json in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4829E36E36004B1E81 /* mbtaBusStops.json */; };
 		130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */; };
-		8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
+		821C89752A336837006FD745 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
+		821C89762A336842006FD745 /* RadarMapView_Dev.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView_Dev.swift */; };
+		821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
 		8241735529DE0C70001599B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735429DE0C70001599B1 /* Assets.xcassets */; };
 		8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735729DE0C70001599B1 /* Preview Assets.xcassets */; };
 		8241736229DE1398001599B1 /* DestinationAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736129DE1398001599B1 /* DestinationAnchorListView.swift */; };
@@ -611,7 +613,6 @@
 				825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */,
 				82A016A42A02E51800EAA526 /* RingBuffer.swift in Sources */,
 				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
-				8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */,
 				82F2E43229FC5FD200781E75 /* StartAnchorListView.swift in Sources */,
 				A80CDCBA2A311E92007FA7CE /* HomeView.swift in Sources */,
 				8241737429DE1440001599B1 /* AllPaths.swift in Sources */,
@@ -627,6 +628,7 @@
 				A8CB6EBD29DFB22F00EABD80 /* Colors.swift in Sources */,
 				130E7C4329E236BD004B1E81 /* DataModelManager.swift in Sources */,
 				825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */,
+				821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */,
 				825F1F4029E9C65F0043BD98 /* simd_extensions.swift in Sources */,
 				130E7C4129E23494004B1E81 /* LocationDataModel.swift in Sources */,
 				826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */,
@@ -651,6 +653,7 @@
 				82A0167C2A00158D00EAA526 /* PositioningModel.swift in Sources */,
 				82A016972A0057AB00EAA526 /* GeospatialData.swift in Sources */,
 				82A016832A00161200EAA526 /* MapGraph.swift in Sources */,
+				821C89752A336837006FD745 /* HomeView.swift in Sources */,
 				82A0168D2A00178B00EAA526 /* CloudAnchorAligner.swift in Sources */,
 				A80CDCB62A30F5B4007FA7CE /* StartAnchorListView.swift in Sources */,
 				82A016822A00160400EAA526 /* AnnouncementManager.swift in Sources */,
@@ -661,6 +664,7 @@
 				82A016882A0016B400EAA526 /* simd_extensions.swift in Sources */,
 				82A016892A00173400EAA526 /* AllPaths.swift in Sources */,
 				82A016842A00161E00EAA526 /* MultiSegmentPathBuilder.swift in Sources */,
+				821C89762A336842006FD745 /* RadarMapView_Dev.swift in Sources */,
 				A80CDCB42A30F5AE007FA7CE /* DestinationAnchorListView.swift in Sources */,
 				82A016902A0017A700EAA526 /* SoundEffectManager.swift in Sources */,
 				825F1F3529E9B7910043BD98 /* ContentView.swift in Sources */,
