@@ -7,13 +7,11 @@
 
 import SwiftUI
 import CoreLocation
-
-//TODO: add a statement that checks if the user has arrived, and if so, take them to the arrived view. Need to pass in destinationAnchorDetails into the arrived view.
-
-// TODO: ughh what to do about this global variable
-var hideNavTimer: Timer?
+import Foundation
+import ARKit
 
 struct NavigatingView: View {
+    @State var hideNavTimer: Timer?
     let startAnchorDetails: LocationDataModel?
     let destinationAnchorDetails: LocationDataModel
     @State var didLocalize = false
@@ -22,6 +20,10 @@ struct NavigatingView: View {
     @ObservedObject var navigationManager = NavigationManager.shared
     @ObservedObject var routeNavigator = RouteNavigator.shared
     
+    @State var showingConfirmation = false
+    @State var showingHelp = false
+    @AccessibilityFocusState var focusOnPopup
+    
     var body: some View {
         ZStack {
             ARViewContainer()
@@ -29,29 +31,28 @@ struct NavigatingView: View {
                 Spacer()
                 VStack {
                     if !didLocalize {
-                        InformationPopup(popupEntry: "", popupType: .waitingToLocalize, units: .none) //what is this? why do we still have units and stuff?
+                        InformationPopupComponent(popupType: .waitingToLocalize)
                     } else {
                         if RouteNavigator.shared.keypoints?.isEmpty == true {
-                            InformationPopup(popupEntry: "", popupType: .arrived, units: .none)
+                            InformationPopupComponent(popupType: .arrived(destinationAnchorDetails: destinationAnchorDetails))
                         } else if !navigationDirection.isEmpty {
-                            InformationPopup(popupEntry: navigationDirection, popupType: .direction, units: .none)
+                            InformationPopupComponent(popupType: .direction(directionText: navigationDirection))
                         }
                     }
                     Spacer()
                     if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
-                        HStack {
-                            Button(action: {
+                        HStack(spacing: 100) {
+                            ActionBarButtonComponent(action: {
+                                print("pressed pause")
+                            }, iconSystemName: "pause.circle.fill", accessibilityLabel: "Pause Navigation")
+                            
+                            ActionBarButtonComponent(action: {
                                 navigationManager.updateDirections()
-                            }) {
-                                Image(systemName: "waveform")
-                                    .resizable()
-                                    .frame(width: 80, height: 80)
-                                    .foregroundColor(AppColor.accent)
-                            }.accessibilityLabel("Repeat Directions")
+                            }, iconSystemName: "repeat", accessibilityLabel: "Repeat Directions")
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 140)
-                        .background(AppColor.black)
+                        .background(AppColor.dark)
                     }
                 }
                 .padding(.vertical, 100)
@@ -67,6 +68,23 @@ struct NavigatingView: View {
                 PositioningModel.shared.stopPositioning()
                 NavigationManager.shared.stopNavigating()
             }
+            
+            if showingHelp {
+                HelpPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showingHelp)
+                    .accessibilityFocused($focusOnPopup)
+                    .accessibilityAddTraits(.isModal)
+            }
+            
+            if showingConfirmation {
+                ExitPopup(showingConfirmation: $showingConfirmation)
+                    .accessibilityFocused($focusOnPopup)
+                    .accessibilityAddTraits(.isModal)
+            }
+//        }.onReceive(routeNavigator.keypoints) { newKeypoints in
+//            if newKeypoints.count == 0 {
+//                // do some stuff
+//
+//            }
         }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
         }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
@@ -100,18 +118,14 @@ struct NavigatingView: View {
         .background(AppColor.accent)
         .navigationBarBackButtonHidden()
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Text("Exit")
-                    .bold()
-                    .font(.title2)
-                    .onTapGesture {
-                        showingConfirmation = true
-                    }
+            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
+                showingConfirmation = true
+                focusOnPopup = true
             }
-        }
-        
-        if showingConfirmation {
-            ExitNavigationAlertView(showingConfirmation: $showingConfirmation)
+            CustomHeaderButtonComponent(label: "Help", placement: .navigationBarTrailing) {
+                showingHelp = true
+                focusOnPopup = true
+            }
         }
     }
     
@@ -121,105 +135,14 @@ struct NavigatingView: View {
             navigationManager.startNavigating()
         }
     }
-    let popupEntry: String = "Testing Text"
-    @State var showingConfirmation = false
 }
 
-struct InformationPopup: View {
-    let popupEntry: String
-    let popupType: PopupType
-    let units: Units
+struct ARViewContainer: UIViewRepresentable {
     
-    var body: some View {
-        VStack {
-            switch popupType {
-            case .waitingToLocalize:
-                HStack {
-                    Text("Trying to align to your route. Scan your phone around to recognize your surroundings.")
-                        .foregroundColor(AppColor.white)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.center)
-                }
-            case .userNote:
-                HStack {
-                    Text("User Note")
-                        .foregroundColor(AppColor.white)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-                HStack {
-                    Text(popupEntry)
-                        .foregroundColor(AppColor.white)
-                        .font(.title2)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-            case .distanceAway:
-                HStack {
-                    Text("\(popupEntry) \(units.rawValue) away")
-                        .foregroundColor(AppColor.white)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.center)
-                }
-            case .direction:
-                HStack {
-                    Text("\(popupEntry)")
-                        .foregroundColor(AppColor.white)
-                        .bold()
-                        .font(.title2)
-                        .multilineTextAlignment(.center)
-                }
-            case .arrived:
-                VStack {
-                    HStack {
-                        Text("Arrived. You should be within one cane's length of your destination.")
-                            .foregroundColor(AppColor.white)
-                            .bold()
-                            .font(.title2)
-                            .multilineTextAlignment(.leading)
-                    }
-                    NavigationLink (destination: MainView(), label: {
-                        Text("Home")
-                            .font(.title)
-                            .bold()
-                            .frame(maxWidth: 300)
-                            .foregroundColor(AppColor.black)
-                    })
-                    .padding(.bottom, 20)
-                    .padding(.top, 10)
-                    .tint(AppColor.accent)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(AppColor.black)
+    func makeUIView(context: Context) -> ARSCNView {
+        return PositioningModel.shared.arView
     }
     
-    enum PopupType: CaseIterable {
-        case waitingToLocalize
-        case userNote
-        case distanceAway
-        case arrived
-        case direction
-    }
+    func updateUIView(_ uiView: ARSCNView, context: Context) {}
     
-    enum Units: String, CaseIterable {
-        case meters = "meters"
-        case feet = "feet"
-        case none = ""
-    }
-}
-
-struct NavigatingView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: LocationDataModel(anchorType: .busStop, associatedOutdoorFeature: nil, coordinates: CLLocationCoordinate2D(latitude: 37, longitude: -71), name: "Bus Stop 1", id: UUID().uuidString))
-    }
 }
