@@ -160,17 +160,14 @@ struct InformationPopupComponent: View {
             if case .arrived = popupType {
                 if let anchorDetails = popupType.additionalAnchorDetails {
                     SmallButtonComponent_NavigationLink(destination: {
-                        AnchorDetailView(anchorDetails: anchorDetails, buttonLabel: "Home") {
-                            GPSLocalizationPopup()
-                        .navigationBarBackButtonHidden()
-                        }
+                        AnchorDetailView_ArrivedView(anchorDetails: anchorDetails)
                     }, label: "Go to Destination Details")
                 }
             }
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(AppColor.dark)
+        
+        }.frame(maxWidth: .infinity)
+            .padding()
+            .background(AppColor.dark)
     }
     
     /// This enumeration represents the different types of popups that can be presented.

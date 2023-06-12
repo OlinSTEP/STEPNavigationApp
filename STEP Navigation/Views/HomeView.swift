@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AuthenticationServices
+import CoreLocation
 
 struct HomeView: View {
     @ObservedObject var authHandler = AuthHandler.shared
@@ -45,7 +46,8 @@ struct HomeView: View {
                                     SettingsView()
                                 }, label: "Settings")
                                 LargeButtonComponent_NavigationLink(destination: {
-                                    AnchorDetailView_ArrivedView()
+                                    AnchorDetailView_ArrivedView(anchorDetails: LocationDataModel(anchorType: .frontdesk, coordinates: CLLocationCoordinate2D(latitude: 42.0, longitude: -71.0), name: "Sample Destination", id: UUID().uuidString)
+)
                                 }, label: "Skip to Arrived View")
                             }
                             .padding(.top, 20)
