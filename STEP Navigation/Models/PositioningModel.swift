@@ -382,7 +382,7 @@ class PositioningModel: NSObject, ObservableObject {
                 atPose: cameraTransform.alignY(),
                 withMetadata: CloudAnchorMetadata(
                     name: name,
-                    type: .indoorDestination,
+                    type: .other,
                     associatedOutdoorFeature: "",
                     geospatialTransform: GeospatialData(arCoreGeospatial: geoSpatialTransfrom), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true),
                 completionHandler: completionHandler
@@ -421,8 +421,9 @@ class PositioningModel: NSObject, ObservableObject {
                 guard let cloudIdentifier = cloudIdentifier else {
                     return completionHandler(false)
                 }
+                // TODO: rethink this when we have a category for new cloud anchors
                 switch metadata.type {
-                case .indoorDestination:
+                case .other:
                     FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
                 default:
                     PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: pose)

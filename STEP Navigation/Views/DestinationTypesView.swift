@@ -37,11 +37,9 @@ struct DestinationTypesView: View {
                     // Creates a navigation button for each anchor type
                     ForEach(anchorTypes, id: \.self) {
                         anchorType in
-                        if anchorType != .indoorDestination {
-                            LargeButtonComponent_NavigationLink(destination: {
-                                DestinationAnchorListView(anchorType: anchorType, nearbyDistance: nearbyDistance)
-                            }, label: "\(anchorType.rawValue)s")
-                        }
+                        LargeButtonComponent_NavigationLink(destination: {
+                            DestinationAnchorListView(anchorType: anchorType, nearbyDistance: nearbyDistance)
+                        }, label: "\(anchorType.rawValue)s")
                     }
                 }
                 .padding(.top, 10)

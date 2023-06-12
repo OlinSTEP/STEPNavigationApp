@@ -217,7 +217,7 @@ class FirebaseManager: ObservableObject {
         }
         let anchorTypeString = (data["category"] as? String) ?? ""
         let associatedOutdoorFeature = (data["associatedOutdoorFeature"] as? String) ?? ""
-        let anchorType = AnchorType(rawValue: anchorTypeString) ?? .indoorDestination
+        let anchorType = AnchorType(rawValue: anchorTypeString) ?? .other
         let creatorUID = (data["creatorUID"] as? String) ?? ""
         let isReadable = (data["isReadable"] as? Bool) ?? true
         var simpleConnections: [String: SimpleEdge] = [:]

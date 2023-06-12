@@ -16,6 +16,64 @@ import SwiftUI
 //  - Anchor List
 //  - NearbyDistanceThreshold
 
+struct TextFieldComponent: View {
+    @Binding var entry: String
+    let instructions: String?
+    let label: String?
+    let textBoxSize: TextBoxSize?
+    
+    init(entry: Binding<String>, instructions: String? = "", label: String? = nil, textBoxSize: TextBoxSize? = .small) {
+        self._entry = entry
+        self.instructions = instructions
+        self.label = label
+        self.textBoxSize = textBoxSize
+    }
+    
+    var body: some View {
+        VStack {
+            if let label = label {
+                HStack {
+                    Text(label)
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                }
+            }
+            
+            if let instructions = instructions {
+                if textBoxSize == .small {
+                    TextField("\(instructions)", text: $entry)
+                        .frame(height: 48)
+                        .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                        .cornerRadius(5)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(AppColor.grey, lineWidth: 2)
+                        )
+                        .bold()
+                } else {
+                    TextField("\(instructions)", text: $entry, axis: .vertical)
+                        .frame(height: 150)
+                        .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                        .cornerRadius(5)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(AppColor.grey, lineWidth: 2)
+                        )
+                        .bold()
+                        .lineLimit(6, reservesSpace: true)
+                }
+            }
+        }
+        .padding(.horizontal)
+    }
+    
+    enum TextBoxSize {
+        case small, large
+    }
+}
+
+
 /// This struct manages the appearance of the titles for each screen.
 struct ScreenTitleComponent: View {
     let titleText: String

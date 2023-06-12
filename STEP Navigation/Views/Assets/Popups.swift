@@ -58,35 +58,60 @@ struct HelpPopup: View {
                 }
             
                 Spacer()
-                SmallButtonComponent_Button(label: "Dismiss", popupTrigger: $showHelp)
+                SmallButtonComponent_PopupTrigger(label: "Dismiss", popupTrigger: $showHelp)
             }
             .background(AppColor.light)
     }
 }
 
 ///This struct displays a confirmation  popup when a user attempts to exit the navigation session.
-struct ExitPopup: View {
+struct ConfirmationPopup<Destination: View>: View {
     /// Binding to a boolean value that indicates whether the confirmation popup is showing.
     @Binding var showingConfirmation: Bool
+    let titleText: String
+    let subtitleText: String?
+    let confirmButtonLabel: String
+    let confirmButtonDestination: () -> Destination
+    let simultaneousAction: (() -> Void)?
+    
+    init(showingConfirmation: Binding<Bool>, titleText: String, subtitleText: String?, confirmButtonLabel: String, confirmButtonDestination: @escaping () -> Destination, simultaneousAction: (() -> Void)? = nil) {
+        self._showingConfirmation = showingConfirmation
+        self.titleText = titleText
+        self.subtitleText = subtitleText
+        self.confirmButtonLabel = confirmButtonLabel
+        self.confirmButtonDestination = confirmButtonDestination
+        self.simultaneousAction = simultaneousAction
+    }
     
     var body: some View {
         VStack {
             VStack {
-                Text("Are you sure you want to exit?")
+                Text(titleText)
                     .bold()
                     .font(.title2)
-                Text("This will end the navigation session.")
-                    .font(.title3)
+                if let subtitleText = subtitleText {
+                    Text(subtitleText)
+                        .font(.title3)
+                }
             }
             .padding(.vertical, 10)
             .padding(.horizontal)
             
             VStack {
-                SmallButtonComponent_NavigationLink(destination: {
-                                    HomeView()
-                                }, label: "Exit")
-                .padding(.bottom, 2)
-                SmallButtonComponent_Button(label: "Cancel", labelColor: AppColor.dark, backgroundColor: AppColor.grey, popupTrigger: $showingConfirmation, role: .cancel)
+                if let simultaneousAction = simultaneousAction {
+                    SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
+                    //TODO: .simultaneousGesture doesn't work with voiceover??? but it does with tapping on the screen. I hate this so much
+                        .simultaneousGesture(TapGesture().onEnded{
+                                simultaneousAction()
+                            print("tapped delete confirm")
+                        })
+                        .padding(.bottom, 2)
+
+                } else {
+                    SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
+                        .padding(.bottom, 2)
+                }
+                SmallButtonComponent_PopupTrigger(label: "Cancel", labelColor: AppColor.dark, backgroundColor: AppColor.grey, popupTrigger: $showingConfirmation, role: .cancel)
             }
             .padding()
         }

@@ -135,7 +135,7 @@ struct EditingAnchorView: View {
                 Button("Save") {
                     let newMetadata =
                         CloudAnchorMetadata(name: newAnchorName,
-                                            type: AnchorType(rawValue: newCategory) ?? .indoorDestination,
+                                            type: AnchorType(rawValue: newCategory) ?? .other,
                                             associatedOutdoorFeature: newAssociatedOutdoorFeature,
                                             geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
                                             isReadable: newIsReadable)

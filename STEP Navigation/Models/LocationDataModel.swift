@@ -133,8 +133,8 @@ enum AnchorType: String, CaseIterable, Identifiable {
     case frontdesk = "Front Desk"
     /// Represents a junction anchor type (e.g., a hallway intersection)
     case junction = "Junction"
-    /// Represents a generic indoor destination.  This is a placeholder value for when the specific category has not yet been set.
-    case indoorDestination = "Indoor"
+//    /// Represents a generic indoor destination.  This is a placeholder value for when the specific category has not yet been set.
+//    case indoorDestination = "Indoor"
     /// Represents a room destination that doesn't fall into a more specific category
     case room = "Room"
     /// Represents a destination that is at the exit of the building
@@ -142,7 +142,8 @@ enum AnchorType: String, CaseIterable, Identifiable {
     /// Represents a water fountain anchor type
     case waterFountain = "Water Fountain"
     /// Represents an anchor type that is part of a path (not a destination in and of itself)
-    case path = "path"
+    case path = "Path"
+    case other = "Other"
     
     /// True if and only if the category corresponds to an indoor feature (i.e., not latitude / longitude based)
     var isIndoors: Bool {
@@ -155,7 +156,7 @@ enum AnchorType: String, CaseIterable, Identifiable {
             return true
         case .room:
             return true
-        case .indoorDestination:
+        case .other:
             return true
         case .junction:
             return true

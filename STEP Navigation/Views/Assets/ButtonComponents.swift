@@ -51,7 +51,7 @@ struct SmallButtonComponent_NavigationLink<Destination: View>: View {
 }
 
 /// This struct manages the appearance of small button components that are buttons. Their visual appearance is identical to the small button components that are navigation links.
-struct SmallButtonComponent_Button: View {
+struct SmallButtonComponent_PopupTrigger: View {
     let label: String
     let labelColor: Color?
     let backgroundColor: Color?
@@ -79,6 +79,37 @@ struct SmallButtonComponent_Button: View {
         Button(role: role) {
             popupTrigger.toggle()
         } label: {
+            Text(label)
+                .font(.title2)
+                .bold()
+                .frame(maxWidth: .infinity)
+                .foregroundColor(labelColor)
+        }
+        .tint(backgroundColor)
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.capsule)
+        .controlSize(.large)
+        .padding(.horizontal)
+    }
+}
+
+struct SmallButtonComponent_Button: View {
+    let label: String
+    let action: () -> Void
+    let labelColor: Color?
+    let backgroundColor: Color?
+    
+    
+    init(label: String, action: @escaping () -> Void, labelColor: Color? = AppColor.dark, backgroundColor: Color? = AppColor.accent){
+        self.label = label
+        self.action = action
+        self.labelColor = labelColor
+        self.backgroundColor = backgroundColor
+    }
+    
+    
+    var body: some View {
+        Button(action: action) {
             Text(label)
                 .font(.title2)
                 .bold()

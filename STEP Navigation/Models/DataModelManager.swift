@@ -118,7 +118,8 @@ class DataModelManager: ObservableObject {
     /// Returns a set of all AnchorTypes currently in the system
     /// - Returns: the anchor types that exist
     func getAnchorTypes() -> Set<AnchorType> {
-        return Set(allLocationModels.keys + [.indoorDestination])
+        // TODO: make sure removing .indoorLocations isn't causing issues
+        return Set(allLocationModels.keys)
     }
     
     /// Lookup a location data model associated by ID
@@ -226,18 +227,37 @@ class DataModelManager: ObservableObject {
             - parameter maxDistance: The maximum distance in meters.
             - returns: A set containing all location data models within the specified distance from the specified location.
     */
+    func getNearbyIndoorLocations(location: CLLocationCoordinate2D,
+                                  maxDistance: CLLocationDistance,
+                                  withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
+        var models = Set<LocationDataModel>()
+        for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
+            models.formUnion(allLocationModels[anchorTypeCase] ?? [])
+        }
+        
+        let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        
+        return models.filter { model in
+            let locationCoordinate = model.getLocationCoordinate()
+            let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+            return location.distance(from: threshold) <= maxDistance + withBuffer
+        }
+    }
+    
+    /**
+            Returns a set containing all location data models within the specified distance from the specified location.
+         
+            - parameter anchorType: The type of the anchor.  If the anchorType is the special value
+                    .indoorDestination, then any anchorType that has isIndoor set to true is okay
+            - parameter location: The location to use as the center point for the distance calculation.
+            - parameter maxDistance: The maximum distance in meters.
+            - returns: A set containing all location data models within the specified distance from the specified location.
+    */
     func getNearbyLocations(for anchorType: AnchorType,
                             location: CLLocationCoordinate2D,
                             maxDistance: CLLocationDistance,
                             withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
-        var models = Set<LocationDataModel>()
-        if anchorType == .indoorDestination {
-            for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
-                models.formUnion(allLocationModels[anchorTypeCase] ?? [])
-            }
-        } else {
-            models.formUnion(allLocationModels[anchorType] ?? [])
-        }
+        let models = allLocationModels[anchorType] ?? []
         
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         

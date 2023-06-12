@@ -18,12 +18,11 @@ struct ManageAnchorsListView: View {
         
         ScrollView {
             SmallButtonComponent_NavigationLink(destination: {
-                AnchorDetailEditView(buttonText: "Record Anchor")
+                RecordAnchorView()
             }, label: "Create New Anchor")
             .padding(.top, 20)
             
             MappingAnchorListComponent(anchors: anchors)
-            
             Spacer()
         }
         .onReceive(positionModel.$currentLatLon) { latLon in
@@ -35,8 +34,7 @@ struct ManageAnchorsListView: View {
         }
         lastQueryLocation = latLon
         anchors = Array(
-            DataModelManager.shared.getNearbyLocations(
-                for: .indoorDestination,
+            DataModelManager.shared.getNearbyIndoorLocations(
                 location: latLon,
                 maxDistance: CLLocationDistance(Double.infinity),
                 withBuffer: 0.0

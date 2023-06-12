@@ -36,8 +36,7 @@ struct StartAnchorListView: View {
                 return
             }
             anchors = Array(
-                DataModelManager.shared.getNearbyLocations(
-                    for: .indoorDestination,
+                DataModelManager.shared.getNearbyIndoorLocations(
                     location: latLon,
                     maxDistance: CLLocationDistance(nearbyDistance),
                     withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
