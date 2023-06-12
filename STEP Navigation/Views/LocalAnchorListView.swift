@@ -54,6 +54,8 @@ struct LocalAnchorListView: View {
                 $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
             })
             
+            //print(anchors)
+            
 
             allAnchors = Array(
                 DataModelManager.shared.getNearbyLocations(

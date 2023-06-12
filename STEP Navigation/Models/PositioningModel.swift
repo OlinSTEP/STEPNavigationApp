@@ -106,6 +106,8 @@ class PositioningModel: NSObject, ObservableObject {
     private static let poseBufferMaxLength = 30
     /// the lookback in the pose buffer when estimating cloud anchor quality
     private static let poseBufferLookbackForCloudAnchorAssessment = 15
+    /// the cloud anchors currently being resolved in this session
+    private var cloudAnchorsBeingResolved: Set<String> = []
     
     /// the alignment that transforms the map coordinate system to the current ARKit session's coordinate system
     private var manualAlignment: simd_float4x4? {
@@ -187,6 +189,7 @@ class PositioningModel: NSObject, ObservableObject {
     /// Stop positioning using ARCore and ARKit
     func stopPositioning() {
         garSession = nil
+        cloudAnchorsBeingResolved = []
         arView.session.pause()
         resetAlignment()
     }
@@ -273,7 +276,12 @@ class PositioningModel: NSObject, ObservableObject {
     /// Initiate a request to resolve a cloud anchor based on its cloud identifier
     /// - Parameter cloudAnchorID: the cloud identifier
     func resolveCloudAnchor(byID cloudAnchorID: String) {
+        
+        guard !cloudAnchorsBeingResolved.contains(cloudAnchorID) else {
+            return
+        }
         do {
+            cloudAnchorsBeingResolved.insert(cloudAnchorID)
             try garSession?.resolveCloudAnchor(cloudAnchorID) { garAnchor, anchorState in
                 guard anchorState == .success else {
                     return
@@ -289,6 +297,9 @@ class PositioningModel: NSObject, ObservableObject {
                     timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
                 self.resolvedCloudAnchors.insert(cloudAnchorID)
                 self.manualAlignment = self.cloudAnchorAligner.adjust(currentAlignment: self.manualAlignment)
+                
+                
+                PathRecorder.shared.addCloudAnchor(identifier: cloudAnchorID, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID)!, currentPose: garAnchor.transform)
             }
         } catch {
             print("error \(error.localizedDescription)")

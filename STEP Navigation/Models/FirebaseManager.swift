@@ -400,7 +400,7 @@ class FirebaseManager: ObservableObject {
         return mapAnchors[id]?.name
     }
     
-    /// Get the cloud anchor metadata based on its identifier.  If hte cloud anchor has not been downloaded already, this will return nil
+    /// Get the cloud anchor metadata based on its identifier.  If the cloud anchor has not been downloaded already, this will return nil
     /// - Parameter id: the cloud anchor identifier
     /// - Returns: the metadata for the cloud anchor
     func getCloudAnchorMetadata(byID id: String)->CloudAnchorMetadata? {

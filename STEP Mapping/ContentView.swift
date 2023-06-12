@@ -9,6 +9,10 @@ import SwiftUI
 import Charts
 import ARCoreGeospatial
 import ARCoreCloudAnchors
+import Firebase
+import FirebaseDatabase
+import FirebaseStorage
+
 
 enum MainScreenType {
     case mainScreen
@@ -18,6 +22,7 @@ enum MainScreenType {
     case walkToSecondAnchor(anchorID1: String, anchorID2: String)
     case findSecondAnchorToFormConnection(anchorID1: String, anchorID2: String)
     case deleteCloudAnchor
+    case resolvingCloudAnchors
     case editAnchor
     case editingAnchor(anchorID: String)
     var isOnMainScreen: Bool {
@@ -77,6 +82,8 @@ struct ContentView : View {
                     FindSecondAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
                 case .deleteCloudAnchor:
                     DeleteCloudAnchor()
+                case .resolvingCloudAnchors:
+                    ResolvingCloudAnchorsView()
                 }
             }
         }
@@ -134,11 +141,11 @@ struct EditingAnchorView: View {
                 }
                 Button("Save") {
                     let newMetadata =
-                        CloudAnchorMetadata(name: newAnchorName,
-                                            type: AnchorType(rawValue: newCategory) ?? .indoorDestination,
-                                            associatedOutdoorFeature: newAssociatedOutdoorFeature,
-                                            geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
-                                            isReadable: newIsReadable)
+                    CloudAnchorMetadata(name: newAnchorName,
+                                        type: AnchorType(rawValue: newCategory) ?? .indoorDestination,
+                                        associatedOutdoorFeature: newAssociatedOutdoorFeature,
+                                        geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
+                                        isReadable: newIsReadable)
                     FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
                     MainUIStateContainer.shared.currentScreen = .createAnchor
                 }
@@ -146,7 +153,6 @@ struct EditingAnchorView: View {
         }
         .background(Color.orange)
         .padding()
-
     }
 }
 
@@ -222,6 +228,9 @@ struct MainScreen: View {
             Button("Delete an Anchor") {
                 MainUIStateContainer.shared.currentScreen = .deleteCloudAnchor
             }
+            Button("Resolve many Anchors") {
+                MainUIStateContainer.shared.currentScreen = .resolvingCloudAnchors
+            }
         }
         .background(Color.orange)
         .padding()
@@ -230,6 +239,47 @@ struct MainScreen: View {
         }
     }
 }
+
+struct ResolvingCloudAnchorsView: View {
+    @ObservedObject var positionModel = STEP_Mapping.PositioningModel.shared
+    @State var loc:CLLocationCoordinate2D = CLLocationCoordinate2D()
+    
+    var body: some View {
+        HStack{
+            VStack {
+                Text("Go to the next anchor.")
+                
+                Text("Cloud Anchor resolved")
+                
+                Button("save"){
+                    PathRecorder.shared.manyAnchorstoFirebase()
+                }
+                .onAppear() {
+                    PositioningModel.shared.startPositioning()
+                    PathRecorder.shared.startRecordingPathonly()
+                }
+            }
+        }
+        .onReceive(positionModel.$currentLatLon) { latLon in
+            guard let latLon = latLon else {
+                return
+            }
+            loc = latLon
+            let anchors = Array(
+                DataModelManager.shared.getNearbyLocations(
+                    for: .indoorDestination,
+                    location: loc,
+                    maxDistance: CLLocationDistance(50)
+                )
+            )
+            for anchor in anchors {
+                PositioningModel.shared.resolveCloudAnchor(byID : anchor.id)
+            }
+            
+        }
+    }
+}
+
 
 struct FindFirstAnchor: View {
     @ObservedObject var positioningModel = PositioningModel.shared
@@ -257,7 +307,7 @@ struct FindSecondAnchor: View {
     let anchorID1: String
     let anchorID2: String
     @State var showingPopover = false
-
+    
     var body: some View {
         VStack {
             Button("Show Recorded Path") {
@@ -349,7 +399,7 @@ struct RoutePreview: View {
 struct Arrow: ChartSymbolShape {
     let angle: CGFloat
     let size: CGFloat
-
+    
     func path(in rect: CGRect) -> Path {
         let w = rect.width * size * 0.05 + 0.6
         var path = Path()
@@ -361,7 +411,7 @@ struct Arrow: ChartSymbolShape {
             .applying(.init(scaleX: w, y: w))
             .applying(.init(translationX: rect.midX, y: rect.midY))
     }
-
+    
     var perceptualUnitRect: CGRect {
         return CGRect(x: 0, y: 0, width: 1, height: 1)
     }
@@ -418,14 +468,14 @@ struct ConnectAnchorView: View {
                 }
             }
             .pickerStyle(WheelPickerStyle())
-
+            
             Picker("Anchor 2", selection: $anchorID2) {
                 ForEach(FirebaseManager.shared.mapAnchors.sorted(by: { $0.0 > $1.0 }), id: \.key) { cloudAnchorID, mapAnchorMetadata in
                     Text(mapAnchorMetadata.name)
                 }
             }
             .pickerStyle(WheelPickerStyle())
-
+            
             Button("Connect Cloud Anchors") {
                 guard anchorID1 != anchorID2 else {
                     AnnouncementManager.shared.announce(announcement: "Navigating two and from the same point of interest is not currently supported")
@@ -454,7 +504,7 @@ struct WalkToSecondAnchor: View {
     let anchorID1: String
     let anchorID2: String
     @ObservedObject var positioningModel = PositioningModel.shared
-   
+    
     var body: some View {
         HStack{
             VStack {
@@ -490,3 +540,4 @@ struct ContentView_Previews : PreviewProvider {
     }
 }
 #endif
+
