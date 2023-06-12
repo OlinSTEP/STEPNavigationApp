@@ -27,7 +27,6 @@ struct AnchorDetailView_Manage: View {
                 SmallButtonComponent_NavigationLink(destination: {
                     ConnectingView()
                 }, label: "Connect")
-//                SmallButtonComponent_Button(label: "Delete", popupTrigger: Binding<Bool>)
             }
         }
     }

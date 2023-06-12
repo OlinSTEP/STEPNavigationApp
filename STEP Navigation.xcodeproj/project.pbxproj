@@ -14,6 +14,7 @@
 		130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */; };
 		130E7C4929E36E36004B1E81 /* mbtaBusStops.json in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4829E36E36004B1E81 /* mbtaBusStops.json */; };
 		130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */; };
+		6569872B2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
 		8241735129DE0C6F001599B1 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
 		8241735529DE0C70001599B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735429DE0C70001599B1 /* Assets.xcassets */; };
 		8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735729DE0C70001599B1 /* Preview Assets.xcassets */; };
@@ -147,6 +148,7 @@
 		130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDataModelParser.swift; sourceTree = "<group>"; };
 		130E7C4829E36E36004B1E81 /* mbtaBusStops.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mbtaBusStops.json; sourceTree = "<group>"; };
 		130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Olin_College_Doors.geojson; sourceTree = "<group>"; };
+		6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbsDownMultiplechoice.swift; sourceTree = "<group>"; };
 		8241734D29DE0C6F001599B1 /* STEP Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Navigation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_NavigationApp.swift; sourceTree = "<group>"; };
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				A80CDCAA2A2E2F61007FA7CE /* Assets */,
 				8241736729DE13B8001599B1 /* AnchorDetailView.swift */,
 				A80CDCC92A33BE68007FA7CE /* AnchorDetailView_ArrivedView.swift */,
+				6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */,
 				A80CDCC52A33BB7F007FA7CE /* AnchorDetailView_Manage.swift */,
 				A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */,
 				8241736129DE1398001599B1 /* DestinationAnchorListView.swift */,
@@ -663,6 +666,7 @@
 				825F1F5529E9CF490043BD98 /* PathLogger.swift in Sources */,
 				825F1F4F29E9CB350043BD98 /* NavigationManager.swift in Sources */,
 				829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */,
+				6569872B2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift in Sources */,
 				82811EE52A0C32B900D1BE96 /* AuthHandler.swift in Sources */,
 				A89CAA6A2A28EFC100E3A03D /* Popups.swift in Sources */,
 				8241736229DE1398001599B1 /* DestinationAnchorListView.swift in Sources */,
