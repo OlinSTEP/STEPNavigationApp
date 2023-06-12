@@ -91,13 +91,6 @@ struct AnchorDetailEditView<Destination: View>: View {
             .simultaneousGesture(TapGesture().onEnded{
                 self.updateMetadata()
             })
-        
-//        NavigationLink(destination: HomeView(), label: {
-//            Text("save")
-//        })
-//        .simultaneousGesture(TapGesture().onEnded{
-//            self.updateMetadata()
-//        })
     }
     
     func updateMetadata() {
