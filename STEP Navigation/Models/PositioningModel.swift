@@ -96,6 +96,8 @@ class PositioningModel: NSObject, ObservableObject {
     @Published var currentQuality: GARFeatureMapQuality?
     /// the cloud anchors that have been resolved so far.  The elements of the set are the cloud identifiers
     @Published var resolvedCloudAnchors = Set<String>()
+    /// the name of the anchor that was most recently resolved
+    @Published var lastAnchor : String = ""
     /// the current geo localization accuracy
     @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
     /// the current latitude and longitude
@@ -296,6 +298,7 @@ class PositioningModel: NSObject, ObservableObject {
                     withPose: garAnchor.transform,
                     timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
                 self.resolvedCloudAnchors.insert(cloudAnchorID)
+                self.lastAnchor = FirebaseManager.shared.getCloudAnchorName(byID: cloudAnchorID) ?? ""
                 self.manualAlignment = self.cloudAnchorAligner.adjust(currentAlignment: self.manualAlignment)
                 
                 
