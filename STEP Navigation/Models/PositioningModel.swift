@@ -523,7 +523,7 @@ extension PositioningModel: ARSessionDelegate {
                         continue
                     }
                     self.lastAnchor = FirebaseManager.shared.getCloudAnchorName(byID: cloudIdentifier) ?? ""
-                    PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudIdentifier)!, currentPose: anchor.transform)
+                    PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudIdentifier)!, currentPose: anchor.transform, timestamp: garFrame.timestamp)
                     shouldDoCloudAnchorAlignment = true
                     cloudAnchorAligner.cloudAnchorDidUpdate(withCloudID: cloudIdentifier, withIdentifier: anchor.identifier.uuidString, withPose: anchor.transform, timestamp: frame.timestamp)
                 }

@@ -29,7 +29,9 @@ class PathRecorder {
     private (set) var breadCrumbs: [PoseData] = []
     /// The cloud anchors created along this path (the key is the cloud identifier and the value consists of the
     /// cloud anchor metadata and itse pose in the recording session)
-    private (set) var cloudAnchors: [String: (CloudAnchorMetadata, simd_float4x4, Double)] = [:]
+//    private (set) var cloudAnchors: [String: (CloudAnchorMetadata, simd_float4x4, Double)] = [:]
+    /// dictioanry of cloudAnchor information
+    private (set) var cloudAnchors: [[String:Any]] = []
     /// A timer used to periodically capture poses
     private var recordingTimer: Timer?
     /// A timer used to periodically host cloud anchors
@@ -57,7 +59,7 @@ class PathRecorder {
     /// - Parameter hz: this is the frquency with which to capture poses to store as breadcrumbs.
     private func startRecordingPath(withFrequency hz: Double) {
         breadCrumbs = []
-        cloudAnchors = [:]
+        cloudAnchors = []
         recordingTimer?.invalidate()
         cloudAnchorTimer?.invalidate()
         
@@ -91,7 +93,13 @@ class PathRecorder {
     ///   - metadata: the metadata describing the cloud anchor
     ///   - currentPose: the pose of the cloud anchor as specified in the corresponding `GARAnchor`
     func addCloudAnchor(identifier: String, metadata: CloudAnchorMetadata, currentPose: simd_float4x4, timestamp: Double) {
-        cloudAnchors[identifier] = (metadata, currentPose, timestamp)
+        cloudAnchors.append([
+//            "metadata": metadata,
+            "timestamp": timestamp,
+            "pose": currentPose.toColumnMajor(),
+            "poseId":  breadCrumbs.count,
+            "cloudIdentifier": identifier
+        ])
     }
     
     /// Stop recording the path.
@@ -112,27 +120,7 @@ class PathRecorder {
             partialResult += newPose
         }
         
-        var finalAnchors: [String: (CloudAnchorMetadata, simd_float4x4, Double )] = [:]
-        
-        for (cloudIdentifier, anchorInfo) in cloudAnchors {
-            if anchorInfo.0.type == .path {
-                finalAnchors[cloudIdentifier] = anchorInfo
-            } else {
-                guard let currentPose = PositioningModel.shared.currentLocation(ofCloudAnchor: cloudIdentifier) else {
-                    continue
-                }
-                finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose, anchorInfo.2)
-            }
-        }
-        print("This is final anchors \(finalAnchors)")
-        let formattedPathAnchors = finalAnchors.map{
-            [
-                "timestamp": $0.1.2,
-                "cloudIdentifier": $0.0,
-                "pose": $0.1.1.toColumnMajor(),
-                "poseId": $0.1.1.toColumnMajor().count
-            ]
-        }
+
         
         let formattedPoses = PathRecorder.shared.breadCrumbs.enumerated().map{
             [
@@ -142,11 +130,10 @@ class PathRecorder {
                 "planes": [:] as [String:Any]
             ] as [String: Any]
         }
-        let timestamps = formattedPathAnchors.map { $0["timestamp"] }
 
         
         
-        let mapJsonFile: [String: Any] = ["tag_data": [], "map_id": mapId, "pose_data": formattedPoses, "cloud_data": formattedPathAnchors, "location_data": [], "plane_data": [], "anchor_timestamp": timestamps]
+        let mapJsonFile: [String: Any] = ["tag_data": [], "map_id": mapId, "pose_data": formattedPoses, "cloud_data": cloudAnchors, "location_data": [], "plane_data": []]
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
             firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"])){ (metadata, error) in
@@ -170,36 +157,37 @@ class PathRecorder {
     
     /// Upload the path data to Firebase
     func toFirebase(){
-        guard let startAnchorID = startAnchorID, let stopAnchorID = stopAnchorID, let anchor1Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: startAnchorID), let anchor2Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: stopAnchorID) else {
-            return
-        }
+        //currently broken bcs of type changes for connecting multiple
+//        guard let startAnchorID = startAnchorID, let stopAnchorID = stopAnchorID, let anchor1Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: startAnchorID), let anchor2Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: stopAnchorID) else {
+//            return
+//        }
         
-        firebaseRef = Database.database(url: "https://stepnavigation-default-rtdb.firebaseio.com").reference()
-        firebaseStorage = Storage.storage()
-        firebaseStorageRef = firebaseStorage.reference()
-        
-        let mapId = UUID().uuidString
-        
-        var finalAnchors: [String: (CloudAnchorMetadata, simd_float4x4, Double)] = [:]
-        
-        for (cloudIdentifier, anchorInfo) in cloudAnchors {
-            if anchorInfo.0.type == .path {     // Note: the path anchors are not currently resolved, so they don't move around.  We should add them anyway
-                finalAnchors[cloudIdentifier] = anchorInfo
-            } else {
-                guard let currentPose = PositioningModel.shared.currentLocation(ofCloudAnchor: cloudIdentifier) else {
-                    continue
-                }
-                finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose, anchorInfo.2)
-            }
-        }
-    
-        FirebaseManager.shared.addConnection(
-            anchorID1: startAnchorID,
-            anchor1Pose: anchor1Pose,
-            anchorID2: stopAnchorID,
-            anchor2Pose: anchor2Pose,
-            breadCrumbs: PathRecorder.shared.breadCrumbs,
-            pathAnchors: finalAnchors)
+//        firebaseRef = Database.database(url: "https://stepnavigation-default-rtdb.firebaseio.com").reference()
+//        firebaseStorage = Storage.storage()
+//        firebaseStorageRef = firebaseStorage.reference()
+//
+//        let mapId = UUID().uuidString
+//
+//        var finalAnchors: [String: (CloudAnchorMetadata, simd_float4x4, Double)] = [:]
+//
+//        for anchor in cloudAnchors {
+//            if anchor["metadata"]!["type"] == .path {     // Note: the path anchors are not currently resolved, so they don't move around.  We should add them anyway
+//                finalAnchors[anchor["cloudIdentifier"]] = anchor
+//            } else {
+//                guard let currentPose = PositioningModel.shared.currentLocation(ofCloudAnchor: cloudIdentifier) else {
+//                    continue
+//                }
+//                finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose, anchorInfo.2)
+//            }
+//        }
+//
+//        FirebaseManager.shared.addConnection(
+//            anchorID1: startAnchorID,
+//            anchor1Pose: anchor1Pose,
+//            anchorID2: stopAnchorID,
+//            anchor2Pose: anchor2Pose,
+//            breadCrumbs: PathRecorder.shared.breadCrumbs,
+//            pathAnchors: finalAnchors)
     }
     
 }
