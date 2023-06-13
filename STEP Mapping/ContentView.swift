@@ -243,13 +243,13 @@ struct MainScreen: View {
 struct ResolvingCloudAnchorsView: View {
     @ObservedObject var positionModel = STEP_Mapping.PositioningModel.shared
     @State var loc:CLLocationCoordinate2D = CLLocationCoordinate2D()
+    @State var newResolved : String = ""
     
     var body: some View {
         HStack{
             VStack {
                 Text("Go to the next anchor.")
-                
-                Text("Cloud Anchor resolved")
+                Text("Resolved " + newResolved)
                 
                 Button("save"){
                     PathRecorder.shared.manyAnchorstoFirebase()
@@ -275,6 +275,12 @@ struct ResolvingCloudAnchorsView: View {
             for anchor in anchors {
                 PositioningModel.shared.resolveCloudAnchor(byID : anchor.id)
             }
+        }
+        .onReceive(PositioningModel.shared.$lastAnchor) { anchorName in
+            newResolved = anchorName
+            let _ = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+                newResolved = ""
+            }
             
         }
     }
@@ -285,7 +291,7 @@ struct FindFirstAnchor: View {
     @ObservedObject var positioningModel = PositioningModel.shared
     let anchorID1: String
     let anchorID2: String
-
+    
     var body: some View {
         VStack {
             if positioningModel.resolvedCloudAnchors.contains(anchorID1) {
@@ -371,7 +377,7 @@ struct PathPlot: View {
         }
         var yPaddingOnEachSide = Float(2.0)
         var xPaddingOnEachSide = Float(2.0)
-
+        
         if xMax - xMin > yMax - yMin {
             yPaddingOnEachSide += ((xMax - xMin) - (yMax - yMin))/2.0
         } else {

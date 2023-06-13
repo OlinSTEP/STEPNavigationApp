@@ -8,91 +8,36 @@
 import SwiftUI
 import CoreLocation
 
-struct AnchorDetailView: View {
+struct AnchorDetailView<Destination: View>: View {
     let anchorDetails: LocationDataModel
+    let buttonLabel: String
+    let buttonDestination: () -> Destination
     
     var body: some View {
-        ZStack {
-            VStack {
-                //need to add in 20 units of spacing colored spacing here
-                HStack {
-                    Text(anchorDetails.getName())
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.horizontal)
-                        .padding(.top)
-                        .padding(.bottom, 2)
-                    Spacer()
-                }
-                
-                HStack {
-                    if let currentLocation = PositioningModel.shared.currentLatLon {
-                        let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                        let formattedDistance = String(format: "%.0f", distance)
-                        Text("\(formattedDistance) meters away")
-                            .font(.title)
-                            .padding(.horizontal)
-                    }
-                    Spacer()
-                }
-                VStack {
-                    HStack {
-                        Text("Location Notes")
-                            .font(.title2)
-                            .bold()
-                            .padding(.bottom, 5)
-                            .multilineTextAlignment(.leading)
-                        Spacer()
-                    }
-                    HStack {
-                        if let notes = anchorDetails.getNotes(), notes != "" {
-                            Text("\(notes)")
-                        }
-                        else {
-                            Text("No notes available for this location.")
-                        }
-                        Spacer()
-                    }
-                }
-                .padding()
-                                
-                Spacer()
-                if anchorDetails.getAnchorType().isIndoors {
-                    NavigationLink (destination: ChooseStartAnchorView(destinationAnchorDetails: anchorDetails), label: {
-                        Text("Find Start Anchor")
-                            .font(.title2)
-                            .bold()
-                            .frame(maxWidth: 300)
-                            .foregroundColor(AppColor.black)
-                    })
-                    .padding(.bottom, 20)
-                    .tint(AppColor.accent)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                } else {
-                    NavigationLink (destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchorDetails), label: {
-                        Text("Navigate")
-                            .font(.title)
-                            .bold()
-                            .frame(maxWidth: 300)
-                            .foregroundColor(AppColor.black)
-                    })
-                    .padding(.bottom, 20)
-                    .tint(AppColor.accent)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                }
+        VStack {
+            if let currentLocation = PositioningModel.shared.currentLatLon {
+                let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
+                let formattedDistance = String(format: "%.0f", distance)
+                AnchorDetailsComponent(title: anchorDetails.getName(), distanceAway: formattedDistance)
+                    .padding(.top)
             }
+            Spacer()
+            SmallButtonComponent_NavigationLink(destination: buttonDestination, label: buttonLabel)
+            
+//            if anchorDetails.getAnchorType().isIndoors {
+//                SmallButtonComponent_NavigationLink(destination: {
+//                    StartAnchorListView(destinationAnchorDetails: anchorDetails)
+//                                }, label: "Find Start Anchor")
+//            } else {
+//                SmallButtonComponent_NavigationLink(destination: {
+//                    NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchorDetails)
+//                                }, label: "Navigate")
+//
+//                SmallButtonComponent_NavigationLink(destination: {
+//                    NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: destinationAnchorDetails!)
+//                                }, label: "Navigate")
+//
+//            }
         }
-    }
-}
-
-struct AnchorDetailView_Previews: PreviewProvider {
-    @State static var anchorDetails = LocationDataModel(anchorType: .externalDoor, coordinates: CLLocationCoordinate2D(latitude: 42, longitude: -71), name: "Test Door", id: UUID().uuidString)
-    
-    static var previews: some View {
-        AnchorDetailView(anchorDetails: anchorDetails)
     }
 }
