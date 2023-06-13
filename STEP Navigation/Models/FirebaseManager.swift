@@ -30,7 +30,7 @@ class FirebaseManager: ObservableObject {
     /// Keeps track of new cloud anchor connections that get added to the database
     private var connectionObserver: ListenerRegistration?
     /// Keeps track of new cloud anchors that get added to the database
-    private var cloudAnchorObserver: ListenerRegistration?
+    private var cloudAnchorObservers: [ListenerRegistration] = []
     /// Keeps track of the location at which we last probed for nearby destinations
     private var lastQueryLocation: CLLocationCoordinate2D?
     /// The mode the database is currently operating within.  This mode is useful for setting various listeners.
@@ -271,64 +271,68 @@ class FirebaseManager: ObservableObject {
                 .start(at: [bound.startValue])
                 .end(at: [bound.endValue])
         }
+        removeAllCloudAnchorObservers()
         for query in queries {
-            query.getDocuments() { (snapshot, error) in
-                guard let documents = snapshot?.documents else {
-                    print("Unable to fetch snapshot data. \(String(describing: error))")
-                    return
+            cloudAnchorObservers.append(
+                query.addSnapshotListener() { (snapshot, error) in
+                    guard let snapshot = snapshot else {
+                        print("Error fetching snapshots: \(error!)")
+                        return
+                    }
+                    self.handleCloudAnchorSnapshot(snapshot: snapshot)
                 }
-                print("querying \(documents.count)")
-                for document in documents {
-                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: document.documentID, document.data()) {
-                        // we could wind up adding the same model multiple times, but that is okay
-                        self.mapAnchors[document.documentID] = cloudMetadata
-                        DataModelManager.shared.addDataModel(dataModel)
-                        self.mapGraph.cloudNodes.insert(document.documentID)
-                        for (toID, simpleEdge) in lightweightConnections {
-                            print("added lightweight \(document.documentID) to \(toID)")
-                            self.mapGraph.addLightweightConnection(from: document.documentID, to: toID, withEdge: simpleEdge)
-                        }
+            )
+        }
+    }
+    
+    private func observeQuery(query: Query) {
+        
+    }
+    
+    private func handleCloudAnchorSnapshot(snapshot: QuerySnapshot) {
+        snapshot.documentChanges.forEach { diff in
+            switch diff.type {
+            case .added:
+                if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()) {
+                    self.mapAnchors[diff.document.documentID] = cloudMetadata
+                    DataModelManager.shared.addDataModel(dataModel)
+                    self.mapGraph.cloudNodes.insert(diff.document.documentID)
+                    for (toID, simpleEdge) in lightweightConnections {
+                        self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
+                    }
+                }
+            case .removed:
+                if DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
+                    self.mapAnchors.removeValue(forKey: diff.document.documentID)
+                    self.mapGraph.cloudNodes.remove(diff.document.documentID)
+                }
+            case .modified:
+                if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()), DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
+                    self.mapAnchors[diff.document.documentID] = cloudMetadata
+                    DataModelManager.shared.addDataModel(dataModel)
+                    for (toID, simpleEdge) in lightweightConnections {
+                        self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
                     }
                 }
             }
         }
     }
     
+    private func removeAllCloudAnchorObservers() {
+        cloudAnchorObservers.map({$0.remove()})
+        cloudAnchorObservers = []
+    }
+    
     /// Create a snapshot listener for all the cloud anchors.
     private func observeAllCloudAnchors() {
-        cloudAnchorObserver?.remove()
-        cloudAnchorObserver = cloudAnchorCollection.addSnapshotListener() { snapshot, error  in
-            guard let snapshot = snapshot else {
-                print("Error fetching snapshots: \(error!)")
-                return
-            }
-            snapshot.documentChanges.forEach { diff in
-                switch diff.type {
-                case .added:
-                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()) {
-                        self.mapAnchors[diff.document.documentID] = cloudMetadata
-                        DataModelManager.shared.addDataModel(dataModel)
-                        self.mapGraph.cloudNodes.insert(diff.document.documentID)
-                        for (toID, simpleEdge) in lightweightConnections {
-                            self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
-                        }
-                    }
-                case .removed:
-                    if DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
-                        self.mapAnchors.removeValue(forKey: diff.document.documentID)
-                        self.mapGraph.cloudNodes.remove(diff.document.documentID)
-                    }
-                case .modified:
-                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()), DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
-                        self.mapAnchors[diff.document.documentID] = cloudMetadata
-                        DataModelManager.shared.addDataModel(dataModel)
-                        for (toID, simpleEdge) in lightweightConnections {
-                            self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
-                        }
-                    }
+        cloudAnchorObservers.append( cloudAnchorCollection.addSnapshotListener() { snapshot, error  in
+                guard let snapshot = snapshot else {
+                    print("Error fetching snapshots: \(error!)")
+                    return
                 }
+                self.handleCloudAnchorSnapshot(snapshot: snapshot)
             }
-        }
+        )
     }
     
     /// Create a snapshot listener for all of the connection objects in the database
