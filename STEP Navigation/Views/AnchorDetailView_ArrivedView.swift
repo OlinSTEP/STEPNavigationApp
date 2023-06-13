@@ -36,7 +36,7 @@ struct AnchorDetailView_ArrivedView: View {
                                 .font(.title)
                                 .padding()
                                 .foregroundColor(.white)
-                                .background(Color.red)
+                                .background(Color.green)
                                 .cornerRadius(10)
                         }
                     }
