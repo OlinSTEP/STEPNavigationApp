@@ -11,6 +11,8 @@ struct AnchorDetailEditView<Destination: View>: View {
     let buttonLabel: String
     let buttonDestination: () -> Destination
     
+    @State var confirmPressed: Bool = false
+    
     let anchorID: String
     @State var newAnchorName: String
     @State var newPlace: String
@@ -88,12 +90,25 @@ struct AnchorDetailEditView<Destination: View>: View {
         .padding(.top, 16)
         
         Spacer()
-        SmallButtonComponent_NavigationLink(destination: buttonDestination, label: "Save")
-        //TODO: fix this so it uses something other than simultaneous gesture because this is not voiceover accessible
-            .simultaneousGesture(TapGesture().onEnded{
+        NavigationLink(destination: buttonDestination(), isActive: $confirmPressed, label: {
+            Text("\(buttonLabel)")
+                .font(.title2)
+                .bold()
+                .frame(maxWidth: .infinity)
+                .foregroundColor(AppColor.dark)
+        })
+        .onChange(of: confirmPressed) {
+            newValue in
+            if newValue {
+                print("simultaneous action completed")
                 self.updateMetadata()
-            })
-    }
+            }
+        }
+        .tint(AppColor.accent)
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.capsule)
+        .controlSize(.large)
+        .padding(.horizontal)        }
     
     func updateMetadata() {
         let newMetadata =

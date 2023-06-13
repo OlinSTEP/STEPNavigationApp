@@ -365,8 +365,8 @@ class PositioningModel: NSObject, ObservableObject {
     /// - Parameters:
     ///   - delay: the delay in seconds before creating the cloud anchor
     ///   - name: the name to associate with the cloud anchor
-    ///   - completionHandler: called with true if the cloud anchor is successful created and false otherwise
-    func createCloudAnchor(afterDelay delay: Double, withName name: String, completionHandler: @escaping (Bool)->()) {
+    ///   - completionHandler: called with an input of the cloud anchor identifier if successful, nil otherwise
+    func createCloudAnchor(afterDelay delay: Double, withName name: String, completionHandler: @escaping (String?)->()) {
         guard !name.isEmpty else {
             AnnouncementManager.shared.announce(announcement: "Please enter an anchor name")
             return
@@ -393,8 +393,8 @@ class PositioningModel: NSObject, ObservableObject {
     /// Create a new cloud anchor using a pose from several seconds ago
     /// - Parameters:
     ///     - metadata: the metadata for the cloud anchor
-    ///     - completionHandler: called with an input of true if the cloud anchor is successfully created and false otherwise
-    func createCloudAnchorFromBufferedPose(withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (Bool)->()) {
+    ///     - completionHandler: called with an input of the cloud anchor identifier if successful, nil otherwise
+    func createCloudAnchorFromBufferedPose(withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (String?)->()) {
         guard !poseBuffer.isEmpty else {
             return
         }
@@ -407,8 +407,8 @@ class PositioningModel: NSObject, ObservableObject {
     /// - Parameters:
     ///   - pose: the pose of the cloud anchor in the current tracking session
     ///   - metadata: the metadata to be associated with the cloud anchor
-    ///   - completionHandler: called with an input of true if the cloud anchor is successfully created and false otherwise
-    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (Bool)->()) {
+    ///   - completionHandler: called with an input of the cloud anchor identifier if successful, nil otherwise
+    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (String?)->()) {
         let newAnchor = ARAnchor(transform: pose)
         arView.session.add(anchor: newAnchor)
         do {
@@ -416,10 +416,10 @@ class PositioningModel: NSObject, ObservableObject {
             try garSession?.hostCloudAnchor(newAnchor, ttlDays: 1) { cloudIdentifier, anchorState in
                 guard anchorState == .success else {
                     AnnouncementManager.shared.announce(announcement: "Failed to host anchor")
-                    return completionHandler(false)
+                    return completionHandler(nil)
                 }
                 guard let cloudIdentifier = cloudIdentifier else {
-                    return completionHandler(false)
+                    return completionHandler(nil)
                 }
                 // TODO: rethink this when we have a category for new cloud anchors
                 switch metadata.type {
@@ -430,11 +430,11 @@ class PositioningModel: NSObject, ObservableObject {
                     
                 }
                 AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
-                return completionHandler(true)
+                return completionHandler(cloudIdentifier)
             }
         } catch {
             print("host cloud anchor failed \(error.localizedDescription)")
-            return completionHandler(false)
+            return completionHandler(nil)
         }
     }
     

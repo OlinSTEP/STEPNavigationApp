@@ -14,7 +14,6 @@
 		130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130E7C4529E36C97004B1E81 /* LocationDataModelParser.swift */; };
 		130E7C4929E36E36004B1E81 /* mbtaBusStops.json in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4829E36E36004B1E81 /* mbtaBusStops.json */; };
 		130E7C4B29E36E41004B1E81 /* Olin_College_Doors.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */; };
-		6569872C2A38AFFC00F5C584 /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
 		6569872D2A38AFFD00F5C584 /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
 		821C89752A336837006FD745 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
 		821C89762A336842006FD745 /* RadarMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView.swift */; };
@@ -134,8 +133,9 @@
 		A83CBC612A3768DA00E8E3CF /* AnchorDetailEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCC32A33A911007FA7CE /* AnchorDetailEditView.swift */; };
 		A83CBC622A3768DC00E8E3CF /* ConnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCC72A33BC7D007FA7CE /* ConnectingView.swift */; };
 		A83CBC632A3768DF00E8E3CF /* RecordAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */; };
-		A83CBC642A37B13D00E8E3CF /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
 		A83CBC652A37B13E00E8E3CF /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
+		A83CBC672A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */; };
+		A83CBC682A38C83200E8E3CF /* SettingsDetailView_Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */; };
 		A89CAA6A2A28EFC100E3A03D /* Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89CAA692A28EFC100E3A03D /* Popups.swift */; };
 		A8B7CB4E2A2A592E004468B8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B7CB4D2A2A592E004468B8 /* Components.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* Colors.swift */; };
@@ -218,6 +218,7 @@
 		A80CDCC72A33BC7D007FA7CE /* ConnectingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectingView.swift; sourceTree = "<group>"; };
 		A80CDCC92A33BE68007FA7CE /* AnchorDetailView_ArrivedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetailView_ArrivedView.swift; sourceTree = "<group>"; };
 		A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAnchorView.swift; sourceTree = "<group>"; };
+		A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailView_Buttons.swift; sourceTree = "<group>"; };
 		A89CAA692A28EFC100E3A03D /* Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popups.swift; sourceTree = "<group>"; };
 		A8B7CB4D2A2A592E004468B8 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
@@ -352,6 +353,7 @@
 				A80CDCC32A33A911007FA7CE /* AnchorDetailEditView.swift */,
 				A80CDCC72A33BC7D007FA7CE /* ConnectingView.swift */,
 				A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */,
+				A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -669,6 +671,7 @@
 				A83CBC5B2A37515A00E8E3CF /* RecordAnchorView.swift in Sources */,
 				A80CDCC42A33A911007FA7CE /* AnchorDetailEditView.swift in Sources */,
 				130E7C4329E236BD004B1E81 /* DataModelManager.swift in Sources */,
+				A83CBC672A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift in Sources */,
 				A80CDCC02A33A808007FA7CE /* SettingsView.swift in Sources */,
 				825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */,
 				821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */,
@@ -697,6 +700,7 @@
 			files = (
 				A80CDCAE2A30F58D007FA7CE /* NavigatingView.swift in Sources */,
 				82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */,
+				A83CBC682A38C83200E8E3CF /* SettingsDetailView_Buttons.swift in Sources */,
 				A83CBC622A3768DC00E8E3CF /* ConnectingView.swift in Sources */,
 				82A0167C2A00158D00EAA526 /* PositioningModel.swift in Sources */,
 				82A016972A0057AB00EAA526 /* GeospatialData.swift in Sources */,

@@ -9,7 +9,19 @@ import SwiftUI
 
 struct SettingsView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScreenTitleComponent(titleText: "Settings")
+        VStack(spacing: 20) {
+            VStack {
+                Text("Color")
+                SmallButtonComponent_NavigationLink(destination: {
+                    SettingsDetailView_CrumbColor()
+                }, label: "Color Scheme")
+                SmallButtonComponent_NavigationLink(destination: {
+                    SettingsDetailView_CrumbColor()
+                }, label: "Crumb Color")
+            }
+        }
+        Spacer()
     }
 }
 
