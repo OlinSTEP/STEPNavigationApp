@@ -10,7 +10,6 @@ import CoreLocation
 
 
 struct AnchorDetailView_ArrivedView: View {
-    
     let anchorDetails: LocationDataModel
    
     

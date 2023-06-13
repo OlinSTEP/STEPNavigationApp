@@ -74,6 +74,9 @@ struct ConfirmationPopup<Destination: View>: View {
     let confirmButtonDestination: () -> Destination
     let simultaneousAction: (() -> Void)?
     
+    @State var deletePressed: Bool = false
+
+    
     init(showingConfirmation: Binding<Bool>, titleText: String, subtitleText: String?, confirmButtonLabel: String, confirmButtonDestination: @escaping () -> Destination, simultaneousAction: (() -> Void)? = nil) {
         self._showingConfirmation = showingConfirmation
         self.titleText = titleText
@@ -99,13 +102,37 @@ struct ConfirmationPopup<Destination: View>: View {
             
             VStack {
                 if let simultaneousAction = simultaneousAction {
-                    SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
-                    //TODO: .simultaneousGesture doesn't work with voiceover??? but it does with tapping on the screen. I hate this so much
-                        .simultaneousGesture(TapGesture().onEnded{
-                                simultaneousAction()
-                            print("tapped delete confirm")
-                        })
-                        .padding(.bottom, 2)
+//                    SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
+//                        .simultaneousGesture(TapGesture().onEnded {
+////                                simultaneousAction()
+//                            print("gesture delete")
+//                        })
+//                        .accessibilityAction {
+//                            print("accessiblity action delete")
+//                            //this works to delete the thing but it doesn't take the user home for some reason
+////                            simultaneousAction()
+//                        }
+                    NavigationLink(destination: confirmButtonDestination(), isActive: $deletePressed, label: {
+                        Text("\(confirmButtonLabel)")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(AppColor.dark)
+                    })
+                    .onChange(of: deletePressed) {
+                        newValue in
+                        if newValue {
+                            print("simultaneous action completed")
+                            simultaneousAction()
+                        }
+                    }
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                    .padding(.horizontal)
+                
+                    .padding(.bottom, 2)
 
                 } else {
                     SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
