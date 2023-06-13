@@ -515,6 +515,8 @@ extension PositioningModel: ARSessionDelegate {
                     guard let cloudIdentifier = identifierToCloudIdentifier[anchor.identifier] else {
                         continue
                     }
+                    self.lastAnchor = FirebaseManager.shared.getCloudAnchorName(byID: cloudIdentifier) ?? ""
+                    PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudIdentifier)!, currentPose: anchor.transform)
                     shouldDoCloudAnchorAlignment = true
                     cloudAnchorAligner.cloudAnchorDidUpdate(withCloudID: cloudIdentifier, withIdentifier: anchor.identifier.uuidString, withPose: anchor.transform, timestamp: frame.timestamp)
                 }
