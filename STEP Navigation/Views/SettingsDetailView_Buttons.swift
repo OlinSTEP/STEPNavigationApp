@@ -8,22 +8,32 @@
 import SwiftUI
 
 struct SettingsDetailView_CrumbColor: View {
-    @State var crumbColor: Color = AppColor.accent
+    @State var selectedCrumbColor: Color?
+    var backgroundColor: Color?
+    
     
     var body: some View {
+        
+        let crumbColorOptions = [
+            CrumbColors(label: "Default", color: AppColor.accent),
+            CrumbColors(label: "Red", color: AppColor.lightred),
+            CrumbColors(label: "Blue", color: AppColor.lightblue),
+        ]
+        
         VStack {
-            SmallButtonComponent_Button(label: "Default") {
-                crumbColor = AppColor.accent
-            }
-            SmallButtonComponent_Button(label: "Red") {
-                crumbColor = AppColor.lightred
-            }
-            SmallButtonComponent_Button(label: "Green") {
-                crumbColor = AppColor.lightgreen
-            }
-            SmallButtonComponent_Button(label: "Blue") {
-                crumbColor = AppColor.lightblue
+            ForEach(crumbColorOptions) { item in
+                SmallButtonComponent_Button(label: item.label) {
+                    selectedCrumbColor = item.color
+//                    backgroundColor = item.color
+                }
             }
         }
     }
+}
+
+
+struct CrumbColors: Identifiable {
+    var label: String
+    var color: Color
+    var id = UUID()
 }

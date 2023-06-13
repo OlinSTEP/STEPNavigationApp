@@ -136,6 +136,7 @@
 		A83CBC652A37B13E00E8E3CF /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
 		A83CBC672A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */; };
 		A83CBC682A38C83200E8E3CF /* SettingsDetailView_Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */; };
+		A83CBC6A2A38E28900E8E3CF /* RecordAnchorInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */; };
 		A89CAA6A2A28EFC100E3A03D /* Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89CAA692A28EFC100E3A03D /* Popups.swift */; };
 		A8B7CB4E2A2A592E004468B8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B7CB4D2A2A592E004468B8 /* Components.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* Colors.swift */; };
@@ -219,6 +220,7 @@
 		A80CDCC92A33BE68007FA7CE /* AnchorDetailView_ArrivedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetailView_ArrivedView.swift; sourceTree = "<group>"; };
 		A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAnchorView.swift; sourceTree = "<group>"; };
 		A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailView_Buttons.swift; sourceTree = "<group>"; };
+		A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAnchorInstructionsView.swift; sourceTree = "<group>"; };
 		A89CAA692A28EFC100E3A03D /* Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popups.swift; sourceTree = "<group>"; };
 		A8B7CB4D2A2A592E004468B8 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 				A80CDCC72A33BC7D007FA7CE /* ConnectingView.swift */,
 				A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */,
 				A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */,
+				A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -663,6 +666,7 @@
 				8241736C29DE13F4001599B1 /* HapticFeedbackAdapter.swift in Sources */,
 				825F1F5729E9CF7D0043BD98 /* FirebaseManager.swift in Sources */,
 				825F1F5129E9CBA70043BD98 /* MapGraph.swift in Sources */,
+				A83CBC6A2A38E28900E8E3CF /* RecordAnchorInstructionsView.swift in Sources */,
 				8241737929DE1478001599B1 /* PositioningModel.swift in Sources */,
 				A80CDCAC2A2FA43E007FA7CE /* ButtonComponents.swift in Sources */,
 				825F1F5329E9CF130043BD98 /* CloudAnchorAligner.swift in Sources */,

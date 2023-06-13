@@ -11,40 +11,71 @@ import ARCoreCloudAnchors
 
 struct RecordAnchorView: View {
     @State private var currentQuality: GARFeatureMapQuality?
-    @State var showPopup: Bool = false
+    @State var showNextButton: Bool = false
     @State var anchorID: String = ""
+    @State var showInstructions = true
     
     
     var body: some View {
         ZStack {
             ARViewContainer()
+            
+            if showNextButton == false && showInstructions == false {
+                InformationPopupComponent(popupType: .countdown(countdown: 4))
+            }
+            
             VStack {
-//                if let currentQuality = currentQuality {
-//                    if currentQuality == .insufficient {
-//                        Text("Quality is low. Make sure to move your phone around and capture the anchor location from multiple angles.")
-//                    }
-//                }
-                Button("Start Recording Anchor") {
-                    PositioningModel.shared.createCloudAnchor(afterDelay: 30.0, withName: "New Anchor") { anchorID in
-                        guard let anchorID = anchorID else {
-                            print("somethign went wrong")
-                            return
+                if showInstructions == true {
+                    VStack {
+                        RecordAnchorInstructionsView()
+                        Spacer()
+                        
+                        Button {
+                            PositioningModel.shared.createCloudAnchor(afterDelay: 5.0, withName: "New Anchor") { anchorID in
+                                guard let anchorID = anchorID else {
+                                    print("something went wrong with creating the cloud anchor")
+                                    return
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    showNextButton = true
+                                    self.anchorID = anchorID
+                                    print("anchor created successfully")
+                                }
+                            }
+//                            showInstructions = false
+                        } label: {
+                            Text("Start Recording")
+                                .font(.title2)
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                                .foregroundColor(AppColor.dark)
                         }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            showPopup = true
-                            self.anchorID = anchorID
-                            print("anchor created successfully")
-                        }
+                        .tint(AppColor.accent)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                        .padding(.horizontal)
                     }
+                    .background(AppColor.light)
                 }
-                if showPopup == true {
+                
+                if showNextButton == true {
                     NavigationLink {
                         AnchorDetailEditView(anchorID: anchorID, buttonLabel: "Save Anchor") {
                             HomeView()
                         }
                     } label: {
                         Text("Next")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(AppColor.dark)
                     }
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                    .padding(.horizontal)
                 }
             }
             .onAppear() {
@@ -52,6 +83,16 @@ struct RecordAnchorView: View {
             }
             .onReceive(PositioningModel.shared.$currentQuality) { newValue in
                 currentQuality = newValue
+            }
+        }
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink(destination: HomeView(), label: {
+                    Text("Cancel")
+                        .bold()
+                        .font(.title2)
+                })
             }
         }
     }
