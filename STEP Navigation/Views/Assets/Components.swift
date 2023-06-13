@@ -22,6 +22,8 @@ struct TextFieldComponent: View {
     let label: String?
     let textBoxSize: TextBoxSize?
     
+    @FocusState private var entryIsFocused: Bool
+    
     init(entry: Binding<String>, instructions: String? = "", label: String? = nil, textBoxSize: TextBoxSize? = .small) {
         self._entry = entry
         self.instructions = instructions
@@ -51,6 +53,7 @@ struct TextFieldComponent: View {
                                 .stroke(AppColor.grey, lineWidth: 2)
                         )
                         .bold()
+                        .submitLabel(.done)
                 } else {
                     TextField("\(instructions)", text: $entry, axis: .vertical)
                         .frame(height: 150)
@@ -62,6 +65,15 @@ struct TextFieldComponent: View {
                         )
                         .bold()
                         .lineLimit(6, reservesSpace: true)
+                        .submitLabel(.done)
+                        .focused($entryIsFocused)
+                        .onChange(of: entry) { newValue in
+                            guard let newValueLastChar = newValue.last else { return }
+                            if newValueLastChar == "\n" {
+                                entry.removeLast()
+                                entryIsFocused = false
+                            }
+                        }
                 }
             }
         }

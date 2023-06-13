@@ -42,7 +42,7 @@ struct RecordAnchorView: View {
                                     print("anchor created successfully")
                                 }
                             }
-//                            showInstructions = false
+                            showInstructions = false
                         } label: {
                             Text("Start Recording")
                                 .font(.title2)
