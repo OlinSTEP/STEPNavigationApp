@@ -34,6 +34,11 @@ enum GeoLocationAccuracy: Int {
     }
 }
 
+//struct AnchorPoseData {
+//    var pose: simd_float4x4
+//    var timestamp: Double
+//}
+
 /// This stores the metadata about the cloud anchor.  Note: that the cloudIdentifier is not stored here, but rather maintained as the key in various data structures that store ``CloudAnchorMetadata``
 struct CloudAnchorMetadata {
     /// The name of the cloud anchor (this is user-facing, can be changed, and is not guaranteed to be unique)
@@ -48,6 +53,8 @@ struct CloudAnchorMetadata {
     let creatorUID: String
     /// True if the cloud anchor can be read by the general public, false if it can only be ready by the user who created it
     let isReadable: Bool
+//    /// The timestamps for when the anchors are resolved
+//    let anchorTimestamp: Double
     
     /// Convert the cloud anchor data to a dictionary that is suitable for serialization or storage in a database
     /// - Returns: the dictionary as key-value pairs
@@ -289,6 +296,7 @@ class PositioningModel: NSObject, ObservableObject {
                 guard let garAnchor = garAnchor else {
                     return
                 }
+//                self.anchorCrumbs.append(AnchorTimeData(pose: , timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0))
                 self.identifierToCloudIdentifier[garAnchor.identifier] = cloudAnchorID
                 self.cloudAnchorAligner.cloudAnchorDidUpdate(
                     withCloudID: cloudAnchorID,
@@ -298,8 +306,7 @@ class PositioningModel: NSObject, ObservableObject {
                 self.resolvedCloudAnchors.insert(cloudAnchorID)
                 self.manualAlignment = self.cloudAnchorAligner.adjust(currentAlignment: self.manualAlignment)
                 
-                
-                PathRecorder.shared.addCloudAnchor(identifier: cloudAnchorID, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID)!, currentPose: garAnchor.transform)
+                PathRecorder.shared.addCloudAnchor(identifier: cloudAnchorID, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID)!, currentPose: garAnchor.transform, timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
             }
         } catch {
             print("error \(error.localizedDescription)")
@@ -436,8 +443,8 @@ class PositioningModel: NSObject, ObservableObject {
                 case .indoorDestination:
                     FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
                 default:
-                    PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: pose)
-                    
+                    PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: pose, timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
+              // I'm taking the current timestamp but not totally sure if that's write
                 }
                 AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
                 return completionHandler(true)
@@ -607,7 +614,7 @@ extension PositioningModel: CLLocationManagerDelegate {
     /// - Parameters:
     ///   - manager: the location manager
     ///   - locations: the new locations of the device.  If more than one are present, the last one is the most recent.
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, Locations locations: [CLLocation]) {
         guard let mostRecentLocation = locations.last, garSession == nil else {
             return
         }

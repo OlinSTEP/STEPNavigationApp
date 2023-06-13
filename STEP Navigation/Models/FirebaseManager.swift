@@ -163,7 +163,7 @@ class FirebaseManager: ObservableObject {
                        anchorID2: String,
                        anchor2Pose: simd_float4x4,
                        breadCrumbs: [PoseData],
-                       pathAnchors: [String: (CloudAnchorMetadata, simd_float4x4)]) {
+                       pathAnchors: [String: (CloudAnchorMetadata, simd_float4x4, Double)]) {
         // we'll create an identifier to refer to the path and then link it to the cloud anchors
         // TODO: add transaction
         let id = UUID().uuidString

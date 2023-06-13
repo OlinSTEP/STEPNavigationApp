@@ -34,6 +34,7 @@ class CloudAnchorAligner {
         let newInfo = CloudAnchorResolutionInfomation(identifier: cloudID, lastUpdateTime: Date(), pose: pose)
         if let landmark = cloudAnchorLandmarks?[cloudID] {
             PathLogger.shared.logCloudAnchorDidUpdate(cloudID: cloudID, identifier: identifier, pose: pose, mapPose: landmark, timestamp: timestamp)
+            print("This is landmark\( landmark)")
         }
         if var resolvedAnchors = resolvedCloudAnchors[cloudID] {
             resolvedAnchors.append(newInfo)
