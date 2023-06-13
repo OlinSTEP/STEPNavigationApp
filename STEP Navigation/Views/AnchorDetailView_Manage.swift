@@ -24,7 +24,7 @@ struct AnchorDetailView_Manage: View {
                         .padding(.top)
                 }
                 Spacer()
-                VStack(spacing: 10) {
+                VStack(spacing: 15) {
                     SmallButtonComponent_NavigationLink(destination: {
                         AnchorDetailEditView(anchorID: anchorDetails.id, buttonLabel: "Save") {
                             HomeView()

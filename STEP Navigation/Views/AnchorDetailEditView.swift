@@ -53,6 +53,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                     })
                     .pickerStyle(.menu)
                     Spacer()
+                    Text("\(newCategory.rawValue)")
                 }
             }
             .padding(.horizontal)
@@ -88,6 +89,7 @@ struct AnchorDetailEditView<Destination: View>: View {
         
         Spacer()
         SmallButtonComponent_NavigationLink(destination: buttonDestination, label: "Save")
+        //TODO: fix this so it uses something other than simultaneous gesture because this is not voiceover accessible
             .simultaneousGesture(TapGesture().onEnded{
                 self.updateMetadata()
             })

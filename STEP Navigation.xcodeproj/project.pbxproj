@@ -134,6 +134,8 @@
 		A83CBC612A3768DA00E8E3CF /* AnchorDetailEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCC32A33A911007FA7CE /* AnchorDetailEditView.swift */; };
 		A83CBC622A3768DC00E8E3CF /* ConnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCC72A33BC7D007FA7CE /* ConnectingView.swift */; };
 		A83CBC632A3768DF00E8E3CF /* RecordAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */; };
+		A83CBC642A37B13D00E8E3CF /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
+		A83CBC652A37B13E00E8E3CF /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
 		A89CAA6A2A28EFC100E3A03D /* Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89CAA692A28EFC100E3A03D /* Popups.swift */; };
 		A8B7CB4E2A2A592E004468B8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B7CB4D2A2A592E004468B8 /* Components.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* Colors.swift */; };
