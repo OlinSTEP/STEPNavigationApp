@@ -11,6 +11,8 @@ struct AnchorDetailEditView<Destination: View>: View {
     let buttonLabel: String
     let buttonDestination: () -> Destination
     
+    let visibilityOptions = [true, false]
+    
     @State var confirmPressed: Bool = false
     
     let anchorID: String
@@ -29,74 +31,128 @@ struct AnchorDetailEditView<Destination: View>: View {
         newAssociatedOutdoorFeature = metadata.associatedOutdoorFeature
         newCategory = metadata.type
         newIsReadable = metadata.isReadable
-        newPlace = "Placeholder Place"
-        newNotes = "Placeholder Notes"
+        newPlace = "Placeholder Place - Do not edit, doesn't work yet"
+        newNotes = "Placeholder Notes - Do not edit, doesn't work yet"
         self.buttonLabel = buttonLabel
         self.buttonDestination = buttonDestination
+        
+//        UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(red: 171/255, green: 236/255, blue: 220/255, alpha: 1)
+//        UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: AppColor.dark], for: .selected)
+//        UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: AppColor.dark], for: .normal)
     }
     
+    
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                TextFieldComponent(entry: $newAnchorName, label: "Name")
-                //TODO: add popup to warn if you set the name as the same as another nearby anchor/another anchor in the same organization (not me accidentally naming two anchors MAC Elevators (2nd Floor))
-                TextFieldComponent(entry: $newPlace, label: "Organization")
-                VStack {
-                    HStack {
-                        Text("Anchor Type")
-                            .font(.title2)
-                            .bold()
-                        Spacer()
-                    }
-                    HStack {
-                        Picker(selection: $newCategory) {
-                            ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
-                                Text(category.rawValue)
-                            }
-                        } label: {
-                            Text("AnchorType")
-                        }
-                        .pickerStyle(.menu)
-                        Spacer()
-                    }
-                    .frame(height: 48)
-                    .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
-                    .cornerRadius(5)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(AppColor.grey, lineWidth: 2)
-                    )
-                }
-                .padding(.horizontal)
-                
-                if newCategory == .exit {
+        VStack {
+            VStack {
+                ScrollView {
+                    TextFieldComponent(entry: $newAnchorName, label: "Name")
+//                    TextFieldComponent(entry: $newPlace, label: "Organization")
                     VStack {
                         HStack {
-                            Text("Select Corresponding Exit")
+                            Text("Type")
                                 .font(.title2)
                                 .bold()
                             Spacer()
                         }
                         HStack {
-                            Picker("Select Corresponding Exit", selection: $newAssociatedOutdoorFeature) {
-                                Text("").tag("")
-                                ForEach(DataModelManager.shared.getLocationsByType(anchorType: .externalDoor).sorted(by: { $0.getName() < $1.getName() })) { outdoorFeature in
-                                    Text(outdoorFeature.getName()).tag(outdoorFeature.id)
+                            Picker(selection: $newCategory) {
+                                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
+                                    Text(category.rawValue)
                                 }
+                            } label: {
+                                Text("AnchorType")
                             }
+                            .pickerStyle(.menu)
                             Spacer()
                         }
+                        .frame(height: 48)
+                        .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(AppColor.grey, lineWidth: 2)
+                        )
                     }
                     .padding(.horizontal)
                     
-                }
-                TextFieldComponent(entry: $newNotes, label: "Location Notes", textBoxSize: .large)
-                Toggle("Public Anchor", isOn: $newIsReadable)
+                    if newCategory == .exit {
+                        VStack {
+                            HStack {
+                                Text("Corresponding Exit")
+                                    .font(.title2)
+                                    .bold()
+                                Spacer()
+                            }
+                            HStack {
+                                Picker("Select Corresponding Exit", selection: $newAssociatedOutdoorFeature) {
+                                    Text("").tag("")
+                                    ForEach(DataModelManager.shared.getLocationsByType(anchorType: .externalDoor).sorted(by: { $0.getName() < $1.getName() })) { outdoorFeature in
+                                        Text(outdoorFeature.getName()).tag(outdoorFeature.id)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 48)
+                            .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(AppColor.grey, lineWidth: 2)
+                            )
+                        }
+                        .padding(.horizontal)
+                        
+                    }
+//                    TextFieldComponent(entry: $newNotes, label: "Location Notes", textBoxSize: .large)
+//                    VStack {
+//                        HStack {
+//                            Text("Visibility")
+//                                .font(.title2)
+//                                .bold()
+//                            Spacer()
+//                        }
+//                        HStack {
+//                            Toggle("Public Anchor", isOn: $newIsReadable)
+//                                .bold()
+//                                .tint(AppColor.dark)
+//                        }
+//                        .frame(height: 48)
+//                        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+//                        .cornerRadius(10)
+//                        .overlay(
+//                            RoundedRectangle(cornerRadius: 10)
+//                                .stroke(AppColor.grey, lineWidth: 2)
+//                        )
+//                    }
+//                    .padding(.horizontal)
+                    
+                    VStack {
+                        HStack {
+                            Text("Visibility")
+                                .font(.title2)
+                                .bold()
+                            Spacer()
+                        }
+                        Picker("Anchor Visibility", selection: $newIsReadable) {
+                            ForEach(visibilityOptions, id: \.self) {
+                                if $0 == true {
+                                    Text("Public")
+                                } else {
+                                    Text("Private")
+                                }
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .colorMultiply(AppColor.accent)
+                    }
                     .padding(.horizontal)
-                    .bold()
-                
+
+                    
+                }
+                Spacer()
             }
-            .padding(.top, 16)
+            .padding(.top, 20)
             
             Spacer()
             //fix this so that it is actually stuck to the bottom: since it is a scrollview the spacer doesn't do anything, but if you make it not a scrollview then when the keyboard appears it moves the save button up weirdly
@@ -119,8 +175,8 @@ struct AnchorDetailEditView<Destination: View>: View {
             .buttonBorderShape(.capsule)
             .controlSize(.large)
             .padding(.horizontal)
-            
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
     
     func updateMetadata() {

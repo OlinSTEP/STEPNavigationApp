@@ -140,6 +140,7 @@
 		A89CAA6A2A28EFC100E3A03D /* Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89CAA692A28EFC100E3A03D /* Popups.swift */; };
 		A8B7CB4E2A2A592E004468B8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B7CB4D2A2A592E004468B8 /* Components.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* Colors.swift */; };
+		A8DA8BC12A3A0BDA0024510F /* SelectConnectingAnchorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */; };
 		A8FF1A1229E062DD002019E9 /* DestinationTypesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */; };
 /* End PBXBuildFile section */
 
@@ -224,6 +225,7 @@
 		A89CAA692A28EFC100E3A03D /* Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popups.swift; sourceTree = "<group>"; };
 		A8B7CB4D2A2A592E004468B8 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectConnectingAnchorsView.swift; sourceTree = "<group>"; };
 		A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationTypesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -357,6 +359,7 @@
 				A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */,
 				A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */,
 				A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */,
+				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -659,6 +662,7 @@
 				8241736829DE13B8001599B1 /* AnchorDetailView.swift in Sources */,
 				82F2E43229FC5FD200781E75 /* StartAnchorListView.swift in Sources */,
 				A80CDCBA2A311E92007FA7CE /* HomeView.swift in Sources */,
+				A8DA8BC12A3A0BDA0024510F /* SelectConnectingAnchorsView.swift in Sources */,
 				8241737429DE1440001599B1 /* AllPaths.swift in Sources */,
 				A8FF1A1229E062DD002019E9 /* DestinationTypesView.swift in Sources */,
 				A80CDCB82A311E58007FA7CE /* RadarMapView.swift in Sources */,

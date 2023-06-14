@@ -31,7 +31,7 @@ struct AnchorDetailView_Manage: View {
                         }
                     }, label: "Edit")
                     SmallButtonComponent_NavigationLink(destination: {
-                        ConnectingView()
+                        SelectConnectingAnchorsView(anchorID1: anchorDetails.id)
                     }, label: "Connect")
                     
                     

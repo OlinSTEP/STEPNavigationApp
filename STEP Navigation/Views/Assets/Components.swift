@@ -46,21 +46,21 @@ struct TextFieldComponent: View {
                 if textBoxSize == .small {
                     TextField("\(instructions)", text: $entry)
                         .frame(height: 48)
-                        .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
-                        .cornerRadius(5)
+                        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                        .cornerRadius(10)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 5)
+                            RoundedRectangle(cornerRadius: 10)
                                 .stroke(AppColor.grey, lineWidth: 2)
                         )
                         .bold()
                         .submitLabel(.done)
                 } else {
                     TextField("\(instructions)", text: $entry, axis: .vertical)
-                        .frame(height: 150)
-                        .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
-                        .cornerRadius(5)
+                        .frame(height: 146)
+                        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                        .cornerRadius(10)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 5)
+                            RoundedRectangle(cornerRadius: 10)
                                 .stroke(AppColor.grey, lineWidth: 2)
                         )
                         .bold()
