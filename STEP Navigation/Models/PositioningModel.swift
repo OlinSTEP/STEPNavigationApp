@@ -374,6 +374,7 @@ class PositioningModel: NSObject, ObservableObject {
         AnnouncementManager.shared.announce(announcement: "Creating cloud anchor in \(round(delay)) seconds")
         guard let cameraTransform = self.arView.session.currentFrame?.camera.transform,
               let geoSpatialTransfrom = garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform else {
+            AnnouncementManager.shared.announce(announcement: "Transform was nil")
             return
         }
         

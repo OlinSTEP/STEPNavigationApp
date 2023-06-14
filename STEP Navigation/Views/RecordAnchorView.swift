@@ -15,13 +15,22 @@ struct RecordAnchorView: View {
     @State var anchorID: String = ""
     @State var showInstructions = true
     
+    @State private var timeRemaining = 0
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
     
     var body: some View {
         ZStack {
             ARViewContainer()
             
             if showNextButton == false && showInstructions == false {
-                InformationPopupComponent(popupType: .countdown(countdown: 4))
+                InformationPopupComponent(popupType: .countdown(countdown: timeRemaining))
+//                Text("\(timeRemaining)")
+                    .onReceive(timer) { time in
+                        if timeRemaining > 0 {
+                            timeRemaining -= 1
+                        }
+                    }
             }
             
             VStack {
@@ -31,7 +40,7 @@ struct RecordAnchorView: View {
                         Spacer()
                         
                         Button {
-                            PositioningModel.shared.createCloudAnchor(afterDelay: 5.0, withName: "New Anchor") { anchorID in
+                            PositioningModel.shared.createCloudAnchor(afterDelay: 30.0, withName: "New Anchor") { anchorID in
                                 guard let anchorID = anchorID else {
                                     print("something went wrong with creating the cloud anchor")
                                     return
@@ -43,6 +52,7 @@ struct RecordAnchorView: View {
                                 }
                             }
                             showInstructions = false
+                            timeRemaining = 30
                         } label: {
                             Text("Start Recording")
                                 .font(.title2)
@@ -85,6 +95,7 @@ struct RecordAnchorView: View {
                 currentQuality = newValue
             }
         }
+        .background(AppColor.accent)
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

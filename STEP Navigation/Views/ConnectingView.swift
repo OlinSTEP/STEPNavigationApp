@@ -10,6 +10,8 @@ import ARCoreGeospatial
 import ARCoreCloudAnchors
 
 struct ConnectingView: View {
+    @ObservedObject var positioningModel = PositioningModel.shared
+
     @State var anchorID1 = FirebaseManager.shared.firstCloudAnchor ?? ""
     @State var anchorID2 = FirebaseManager.shared.firstCloudAnchor ?? ""
     @ObservedObject var firebaseManager = FirebaseManager.shared
@@ -18,14 +20,93 @@ struct ConnectingView: View {
     
     @State var showInstructions: Bool = true
     
+    @State var savePressed: Bool = false
+
+    
     var body: some View {
         ZStack {
             ARViewContainer()
+                if positioningModel.resolvedCloudAnchors.contains(anchorID1) {
+                    HStack {
+                        Text("Anchor successfully resolved. You can now walk to \(FirebaseManager.shared.getCloudAnchorName(byID: anchorID2)!).")
+                        .foregroundColor(AppColor.light)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(AppColor.dark)
+                    
+                    if positioningModel.resolvedCloudAnchors.contains(anchorID2) {
+                        
+                        VStack {
+                            HStack {
+                                Text("\(FirebaseManager.shared.getCloudAnchorName(byID: anchorID2)!) anchor successfully resolved. Connection created.")
+                                    .foregroundColor(AppColor.light)
+                                    .bold()
+                                    .font(.title2)
+                                    .multilineTextAlignment(.center)
+                            }
+                            NavigationLink(destination: HomeView(), isActive: $savePressed, label: {
+                                Text("Save")
+                                    .font(.title2)
+                                    .bold()
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundColor(AppColor.dark)
+                            })
+                            .onChange(of: savePressed) {
+                                newValue in
+                                if newValue {
+                                    PathRecorder.shared.toFirebase()
+                                }
+                            }
+                            .tint(AppColor.accent)
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.capsule)
+                            .controlSize(.large)
+                            .padding(.horizontal)
+                            
+
+//                            Button("Save") {
+//                                PathRecorder.shared.toFirebase()
+//                            }
+//                            .foregroundColor(AppColor.light)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(AppColor.dark)
+                    } else {
+                        HStack {
+                            Text("Walk to \(FirebaseManager.shared.getCloudAnchorName(byID: anchorID2)!).")
+                            .foregroundColor(AppColor.light)
+                            .bold()
+                            .font(.title2)
+                            .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(AppColor.dark)
+                    }
+                    
+                } else {
+                    
+                    HStack {
+                        Text("Stand at \(FirebaseManager.shared.getCloudAnchorName(byID: anchorID1)!) and scan your phone around to resolve the anchor.")
+                        .foregroundColor(AppColor.light)
+                        .bold()
+                        .font(.title2)
+                        .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(AppColor.dark)
+                }
             
             if showInstructions == true {
                 VStack {
                     HStack {
-                        Text("Instructions here")
+                        Text("Instructions here. Go to your first anchor. Etc etc.")
                         Spacer()
                     }
                     Spacer()
@@ -41,14 +122,30 @@ struct ConnectingView: View {
                         showInstructions = false
                     } label: {
                         Text("Find First Anchor")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(AppColor.dark)
                     }
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                    .padding(.horizontal)
                 }
                 .background(AppColor.light)
             }
-            
-        
-        
-            
+        }
+        .background(AppColor.accent)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink(destination: HomeView(), label: {
+                    Text("Cancel")
+                        .bold()
+                        .font(.title2)
+                })
+            }
         }
         .onReceive(PositioningModel.shared.$currentQuality) { newQuality in
             currentQuality = newQuality
@@ -57,151 +154,4 @@ struct ConnectingView: View {
             PositioningModel.shared.startPositioning()
         }
     }
-    
-    enum connectingPopupText: String {
-        case findFirstAnchor, walkToSecondAnchor, resolvedSecondAnchor
-    }
 }
-
-//struct ConnectAnchorView: View {
-//    @State var anchorID1 = FirebaseManager.shared.firstCloudAnchor ?? ""
-//    @State var anchorID2 = FirebaseManager.shared.firstCloudAnchor ?? ""
-//    @ObservedObject var firebaseManager = FirebaseManager.shared
-//    @State var currentQuality: GARFeatureMapQuality?
-//
-//    var body: some View {
-//        VStack {
-//            if let currentQuality = currentQuality {
-//                switch currentQuality {
-//                case .insufficient:
-//                    Text("Anchor quality insufficient")
-//                case .sufficient:
-//                    Text("Anchor quality sufficient")
-//                case .good:
-//                    Text("Anchor quality good")
-//                @unknown default:
-//                    Text("Anchor quality is unknown")
-//                }
-//            }
-//            Picker("Anchor 1", selection: $anchorID1) {
-//                ForEach(FirebaseManager.shared.mapAnchors.sorted(by: { $0.0 > $1.0 }), id: \.key) { cloudAnchorID, mapAnchorMetadata in
-//                    Text(mapAnchorMetadata.name)
-//                }
-//            }
-//            .pickerStyle(WheelPickerStyle())
-//
-//            Picker("Anchor 2", selection: $anchorID2) {
-//                ForEach(FirebaseManager.shared.mapAnchors.sorted(by: { $0.0 > $1.0 }), id: \.key) { cloudAnchorID, mapAnchorMetadata in
-//                    Text(mapAnchorMetadata.name)
-//                }
-//            }
-//            .pickerStyle(WheelPickerStyle())
-//
-//            Button("Connect Cloud Anchors") {
-//                guard anchorID1 != anchorID2 else {
-//                    AnnouncementManager.shared.announce(announcement: "Navigating two and from the same point of interest is not currently supported")
-//                    return
-//                }
-//                PositioningModel.shared.resolveCloudAnchor(byID: anchorID1)
-//                PositioningModel.shared.resolveCloudAnchor(byID: anchorID2)
-//                PathRecorder.shared.startAnchorID = anchorID1
-//                PathRecorder.shared.stopAnchorID = anchorID2
-//                MainUIStateContainer.shared.currentScreen = .findFirstAnchorToFormConnection(anchorID1: anchorID1, anchorID2: anchorID2)
-//            }
-//
-//        }
-//        .background(Color.orange)
-//        .padding()
-//        .onReceive(PositioningModel.shared.$currentQuality) { newQuality in
-//            currentQuality = newQuality
-//        }
-//        .onAppear() {
-//            PositioningModel.shared.startPositioning()
-//        }
-//    }
-//}
-
-//struct FindFirstAnchor: View {
-//    @ObservedObject var positioningModel = PositioningModel.shared
-//    let anchorID1: String
-//    let anchorID2: String
-//
-//    var body: some View {
-//        VStack {
-//            if positioningModel.resolvedCloudAnchors.contains(anchorID1) {
-//                Text("Resolved first anchor")
-//                Button("Next Step") {
-//                    MainUIStateContainer.shared.currentScreen = .walkToSecondAnchor(anchorID1: anchorID1, anchorID2: anchorID2)
-//                }
-//            } else {
-//                Text("Find Anchor by scanning your phone around \(FirebaseManager.shared.getCloudAnchorName(byID: anchorID1)!)")
-//            }
-//        }
-//        .background(Color.orange)
-//        .padding()
-//    }
-//}
-
-//struct WalkToSecondAnchor: View {
-//    let anchorID1: String
-//    let anchorID2: String
-//    @ObservedObject var positioningModel = PositioningModel.shared
-//
-//    var body: some View {
-//        HStack{
-//            VStack {
-//                if let currentQuality = PositioningModel.shared.currentQuality {
-//                    switch currentQuality {
-//                    case .insufficient:
-//                        Text("Anchor quality insufficient")
-//                    case .sufficient:
-//                        Text("Anchor quality sufficient")
-//                    case .good:
-//                        Text("Anchor quality good")
-//                    @unknown default:
-//                        Text("Anchor quality is unknown")
-//                    }
-//                }
-//                Text("Walk to the second anchor")
-//                Button("Next step") {
-//                    PathRecorder.shared.stopRecordingPath()
-//                    MainUIStateContainer.shared.currentScreen = .findSecondAnchorToFormConnection(anchorID1: anchorID1, anchorID2: anchorID2)
-//                }
-//            }
-//        }.onAppear() {
-//            PathRecorder.shared.startRecording()
-//        }
-//    }
-//}
-//
-
-//struct FindSecondAnchor: View {
-//    @ObservedObject var positioningModel = PositioningModel.shared
-//    let anchorID1: String
-//    let anchorID2: String
-//    @State var showingPopover = false
-//
-//    var body: some View {
-//        VStack {
-//            Button("Show Recorded Path") {
-//                showingPopover.toggle()
-//            }
-//            if positioningModel.resolvedCloudAnchors.contains(anchorID2) {
-//                Text("Resolved second anchor")
-//                Button("Done") {
-//                    PathRecorder.shared.toFirebase()
-//                    MainUIStateContainer.shared.currentScreen = .createAnchor
-//                }
-//            } else {
-//                Text("Find Anchor by scanning your phone around \(FirebaseManager.shared.getCloudAnchorName(byID: anchorID2)!)")
-//            }
-//        }
-//        .popover(isPresented: $showingPopover) {
-//            let keypoints = PathRecorder.shared.breadCrumbs.map({ KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: $0)})
-//            let currentPose = PositioningModel.shared.cameraTransform
-//            PathPlot(points: keypoints, currentTransform: currentPose)
-//        }
-//        .background(Color.orange)
-//        .padding()
-//    }
-//}
