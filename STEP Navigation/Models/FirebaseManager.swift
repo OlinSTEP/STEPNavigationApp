@@ -39,6 +39,8 @@ class FirebaseManager: ObservableObject {
     let mapGraph = MapGraph()
     /// A connection to the Firestore database
     private let db: Firestore
+    /// the path where we last stored a log file
+    var lastLogPath: String?
     
     /// a handle to the cloud anchor collection.  This handle is affected by the the mapping sub folder setting.
     private var cloudAnchorCollection: CollectionReference {
@@ -106,6 +108,16 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    func uploadFeedback(_ data: Data) {
+        guard let uid = AuthHandler.shared.currentUID else {
+            return
+        }
+        let filename = "\(UUID().uuidString).json"
+        Storage.storage().reference().child("feedbackSurveyData").child(uid).child(filename).putData(data) { (metadata, error) in
+            print("error: \(error?.localizedDescription ?? "none")")
+        }
+    }
+    
     /// Download the path data from Firestore corresponding to the specified edges.
     /// - Parameters:
     ///   - edges: The edges to download specified as a list of String tuples.  Each tuple contains the start cloud anchor ID and end cloud anchor ID for the requested edge.
@@ -146,6 +158,7 @@ class FirebaseManager: ObservableObject {
         let uniqueId = RouteNavigator.shared.routeNameForLogging ?? UUID().uuidString
         print("UPLOADING LOG \(RouteNavigator.shared.routeNameForLogging ?? "nil")")
         Storage.storage().reference().child("take2logs").child("\(uniqueId).log").putData(data) { (metadata, error) in
+            self.lastLogPath = metadata?.path
             print("error: \(error?.localizedDescription ?? "none")")
         }
     }
