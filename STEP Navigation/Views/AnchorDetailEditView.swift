@@ -17,7 +17,7 @@ struct AnchorDetailEditView<Destination: View>: View {
     
     let anchorID: String
     @State var newAnchorName: String
-    @State var newPlace: String
+    @State var newOrganization: String
     @State var newCategory: AnchorType
     @State var newNotes: String
     @State var newAssociatedOutdoorFeature: String
@@ -31,7 +31,7 @@ struct AnchorDetailEditView<Destination: View>: View {
         newAssociatedOutdoorFeature = metadata.associatedOutdoorFeature
         newCategory = metadata.type
         newIsReadable = metadata.isReadable
-        newPlace = "Placeholder Place - Do not edit, doesn't work yet"
+        newOrganization = metadata.organization
         newNotes = "Placeholder Notes - Do not edit, doesn't work yet"
         self.buttonLabel = buttonLabel
         self.buttonDestination = buttonDestination
@@ -47,7 +47,7 @@ struct AnchorDetailEditView<Destination: View>: View {
             VStack {
                 ScrollView {
                     TextFieldComponent(entry: $newAnchorName, label: "Name")
-//                    TextFieldComponent(entry: $newPlace, label: "Organization")
+                    TextFieldComponent(entry: $newOrganization, label: "Organization")
                     VStack {
                         HStack {
                             Text("Type")
@@ -185,7 +185,8 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 type: newCategory,
                                 associatedOutdoorFeature: newAssociatedOutdoorFeature,
                                 geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
-                                isReadable: newIsReadable)
+                            isReadable: newIsReadable,
+                            organization: newOrganization)
         FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
     }
 }

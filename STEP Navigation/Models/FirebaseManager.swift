@@ -218,6 +218,7 @@ class FirebaseManager: ObservableObject {
         let anchorTypeString = (data["category"] as? String) ?? ""
         let associatedOutdoorFeature = (data["associatedOutdoorFeature"] as? String) ?? ""
         let anchorType = AnchorType(rawValue: anchorTypeString) ?? .other
+        let organization = (data["organization"] as? String) ?? ""
         let creatorUID = (data["creatorUID"] as? String) ?? ""
         let isReadable = (data["isReadable"] as? Bool) ?? true
         var simpleConnections: [String: SimpleEdge] = [:]
@@ -234,7 +235,8 @@ class FirebaseManager: ObservableObject {
                                 type: anchorType,
                                 associatedOutdoorFeature: associatedOutdoorFeature,
                                 geospatialTransform: geospatialData, creatorUID: creatorUID,
-                                isReadable: isReadable
+                                isReadable: isReadable,
+                                organization: organization
             ),
             LocationDataModel(anchorType: anchorType,
                               associatedOutdoorFeature: associatedOutdoorFeature,
