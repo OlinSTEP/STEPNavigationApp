@@ -35,6 +35,7 @@ struct RadarMapView: View {
         let toolbarColor = focusedIndex != nil && focusedIndex! != 0 ? RadarMapView.getQualityColor(quality: points[focusedIndex!].quality).light : AppColor.accent
 
             ZStack {
+                //TODO: add a component here that dispalys "adjusting to landscape mode" or something like that for a few seconds while the phone adjusts, then disappear to display the map
                 VStack {
                     Spacer()
                     HStack {
@@ -45,7 +46,7 @@ struct RadarMapView: View {
                 .ignoresSafeArea()
                 .background(AppColor.dark)
                 .onAppear {
-                    UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation") // Forcing the rotation to portrait
+                    UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation") // Forcing the rotation to landscape
                     AppDelegate.orientationLock = .landscapeRight // And making sure it stays that way
                 }
                 .onDisappear {

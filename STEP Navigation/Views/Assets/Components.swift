@@ -22,6 +22,8 @@ struct TextFieldComponent: View {
     let label: String?
     let textBoxSize: TextBoxSize?
     
+    @FocusState private var entryIsFocused: Bool
+    
     init(entry: Binding<String>, instructions: String? = "", label: String? = nil, textBoxSize: TextBoxSize? = .small) {
         self._entry = entry
         self.instructions = instructions
@@ -44,24 +46,34 @@ struct TextFieldComponent: View {
                 if textBoxSize == .small {
                     TextField("\(instructions)", text: $entry)
                         .frame(height: 48)
-                        .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
-                        .cornerRadius(5)
+                        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                        .cornerRadius(10)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 5)
+                            RoundedRectangle(cornerRadius: 10)
                                 .stroke(AppColor.grey, lineWidth: 2)
                         )
                         .bold()
+                        .submitLabel(.done)
                 } else {
                     TextField("\(instructions)", text: $entry, axis: .vertical)
-                        .frame(height: 150)
-                        .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
-                        .cornerRadius(5)
+                        .frame(height: 146)
+                        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                        .cornerRadius(10)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 5)
+                            RoundedRectangle(cornerRadius: 10)
                                 .stroke(AppColor.grey, lineWidth: 2)
                         )
                         .bold()
                         .lineLimit(6, reservesSpace: true)
+                        .submitLabel(.done)
+                        .focused($entryIsFocused)
+                        .onChange(of: entry) { newValue in
+                            guard let newValueLastChar = newValue.last else { return }
+                            if newValueLastChar == "\n" {
+                                entry.removeLast()
+                                entryIsFocused = false
+                            }
+                        }
                 }
             }
         }
@@ -179,6 +191,7 @@ struct InformationPopupComponent: View {
         case waitingToLocalize
         case arrived(destinationAnchorDetails: LocationDataModel)
         case direction(directionText: String)
+        case countdown(countdown: Int)
         
         var messageText: String {
             switch self {
@@ -188,6 +201,8 @@ struct InformationPopupComponent: View {
                 return "Trying to align to your route. Scan your phone around to recognize your surroundings."
             case .direction(let directionText):
                 return directionText
+            case .countdown(let countdown):
+                return String(countdown)
             }
         }
         
@@ -360,20 +375,6 @@ enum AnchorSelectionType {
     case indoorStartingPoint(selectedDestination: LocationDataModel)
     case indoorEndingPoint
     case outdoorEndingPoint
-}
-
-struct MappingAnchorListComponent: View {
-    let anchors: [LocationDataModel]
-    var body: some View {
-        VStack(spacing: 20) {
-            ForEach(0..<anchors.count, id: \.self) { idx in
-                LargeButtonComponent_NavigationLink(destination: {
-                    AnchorDetailView_Manage(anchorDetails: anchors[idx])
-                }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
-            }
-        }
-        .padding(.vertical, 20)
-    }
 }
 
 struct NearbyDistanceThresholdComponent: View {

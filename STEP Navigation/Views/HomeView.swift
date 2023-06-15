@@ -27,6 +27,8 @@ struct HomeView: View {
                     .navigationBarBackButtonHidden()
                     .padding(.top, 60)
                     .background(AppColor.accent)
+                
+                //TODO: add a component here that dispalys "adjusting to portrait mode" or something like that for a few seconds while the phone adjusts, then disappear to display the home view
                 ScrollView {
                     if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                         if positionModel.currentLatLon == nil {
@@ -54,10 +56,12 @@ struct HomeView: View {
                         }
                     }
                 }
+                .onAppear() {
+                    positionModel.startCoarsePositioning()
+                    UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation") // Forcing the rotation back to portrait
+                    AppDelegate.orientationLock = .portrait // And making sure it stays that way
+                }
                 Spacer()
-            }
-            .onAppear() {
-                positionModel.startCoarsePositioning()
             }
             .accentColor(AppColor.dark)
         }
