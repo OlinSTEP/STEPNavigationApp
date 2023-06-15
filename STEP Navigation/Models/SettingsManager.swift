@@ -6,11 +6,15 @@
 //
 
 import Foundation
+import SwiftUI
 
 /// This class manages the settings of the app
 class SettingsManager: ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = SettingsManager()
+    
+    private var settingsToColor: [String: Color] = ["Red": AppColor.lightred,
+                                                "Blue": AppColor.lightblue]
     
     /// if non-empty, put all mapping content in a subfolder
     var mappingSubFolder = ""
@@ -23,6 +27,8 @@ class SettingsManager: ObservableObject {
     
     /// true if we should visualize streetscape data (requires resetting the app for the setting to take effect)
     var visualizeStreetscapeData = false
+    
+    var crumbColor: Color = AppColor.lightred
     
     /// The private initializer.  This should not be called directly.
     private init() {
@@ -47,6 +53,9 @@ class SettingsManager: ObservableObject {
         adjustPhoneBodyOffset = defaults.bool(forKey: "adjustPhoneBodyOffset")
         automaticDirectionsWhenUserIsLost = defaults.bool(forKey: "automaticDirectionsWhenUserIsLost")
         visualizeStreetscapeData = defaults.bool(forKey: "visualizeStreetscapeData")
+        if let colorAsString = defaults.string(forKey: "crumbColor"), let color = settingsToColor[colorAsString] {
+            crumbColor = color
+        }
     }
     
     /// Register settings bundle
@@ -55,7 +64,8 @@ class SettingsManager: ObservableObject {
             "mappingSubFolder": "",
             "adjustPhoneBodyOffset": false,
             "automaticDirectionsWhenUserIsLost": false,
-            "visualizeStreetscapeData": false
+            "visualizeStreetscapeData": false,
+            "crumbColor": "Red"
         ]
         UserDefaults.standard.register(defaults: appDefaults)
     }

@@ -8,6 +8,26 @@
 	<array>
 		<dict>
 			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Key</key>
+			<string>crumbColor</string>
+			<key>Title</key>
+			<string>Crumb Color</string>
+			<key>Titles</key>
+			<array>
+				<string>Red</string>
+				<string>Blue</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<string>Red</string>
+				<string>Blue</string>
+			</array>
+			<key>DefaultValue</key>
+			<string>Red</string>
+		</dict>
+		<dict>
+			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
 			<string>Visualize Google Streetscape Data</string>
