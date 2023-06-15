@@ -32,7 +32,7 @@ struct AnchorDetailEditView<Destination: View>: View {
         newCategory = metadata.type
         newIsReadable = metadata.isReadable
         newOrganization = metadata.organization
-        newNotes = "Placeholder Notes - Do not edit, doesn't work yet"
+        newNotes = metadata.notes
         self.buttonLabel = buttonLabel
         self.buttonDestination = buttonDestination
         
@@ -104,7 +104,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                         .padding(.horizontal)
                         
                     }
-//                    TextFieldComponent(entry: $newNotes, label: "Location Notes", textBoxSize: .large)
+                    TextFieldComponent(entry: $newNotes, label: "Location Notes", textBoxSize: .large)
 //                    VStack {
 //                        HStack {
 //                            Text("Visibility")
@@ -186,7 +186,8 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 associatedOutdoorFeature: newAssociatedOutdoorFeature,
                                 geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
                             isReadable: newIsReadable,
-                            organization: newOrganization)
+                            organization: newOrganization,
+                            notes: newNotes)
         FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
     }
 }
