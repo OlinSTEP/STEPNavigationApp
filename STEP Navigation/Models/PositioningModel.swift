@@ -50,6 +50,8 @@ struct CloudAnchorMetadata {
     let isReadable: Bool
     /// The organization that the cloud anchor is associated with
     let organization: String
+    /// The notes for the cloud anchor
+    let notes: String
     
     /// Convert the cloud anchor data to a dictionary that is suitable for serialization or storage in a database
     /// - Returns: the dictionary as key-value pairs
@@ -62,6 +64,7 @@ struct CloudAnchorMetadata {
                 "type": type.rawValue,
                 "category": type.rawValue,
                 "organization": organization,
+                "notes": notes,
                 "associatedOutdoorFeature": associatedOutdoorFeature,
                 "geospatialTransform": geospatialTransform.asDict(),
                 "geohash": hash]
@@ -391,7 +394,8 @@ class PositioningModel: NSObject, ObservableObject {
                     associatedOutdoorFeature: "",
                     geospatialTransform: GeospatialData(arCoreGeospatial: geoSpatialTransfrom), creatorUID: AuthHandler.shared.currentUID ?? "",
                     isReadable: true,
-                    organization: ""),
+                    organization: "",
+                    notes: ""),
                 completionHandler: completionHandler
             )
         }
