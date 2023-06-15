@@ -16,8 +16,13 @@ struct LocationDataModel: Hashable, Identifiable {
     private let associatedOutdoorFeature: String?
     /// the latitude / longitude for the data model
     private let coordinates: CLLocationCoordinate2D
-    /// the notes for the data model
-    private let notes: String?
+    /// the cloud anchor metadata (only applies to LocationDataModels that are Cloud anchors
+    var cloudAnchorMetadata: CloudAnchorMetadata? {
+        if let cloudAnchorID = cloudAnchorID {
+            return FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID)
+        }
+        return nil
+    }
     /// the name of the data model
     private let name: String
     /// the identifier for this data model
@@ -39,14 +44,12 @@ struct LocationDataModel: Hashable, Identifiable {
     init(anchorType: AnchorType,
          associatedOutdoorFeature: String?=nil,
          coordinates: CLLocationCoordinate2D,
-         notes: String? = "",
          name: String,
          id: String,
          cloudAnchorID: String?=nil) {
         self.anchorType = anchorType
         self.associatedOutdoorFeature = associatedOutdoorFeature
         self.coordinates = coordinates
-        self.notes = notes
         self.name = name
         self.id = id
         self.cloudAnchorID = cloudAnchorID
@@ -61,7 +64,6 @@ struct LocationDataModel: Hashable, Identifiable {
             hasher.combine(anchorType)
             hasher.combine(coordinates.latitude)
             hasher.combine(coordinates.longitude)
-            hasher.combine(notes ?? "")
             hasher.combine(name)
         }
     
@@ -76,7 +78,6 @@ struct LocationDataModel: Hashable, Identifiable {
         return lhs.anchorType == rhs.anchorType &&
             lhs.coordinates.latitude == rhs.coordinates.latitude &&
             lhs.coordinates.longitude == rhs.coordinates.longitude &&
-            lhs.notes == rhs.notes &&
             lhs.name == rhs.name
     }
     
@@ -96,12 +97,6 @@ struct LocationDataModel: Hashable, Identifiable {
     /// - Returns: the name of the model
     func getName() -> String {
         return self.name
-    }
-    
-    /// Return the associated notes
-    /// - Returns: the associated notes or nil if none exist
-    func getNotes() -> String? {
-        return self.notes
     }
     
     /// Return the associated cloud identifier
