@@ -20,7 +20,7 @@ class DataModelManager: ObservableObject {
     public static var shared = DataModelManager()
     
     // Dictionary that stores all the location models
-    private var allLocationModels = [AnchorType: Set<LocationDataModel>]()
+    @Published var allLocationModels = [AnchorType: Set<LocationDataModel>]()
     
     private var idMap: [String: LocationDataModel] = [:]
     
@@ -103,11 +103,12 @@ class DataModelManager: ObservableObject {
     /// - Parameter byCloudAnchorID: the cloud anchorID associated with the data model to delete
     /// TODO: this is a bad linear search.  Need to have a better way to get the element (e.g., if we hashed on just the ID or something of that nature)
     func deleteDataModel(byCloudAnchorID id: String)->Bool {
-        for var (_, models) in allLocationModels {
+        for var (anchorType, models) in allLocationModels {
             for model in models {
                 if model.getCloudAnchorID() == id {
                     models.remove(model)
                     idMap.removeValue(forKey: model.id)
+                    allLocationModels[anchorType] = models
                     return true
                 }
             }

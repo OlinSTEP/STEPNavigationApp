@@ -138,6 +138,7 @@ class FirebaseManager: ObservableObject {
     /// - Parameter id: the identifier of the cloud anchor ID to delete.
     func deleteCloudAnchor(id: String) {
         cloudAnchorCollection.document(id).delete()
+        DataModelManager.shared.deleteDataModel(byCloudAnchorID: id)
     }
     
     /// Upload the log data to the storage bucket
