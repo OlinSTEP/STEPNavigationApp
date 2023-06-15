@@ -34,6 +34,12 @@ struct ManageAnchorsListView: View {
             .padding(.vertical, 20)
             Spacer()
         }
+        .onReceive(DataModelManager.shared.objectWillChange) {
+            anchors = []
+            if let latLon = lastQueryLocation {
+                updateNearbyAnchors(latLon: latLon)
+            }
+        }
         .onReceive(positionModel.$currentLatLon) { latLon in
             guard let latLon = latLon else {
                 return
@@ -42,16 +48,20 @@ struct ManageAnchorsListView: View {
                 return
             }
             lastQueryLocation = latLon
-            anchors = Array(
-                DataModelManager.shared.getNearbyIndoorLocations(
-                    location: latLon,
-                    maxDistance: CLLocationDistance(Double.infinity),
-                    withBuffer: 0.0
-                )
-            )
-            .sorted(by: {
-                $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
-            })
+            updateNearbyAnchors(latLon: latLon)
         }
+    }
+    
+    private func updateNearbyAnchors(latLon: CLLocationCoordinate2D) {
+        anchors = Array(
+            DataModelManager.shared.getNearbyIndoorLocations(
+                location: latLon,
+                maxDistance: CLLocationDistance(Double.infinity),
+                withBuffer: 0.0
+            )
+        )
+        .sorted(by: {
+            $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
+        })
     }
 }
