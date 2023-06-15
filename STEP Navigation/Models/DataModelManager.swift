@@ -162,6 +162,20 @@ class DataModelManager: ObservableObject {
         return Array(reachableTypesAsSet)
     }
     
+    /// Get an array of all organizations that have been loaded by the `FirebaseManager`.
+    /// - Returns: A alphabetically sorted list of organizations.  The empty organization is not returned.
+    func getAllNearbyOrganizations()-> [String] {
+        var returnValueAsSet: Set<String> = []
+        for model in getAllIndoorLocationModels() {
+            if let cloudIdentifier = model.getCloudAnchorID(),
+               let metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudIdentifier),
+               !metadata.organization.isEmpty {
+                returnValueAsSet.insert(metadata.organization)
+            }
+        }
+        return Array(returnValueAsSet).sorted()
+    }
+    
     /**
             Returns a set containing all indoor categories within the specified distance from the specified location.
          
