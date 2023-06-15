@@ -36,9 +36,11 @@ struct SelectConnectingAnchorsView: View {
                 //TODO: make it so that the anchor you are connecting from doesn't show up in the list
                 VStack(spacing: 20) {
                     ForEach(0..<anchors.count, id: \.self) { idx in
-                        LargeButtonComponent_NavigationLink(destination: {
-                            ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)
-                        }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+                        if anchors[idx].id != anchorID1 {
+                            LargeButtonComponent_NavigationLink(destination: {
+                                ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)
+                            }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+                        }
                     }
                 }
                 .padding(.vertical, 20)

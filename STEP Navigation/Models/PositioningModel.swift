@@ -273,6 +273,7 @@ class PositioningModel: NSObject, ObservableObject {
     /// Initiate a request to resolve a cloud anchor based on its cloud identifier
     /// - Parameter cloudAnchorID: the cloud identifier
     func resolveCloudAnchor(byID cloudAnchorID: String) {
+        print("garSession \(garSession)")
         do {
             try garSession?.resolveCloudAnchor(cloudAnchorID) { garAnchor, anchorState in
                 guard anchorState == .success else {
