@@ -17,18 +17,18 @@ class SettingsManager: ObservableObject {
                                                 "Blue": AppColor.lightblue]
     
     /// if non-empty, put all mapping content in a subfolder
-    var mappingSubFolder = ""
+    @Published var mappingSubFolder = ""
     
     /// true if we should adjust navigation based on phone / body offset
-    var adjustPhoneBodyOffset = false
+    @Published var adjustPhoneBodyOffset = false
     
     /// true if we should provide the user with guidance when they appear to be lost
-    var automaticDirectionsWhenUserIsLost = false
+    @Published var automaticDirectionsWhenUserIsLost = false
     
     /// true if we should visualize streetscape data (requires resetting the app for the setting to take effect)
-    var visualizeStreetscapeData = false
+    @Published var visualizeStreetscapeData = false
     
-    var crumbColor: Color = AppColor.lightred
+    @Published var crumbColor: Color = AppColor.lightred
     
     /// The private initializer.  This should not be called directly.
     private init() {

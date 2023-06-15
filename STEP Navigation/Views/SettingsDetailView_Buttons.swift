@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SettingsDetailView_CrumbColor: View {
+    @ObservedObject var settingsManager = SettingsManager.shared
     @State var selectedCrumbColor: Color?
-//    @EnvironmentObject var selectedCrumbColor: Color
     var backgroundColor: Color?
     
     init(selectedCrumbColor: Color? = AppColor.accent, backgroundColor: Color? = nil) {
@@ -28,21 +28,35 @@ struct SettingsDetailView_CrumbColor: View {
         
         VStack {
             ScreenTitleComponent(titleText: "Crumb Color", subtitleText: "Set the color of the box-shaped crumb for navigating.")
-            VStack {
-                ForEach(crumbColorOptions) { item in
-                    SmallButtonComponent_Button(label: item.label, action: {
-                        selectedCrumbColor = item.color
-                    }, backgroundColor: selectedCrumbColor == item.color ? item.color : AppColor.grey)
-                }
-                .padding(.vertical, 2)
-            }
-            .padding(.top, 20)
-
-            Spacer()
+            
+            Button(action:{
+                                UserDefaults.standard.setValue("Red", forKey: "crumbColor")
+                        }) {
+                            Text("Red")
+                                .foregroundColor(settingsManager.crumbColor == AppColor.lightred ? AppColor.lightred : AppColor.grey)
+                        }
+            
+            Button(action:{
+                                UserDefaults.standard.setValue("Blue", forKey: "crumbColor")
+                        }) {
+                            Text("Blue")
+                                .foregroundColor(settingsManager.crumbColor == AppColor.lightblue ? AppColor.lightblue : AppColor.grey)
+                        }
+//            VStack {
+//                ForEach(crumbColorOptions) { item in
+//                    SmallButtonComponent_Button(label: item.label, action: {
+//                        selectedCrumbColor = item.color
+//                    }, backgroundColor: selectedCrumbColor == item.color ? item.color : AppColor.grey)
+//                }
+//                .padding(.vertical, 2)
+//            }
+//            .padding(.top, 20)
+//
+//            Spacer()
             
             SmallButtonComponent_NavigationLink(destination: {
                 SettingsView()
-            }, label: "Save")
+            }, label: "Return to Settings")
         }
         .navigationBarBackButtonHidden()
     }
