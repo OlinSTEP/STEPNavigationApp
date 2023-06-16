@@ -14,8 +14,29 @@ struct ManageAnchorsListView: View {
     @State var anchors: [LocationDataModel] = []
     @State var lastQueryLocation: CLLocationCoordinate2D?
     
+    @State var selectedOrganization = ""
+    
     var body: some View {
-        ScreenTitleComponent(titleText: "Anchors", subtitleText: "At *organization name*")
+        VStack {
+            HStack {
+                Text("Anchors")
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.horizontal)
+                Spacer()
+            }
+            .padding(.bottom, 0.5)
+            
+            HStack {
+                Text("At")
+                    .font(.title2)
+                    .padding(.leading)
+                OrganizationPicker(selectedOrganization: $selectedOrganization)
+                Spacer()
+            }
+            .padding(.bottom, 20)
+        }
+        .background(AppColor.accent)
         
         ScrollView {
             SmallButtonComponent_NavigationLink(destination: {
@@ -23,12 +44,13 @@ struct ManageAnchorsListView: View {
             }, label: "Create New Anchor")
             .padding(.top, 20)
             
-//            MappingAnchorListComponent(anchors: anchors)
             VStack(spacing: 20) {
                 ForEach(0..<anchors.count, id: \.self) { idx in
-                    LargeButtonComponent_NavigationLink(destination: {
-                        AnchorDetailView_Manage(anchorDetails: anchors[idx])
-                    }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+                    if anchors[idx].cloudAnchorMetadata?.organization == selectedOrganization {
+                        LargeButtonComponent_NavigationLink(destination: {
+                            AnchorDetailView_Manage(anchorDetails: anchors[idx])
+                        }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+                    }
                 }
             }
             .padding(.vertical, 20)
@@ -63,5 +85,85 @@ struct ManageAnchorsListView: View {
         .sorted(by: {
             $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
         })
+    }
+}
+
+//struct OrganizationPicker: View {
+//    @ObservedObject var dataModelManager = DataModelManager.shared
+//    @Binding var selectedOrganization: String
+//
+//    var body: some View {
+//        Picker("Organizations", selection: $selectedOrganization) {
+//            Text("No Organization Specified").tag("")
+//                .font(.system(size: 16, weight: .bold))
+//                .foregroundColor(.red)
+//
+//            ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
+//                Text(organization)
+//            }
+//        }
+//    }
+//}
+
+//struct OrganizationPicker: View {
+//    @ObservedObject var dataModelManager = DataModelManager.shared
+//    @Binding var selectedOrganization: String
+//
+//    var body: some View {
+//        Menu {
+//            Button(action: {
+//                selectedOrganization = ""
+//            }) {
+//                Text("Blank Organization")
+//            }
+//
+//            ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
+//                Button(action: {
+//                    selectedOrganization = organization
+//                }) {
+//                    Text(organization)
+//                }
+//            }
+//        } label: {
+//            Label(
+//                title: {
+//                    Text(selectedOrganization.isEmpty ? "Select Organization" : selectedOrganization)
+//                    .bold()
+//                    .font(.title2)
+//                },
+//                icon: {
+//                    Image(systemName: "chevron.down")
+//                }
+//            )
+//        }
+//    }
+//}
+
+struct OrganizationPicker: View {
+    @ObservedObject var dataModelManager = DataModelManager.shared
+    @Binding var selectedOrganization: String
+    
+    var body: some View {
+        Menu {
+            Button(action: {
+                selectedOrganization = ""
+            }) {
+                Text("Organization Field Blank - option included for testing purposes")
+            }
+            
+            ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
+                Button(action: {
+                    selectedOrganization = organization
+                }) {
+                    Text(organization)
+                }
+            }
+        } label: {
+            HStack {
+                Text(selectedOrganization.isEmpty ? "Select Organization" : selectedOrganization)
+                    .font(.title2)
+                Image(systemName: "chevron.down")
+            }
+        }
     }
 }
