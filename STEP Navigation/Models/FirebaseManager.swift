@@ -40,6 +40,9 @@ class FirebaseManager: ObservableObject {
     /// A connection to the Firestore database
     private let db: Firestore
     
+    /// Stores the current version of the edge connecting two nodes.  This is used for path versioning
+    private var currentVersionMap: [NodePair<String, String>: Int] = [:]
+    
     /// a handle to the cloud anchor collection.  This handle is affected by the the mapping sub folder setting.
     private var cloudAnchorCollection: CollectionReference {
         if SettingsManager.shared.mappingSubFolder.isEmpty {
@@ -99,7 +102,6 @@ class FirebaseManager: ObservableObject {
     /// - Parameters:
     ///   - identifier: the ARCore Cloud Anchor ID
     ///   - metadata: the data to store with the cloud anchor
-    ///   TODO: need to support geo hash
     func updateCloudAnchor(identifier: String, metadata: CloudAnchorMetadata) {
         self.cloudAnchorCollection.document(identifier).updateData(metadata.asDict()) { error in
             print("error: \(error?.localizedDescription ?? "none")")
@@ -138,7 +140,7 @@ class FirebaseManager: ObservableObject {
     /// - Parameter id: the identifier of the cloud anchor ID to delete.
     func deleteCloudAnchor(id: String) {
         cloudAnchorCollection.document(id).delete()
-        DataModelManager.shared.deleteDataModel(byCloudAnchorID: id)
+        let _ = DataModelManager.shared.deleteDataModel(byCloudAnchorID: id)
     }
     
     /// Upload the log data to the storage bucket
@@ -195,9 +197,22 @@ class FirebaseManager: ObservableObject {
             "connections": FieldValue.arrayUnion(
                 [["toID": anchorID2,
                   "weight": edgeWeight,
-                  "pathID": id] as [String : Any]])
+                  "pathID": id,
+                  "version": getConnectionVersion(from: anchorID1, to: anchorID2)] as [String : Any]])
         ])
-
+    }
+    
+    /// Get the next version for the connection to use between the two anchors
+    /// - Parameters:
+    ///   - anchorID1: the "from" anchor
+    ///   - anchorID2: the "to" anchor
+    /// - Returns: the integer to use for the version (this will increase by one with each new recorded path)
+    private func getConnectionVersion(from anchorID1: String, to anchorID2: String)->Int {
+        if let currentVersion = currentVersionMap[NodePair(from: anchorID1, to: anchorID2)] {
+            return currentVersion + 1
+        } else {
+            return 0
+        }
     }
     
     /// Parse the data from Firebase containing the cloud anchor
@@ -230,7 +245,9 @@ class FirebaseManager: ObservableObject {
                   let weight = connection["weight"] as? Double else {
                 continue
             }
-            simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight))
+            let version = connection["version"] as? Int ?? 0
+            currentVersionMap[NodePair(from: id, to: toID)] = max(version, currentVersionMap[NodePair(from: id, to: toID)] ?? 0)
+            simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight), wasReversed: false, version: version)
         }
         return (
             CloudAnchorMetadata(name: anchorName,

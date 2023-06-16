@@ -99,7 +99,9 @@ class PositioningModel: NSObject, ObservableObject {
     /// a mapping from anchor identifiers to cloud identifiers
     private var identifierToCloudIdentifier: [UUID: String] = [:]
     private var arCoreDispatchQueue = DispatchQueue(label: "arCoreQueue")
-    private var sessionReady = NSCondition()
+    private var sessionReadyCondition = NSCondition()
+    /// keeps track of whether the GARSession is ready
+    private var sessionReady = false
     /// the most recent quality (useful for updating SwiftUI-based views)
     @Published var currentQuality: GARFeatureMapQuality?
     /// the cloud anchors that have been resolved so far.  The elements of the set are the cloud identifiers
@@ -195,8 +197,10 @@ class PositioningModel: NSObject, ObservableObject {
     /// Stop positioning using ARCore and ARKit
     func stopPositioning() {
         garSession = nil
-        // TODO: I think this is very bad and might cause segfaults
-        sessionReady = NSCondition()
+        print("Resetting condition!")
+        sessionReadyCondition.lock()
+        sessionReady = false
+        sessionReadyCondition.unlock()
         arView.session.pause()
         resetAlignment()
     }
@@ -284,8 +288,9 @@ class PositioningModel: NSObject, ObservableObject {
     /// - Parameter cloudAnchorID: the cloud identifier
     func resolveCloudAnchor(byID cloudAnchorID: String) {
         arCoreDispatchQueue.async {
-            self.sessionReady.wait()
+            self.waitOnSession()
             do {
+                print("RESOLVING \(cloudAnchorID)")
                 try self.garSession?.resolveCloudAnchor(cloudAnchorID) { garAnchor, anchorState in
                     guard anchorState == .success else {
                         return
@@ -312,7 +317,7 @@ class PositioningModel: NSObject, ObservableObject {
     /// - Parameter pose: the pose to use as a reference
     private func estimateFeatureMapQualityForHosting(pose: simd_float4x4) {
         arCoreDispatchQueue.async {
-            self.sessionReady.wait()
+            self.waitOnSession()
             do {
                 let quality = try self.garSession?.estimateFeatureMapQualityForHosting(pose)
                 DispatchQueue.main.async {
@@ -339,7 +344,7 @@ class PositioningModel: NSObject, ObservableObject {
     /// - Returns: the initial GARAnchor that tracks the terrain anchor
     func addTerrainAnchor(at location: CLLocationCoordinate2D, withName name: String, completionHandler: @escaping (GARAnchor?, GARTerrainAnchorState)->()) {
         arCoreDispatchQueue.async {
-            self.sessionReady.wait()
+            self.waitOnSession()
             guard let garSession = self.garSession else {
                 completionHandler(nil, .errorInternal)
                 return
@@ -395,7 +400,7 @@ class PositioningModel: NSObject, ObservableObject {
         }
         AnnouncementManager.shared.announce(announcement: "Creating cloud anchor in \(round(delay)) seconds")
         arCoreDispatchQueue.async {
-            self.sessionReady.wait()
+            self.waitOnSession()
             guard let cameraTransform = self.arView.session.currentFrame?.camera.transform,
                   let geoSpatialTransfrom = self.garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform else {
                 print("transform was nil!")
@@ -433,6 +438,15 @@ class PositioningModel: NSObject, ObservableObject {
         createCloudAnchor(atPose: poseToUseForQualityEstimation, withMetadata: metadata, completionHandler: completionHandler)
     }
     
+    /// Wait on the ``sessionIsReadyCondition``
+    private func waitOnSession() {
+        sessionReadyCondition.lock()
+        while !sessionReady {
+            sessionReadyCondition.wait()
+        }
+        sessionReadyCondition.unlock()
+    }
+    
     /// Create a new cloud anchor
     /// - Parameters:
     ///   - pose: the pose of the cloud anchor in the current tracking session
@@ -440,7 +454,7 @@ class PositioningModel: NSObject, ObservableObject {
     ///   - completionHandler: called with an input of the cloud anchor identifier if successful, nil otherwise
     func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (String?)->()) {
         arCoreDispatchQueue.async {
-            self.sessionReady.wait()
+            self.waitOnSession()
             let newAnchor = ARAnchor(transform: pose)
             self.arView.session.add(anchor: newAnchor)
             do {
@@ -507,11 +521,15 @@ extension PositioningModel: ARSessionDelegate {
         PathLogger.shared.logPose(frame.camera.transform, timestamp: frame.timestamp)
         if frame.camera.trackingState == .normal && garSession == nil {
             startGARSession()
+            monitorQuality()
         }
         do {
             if let garFrame = try garSession?.update(frame) {
                 if garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform != nil {
-                    sessionReady.signal()
+                    sessionReadyCondition.lock()
+                    sessionReady = true
+                    sessionReadyCondition.signal()
+                    sessionReadyCondition.unlock()
                 }
                 latestGARAnchors = garFrame.anchors
                 if let nextKeypoint = RouteNavigator.shared.nextKeypoint,

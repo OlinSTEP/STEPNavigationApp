@@ -26,6 +26,10 @@ struct SimpleEdge {
     let pathID: String
     /// The cost of traversing the edge (currently based on the length of the path)
     let cost: Float
+    /// True if this simple edge was created from reversing an edge
+    let wasReversed: Bool
+    /// The sequential 
+    let version: Int
 }
 
 /// A complex edge that allows for multiple paths to be stitched together into a single, unified path.
@@ -120,11 +124,17 @@ class MapGraph {
     ///   - simpleEdge: the simple edge that encodes that path ID and the edge cost
     func addLightweightConnection(from fromID: String, to toID: String, withEdge simpleEdge: SimpleEdge) {
         isDirty = true
-        lightweightConnections[NodePair(from: fromID, to: toID)] = simpleEdge
-        // add reverse edge if it doesn't exist yet
-        if lightweightConnections[NodePair(from: toID, to: fromID)] == nil {
+        let currentConnection = lightweightConnections[NodePair(from: fromID, to: toID)]
+        if currentConnection == nil || (currentConnection!.version < simpleEdge.version || currentConnection!.wasReversed) {
+            lightweightConnections[NodePair(from: fromID, to: toID)] = simpleEdge
+        }
+        let reverseConnection = lightweightConnections[NodePair(from: toID, to: fromID)]
+        // add reverse edge if it doesn't exist yet or if it was reversed and has a lower version
+        if reverseConnection == nil || (reverseConnection!.wasReversed && reverseConnection!.version < simpleEdge.version) {
             let reversed = SimpleEdge(pathID: simpleEdge.pathID,
-                                      cost: simpleEdge.cost)
+                                      cost: simpleEdge.cost,
+                                      wasReversed: true,
+                                      version: simpleEdge.version)
             lightweightConnections[NodePair(from: toID, to: fromID)] = reversed
         }
     }

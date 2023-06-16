@@ -55,6 +55,8 @@ struct ConnectingView: View {
                             .bold()
                             .font(.title2)
                             .multilineTextAlignment(.center)
+                    }.onAppear() {
+                        PathRecorder.shared.startRecording()
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -81,6 +83,7 @@ struct ConnectingView: View {
                         .onChange(of: savePressed) {
                             newValue in
                             if newValue {
+                                PathRecorder.shared.stopRecordingPath()
                                 PathRecorder.shared.toFirebase()
                             }
                         }
@@ -177,6 +180,9 @@ struct ConnectingView: View {
         }
         .onAppear() {
             PositioningModel.shared.startPositioning()
+        }
+        .onDisappear() {
+            PositioningModel.shared.stopPositioning()
         }
     }
 }
