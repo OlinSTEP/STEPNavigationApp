@@ -13,8 +13,9 @@ class SettingsManager: ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = SettingsManager()
     
-    private var settingsToColor: [String: Color] = ["Red": AppColor.lightred,
-                                                "Blue": AppColor.lightblue]
+    private var crumbColorStringToColor: [String: Color] = ["defaultCrumbColor": AppColor.accent, "Green": AppColor.lightgreen, "Red": AppColor.lightred, "Blue": AppColor.lightblue]
+    
+    private var colorSchemeStringToColor: [String: [Color]] = ["defaultColorScheme": [AppColor.white, AppColor.defaultBlack, AppColor.defaultAccent], "Black_White": [AppColor.white, AppColor.black, AppColor.black], "Yellow_Black": [AppColor.black, AppColor.yellow, AppColor.yellow], "Yellow_Blue": [AppColor.blue, AppColor.yellow, AppColor.yellow]]
     
     /// if non-empty, put all mapping content in a subfolder
     @Published var mappingSubFolder = ""
@@ -28,7 +29,9 @@ class SettingsManager: ObservableObject {
     /// true if we should visualize streetscape data (requires resetting the app for the setting to take effect)
     @Published var visualizeStreetscapeData = false
     
-    @Published var crumbColor: Color = AppColor.lightred
+    @Published var crumbColor: Color = AppColor.accent
+    @Published var colorScheme: [Color] = [AppColor.white, AppColor.defaultBlack, AppColor.defaultAccent]
+
     
     /// The private initializer.  This should not be called directly.
     private init() {
@@ -53,8 +56,11 @@ class SettingsManager: ObservableObject {
         adjustPhoneBodyOffset = defaults.bool(forKey: "adjustPhoneBodyOffset")
         automaticDirectionsWhenUserIsLost = defaults.bool(forKey: "automaticDirectionsWhenUserIsLost")
         visualizeStreetscapeData = defaults.bool(forKey: "visualizeStreetscapeData")
-        if let colorAsString = defaults.string(forKey: "crumbColor"), let color = settingsToColor[colorAsString] {
+        if let crumbColorAsString = defaults.string(forKey: "crumbColor"), let color = crumbColorStringToColor[crumbColorAsString] {
             crumbColor = color
+        }
+        if let colorSchemeAsString = defaults.string(forKey: "colorScheme"), let color = colorSchemeStringToColor[colorSchemeAsString] {
+            colorScheme = color
         }
     }
     
@@ -65,7 +71,8 @@ class SettingsManager: ObservableObject {
             "adjustPhoneBodyOffset": false,
             "automaticDirectionsWhenUserIsLost": false,
             "visualizeStreetscapeData": false,
-            "crumbColor": "Red"
+            "crumbColor": "defaultCrumbColor",
+            "colorScheme": "defaultColorScheme"
         ]
         UserDefaults.standard.register(defaults: appDefaults)
     }

@@ -88,15 +88,81 @@ struct ManageAnchorsListView: View {
     }
 }
 
+//struct OrganizationPicker: View {
+//    @ObservedObject var dataModelManager = DataModelManager.shared
+//    @Binding var selectedOrganization: String
+//
+//    var body: some View {
+//        Picker("Organizations", selection: $selectedOrganization) {
+//            Text("No Organization Specified").tag("")
+//                .font(.system(size: 16, weight: .bold))
+//                .foregroundColor(.red)
+//
+//            ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
+//                Text(organization)
+//            }
+//        }
+//    }
+//}
+
+//struct OrganizationPicker: View {
+//    @ObservedObject var dataModelManager = DataModelManager.shared
+//    @Binding var selectedOrganization: String
+//
+//    var body: some View {
+//        Menu {
+//            Button(action: {
+//                selectedOrganization = ""
+//            }) {
+//                Text("Blank Organization")
+//            }
+//
+//            ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
+//                Button(action: {
+//                    selectedOrganization = organization
+//                }) {
+//                    Text(organization)
+//                }
+//            }
+//        } label: {
+//            Label(
+//                title: {
+//                    Text(selectedOrganization.isEmpty ? "Select Organization" : selectedOrganization)
+//                    .bold()
+//                    .font(.title2)
+//                },
+//                icon: {
+//                    Image(systemName: "chevron.down")
+//                }
+//            )
+//        }
+//    }
+//}
+
 struct OrganizationPicker: View {
     @ObservedObject var dataModelManager = DataModelManager.shared
     @Binding var selectedOrganization: String
     
     var body: some View {
-        Picker("Organizations", selection: $selectedOrganization) {
-            Text("No Organization Specified").tag("")
+        Menu {
+            Button(action: {
+                selectedOrganization = ""
+            }) {
+                Text("Organization Field Blank - option included for testing purposes")
+            }
+            
             ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
-                Text(organization)
+                Button(action: {
+                    selectedOrganization = organization
+                }) {
+                    Text(organization)
+                }
+            }
+        } label: {
+            HStack {
+                Text(selectedOrganization.isEmpty ? "Select Organization" : selectedOrganization)
+                    .font(.title2)
+                Image(systemName: "chevron.down")
             }
         }
     }

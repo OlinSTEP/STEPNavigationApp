@@ -235,11 +235,15 @@ struct OrganizationComboBox: View {
         self.horizontalOffset = horizontalOffset
         self._allOrganizations = State(initialValue: dataModelManager.getAllNearbyOrganizations())
     }
-    
-    private var filteredTexts: Binding<[String]> { Binding (
-        get: {
-            return allOrganizations.filter { $0.contains(inputText) && $0.prefix(1) == inputText.prefix(1) } },
-        set: { _ in })
+
+    private var filteredTexts: Binding<[String]> {
+        Binding(
+            get: {
+                let lowercasedInputText = inputText.lowercased()
+                return allOrganizations.filter { $0.lowercased().localizedCaseInsensitiveContains(lowercasedInputText) }
+            },
+            set: { _ in }
+        )
     }
     
     public var body: some View {
