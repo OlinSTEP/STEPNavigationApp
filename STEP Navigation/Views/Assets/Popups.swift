@@ -138,7 +138,26 @@ struct ConfirmationPopup<Destination: View>: View {
                     SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
                         .padding(.bottom, 2)
                 }
-                SmallButtonComponent_PopupTrigger(label: "Cancel", labelColor: AppColor.dark, backgroundColor: AppColor.grey, popupTrigger: $showingConfirmation, role: .cancel)
+//                SmallButtonComponent_PopupTrigger(label: "Cancel", labelColor: AppColor.dark, backgroundColor: AppColor.grey, popupTrigger: $showingConfirmation, role: .cancel)
+                
+                Button(role: .cancel) {
+                    showingConfirmation.toggle()
+                } label: {
+                    Text("Cancel")
+                        .font(.title2)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(AppColor.dark)
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(AppColor.dark, lineWidth: 2)
+                )
+                .padding(.horizontal)
+
             }
             .padding()
         }

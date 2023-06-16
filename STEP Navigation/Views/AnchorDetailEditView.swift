@@ -48,7 +48,6 @@ struct AnchorDetailEditView<Destination: View>: View {
             VStack {
                 ScrollView {
                     TextFieldComponent(entry: $newAnchorName, label: "Name")
-//                    TextFieldComponent(entry: $newOrganization, label: "Organization")
                     
                     VStack {
                         HStack {
@@ -68,7 +67,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                             .cornerRadius(10)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(AppColor.grey, lineWidth: 2)
+                                    .stroke(AppColor.dark, lineWidth: 2)
                             )
                             OrganizationComboBox(editing: $editing, text: $newOrganization, verticalOffset: vOffset, horizontalOffset: hOffset)
                         }
@@ -98,7 +97,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                         .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(AppColor.grey, lineWidth: 2)
+                                .stroke(AppColor.dark, lineWidth: 2)
                         )
                     }
                     .padding(.horizontal)
@@ -125,34 +124,13 @@ struct AnchorDetailEditView<Destination: View>: View {
                             .cornerRadius(10)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(AppColor.grey, lineWidth: 2)
+                                    .stroke(AppColor.dark, lineWidth: 2)
                             )
                         }
                         .padding(.horizontal)
                         
                     }
                     TextFieldComponent(entry: $newNotes, label: "Location Notes", textBoxSize: .large)
-//                    VStack {
-//                        HStack {
-//                            Text("Visibility")
-//                                .font(.title2)
-//                                .bold()
-//                            Spacer()
-//                        }
-//                        HStack {
-//                            Toggle("Public Anchor", isOn: $newIsReadable)
-//                                .bold()
-//                                .tint(AppColor.dark)
-//                        }
-//                        .frame(height: 48)
-//                        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
-//                        .cornerRadius(10)
-//                        .overlay(
-//                            RoundedRectangle(cornerRadius: 10)
-//                                .stroke(AppColor.grey, lineWidth: 2)
-//                        )
-//                    }
-//                    .padding(.horizontal)
                     
                     VStack {
                         HStack {
@@ -182,13 +160,12 @@ struct AnchorDetailEditView<Destination: View>: View {
             .padding(.top, 20)
             
             Spacer()
-            //fix this so that it is actually stuck to the bottom: since it is a scrollview the spacer doesn't do anything, but if you make it not a scrollview then when the keyboard appears it moves the save button up weirdly
             NavigationLink(destination: buttonDestination(), isActive: $confirmPressed, label: {
                 Text("\(buttonLabel)")
                     .font(.title2)
                     .bold()
                     .frame(maxWidth: .infinity)
-                    .foregroundColor(AppColor.dark)
+                    .foregroundColor(AppColor.light)
             })
             .onChange(of: confirmPressed) {
                 newValue in
@@ -278,7 +255,7 @@ struct OrganizationComboBox: View {
             .frame(maxWidth: .infinity,
                    minHeight: 0,
                    maxHeight: 50 * CGFloat( (filteredTexts.wrappedValue.count > 3 ? 3: filteredTexts.wrappedValue.count)))
-            .shadow(color: AppColor.grey, radius: 4)
+            .shadow(color: AppColor.dark, radius: 4)
             .offset(x: horizontalOffset, y: verticalOffset)
             .isHidden(!editing, remove: !editing)
             

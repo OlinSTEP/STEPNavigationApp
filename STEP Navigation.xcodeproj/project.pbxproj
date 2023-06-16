@@ -134,8 +134,8 @@
 		A83CBC622A3768DC00E8E3CF /* ConnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCC72A33BC7D007FA7CE /* ConnectingView.swift */; };
 		A83CBC632A3768DF00E8E3CF /* RecordAnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */; };
 		A83CBC652A37B13E00E8E3CF /* ThumbsDownMultiplechoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872A2A378DAC00F5C584 /* ThumbsDownMultiplechoice.swift */; };
-		A83CBC672A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */; };
-		A83CBC682A38C83200E8E3CF /* SettingsDetailView_Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */; };
+		A83CBC672A38C6CB00E8E3CF /* SettingsDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */; };
+		A83CBC682A38C83200E8E3CF /* SettingsDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */; };
 		A83CBC6A2A38E28900E8E3CF /* RecordAnchorInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */; };
 		A89CAA6A2A28EFC100E3A03D /* Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89CAA692A28EFC100E3A03D /* Popups.swift */; };
 		A8B7CB4E2A2A592E004468B8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B7CB4D2A2A592E004468B8 /* Components.swift */; };
@@ -220,7 +220,7 @@
 		A80CDCC72A33BC7D007FA7CE /* ConnectingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectingView.swift; sourceTree = "<group>"; };
 		A80CDCC92A33BE68007FA7CE /* AnchorDetailView_ArrivedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorDetailView_ArrivedView.swift; sourceTree = "<group>"; };
 		A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAnchorView.swift; sourceTree = "<group>"; };
-		A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailView_Buttons.swift; sourceTree = "<group>"; };
+		A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailViews.swift; sourceTree = "<group>"; };
 		A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAnchorInstructionsView.swift; sourceTree = "<group>"; };
 		A89CAA692A28EFC100E3A03D /* Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popups.swift; sourceTree = "<group>"; };
 		A8B7CB4D2A2A592E004468B8 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
@@ -357,7 +357,7 @@
 				A80CDCC32A33A911007FA7CE /* AnchorDetailEditView.swift */,
 				A80CDCC72A33BC7D007FA7CE /* ConnectingView.swift */,
 				A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */,
-				A83CBC662A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift */,
+				A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */,
 				A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */,
 				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
 			);
@@ -679,7 +679,7 @@
 				A83CBC5B2A37515A00E8E3CF /* RecordAnchorView.swift in Sources */,
 				A80CDCC42A33A911007FA7CE /* AnchorDetailEditView.swift in Sources */,
 				130E7C4329E236BD004B1E81 /* DataModelManager.swift in Sources */,
-				A83CBC672A38C6CB00E8E3CF /* SettingsDetailView_Buttons.swift in Sources */,
+				A83CBC672A38C6CB00E8E3CF /* SettingsDetailViews.swift in Sources */,
 				A80CDCC02A33A808007FA7CE /* SettingsView.swift in Sources */,
 				825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */,
 				821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */,
@@ -708,7 +708,7 @@
 			files = (
 				A80CDCAE2A30F58D007FA7CE /* NavigatingView.swift in Sources */,
 				82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */,
-				A83CBC682A38C83200E8E3CF /* SettingsDetailView_Buttons.swift in Sources */,
+				A83CBC682A38C83200E8E3CF /* SettingsDetailViews.swift in Sources */,
 				A83CBC622A3768DC00E8E3CF /* ConnectingView.swift in Sources */,
 				82A0167C2A00158D00EAA526 /* PositioningModel.swift in Sources */,
 				82A016972A0057AB00EAA526 /* GeospatialData.swift in Sources */,

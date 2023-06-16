@@ -26,7 +26,7 @@ struct SmallButtonComponent_NavigationLink<Destination: View>: View {
     ///   - label: the string label for the button component
     ///   - labelColor: an optional color for the text label of the button; if no color is specified, the default color is AppColor.dark
     ///   - backgroundColor: an optional color for the background color of the button; if no color is specified, the default color is AppColor.accent
-    init(destination: @escaping () -> Destination, label: String, labelColor: Color? = AppColor.dark, backgroundColor: Color? = AppColor.accent) {
+    init(destination: @escaping () -> Destination, label: String, labelColor: Color? = AppColor.light, backgroundColor: Color? = AppColor.accent) {
         self.destination = destination
         self.label = label
         self.labelColor = labelColor
@@ -65,7 +65,7 @@ struct SmallButtonComponent_PopupTrigger: View {
     ///   - backgroundColor: an optional color for the background color of the button; if no color is specified, the default color is AppColor.accent
     ///   - popupTrigger: a boolean that is toggled by pressing the button
     ///   - role: an optional specifier for the role of the button, can take values such as .cancel, .destructive, and more
-    init(label: String, labelColor: Color? = AppColor.dark, backgroundColor: Color? = AppColor.accent, popupTrigger: Binding<Bool>, role: ButtonRole? = nil){
+    init(label: String, labelColor: Color? = AppColor.light, backgroundColor: Color? = AppColor.accent, popupTrigger: Binding<Bool>, role: ButtonRole? = nil){
         self.label = label
         self.labelColor = labelColor
         self.backgroundColor = backgroundColor
@@ -100,7 +100,7 @@ struct SmallButtonComponent_Button: View {
     let backgroundColor: Color?
     
     
-    init(label: String, action: @escaping () -> Void, labelColor: Color? = AppColor.dark, backgroundColor: Color? = AppColor.accent){
+    init(label: String, action: @escaping () -> Void, labelColor: Color? = AppColor.light, backgroundColor: Color? = AppColor.accent){
         self.label = label
         self.action = action
         self.labelColor = labelColor
@@ -120,6 +120,10 @@ struct SmallButtonComponent_Button: View {
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.capsule)
         .controlSize(.large)
+        .overlay(
+            RoundedRectangle(cornerRadius: 30)
+                .stroke(AppColor.dark, lineWidth: 2)
+        )
         .padding(.horizontal)
     }
 }
@@ -141,7 +145,7 @@ struct LargeButtonComponent_NavigationLink<Destination: View>: View {
     ///   - backgroundColor: an optional color for the background color of the button; if no color is specified, the default color is AppColor.accent
     ///   - labelTextSize: an optional specifier to change the text size of the label; if not text size is specified, the default is .largeTitle
     ///   - labelTextLeading: an optional boolean to make the text leading (left-aligned); by default the boolean is set to false and the text is centered
-    init(destination: @escaping () -> Destination, label: String, labelColor: Color? = AppColor.dark, backgroundColor: Color? = AppColor.accent, labelTextSize: Font? = .largeTitle, labelTextLeading: Bool? = false) {
+    init(destination: @escaping () -> Destination, label: String, labelColor: Color? = AppColor.light, backgroundColor: Color? = AppColor.accent, labelTextSize: Font? = .largeTitle, labelTextLeading: Bool? = false) {
         self.destination = destination
         self.label = label
         self.labelColor = labelColor
@@ -187,7 +191,7 @@ struct LargeButtonComponent_Button: View {
     ///   - labelColor: an optional color for the text label of the button; if no color is specified, the default color is AppColor.dark
     ///   - backgroundColor: an optional color for the background color of the button; if no color is specified, the default color is AppColor.accent
     ///   - action: the action for the button to perform, can take any length of code
-    init(label: String, labelColor: Color? = AppColor.dark, backgroundColor: Color? = AppColor.accent, action: @escaping () -> Void ) {
+    init(label: String, labelColor: Color? = AppColor.light, backgroundColor: Color? = AppColor.accent, action: @escaping () -> Void ) {
         self.label = label
         self.labelColor = labelColor
         self.backgroundColor = backgroundColor

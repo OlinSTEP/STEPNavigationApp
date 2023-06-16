@@ -28,8 +28,7 @@ struct HomeView: View {
                     .padding(.top, 60)
                     .background(AppColor.accent)
                 
-                //TODO: add a component here that dispalys "adjusting to portrait mode" or something like that for a few seconds while the phone adjusts, then disappear to display the home view
-                ScrollView {
+                VStack {
                     if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                         if positionModel.currentLatLon == nil {
                             GPSLocalizationPopup()
@@ -37,20 +36,17 @@ struct HomeView: View {
                             VStack(spacing: 20) {
                                 LargeButtonComponent_NavigationLink(destination: {
                                     DestinationTypesView()
-                                }, label: "Navigate a Route")
+                                }, label: "Navigate")
                                 LargeButtonComponent_NavigationLink(destination: {
                                     RadarMapView()
-                                }, label: "Explore your Surroundings")
+                                }, label: "Explore")
                                 LargeButtonComponent_NavigationLink(destination: {
                                     ManageAnchorsListView()
-                                }, label: "Manage Anchors")
-                                LargeButtonComponent_NavigationLink(destination: {
+                                }, label: "Manage")
+                                Spacer()
+                                SmallButtonComponent_NavigationLink(destination: {
                                     SettingsView()
                                 }, label: "Settings")
-                                LargeButtonComponent_NavigationLink(destination: {
-                                    AnchorDetailView_ArrivedView(anchorDetails: LocationDataModel(anchorType: .frontdesk, coordinates: CLLocationCoordinate2D(latitude: 42.0, longitude: -71.0), name: "Sample Destination", id: UUID().uuidString)
-)
-                                }, label: "Skip to Arrived View")
                             }
                             .padding(.top, 20)
                         }
@@ -63,7 +59,7 @@ struct HomeView: View {
                 }
                 Spacer()
             }
-            .accentColor(AppColor.dark)
+            .accentColor(AppColor.light)
         }
     }
 }

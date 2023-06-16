@@ -50,9 +50,8 @@ struct TextFieldComponent: View {
                         .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(AppColor.grey, lineWidth: 2)
+                                .stroke(AppColor.dark, lineWidth: 2)
                         )
-                        .bold()
                         .submitLabel(.done)
                 } else {
                     TextField("\(instructions)", text: $entry, axis: .vertical)
@@ -61,9 +60,8 @@ struct TextFieldComponent: View {
                         .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(AppColor.grey, lineWidth: 2)
+                                .stroke(AppColor.dark, lineWidth: 2)
                         )
-                        .bold()
                         .lineLimit(6, reservesSpace: true)
                         .submitLabel(.done)
                         .focused($entryIsFocused)
@@ -122,6 +120,7 @@ struct ScreenTitleComponent: View {
             }
         }
         .background(AppColor.accent)
+        .foregroundColor(AppColor.light)
     }
 }
 
@@ -142,6 +141,7 @@ struct CustomHeaderButtonComponent: ToolbarContent {
             Text(label)
                 .bold()
                 .font(.title2)
+                .foregroundColor(AppColor.light)
                 .onTapGesture {
                     onTapGesture()
                 }
@@ -330,10 +330,34 @@ struct NavigateAnchorListComponent: View {
             ScrollView {
                 if case .indoorStartingPoint(let destinationAnchor) = anchorSelectionType {
                    if NavigationManager.shared.getReachabilityFromOutdoors(outOf: [destinationAnchor]).first == true {
-                       LargeButtonComponent_NavigationLink(destination: {
-                           NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: destinationAnchor)
-                       }, label: "Start Outside", labelColor: AppColor.grey, backgroundColor: AppColor.dark, labelTextSize: .title, labelTextLeading: true)
-                       .padding(.bottom, 10)
+//                       LargeButtonComponent_NavigationLink(destination: {
+//                           NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: destinationAnchor)
+//                       }, label: "Start Outside", labelColor: AppColor.light, backgroundColor: AppColor.dark, labelTextSize: .title, labelTextLeading: true)
+                       NavigationLink (
+                           destination: {
+                               NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: destinationAnchor)
+                           },
+                           label: {
+                               HStack {
+                                   Text("Start Outside")
+                                       .font(.title)
+                                       .bold()
+                                       .padding(30)
+                                       .foregroundColor(AppColor.dark)
+                                       .multilineTextAlignment(.leading)
+                                       Spacer()
+                               }
+                               .frame(maxWidth: .infinity)
+                               .frame(minHeight: 140)
+                           })
+                       .background(AppColor.light)
+                       .cornerRadius(20)
+                       .overlay(
+                           RoundedRectangle(cornerRadius: 20)
+                            .stroke(AppColor.dark, lineWidth: 5)
+                       )
+                       .padding(.horizontal)
+                       .padding(.top, 5)
                    }
                 }
                 VStack(spacing: 20) {
@@ -364,6 +388,7 @@ struct NavigateAnchorListComponent: View {
                         }
                     }
                 }
+                .padding(.top, 10)
             }
         }
         .padding(.top, 10)
@@ -400,7 +425,7 @@ struct NearbyDistanceThresholdComponent: View {
                     .font(.title2)
                     .bold()
                     .frame(maxWidth: 300)
-                    .foregroundColor(AppColor.dark)
+                    .foregroundColor(AppColor.light)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)

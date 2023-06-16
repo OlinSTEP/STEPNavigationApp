@@ -39,8 +39,29 @@ struct AnchorDetailView_Manage: View {
                     //                    FirebaseManager.shared.deleteCloudAnchor(id: anchorID)
                     //                    MainUIStateContainer.shared.currentScreen = .createAnchor
                     //                }
-                    SmallButtonComponent_Button(label: "Delete", action: {                 showingConfirmation = true
-                    }, labelColor: AppColor.dark, backgroundColor: AppColor.lightred)
+//                    SmallButtonComponent_Button(label: "Delete", action: {
+//                        showingConfirmation = true
+//                    })
+                    
+                    Button(action: {
+                        showingConfirmation = true
+                    }) {
+                        Text("Delete")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(AppColor.dark)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 30)
+                            .stroke(AppColor.dark, lineWidth: 2)
+                    )
+                    .padding(.horizontal)
+                    
+                    
                     
                 }
             }

@@ -13,9 +13,9 @@ class SettingsManager: ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = SettingsManager()
     
-    private var crumbColorStringToColor: [String: Color] = ["defaultCrumbColor": AppColor.accent, "Green": AppColor.lightgreen, "Red": AppColor.lightred, "Blue": AppColor.lightblue]
+    private var crumbColorStringToColor: [String: Color] = ["defaultCrumbColor": StaticAppColor.defaultAccent, "Green": StaticAppColor.lightgreen, "Red": StaticAppColor.lightred, "Blue": StaticAppColor.lightblue]
     
-    private var colorSchemeStringToColor: [String: [Color]] = ["defaultColorScheme": [AppColor.white, AppColor.defaultBlack, AppColor.defaultAccent], "Black_White": [AppColor.white, AppColor.black, AppColor.black], "Yellow_Black": [AppColor.black, AppColor.yellow, AppColor.yellow], "Yellow_Blue": [AppColor.blue, AppColor.yellow, AppColor.yellow]]
+    private var colorSchemeStringToColor: [String: [Color]] = ["defaultColorScheme": [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent], "Black_White": [StaticAppColor.white, StaticAppColor.black, StaticAppColor.black], "Yellow_Black": [StaticAppColor.black, StaticAppColor.yellow, StaticAppColor.yellow], "Yellow_Blue": [StaticAppColor.blue, StaticAppColor.yellow, StaticAppColor.yellow]]
     
     /// if non-empty, put all mapping content in a subfolder
     @Published var mappingSubFolder = ""
@@ -29,8 +29,8 @@ class SettingsManager: ObservableObject {
     /// true if we should visualize streetscape data (requires resetting the app for the setting to take effect)
     @Published var visualizeStreetscapeData = false
     
-    @Published var crumbColor: Color = AppColor.accent
-    @Published var colorScheme: [Color] = [AppColor.white, AppColor.defaultBlack, AppColor.defaultAccent]
+    @Published var crumbColor: Color = StaticAppColor.defaultAccent
+    @Published var colorScheme: [Color] = [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent]
 
     
     /// The private initializer.  This should not be called directly.

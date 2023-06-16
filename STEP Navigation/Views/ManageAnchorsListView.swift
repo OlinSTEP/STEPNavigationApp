@@ -23,6 +23,7 @@ struct ManageAnchorsListView: View {
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
+                    .foregroundColor(AppColor.light)
                 Spacer()
             }
             .padding(.bottom, 0.5)
@@ -31,6 +32,7 @@ struct ManageAnchorsListView: View {
                 Text("At")
                     .font(.title2)
                     .padding(.leading)
+                    .foregroundColor(AppColor.light)
                 OrganizationPicker(selectedOrganization: $selectedOrganization)
                 Spacer()
             }
@@ -87,57 +89,6 @@ struct ManageAnchorsListView: View {
         })
     }
 }
-
-//struct OrganizationPicker: View {
-//    @ObservedObject var dataModelManager = DataModelManager.shared
-//    @Binding var selectedOrganization: String
-//
-//    var body: some View {
-//        Picker("Organizations", selection: $selectedOrganization) {
-//            Text("No Organization Specified").tag("")
-//                .font(.system(size: 16, weight: .bold))
-//                .foregroundColor(.red)
-//
-//            ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
-//                Text(organization)
-//            }
-//        }
-//    }
-//}
-
-//struct OrganizationPicker: View {
-//    @ObservedObject var dataModelManager = DataModelManager.shared
-//    @Binding var selectedOrganization: String
-//
-//    var body: some View {
-//        Menu {
-//            Button(action: {
-//                selectedOrganization = ""
-//            }) {
-//                Text("Blank Organization")
-//            }
-//
-//            ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
-//                Button(action: {
-//                    selectedOrganization = organization
-//                }) {
-//                    Text(organization)
-//                }
-//            }
-//        } label: {
-//            Label(
-//                title: {
-//                    Text(selectedOrganization.isEmpty ? "Select Organization" : selectedOrganization)
-//                    .bold()
-//                    .font(.title2)
-//                },
-//                icon: {
-//                    Image(systemName: "chevron.down")
-//                }
-//            )
-//        }
-//    }
-//}
 
 struct OrganizationPicker: View {
     @ObservedObject var dataModelManager = DataModelManager.shared

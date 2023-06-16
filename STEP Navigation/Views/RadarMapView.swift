@@ -14,11 +14,11 @@ struct RadarMapView: View {
     static func getQualityColor(quality: MapPointComponent.Quality) -> (dark: Color, light: Color) {
         switch quality {
         case .low:
-            return (dark: AppColor.darkred, light: AppColor.lightred)
+            return (dark: StaticAppColor.darkred, light: StaticAppColor.lightred)
         case .medium:
-            return (dark: AppColor.darkyellow, light: AppColor.lightyellow)
+            return (dark: StaticAppColor.darkyellow, light: StaticAppColor.lightyellow)
         case .high:
-            return (dark: AppColor.darkgreen, light: AppColor.lightgreen)
+            return (dark: StaticAppColor.darkgreen, light: StaticAppColor.lightgreen)
         }
     }
     

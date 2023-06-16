@@ -13,7 +13,7 @@ struct DestinationAnchorListView: View {
 
     let anchorType: AnchorType
     
-    private let listBackgroundColor = AppColor.grey
+//    private let listBackgroundColor = AppColor.grey
     private let listTextColor = AppColor.dark
     
     @State var lastQueryLocation: CLLocationCoordinate2D?

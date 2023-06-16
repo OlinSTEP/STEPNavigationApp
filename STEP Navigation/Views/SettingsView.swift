@@ -11,34 +11,53 @@ struct SettingsView: View {
     var body: some View {
         VStack {
             ScreenTitleComponent(titleText: "Settings")
-            VStack(spacing: 20) {
-                VStack {
-                    Text("Color")
-                    SmallButtonComponent_NavigationLink(destination: {
-                        SettingsDetailView_ColorScheme()
-                    }, label: "Color Scheme")
-                    SmallButtonComponent_NavigationLink(destination: {
-                        SettingsDetailView_CrumbColor()
-                    }, label: "Crumb Color")
+            ScrollView {
+                VStack(spacing: 20) {
+                    VStack {
+                        HStack {
+                            Text("Color")
+                                .bold()
+                                .font(.title2)
+                            Spacer()
+                        }
+                        .padding()
+                        SmallButtonComponent_NavigationLink(destination: {
+                            SettingsDetailView_ColorScheme()
+                        }, label: "Color Scheme")
+                        .padding(.bottom, 5)
+                        SmallButtonComponent_NavigationLink(destination: {
+                            SettingsDetailView_CrumbColor()
+                        }, label: "Crumb Color")
+                        
+                        VStack {
+                            HStack {
+                                Text("Directions")
+                                    .bold()
+                                    .font(.title2)
+                                Spacer()
+                            }
+                            .padding()
+                            SmallButtonComponent_NavigationLink(destination: {
+                                SettingsDetailView_Units()
+                            }, label: "Units")
+                        }
+                        
+                        VStack {
+                            HStack {
+                                Text("Additional Features")
+                                    .bold()
+                                    .font(.title2)
+                                Spacer()
+                            }
+                            .padding()
+                            SmallButtonComponent_NavigationLink(destination: {
+                                SettingsDetailView_PhoneBodyOffset()
+                            }, label: "Phone - Body Offset")
+                        }
+                    }
                 }
+                Spacer()
             }
-            Spacer()
         }
-//        .navigationBarBackButtonHidden()
-//        .toolbar {
-//            ToolbarItem(placement: .navigationBarLeading) {
-//                NavigationLink(destination: HomeView(), label: {
-//                    Text("Home")
-//                        .bold()
-//                        .font(.title2)
-//                })
-//            }
-//        }
-    }
-}
-
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
     }
 }
