@@ -102,10 +102,8 @@ struct ConnectingView: View {
                         Button {
                             PathRecorder.shared.stopRecordingPath()
                             PathRecorder.shared.toFirebase()
-                            PathRecorder.shared.toFirebase()
                             focusOnImprovePopup = true
                             savePressed = true
-                            
                         } label: {
                             Text("Save")
                                 .font(.title2)
