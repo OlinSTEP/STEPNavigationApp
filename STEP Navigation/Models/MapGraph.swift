@@ -11,6 +11,7 @@ import FirebaseDatabase
 import ARKit
 import FirebaseStorage
 import SwiftGraph
+import SwiftUI
 
 /// A pair of nodes suitable for specifying the start and end of an edge
 struct NodePair<T: Hashable, U: Hashable>: Hashable {
@@ -65,6 +66,26 @@ struct ComplexEdge {
     }
 }
 
+enum ConnectionStatus {
+    case connectedThroughReverseEdge
+    case connectedDirectly
+    case connectedThroughMultipleHops
+    case notConnected
+    
+    var connectionColor: Color {
+        switch self {
+        case .connectedDirectly:
+            return .green
+        case .connectedThroughReverseEdge:
+            return .yellow
+        case .notConnected:
+            return .red
+        case .connectedThroughMultipleHops:
+            return .blue
+        }
+    }
+}
+
 /// This class encompasses a map consisting of cloud anchors (nodes) and paths connecting cloud
 /// anchors (edges).  This class is mainly a datastructure and other classes access its data for
 /// performing operations (e.g., path planning)
@@ -101,6 +122,47 @@ class MapGraph {
         connections = [:]
         isDirty = false
         lightweightConnections = [:]
+    }
+    
+    /// Using the vertices currently downloaded from the database, determine which the connection status between the the specified cloud anchor (`anchorID1`) and each cloud anchor in the pool
+    /// - Parameters:
+    ///   - anchorID1: the cloud anchor to start from
+    ///   - pool: the pool of anchors (only cloud anchors are tested for connectivity)
+    /// - Returns: an array where the `i`th entry indicates the connection status
+    func getConnectionStatus(from anchorID1: String, to pool: [LocationDataModel])->[ConnectionStatus] {
+        // start out by assuming nothing is connected
+        var statuses = Array(repeating: ConnectionStatus.notConnected, count: pool.count)
+        
+        // create this map to speed up search later
+        var cloudAnchorIDToIndex : [String: Int] = [:]
+        for i in 0..<pool.count {
+            if let cloudAnchorID = pool[i].getCloudAnchorID() {
+                cloudAnchorIDToIndex[cloudAnchorID] = i
+            }
+        }
+        
+        // check direct connections
+        for (nodePair, simpleEdge) in lightweightConnections {
+            if nodePair.from == anchorID1, let connectedNodeIndex = cloudAnchorIDToIndex[nodePair.to] {
+                statuses[connectedNodeIndex] = simpleEdge.wasReversed ? .connectedThroughReverseEdge : .connectedDirectly
+            }
+        }
+        
+        // do a breadth first search to find connected nodes
+        let allPaths = weightedGraph.findAllBfs(from: anchorID1, goalTest: { vertex in
+            return true
+        })
+        // get the reachable vertex indices
+        let reachableVertexIndices = allPaths.compactMap({$0.last?.v})
+        // convert to cloud anchor IDs and make it into a set
+        let reachableCloudAnchorIds = Set<String>(reachableVertexIndices.map({weightedGraph.vertexAtIndex($0)}))
+        // mark the appropriate cloud anchor IDs that haven't yet been marked as connected
+        for i in 0..<statuses.count {
+            if statuses[i] == .notConnected, let cloudAnchorID = pool[i].getCloudAnchorID(), reachableCloudAnchorIds.contains(cloudAnchorID) {
+                statuses[i] = .connectedThroughMultipleHops
+            }
+        }
+        return statuses
     }
     
     /// Print the edges in the graph
