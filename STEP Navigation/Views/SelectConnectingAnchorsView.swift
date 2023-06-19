@@ -14,6 +14,7 @@ struct SelectConnectingAnchorsView: View {
     @ObservedObject var positionModel = PositioningModel.shared
     @ObservedObject var dataModelManager = DataModelManager.shared
     @State var anchors: [LocationDataModel] = []
+    @State var connectionStatuses: [ConnectionStatus] = []
     @State var lastQueryLocation: CLLocationCoordinate2D?
 
     
@@ -39,7 +40,7 @@ struct SelectConnectingAnchorsView: View {
                         if anchors[idx].id != anchorID1 {
                             LargeButtonComponent_NavigationLink(destination: {
                                 ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)
-                            }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+                            }, label: "\(anchors[idx].getName())", labelColor: connectionStatuses[idx].connectionColor, labelTextSize: .title, labelTextLeading: true)
                         }
                     }
                 }
@@ -65,6 +66,7 @@ struct SelectConnectingAnchorsView: View {
             .sorted(by: {
                 $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
             })
+            connectionStatuses = FirebaseManager.shared.mapGraph.getConnectionStatus(from: anchorID1, to: anchors)
         }
         
     }

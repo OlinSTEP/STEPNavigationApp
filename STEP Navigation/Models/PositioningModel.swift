@@ -182,7 +182,7 @@ class PositioningModel: NSObject, ObservableObject {
         // in case we have already positioned, use it here
         if let location = locationManager.location, -location.timestamp.timeIntervalSinceNow < 1000.0 {
             // we do this on a delay to give the view a chance to observe this change
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 guard self.geoLocalizationAccuracy == .none else {
                     return
                 }
