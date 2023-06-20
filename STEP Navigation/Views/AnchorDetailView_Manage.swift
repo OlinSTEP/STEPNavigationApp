@@ -56,6 +56,7 @@ struct AnchorDetailView_Manage: View {
                     
                 }
             }
+            .padding(.bottom, 40)
             
             if showingConfirmation {
                 ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to delete this anchor?", subtitleText: "This action cannot be undone.", confirmButtonLabel: "Delete", confirmButtonDestination: { HomeView() }, simultaneousAction: {                FirebaseManager.shared.deleteCloudAnchor(id: anchorDetails.id)
@@ -64,5 +65,8 @@ struct AnchorDetailView_Manage: View {
                 .accessibilityAddTraits(.isModal)
             }
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

@@ -23,6 +23,9 @@ struct StartAnchorListView: View {
                                       anchors: anchors)
             Spacer()
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onChange(of: chosenStart) { newValue in
             print("HERE WE ARE")
         }

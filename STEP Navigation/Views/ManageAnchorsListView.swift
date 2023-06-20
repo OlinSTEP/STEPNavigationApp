@@ -58,6 +58,9 @@ struct ManageAnchorsListView: View {
             .padding(.vertical, 20)
             Spacer()
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onReceive(DataModelManager.shared.objectWillChange) {
             anchors = []
             if let latLon = lastQueryLocation {

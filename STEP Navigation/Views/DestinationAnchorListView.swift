@@ -49,7 +49,12 @@ struct DestinationAnchorListView: View {
             
             NavigateAnchorListComponent(anchorSelectionType: anchorType.isIndoors ? .indoorEndingPoint : .outdoorEndingPoint,
                                         anchors: anchors)
+            .padding(.bottom, 20)
+
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     /// Compute the notion of "close enough" to display to the user.  This is a buffer distance added on top of the distance the user has already selected from the UI
     /// - Parameter accuracy: the current localization accuracy

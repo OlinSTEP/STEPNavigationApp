@@ -14,6 +14,7 @@ struct AnchorDetailEditView<Destination: View>: View {
     let visibilityOptions = [true, false]
     
     @State var confirmPressed: Bool = false
+    @State var newIsReadableIndex: Int = 0
     
     @State var editing: Bool = false
     @State var inputText: String = ""
@@ -84,14 +85,38 @@ struct AnchorDetailEditView<Destination: View>: View {
                             Spacer()
                         }
                         HStack {
-                            Picker(selection: $newCategory) {
+//                            Picker(selection: $newCategory) {
+//                                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
+//                                    Text(category.rawValue)
+//                                }
+//                            } label: {
+//                                Text("AnchorType")
+//                            }
+//                            .pickerStyle(.menu)
+                            
+                            Menu {
                                 ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
-                                    Text(category.rawValue)
+                                    Button(action: {
+                                        newCategory = category
+                                    }, label: {
+                                        HStack {
+                                            Text(category.rawValue)
+                                            if newCategory == category {
+                                                Spacer()
+                                                Image(systemName: "checkmark")
+                                            }
+                                        }
+                                    })
                                 }
                             } label: {
-                                Text("AnchorType")
+                                HStack {
+                                    Text("\(newCategory.rawValue)")
+                                        .foregroundColor(AppColor.foreground)
+                                    Image(systemName: "chevron.up.chevron.down")
+                                        .foregroundColor(AppColor.foreground)
+                                }
                             }
-                            .pickerStyle(.menu)
+
                             Spacer()
                         }
                         .frame(height: 48)
@@ -143,19 +168,8 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 .foregroundColor(AppColor.foreground)
                             Spacer()
                         }
-                        Picker("Anchor Visibility", selection: $newIsReadable) {
-                            ForEach(visibilityOptions, id: \.self) {
-                                if $0 == true {
-                                    Text("Public")
-                                        .foregroundColor(AppColor.text_on_accent)
-                                } else {
-                                    Text("Private")
-                                        .foregroundColor(AppColor.text_on_accent)
-                                }
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .colorMultiply(AppColor.accent)
+                        
+                        CustomSegmentedControl(preselectedIndex: $newIsReadableIndex, isReadable: $newIsReadable, options: ["Public", "Private"])
                     }
                     .padding(.horizontal)
 
@@ -185,7 +199,11 @@ struct AnchorDetailEditView<Destination: View>: View {
             .buttonBorderShape(.capsule)
             .controlSize(.large)
             .padding(.horizontal)
+            .padding(.bottom, 40)
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
     
@@ -199,6 +217,51 @@ struct AnchorDetailEditView<Destination: View>: View {
                             organization: newOrganization,
                             notes: newNotes)
         FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
+    }
+}
+
+struct CustomSegmentedControl: View {
+    @Binding var preselectedIndex: Int
+    @Binding var isReadable: Bool
+    
+    var options: [String]
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(options.indices, id:\.self) { index in
+                ZStack {
+                    Rectangle()
+//                        .fill(StaticAppColor.white.opacity(0.2))
+                        .fill(AppColor.background)
+
+                    Rectangle()
+                        .fill(AppColor.accent)
+                        .cornerRadius(10)
+                        .opacity(preselectedIndex == index ? 1 : 0.01)
+                        .onTapGesture {
+                                withAnimation(.interactiveSpring()) {
+                                    preselectedIndex = index
+                                    if preselectedIndex == 0 {
+                                        isReadable = true
+                                    } else {
+                                        isReadable = false
+                                    }
+                                }
+                            }
+                }
+                .overlay(
+                    Text(options[index])
+                        .foregroundColor(preselectedIndex == index ? AppColor.text_on_accent : AppColor.foreground)
+                        .bold()
+                )
+            }
+        }
+        .frame(height: 40)
+        .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(AppColor.foreground, lineWidth: 2)
+        )
     }
 }
 

@@ -23,6 +23,10 @@ struct AnchorDetailView<Destination: View>: View {
             }
             Spacer()
             SmallButtonComponent_NavigationLink(destination: buttonDestination, label: buttonLabel)
+                .padding(.bottom, 40)
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

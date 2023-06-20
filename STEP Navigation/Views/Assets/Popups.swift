@@ -24,6 +24,7 @@ struct HelpPopup: View {
                         .padding(.horizontal)
                         .padding(.top)
                         .padding(.bottom, 1)
+                        .foregroundColor(AppColor.foreground)
                     Spacer()
                 }
             if let anchorDetailsStart = anchorDetailsStart {
@@ -38,6 +39,7 @@ struct HelpPopup: View {
                         .font(.largeTitle)
                         .bold()
                         .padding(.horizontal)
+                        .foregroundColor(AppColor.foreground)
                     Spacer()
                 }
             }
@@ -48,6 +50,8 @@ struct HelpPopup: View {
                         .padding(.horizontal)
                         .padding(.top)
                         .padding(.bottom, 1)
+                        .foregroundColor(AppColor.foreground)
+
                     Spacer()
                 }
                                 
@@ -92,9 +96,11 @@ struct ConfirmationPopup<Destination: View>: View {
                 Text(titleText)
                     .bold()
                     .font(.title2)
+                    .foregroundColor(AppColor.foreground)
                 if let subtitleText = subtitleText {
                     Text(subtitleText)
                         .font(.title3)
+                        .foregroundColor(AppColor.foreground)
                 }
             }
             .padding(.vertical, 10)

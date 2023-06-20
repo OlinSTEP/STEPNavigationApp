@@ -38,6 +38,7 @@ struct DestinationTypesView: View {
                     NearbyDistanceThresholdComponent(nearbyDistance: $nearbyDistance, focusOnNearbyDistanceValue: $focusOnNearbyDistanceValue)
                 }
             }
+            .padding(.bottom, 20)
         }
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
