@@ -18,7 +18,17 @@ class Feedback: ObservableObject {
     @Published var isRouteRecordingSelected: Bool = false
     @Published var isLocationAnchorSelected: Bool = false
     @Published var isOtherSelected: Bool = false
+    
+    func reset() {
+        self.feedbackStatus = ""
+        self.response = ""
+        self.isNavigationSelected = false
+        self.isRouteRecordingSelected = false
+        self.isLocationAnchorSelected = false
+        self.isOtherSelected = false
+    }
 }
+
 
 // AnchorDetailView_ArrivedView
 struct AnchorDetailView_ArrivedView: View {
@@ -34,17 +44,18 @@ struct AnchorDetailView_ArrivedView: View {
                     AnchorDetailsComponent(title: anchorDetails.getName(), distanceAway: formattedDistance)
                         .padding(.top)
                 }
-                Text("How was your experience with this navigation session?")
+                Text("How was your experience with this navigation session?").bold()
                     .font(.title)
                     .multilineTextAlignment(.center)
                     .padding(.top)
+                ;Spacer().frame(height: 30)
                 HStack {
                     NavigationLink(destination: HomeView().onAppear {
                         feedback.feedbackStatus = "Good"
                     }) {
                         Image(systemName: "hand.thumbsup")
                             .font(.title)
-                            .padding()
+                            .padding(30)
                             .foregroundColor(.white)
                             .background(Color.green)
                             .cornerRadius(10)
@@ -54,24 +65,16 @@ struct AnchorDetailView_ArrivedView: View {
                     }) {
                         Image(systemName: "hand.thumbsdown")
                             .font(.title)
-                            .padding()
+                            .padding(30)
                             .foregroundColor(.white)
                             .background(Color.red)
                             .cornerRadius(10)
                     }
                 }
                 .padding()
-                Spacer()
-                SmallButtonComponent_NavigationLink(destination: { HomeView() }, label: "Home")
+                Spacer().frame(height: 200);                SmallButtonComponent_NavigationLink(destination: { HomeView() }, label: "Home")
             }
-            .onDisappear {
-                MultipleChoiceModel.saveFeedback(feedbackStatus: feedback.feedbackStatus,
-                                                 response: feedback.response,
-                                                 isNavigationSelected: feedback.isNavigationSelected,
-                                                 isRouteRecordingSelected: feedback.isRouteRecordingSelected,
-                                                 isLocationAnchorSelected: feedback.isLocationAnchorSelected,
-                                                 isOtherSelected: feedback.isOtherSelected)
-            }
+
         }
     }
 }
@@ -82,63 +85,104 @@ struct MultipleChoice: View {
 
     var body: some View {
         VStack {
-            Text("What was the problem?")
-                .font(.title)
+            Text("What was the issue?").bold()
+                .font(.largeTitle)
                 .multilineTextAlignment(.center)
                 .padding(.top)
-
+            ; Spacer().frame(height: 50)
             Button(action: {
                 print("Navigation Problem")
                 feedback.isNavigationSelected.toggle()
             }) {
-                Text("Navigation")
-                    .font(.body)
-                    .padding(5)
-                    .foregroundColor(.white)
-                    .background(feedback.isNavigationSelected ? Color.yellow : Color.red)
-                    .cornerRadius(10)
+                Text("Navigation").bold()
+                    .font(.title)
+                    .padding(10)
+//            labelColor: AppColor.dark, backgroundColor: AppColor.lightred
+                    .foregroundColor(AppColor.dark)
+                    .background(feedback.isNavigationSelected ? AppColor.lightgreen: AppColor.lightyellow)
+                    .cornerRadius(15)
             }
-
+            if feedback.isNavigationSelected {
+                TextField("Problem Description", text: $feedback.response)
+                    .foregroundColor(Color.black)
+                    .padding(10)
+                    .border(Color.black, width: 0.5)
+            }
             Button(action: {
                 print("Route Recording")
                 feedback.isRouteRecordingSelected.toggle()
             }) {
-                Text("Route Recording")
-                    .font(.body)
-                    .padding(5)
-                    .foregroundColor(.white)
-                    .background(feedback.isRouteRecordingSelected ? Color.yellow : Color.red)
-                    .cornerRadius(10)
+                Text("Route Recording").bold()
+                    .font(.title)
+                    .padding(10)
+                    .foregroundColor(AppColor.dark)
+                    .background(feedback.isRouteRecordingSelected ? AppColor.lightgreen: AppColor.lightyellow)
+                    .cornerRadius(15)
+            }
+            if feedback.isRouteRecordingSelected {
+                TextField("Problem Description", text: $feedback.response)
+                    .foregroundColor(Color.black)
+                    .padding(10)
+                    .border(Color.black, width: 0.5)
             }
 
             Button(action: {
                 print("Location Anchor Problem")
                 feedback.isLocationAnchorSelected.toggle()
             }) {
-                Text("Inaccurate Location Anchor")
-                    .font(.body)
-                    .padding(5)
-                    .foregroundColor(.white)
-                    .background(feedback.isLocationAnchorSelected ? Color.yellow : Color.red)
-                    .cornerRadius(10)
+                Text("Inaccurate Location Anchor").bold()
+                    .font(.title)
+                    .padding(10)
+                    .foregroundColor(AppColor.dark)
+                    .background(feedback.isLocationAnchorSelected ? AppColor.lightgreen: AppColor.lightyellow)
+                    .cornerRadius(15)
+            }
+            if feedback.isLocationAnchorSelected {
+                TextField("Problem Description", text: $feedback.response)
+                    .foregroundColor(Color.black)
+                    .padding(10)
+                    .border(Color.black, width: 0.5)
             }
 
             Button(action: {
-                print("Others")
-                feedback.isOtherSelected.toggle()
+                            print("Others")
+                            feedback.isOtherSelected.toggle()
             }) {
-                VStack{
-                    Text("Others")
-                        .font(.body)
-                        .padding(5)
-                        .foregroundColor(.white)
-                    .background(feedback.isOtherSelected ? Color.yellow : Color.red)
-                    .cornerRadius(10)
-
-                    TextField("Problem Description", text: $feedback.response)
-                }
+                Text("Others").bold()
+                    .font(.title)
+                    .padding(10)
+                    .foregroundColor(AppColor.dark)
+                    .background(feedback.isOtherSelected ? AppColor.lightgreen: AppColor.lightyellow)
+                    .cornerRadius(15)
             }
+                if feedback.isOtherSelected {
+                    TextField("Problem Description", text: $feedback.response)
+                        .foregroundColor(Color.black)
+                        .padding(10)
+                        .border(Color.black, width: 0.5)
+                }
+            
         }
-        ; SmallButtonComponent_NavigationLink(destination: { HomeView() }, label: "Done")
+        ; NavigationLink(destination: HomeView().onAppear {
+            let feedbackModel = FeedbackModel()
+            feedbackModel.saveFeedback(
+                feedbackStatus: feedback.feedbackStatus,
+                response: feedback.response,
+                isNavigationSelected: feedback.isNavigationSelected,
+                isRouteRecordingSelected: feedback.isRouteRecordingSelected,
+                isLocationAnchorSelected: feedback.isLocationAnchorSelected,
+                isOtherSelected: feedback.isOtherSelected
+            )
+            feedback.reset()
+    }) {
+        Text("Done").bold()
+            .font(.title)
+            .padding(.horizontal, 80)
+            .padding(15)
+            .foregroundColor(AppColor.dark)
+            .background(AppColor.accent)
+            .cornerRadius(15)
     }
 }
+}
+

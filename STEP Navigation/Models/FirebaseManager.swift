@@ -420,3 +420,4 @@ class FirebaseManager: ObservableObject {
         return mapAnchors[id]
     }
 }
+ 
