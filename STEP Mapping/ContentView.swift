@@ -12,6 +12,8 @@ import ARCoreCloudAnchors
 import Firebase
 import FirebaseDatabase
 import FirebaseStorage
+import ARKit
+import SceneKit
 
 
 enum MainScreenType {
@@ -19,6 +21,7 @@ enum MainScreenType {
     case createAnchor
     case deleteCloudAnchor
     case resolvingCloudAnchors
+    case visualizingARMap
     case editAnchor
     case editingAnchor(anchorID: String)
     var isOnMainScreen: Bool {
@@ -72,6 +75,8 @@ struct ContentView : View {
                     DeleteCloudAnchor()
                 case .resolvingCloudAnchors:
                     ResolvingCloudAnchorsView()
+                case .visualizingARMap:
+                    VisualizingARMapView()
                 }
             }
         }
@@ -216,6 +221,9 @@ struct MainScreen: View {
             Button("Map Anchor Connections") {
                 MainUIStateContainer.shared.currentScreen = .resolvingCloudAnchors
             }
+            Button("AR-Visualizer") {
+                MainUIStateContainer.shared.currentScreen = .visualizingARMap
+            }
         }
         .background(Color.orange)
         .padding()
@@ -224,6 +232,7 @@ struct MainScreen: View {
         }
     }
 }
+
 
 struct ResolvingCloudAnchorsView: View {
     @ObservedObject var positionModel = STEP_Mapping.PositioningModel.shared
@@ -269,95 +278,53 @@ struct ResolvingCloudAnchorsView: View {
             let _ = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
                 newResolved = ""
             }
-            
         }
     }
 }
 
-struct PathPlot: View {
-    let points: [KeypointInfo]
-    let currentTransform: simd_float4x4?
-    var body: some View {
-        if let plotBounds = Self.getPlotBounds(keypoints: points) {
-            Chart {
-                if let currentTransform = currentTransform {
-                    PointMark(x: .value("z", currentTransform.columns.3.z),
-                              y: .value("x", currentTransform.columns.3.x))
-                    .symbol(Arrow(angle: CGFloat(Float.pi/2 - getPhoneHeadingYaw(currentLocation: currentTransform)), size: 100))
-                }
-                ForEach(points) { point in
-                    LineMark(
-                        x: .value("z", point.location.translation.z),
-                        y: .value("x", point.location.translation.x)
-                    )
-                    PointMark(
-                        x: .value("z", point.location.translation.z),
-                        y: .value("x", point.location.translation.x)
-                    ).foregroundStyle(RouteNavigator.shared.isCheckedOff(point) ? .black : .blue)
-                }
-            }
-            .chartXScale(domain: ClosedRange(uncheckedBounds: (plotBounds.0, plotBounds.1)))
-            .chartYScale(domain: ClosedRange(uncheckedBounds: (plotBounds.2, plotBounds.3)))
-        } else {
-            Text("Localize first before seeing route preview")
-        }
-    }
-    
-    static func getPlotBounds(keypoints: [KeypointInfo])->(Float, Float, Float, Float)? {
-        guard let xMin = keypoints.map({$0.currentTransform!.translation.z}).min(),
-              let xMax = keypoints.map({$0.currentTransform!.translation.z}).max(),
-              let yMin = keypoints.map({$0.currentTransform!.translation.x}).min(),
-              let yMax = keypoints.map({$0.currentTransform!.translation.x}).max() else {
-            return nil
-        }
-        var yPaddingOnEachSide = Float(2.0)
-        var xPaddingOnEachSide = Float(2.0)
-        
-        if xMax - xMin > yMax - yMin {
-            yPaddingOnEachSide += ((xMax - xMin) - (yMax - yMin))/2.0
-        } else {
-            xPaddingOnEachSide += ((yMax - yMin) - (xMax - xMin))/2.0
-        }
-        return (xMin - xPaddingOnEachSide, xMax + xPaddingOnEachSide, yMin - yPaddingOnEachSide, yMax + yPaddingOnEachSide)
-    }
-}
-
-struct RoutePreview: View {
+struct VisualizingARMapView: View{
     @ObservedObject var positioningModel = PositioningModel.shared
-    @ObservedObject var routeManager = RouteNavigator.shared
     
     var body: some View {
-        if let keypoints = routeManager.originalKeypoints,
-           let currentTransform = positioningModel.cameraTransform {
-            PathPlot(points: keypoints, currentTransform: currentTransform)
-        } else {
-            Text("Localize first before seeing route preview")
-        }
+        Text("Visualizing")
+            .onAppear {
+                PositioningModel.shared.startPositioning()
+                PositioningModel.shared.renderer()
+            }
+        
     }
 }
 
 
-struct Arrow: ChartSymbolShape {
-    let angle: CGFloat
-    let size: CGFloat
-    
-    func path(in rect: CGRect) -> Path {
-        let w = rect.width * size * 0.05 + 0.6
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: 1))
-        path.addLine(to: CGPoint(x: -0.2, y: -0.5))
-        path.addLine(to: CGPoint(x: 0.2, y: -0.5))
-        path.closeSubpath()
-        return path.applying(.init(rotationAngle: angle))
-            .applying(.init(scaleX: w, y: w))
-            .applying(.init(translationX: rect.midX, y: rect.midY))
-    }
-    
-    var perceptualUnitRect: CGRect {
-        return CGRect(x: 0, y: 0, width: 1, height: 1)
-    }
-}
-
+//struct PathPlot: View {
+//    let points: [KeypointInfo]
+//    let currentTransform: simd_float4x4?
+//    var body: some View {
+//        if let plotBounds = Self.getPlotBounds(keypoints: points) {
+//            Chart {
+//                if let currentTransform = currentTransform {
+//                    PointMark(x: .value("z", currentTransform.columns.3.z),
+//                              y: .value("x", currentTransform.columns.3.x))
+//                    .symbol(Arrow(angle: CGFloat(Float.pi/2 - getPhoneHeadingYaw(currentLocation: currentTransform)), size: 100))
+//                }
+//                ForEach(points) { point in
+//                    LineMark(
+//                        x: .value("z", point.location.translation.z),
+//                        y: .value("x", point.location.translation.x)
+//                    )
+//                    PointMark(
+//                        x: .value("z", point.location.translation.z),
+//                        y: .value("x", point.location.translation.x)
+//                    ).foregroundStyle(RouteNavigator.shared.isCheckedOff(point) ? .black : .blue)
+//                }
+//            }
+//            .chartXScale(domain: ClosedRange(uncheckedBounds: (plotBounds.0, plotBounds.1)))
+//            .chartYScale(domain: ClosedRange(uncheckedBounds: (plotBounds.2, plotBounds.3)))
+//        } else {
+//            Text("Localize first before seeing route preview")
+//        }
+//    }
+//}
 
 struct DeleteCloudAnchor: View {
     @State var anchorID = FirebaseManager.shared.firstCloudAnchor ?? ""
@@ -372,7 +339,6 @@ struct DeleteCloudAnchor: View {
                 }
             }
             .pickerStyle(WheelPickerStyle())
-            
             Button("Delete") {
                 FirebaseManager.shared.deleteCloudAnchor(id: anchorID)
                 MainUIStateContainer.shared.currentScreen = .createAnchor
@@ -388,6 +354,6 @@ struct ContentView_Previews : PreviewProvider {
     static var previews: some View {
         ContentView()
     }
+    
 }
 #endif
-

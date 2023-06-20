@@ -43,7 +43,7 @@ class CloudAnchorAligner {
         }
     }
     
-    /// Adjust the alignment based on the current cloud anchor resolutiond ata
+    /// Adjust the alignment based on the current cloud anchor resolution data
     /// - Parameter currentAlignment: the current estimate of the session to map transform
     /// - Returns: the updated session to map transform if one can be computed or nil if none can be computed.
     func adjust(currentAlignment: simd_float4x4?)->simd_float4x4? {

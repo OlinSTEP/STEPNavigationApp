@@ -366,6 +366,10 @@ class PositioningModel: NSObject, ObservableObject {
         }
     }
     
+    func renderer() {
+        rendererHelper.renderer()
+    }
+    
     /// Render the keypoint in the session
     /// - Parameter keypoint: the keypoint description
     func renderKeypoint(_ keypoint: KeypointInfo) {
@@ -638,6 +642,25 @@ class RendererHelper {
         }
         let initialTransform = alignment ?? matrix_identity_float4x4
         anchorNode?.simdTransform = initialTransform
+        anchorNode!.addChildNode(keypointNode!)
+    }
+    
+    func renderer() {
+        // change this function to make boxes at poses and cloud anchors
+        
+        
+        let mesh = SCNBox(width: 0.2, height: 0.2, length: 0.2, chamferRadius: 0)
+        mesh.firstMaterial?.diffuse.contents = UIColor(AppColor.accent)
+        keypointNode?.removeFromParentNode()
+        keypointNode = SCNNode(geometry: mesh)
+//        keypointNode!.simdPosition = location.translation
+        keypointNode?.position = SCNVector3(0, 0, -1)
+        if anchorNode == nil {
+            anchorNode = SCNNode()
+            arView.scene.rootNode.addChildNode(anchorNode!)
+        }
+//        let initialTransform = alignment ?? matrix_identity_float4x4
+//        anchorNode?.simdTransform = initialTransform
         anchorNode!.addChildNode(keypointNode!)
     }
     

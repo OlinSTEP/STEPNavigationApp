@@ -21,6 +21,10 @@ struct PoseData {
     var pose: simd_float4x4
     var timestamp: Double
 }
+
+
+
+
 /// Record breadcrumbs (sequence of poses) along with cloud anchors recorded along the path
 class PathRecorder {
     /// The shared singleton instance of this class
@@ -121,6 +125,7 @@ class PathRecorder {
         firebaseRef = Database.database(url: "https://stepnavigation-default-rtdb.firebaseio.com").reference()
         firebaseStorage = Storage.storage()
         firebaseStorageRef = firebaseStorage.reference()
+
         
         let mapId = UUID().uuidString
         let filePath = "testing/\(mapId)"
@@ -140,7 +145,6 @@ class PathRecorder {
         }
 
         
-        
         let mapJsonFile: [String: Any] = ["tag_data": [], "map_id": mapId, "pose_data": formattedPoses, "cloud_data": cloudAnchors, "location_data": [], "plane_data": []]
         
         if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
@@ -149,6 +153,7 @@ class PathRecorder {
                 firebaseRef.child("unprocessed_maps").child(String(describing: Auth.auth().currentUser!.uid)).child(mapId).setValue(filePath)
             }
         }
+
     }
 }
 
