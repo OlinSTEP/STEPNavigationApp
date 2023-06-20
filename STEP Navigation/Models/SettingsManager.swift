@@ -30,13 +30,18 @@ class SettingsManager: ObservableObject {
     @Published var visualizeStreetscapeData = false
     
     @Published var crumbColor: Color = StaticAppColor.defaultAccent
-    @Published var colorScheme: [Color] = [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent]
+    @Published var colorScheme: [Color] = [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent, StaticAppColor.defaultBlack]
 
     
     /// The private initializer.  This should not be called directly.
     private init() {
         createSettingsBundle()
     }
+    
+    /// Function to get the string label of the color scheme
+    func getColorSchemeLabel(forColorScheme colorScheme: [Color]) -> String? {
+            return colorSchemeStringToColor.first(where: { $0.value == colorScheme })?.key
+        }
     
     /// Configure Settings Bundle and add observer for settings changes.
     func createSettingsBundle() {

@@ -23,7 +23,7 @@ struct SettingsView: View {
                         }
                         .padding()
                         SmallButtonComponent_NavigationLink(destination: {
-                            SettingsDetailView_CrumbColor()
+                            SettingsDetailView_ColorScheme()
                         }, label: "Color Scheme")
                         .padding(.bottom, 5)
                         SmallButtonComponent_NavigationLink(destination: {

@@ -59,66 +59,106 @@ struct CrumbColors: Identifiable {
     var id = UUID()
 }
 
-//struct SettingsDetailView_ColorScheme: View {
-//    @ObservedObject var settingsManager = SettingsManager.shared
-//    @State var selectedColorScheme: String?
-//    
-//    init(selectedColorScheme: String? = "defaultColorScheme") {
-//        self.selectedColorScheme = selectedColorScheme
-//    }
-//    
-//    var body: some View {
-//        
-////        let colorSchemeOptions = [
-////            ColorSchemes(label: "defaultColorScheme", backgroundColor: StaticAppColor.white, foregroundColor: StaticAppColor.defaultBlack, accentColor: StaticAppColor.defaultAccent),
-////            ColorSchemes(label: "Black_White", backgroundColor: StaticAppColor.white, foregroundColor: StaticAppColor.black, accentColor: StaticAppColor.black),
-////            ColorSchemes(label: "Yellow_Black", backgroundColor: StaticAppColor.black, foregroundColor: StaticAppColor.yellow, accentColor: StaticAppColor.yellow),
-////            ColorSchemes(label: "Yellow_Blue", backgroundColor: StaticAppColor.blue, foregroundColor: StaticAppColor.yellow, accentColor: StaticAppColor.yellow)
-////        ]
-//        
-//        VStack {
-//            ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
-//            
-//            VStack(spacing: 10) {
-//                ForEach(colorSchemeOptions) { scheme in
-//                    Button(action: {
-//                        UserDefaults.standard.setValue("\(scheme.label)", forKey: "colorScheme")
-//                    }) {
-//                        Text(scheme.label)
-//                            .font(.title2)
-//                            .bold()
-//                            .frame(maxWidth: .infinity)
-//                            .foregroundColor(scheme.foregroundColor)
-////                            .foregroundColor(settingsManager.colorScheme == scheme.label ? scheme.backgroundColor : scheme.foregroundColor)
-//                    }
-////                    .tint(settingsManager.colorScheme == scheme.label ? scheme.foregroundColor : scheme.backgroundColor)
-//                    .tint(.white)
-//                    .buttonStyle(.borderedProminent)
-//                    .buttonBorderShape(.capsule)
-//                    .controlSize(.large)
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: 30)
-//                            .stroke(scheme.accentColor, lineWidth: 2)
-//                    )
-//                    .padding(.horizontal)
-//                }
-//            }
-//            .padding(.top, 20)
-//            
-//            Text("ForegroundColor: ")
-//            Text("BackgroundColor: ")
-//            Text("AccentColor: ")
-//            
-//            Spacer()
-//        }
-//    }
-//}
+struct SettingsDetailView_ColorScheme: View {
+    @ObservedObject var settingsManager = SettingsManager.shared
+    @State var selectedColorScheme: String?
+    @State var showPopup: Bool = false
+    
+    init() {
+            _selectedColorScheme = State<String?>(initialValue: settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme))
+        }
+    
+    var body: some View {
+        
+        let colorSchemeOptions = [
+            ColorSchemes(label: "defaultColorScheme", background: StaticAppColor.white, foreground: StaticAppColor.defaultBlack, accent: StaticAppColor.defaultAccent, text_on_accent: StaticAppColor.defaultBlack),
+            ColorSchemes(label: "Black_White", background: StaticAppColor.white, foreground: StaticAppColor.black, accent: StaticAppColor.black, text_on_accent: StaticAppColor.white),
+            ColorSchemes(label: "Yellow_Black", background: StaticAppColor.black, foreground: StaticAppColor.yellow, accent: StaticAppColor.yellow, text_on_accent: StaticAppColor.black),
+            ColorSchemes(label: "Yellow_Blue", background: StaticAppColor.blue, foreground: StaticAppColor.yellow, accent: StaticAppColor.yellow, text_on_accent: StaticAppColor.blue),
+        ]
+        
+        ZStack {
+            VStack {
+                ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
+                    .padding(.top, 20)
+                    .background(AppColor.accent)
+                
+                VStack(spacing: 10) {
+                    ForEach(colorSchemeOptions) { scheme in
+                        let selectedScheme: Bool = selectedColorScheme == scheme.label
+                        
+                        Button(action: {
+                            selectedColorScheme = scheme.label
+//                            print(selectedColorScheme)
+                        }) {
+                            Text(scheme.label)
+                                .font(.title2)
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                                .foregroundColor(selectedScheme ? scheme.text_on_accent : AppColor.foreground)
+                            
+                        }
+                        .tint(selectedScheme ? scheme.accent : AppColor.background)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30)
+                                .stroke(selectedScheme ? scheme.background : AppColor.foreground, lineWidth: 2)
+                        )
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(.top, 20)
+                
+                Spacer()
+                
+                Button(action: {
+                    showPopup.toggle()
+                    UserDefaults.standard.setValue(selectedColorScheme, forKey: "colorScheme")
+                }) {
+                    Text("Next")
+                        .font(.title2)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(AppColor.text_on_accent)
+                }
+                .tint(AppColor.accent)
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+                .padding(.horizontal)
+            }
+            
+            if showPopup {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Text("Color scheme set. Please restart the app to apply the new color scheme.")
+                            .foregroundColor(StaticAppColor.black)
+                            .bold()
+                            .font(.title)
+                    }
+                    .padding()
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .edgesIgnoringSafeArea(.all)
+                .background(StaticAppColor.white)
+                .cornerRadius(20)
+                .accessibilityAddTraits(.isModal)
+            }
+        }
+        .navigationBarBackButtonHidden()
+    }
+}
 
 struct ColorSchemes: Identifiable {
     var label: String
-    var backgroundColor: Color
-    var foregroundColor: Color
-    var accentColor: Color
+    var background: Color
+    var foreground: Color
+    var accent: Color
+    var text_on_accent: Color
     var id = UUID()
 }
 
