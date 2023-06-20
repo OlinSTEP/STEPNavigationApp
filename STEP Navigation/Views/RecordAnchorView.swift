@@ -25,7 +25,7 @@ struct RecordAnchorView: View {
             
             if showNextButton == false && showInstructions == false {
                 InformationPopupComponent(popupType: .countdown(countdown: timeRemaining))
-//                Text("\(timeRemaining)")
+                //                Text("\(timeRemaining)")
                     .onReceive(timer) { time in
                         if timeRemaining > 0 {
                             timeRemaining -= 1
@@ -58,7 +58,7 @@ struct RecordAnchorView: View {
                                 .font(.title2)
                                 .bold()
                                 .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.dark)
+                                .foregroundColor(AppColor.text_on_accent)
                         }
                         .tint(AppColor.accent)
                         .buttonStyle(.borderedProminent)
@@ -66,26 +66,32 @@ struct RecordAnchorView: View {
                         .controlSize(.large)
                         .padding(.horizontal)
                     }
-                    .background(AppColor.light)
+                    .background(AppColor.background)
                 }
                 
                 if showNextButton == true {
-                    NavigationLink {
-                        AnchorDetailEditView(anchorID: anchorID, buttonLabel: "Save Anchor") {
-                            HomeView()
+                    VStack {
+                        NavigationLink {
+                            AnchorDetailEditView(anchorID: anchorID, buttonLabel: "Save Anchor") {
+                                HomeView()
+                            }
+                        } label: {
+                            Text("Next")
+                                .font(.title2)
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                                .foregroundColor(AppColor.accent)
                         }
-                    } label: {
-                        Text("Next")
-                            .font(.title2)
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .foregroundColor(AppColor.dark)
+                        .tint(AppColor.text_on_accent)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                        .padding(.horizontal)
                     }
-                    .tint(AppColor.accent)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(AppColor.accent)
+                    .accessibilityAddTraits(.isModal)
                 }
             }
             .onAppear() {
@@ -94,18 +100,18 @@ struct RecordAnchorView: View {
             .onReceive(PositioningModel.shared.$currentQuality) { newValue in
                 currentQuality = newValue
             }
-        }
-        .background(AppColor.accent)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                NavigationLink(destination: HomeView(), label: {
-                    Text("Cancel")
-                        .bold()
-                        .font(.title2)
-                })
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink(destination: HomeView(), label: {
+                        Text("Cancel")
+                            .bold()
+                            .font(.title2)
+                    })
+                }
             }
         }
+        .background(AppColor.accent)
     }
 }
 

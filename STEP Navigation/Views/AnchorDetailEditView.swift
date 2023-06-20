@@ -54,6 +54,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                             Text("Organization")
                                 .font(.title2)
                                 .bold()
+                                .foregroundColor(AppColor.foreground)
                             Spacer()
                         }
                         ZStack(alignment: Alignment(horizontal: .center, vertical: .top)) {
@@ -62,12 +63,12 @@ struct AnchorDetailEditView<Destination: View>: View {
                                             self.editing = edit}).padding(.horizontal, 10)
                             }
                             .frame(height: 48)
-                            .background(AppColor.light)
+//                            .background(AppColor.background)
                             .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
                             .cornerRadius(10)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(AppColor.dark, lineWidth: 2)
+                                    .stroke(AppColor.foreground, lineWidth: 2)
                             )
                             OrganizationComboBox(editing: $editing, text: $newOrganization, verticalOffset: vOffset, horizontalOffset: hOffset)
                         }
@@ -79,6 +80,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                             Text("Type")
                                 .font(.title2)
                                 .bold()
+                                .foregroundColor(AppColor.foreground)
                             Spacer()
                         }
                         HStack {
@@ -97,7 +99,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                         .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(AppColor.dark, lineWidth: 2)
+                                .stroke(AppColor.foreground, lineWidth: 2)
                         )
                     }
                     .padding(.horizontal)
@@ -108,6 +110,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 Text("Corresponding Exit")
                                     .font(.title2)
                                     .bold()
+                                    .foregroundColor(AppColor.foreground)
                                 Spacer()
                             }
                             HStack {
@@ -124,7 +127,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                             .cornerRadius(10)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(AppColor.dark, lineWidth: 2)
+                                    .stroke(AppColor.foreground, lineWidth: 2)
                             )
                         }
                         .padding(.horizontal)
@@ -137,14 +140,17 @@ struct AnchorDetailEditView<Destination: View>: View {
                             Text("Visibility")
                                 .font(.title2)
                                 .bold()
+                                .foregroundColor(AppColor.foreground)
                             Spacer()
                         }
                         Picker("Anchor Visibility", selection: $newIsReadable) {
                             ForEach(visibilityOptions, id: \.self) {
                                 if $0 == true {
                                     Text("Public")
+                                        .foregroundColor(AppColor.text_on_accent)
                                 } else {
                                     Text("Private")
+                                        .foregroundColor(AppColor.text_on_accent)
                                 }
                             }
                         }
@@ -165,7 +171,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                     .font(.title2)
                     .bold()
                     .frame(maxWidth: .infinity)
-                    .foregroundColor(AppColor.light)
+                    .foregroundColor(AppColor.text_on_accent)
             })
             .onChange(of: confirmPressed) {
                 newValue in
@@ -248,14 +254,14 @@ struct OrganizationComboBox: View {
                     }
                 }
             }
-            .background(AppColor.light)
+            .background(AppColor.background)
             .cornerRadius(15)
-            .foregroundColor(AppColor.dark)
+            .foregroundColor(AppColor.foreground)
             .ignoresSafeArea()
             .frame(maxWidth: .infinity,
                    minHeight: 0,
                    maxHeight: 50 * CGFloat( (filteredTexts.wrappedValue.count > 3 ? 3: filteredTexts.wrappedValue.count)))
-            .shadow(color: AppColor.dark, radius: 4)
+            .shadow(color: StaticAppColor.black, radius: 4)
             .offset(x: horizontalOffset, y: verticalOffset)
             .isHidden(!editing, remove: !editing)
             

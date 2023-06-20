@@ -47,9 +47,9 @@ struct ConnectingView: View {
                         }
                     }
                     .frame(width: .infinity)
-                    .border(width: 2, edges: [.top], color: AppColor.dark)
+                    .border(width: 2, edges: [.top], color: AppColor.text_on_accent)
                     .background(AppColor.accent)
-                    .foregroundColor(AppColor.dark)
+                    .foregroundColor(AppColor.text_on_accent)
                     .bold()
                 }
                 
@@ -58,14 +58,14 @@ struct ConnectingView: View {
                 if !positioningModel.resolvedCloudAnchors.contains(startAnchor) && showInstructions == false {
                     HStack {
                         Text("Stand at \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!) and scan your phone around to resolve the anchor.")
-                            .foregroundColor(AppColor.light)
+                            .foregroundColor(AppColor.text_on_accent)
                             .bold()
                             .font(.title2)
                             .multilineTextAlignment(.center)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(AppColor.dark)
+                    .background(AppColor.accent)
                     .onAppear {
                         AnnouncementManager.shared.announce(announcement: "Stand at \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!) and scan your phone around to resolve the anchor.")
                     }
@@ -74,7 +74,7 @@ struct ConnectingView: View {
                 if positioningModel.resolvedCloudAnchors.contains(startAnchor) && !positioningModel.resolvedCloudAnchors.contains(stopAnchor) {
                     HStack {
                         Text("\(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!) anchor successfully resolved. You can now walk to \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!).")
-                            .foregroundColor(AppColor.light)
+                            .foregroundColor(AppColor.text_on_accent)
                             .bold()
                             .font(.title2)
                             .multilineTextAlignment(.center)
@@ -83,7 +83,7 @@ struct ConnectingView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(AppColor.dark)
+                    .background(AppColor.accent)
                     .onAppear {
                         AnnouncementManager.shared.announce(announcement: "\(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!) anchor successfully resolved. You can now walk to \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!).")
                     }
@@ -93,7 +93,7 @@ struct ConnectingView: View {
                     VStack {
                         HStack {
                             Text("\(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) anchor successfully resolved. Connection created.")
-                                .foregroundColor(AppColor.light)
+                                .foregroundColor(AppColor.text_on_accent)
                                 .bold()
                                 .font(.title2)
                                 .multilineTextAlignment(.center)
@@ -109,37 +109,17 @@ struct ConnectingView: View {
                                 .font(.title2)
                                 .bold()
                                 .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.dark)
+                                .foregroundColor(AppColor.accent)
                         }
-                        .tint(AppColor.accent)
+                        .tint(AppColor.text_on_accent)
                         .buttonStyle(.borderedProminent)
                         .buttonBorderShape(.capsule)
                         .controlSize(.large)
                         .padding(.horizontal)
-                        
-//                        NavigationLink(destination: HomeView(), isActive: $savePressed, label: {
-//                            Text("Save")
-//                                .font(.title2)
-//                                .bold()
-//                                .frame(maxWidth: .infinity)
-//                                .foregroundColor(AppColor.dark)
-//                        })
-//                        .onChange(of: savePressed) {
-//                            newValue in
-//                            if newValue {
-//                                PathRecorder.shared.toFirebase()
-//                                focusOnImprovePopup = true
-//                            }
-//                        }
-//                        .tint(AppColor.accent)
-//                        .buttonStyle(.borderedProminent)
-//                        .buttonBorderShape(.capsule)
-//                        .controlSize(.large)
-//                        .padding(.horizontal)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(AppColor.dark)
+                    .background(AppColor.accent)
                     .onAppear {
                         AnnouncementManager.shared.announce(announcement: "\(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) anchor successfully resolved. Connection created.")
                     }
@@ -150,7 +130,7 @@ struct ConnectingView: View {
                     VStack {
                         HStack {
                             Text("The conection will automatically work in both directions, but you can improve the path by walking from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!). Would you like to improve the connection now?")
-                                .foregroundColor(AppColor.light)
+                                .foregroundColor(AppColor.text_on_accent)
                                 .bold()
                                 .font(.title2)
                                 .multilineTextAlignment(.center)
@@ -169,9 +149,9 @@ struct ConnectingView: View {
                                 .font(.title2)
                                 .bold()
                                 .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.dark)
+                                .foregroundColor(AppColor.accent)
                         }
-                        .tint(AppColor.accent)
+                        .tint(AppColor.text_on_accent)
                         .buttonStyle(.borderedProminent)
                         .buttonBorderShape(.capsule)
                         .controlSize(.large)
@@ -182,9 +162,9 @@ struct ConnectingView: View {
                                 .font(.title2)
                                 .bold()
                                 .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.dark)
+                                .foregroundColor(AppColor.accent)
                         })
-                        .tint(AppColor.accent)
+                        .tint(AppColor.text_on_accent)
                         .buttonStyle(.borderedProminent)
                         .buttonBorderShape(.capsule)
                         .controlSize(.large)
@@ -193,7 +173,7 @@ struct ConnectingView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(AppColor.dark)
+                    .background(AppColor.accent)
                     .accessibilityAddTraits(.isModal)
                     
                 }
@@ -205,6 +185,7 @@ struct ConnectingView: View {
                 VStack {
                     HStack {
                         Text("Instructions here. Go to your first anchor. Etc etc.")
+                            .foregroundColor(AppColor.foreground)
                         Spacer()
                     }
                     Spacer()
@@ -225,7 +206,7 @@ struct ConnectingView: View {
                             .font(.title2)
                             .bold()
                             .frame(maxWidth: .infinity)
-                            .foregroundColor(AppColor.dark)
+                            .foregroundColor(AppColor.text_on_accent)
                     }
                     .tint(AppColor.accent)
                     .buttonStyle(.borderedProminent)
@@ -233,7 +214,7 @@ struct ConnectingView: View {
                     .controlSize(.large)
                     .padding(.horizontal)
                 }
-                .background(AppColor.light)
+                .background(AppColor.background)
             }
         }
         .background(AppColor.accent)

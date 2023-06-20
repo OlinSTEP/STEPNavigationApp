@@ -47,12 +47,13 @@ struct RecordAnchorInstructionsView: View {
                     Text("Stand in the anchor destination with the rear camera pointing away from you. Move your phone slowly and steadily as you complete the following motions.")
                     OrderedList(listItems: instructionListItems)
                 }
+                .foregroundColor(AppColor.foreground)
                 .padding()
             }
             Spacer()
         }
         .frame(width: .infinity, height: .infinity)
-        .background(AppColor.light)
+        .background(AppColor.background)
     }
 }
 

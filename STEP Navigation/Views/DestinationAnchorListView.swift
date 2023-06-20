@@ -13,8 +13,7 @@ struct DestinationAnchorListView: View {
 
     let anchorType: AnchorType
     
-//    private let listBackgroundColor = AppColor.grey
-    private let listTextColor = AppColor.dark
+    private let listTextColor = AppColor.text_on_accent
     
     @State var lastQueryLocation: CLLocationCoordinate2D?
     @State var nearbyDistance: Double
@@ -24,30 +23,33 @@ struct DestinationAnchorListView: View {
     @State var anchors: [LocationDataModel] = []
     
     var body: some View {
-        ScreenTitleComponent(titleText: "\(anchorType.rawValue)s")
-            .onReceive(positionModel.$currentLatLon) { latLon in
-            guard let latLon = latLon else {
-                return
-            }
-            guard lastQueryLocation == nil || lastQueryLocation!.distance(from: latLon) > 5.0 else {
-                return
-            }
-            lastQueryLocation = latLon
-            anchors = Array(
-                DataModelManager.shared.getNearbyLocations(
-                    for: anchorType,
-                    location: latLon,
-                    maxDistance: CLLocationDistance(nearbyDistance),
-                    withBuffer: Self.getBufferDistance(positionModel.geoLocalizationAccuracy)
-                )
-            )
-            .sorted(by: {
-                $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
-            })
+        VStack {
+            ScreenTitleComponent(titleText: "\(anchorType.rawValue)s")
+                .onReceive(positionModel.$currentLatLon) { latLon in
+                    guard let latLon = latLon else {
+                        return
+                    }
+                    guard lastQueryLocation == nil || lastQueryLocation!.distance(from: latLon) > 5.0 else {
+                        return
+                    }
+                    lastQueryLocation = latLon
+                    anchors = Array(
+                        DataModelManager.shared.getNearbyLocations(
+                            for: anchorType,
+                            location: latLon,
+                            maxDistance: CLLocationDistance(nearbyDistance),
+                            withBuffer: Self.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                        )
+                    )
+                    .sorted(by: {
+                        $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
+                    })
+                }
+                .background(AppColor.accent)
+            
+            NavigateAnchorListComponent(anchorSelectionType: anchorType.isIndoors ? .indoorEndingPoint : .outdoorEndingPoint,
+                                        anchors: anchors)
         }
-        .background(AppColor.accent)
-        NavigateAnchorListComponent(anchorSelectionType: anchorType.isIndoors ? .indoorEndingPoint : .outdoorEndingPoint,
-                                  anchors: anchors)
     }
     /// Compute the notion of "close enough" to display to the user.  This is a buffer distance added on top of the distance the user has already selected from the UI
     /// - Parameter accuracy: the current localization accuracy

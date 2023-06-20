@@ -60,7 +60,7 @@ struct HelpPopup: View {
                 Spacer()
                 SmallButtonComponent_PopupTrigger(label: "Dismiss", popupTrigger: $showHelp)
             }
-            .background(AppColor.light)
+            .background(AppColor.background)
     }
 }
 
@@ -102,22 +102,12 @@ struct ConfirmationPopup<Destination: View>: View {
             
             VStack {
                 if let simultaneousAction = simultaneousAction {
-//                    SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
-//                        .simultaneousGesture(TapGesture().onEnded {
-////                                simultaneousAction()
-//                            print("gesture delete")
-//                        })
-//                        .accessibilityAction {
-//                            print("accessiblity action delete")
-//                            //this works to delete the thing but it doesn't take the user home for some reason
-////                            simultaneousAction()
-//                        }
                     NavigationLink(destination: confirmButtonDestination(), isActive: $deletePressed, label: {
                         Text("\(confirmButtonLabel)")
                             .font(.title2)
                             .bold()
                             .frame(maxWidth: .infinity)
-                            .foregroundColor(AppColor.dark)
+                            .foregroundColor(AppColor.text_on_accent)
                     })
                     .onChange(of: deletePressed) {
                         newValue in
@@ -131,14 +121,12 @@ struct ConfirmationPopup<Destination: View>: View {
                     .buttonBorderShape(.capsule)
                     .controlSize(.large)
                     .padding(.horizontal)
-                
                     .padding(.bottom, 2)
 
                 } else {
                     SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
                         .padding(.bottom, 2)
                 }
-//                SmallButtonComponent_PopupTrigger(label: "Cancel", labelColor: AppColor.dark, backgroundColor: AppColor.grey, popupTrigger: $showingConfirmation, role: .cancel)
                 
                 Button(role: .cancel) {
                     showingConfirmation.toggle()
@@ -147,14 +135,15 @@ struct ConfirmationPopup<Destination: View>: View {
                         .font(.title2)
                         .bold()
                         .frame(maxWidth: .infinity)
-                        .foregroundColor(AppColor.dark)
+                        .foregroundColor(AppColor.foreground)
                 }
+                .tint(AppColor.background)
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
                 .controlSize(.large)
                 .overlay(
                     RoundedRectangle(cornerRadius: 30)
-                        .stroke(AppColor.dark, lineWidth: 2)
+                        .stroke(AppColor.foreground, lineWidth: 2)
                 )
                 .padding(.horizontal)
 
@@ -162,7 +151,7 @@ struct ConfirmationPopup<Destination: View>: View {
             .padding()
         }
         .frame(width: 360, height: 250)
-        .background(AppColor.light)
+        .background(AppColor.background)
         .cornerRadius(20)
     }
 }
@@ -174,7 +163,7 @@ struct GPSLocalizationPopup: View {
         VStack {
             HStack {
                 Text("Finding Destinations Near You")
-                    .foregroundColor(AppColor.dark)
+                    .foregroundColor(AppColor.foreground)
                     .bold()
                     .font(.title)
                     .multilineTextAlignment(.center)
@@ -185,12 +174,12 @@ struct GPSLocalizationPopup: View {
             
             ZStack {
                 Circle()
-                    .stroke(AppColor.dark, lineWidth: 5)
+                    .stroke(AppColor.foreground, lineWidth: 5)
                     .frame(width: 100, height: 100)
                     .opacity(0.25)
                 Circle()
                     .trim(from: 0.25, to: 1)
-                    .stroke(AppColor.dark, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                    .stroke(AppColor.foreground, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                     .frame(width: 100, height: 100)
                     .rotationEffect(.degrees(isAnimating ? 360 : 0))
                     .onAppear {

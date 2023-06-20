@@ -32,9 +32,9 @@ struct SelectConnectingAnchorsView: View {
         VStack {
             ScreenTitleComponent(titleText: "Select Second Anchor")
             Text("Connect \(anchorName) to:")
+                .foregroundColor(AppColor.foreground)
             
             ScrollView {
-                //TODO: make it so that the anchor you are connecting from doesn't show up in the list
                 VStack(spacing: 20) {
                     ForEach(0..<anchors.count, id: \.self) { idx in
                         if anchors[idx].id != anchorID1 {

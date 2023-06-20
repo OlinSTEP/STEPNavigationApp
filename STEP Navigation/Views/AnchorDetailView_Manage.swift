@@ -34,15 +34,6 @@ struct AnchorDetailView_Manage: View {
                         SelectConnectingAnchorsView(anchorID1: anchorDetails.id)
                     }, label: "Connect")
                     
-                    
-                    //                Button("Delete") {
-                    //                    FirebaseManager.shared.deleteCloudAnchor(id: anchorID)
-                    //                    MainUIStateContainer.shared.currentScreen = .createAnchor
-                    //                }
-//                    SmallButtonComponent_Button(label: "Delete", action: {
-//                        showingConfirmation = true
-//                    })
-                    
                     Button(action: {
                         showingConfirmation = true
                     }) {
@@ -50,17 +41,17 @@ struct AnchorDetailView_Manage: View {
                             .font(.title2)
                             .bold()
                             .frame(maxWidth: .infinity)
-                            .foregroundColor(AppColor.dark)
+                            .foregroundColor(AppColor.foreground)
                     }
+                    .tint(AppColor.background)
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
                     .controlSize(.large)
                     .overlay(
                         RoundedRectangle(cornerRadius: 30)
-                            .stroke(AppColor.dark, lineWidth: 2)
+                            .stroke(AppColor.foreground, lineWidth: 2)
                     )
                     .padding(.horizontal)
-                    
                     
                     
                 }

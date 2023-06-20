@@ -16,6 +16,14 @@ struct HomeView: View {
     
     @AccessibilityFocusState var focusOnPopup
     
+    init() {
+        let appearance = UINavigationBarAppearance()
+        appearance.shadowColor = .clear
+        appearance.backgroundColor = UIColor(AppColor.accent)
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
+    
     var body: some View {
         if authHandler.currentUID == nil {
             SignInWithApple()
@@ -49,17 +57,21 @@ struct HomeView: View {
                                 }, label: "Settings")
                             }
                             .padding(.top, 20)
+                            .padding(.bottom, 40)
                         }
                     }
+                    Spacer()
                 }
+                .background(AppColor.background)
+                .edgesIgnoringSafeArea([.bottom])
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .onAppear() {
                     positionModel.startCoarsePositioning()
                     UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation") // Forcing the rotation back to portrait
                     AppDelegate.orientationLock = .portrait // And making sure it stays that way
                 }
-                Spacer()
             }
-            .accentColor(AppColor.light)
+            .accentColor(AppColor.text_on_accent)
         }
     }
 }

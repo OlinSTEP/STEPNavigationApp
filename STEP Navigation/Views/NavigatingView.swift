@@ -52,7 +52,7 @@ struct NavigatingView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 140)
-                        .background(AppColor.dark)
+                        .background(AppColor.accent)
                     }
                 }
                 .padding(.vertical, 100)

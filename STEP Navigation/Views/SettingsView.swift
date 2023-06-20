@@ -18,11 +18,12 @@ struct SettingsView: View {
                             Text("Color")
                                 .bold()
                                 .font(.title2)
+                                .foregroundColor(AppColor.foreground)
                             Spacer()
                         }
                         .padding()
                         SmallButtonComponent_NavigationLink(destination: {
-                            SettingsDetailView_ColorScheme()
+                            SettingsDetailView_CrumbColor()
                         }, label: "Color Scheme")
                         .padding(.bottom, 5)
                         SmallButtonComponent_NavigationLink(destination: {
@@ -34,6 +35,7 @@ struct SettingsView: View {
                                 Text("Directions")
                                     .bold()
                                     .font(.title2)
+                                    .foregroundColor(AppColor.foreground)
                                 Spacer()
                             }
                             .padding()
@@ -47,6 +49,7 @@ struct SettingsView: View {
                                 Text("Additional Features")
                                     .bold()
                                     .font(.title2)
+                                    .foregroundColor(AppColor.foreground)
                                 Spacer()
                             }
                             .padding()

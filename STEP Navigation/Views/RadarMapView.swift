@@ -44,7 +44,7 @@ struct RadarMapView: View {
                     }
                 }
                 .ignoresSafeArea()
-                .background(AppColor.dark)
+                .background(AppColor.background)
                 .onAppear {
                     UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation") // Forcing the rotation to landscape
                     AppDelegate.orientationLock = .landscapeRight // And making sure it stays that way
@@ -93,7 +93,6 @@ struct RadarMapView: View {
                                 .font(.title3)
                                 .bold()
                                 .multilineTextAlignment(.leading)
-                                .foregroundColor(AppColor.accent)
                                 .lineLimit(3)
                                 .frame(width: 120)
                                 .accessibilityHidden(true)
@@ -101,7 +100,7 @@ struct RadarMapView: View {
                         }
                     }
                     .frame(maxWidth: 200)
-                    .foregroundColor(AppColor.light)
+                    .foregroundColor(AppColor.foreground)
                     Spacer()
                 }
                 .padding()
@@ -125,7 +124,7 @@ struct RadarChartView: View {
         ZStack {
             ZStack {
                 SemiCircle()
-                    .foregroundColor(AppColor.light)
+                    .foregroundColor(AppColor.foreground)
                     .frame(width: circleDiameter, height: radius)
                     .position(x: 0, y: radius / 2)
                 
@@ -143,7 +142,7 @@ struct RadarChartView: View {
                             path.move(to: CGPoint(x: startX, y: startY))
                             path.addLine(to: CGPoint(x: endX, y: endY))
                         }
-                        .stroke(.black, lineWidth: 4)
+                        .stroke(AppColor.background, lineWidth: 4)
                     }
                 }
                 .frame(width: circleDiameter, height: radius)
@@ -152,14 +151,14 @@ struct RadarChartView: View {
                 let tickSizeAdjuster: Double = 10
                 
                 SemiCircle()
-                    .foregroundColor(AppColor.light)
+                    .foregroundColor(AppColor.foreground)
                     .frame(width: circleDiameter - tickSizeAdjuster, height: radius - tickSizeAdjuster)
                     .position(x: tickSizeAdjuster / 2, y: radius / 2)
                 
-                Rectangle()
-                    .foregroundColor(AppColor.light)
-                    .frame(width: circleDiameter, height: 20)
-                    .position(x: radius, y: radius)
+//                Rectangle()
+//                    .foregroundColor(AppColor.background)
+//                    .frame(width: circleDiameter, height: 20)
+//                    .position(x: radius, y: radius)
             }
             
             ZStack {
@@ -170,7 +169,7 @@ struct RadarChartView: View {
                     let distance = points[index].adjustedDistance
                     let radius = (distance / 180.0) * radius
                     
-                    let focusColor = isFocused ? RadarMapView.getQualityColor(quality: points[index].quality).dark : AppColor.dark
+//                    let focusColor = isFocused ? RadarMapView.getQualityColor(quality: points[index].quality).dark : AppColor.foreground
                     
                     let lineEndX = centerX + (radius * cos(angle))
                     let lineEndY = centerY + (radius * sin(angle))
@@ -182,7 +181,7 @@ struct RadarChartView: View {
                     Circle()
                         .frame(width: dotSize, height: dotSize)
                         .position(x: dotX, y: dotY)
-                        .foregroundColor(focusColor)
+                        .foregroundColor(AppColor.background)
                         .accessibilityElement(children: .ignore)
                         .accessibility(label: Text(points[index].name))
                         .accessibility(value: Text("\(String(format: "%.0f", points[index].adjustedDistance)) units away at \(points[index].angleToClock)"))
@@ -194,20 +193,14 @@ struct RadarChartView: View {
                             path.move(to: CGPoint(x: centerX, y: centerY))
                             path.addLine(to: CGPoint(x: lineEndX, y: lineEndY))
                         }
-                        .stroke(focusColor, lineWidth: 4)
+                        .stroke(AppColor.background, lineWidth: 4)
                         
                         Star(corners: 5, smoothness: 0.5)
-                            .fill(focusColor)
+                            .fill(AppColor.background)
                             .frame(width: dotSize + 20, height: dotSize + 20)
                             .position(x: dotX, y: dotY)
-                            .foregroundColor(focusColor)
+                            .foregroundColor(AppColor.background)
                             .accessibilityHidden(true)
-                        
-//                        Rectangle()
-//                            .frame(width: dotSize, height: dotSize)
-//                            .position(x: dotX, y: dotY)
-//                            .foregroundColor(focusColor)
-//                            .accessibilityHidden(true)
                     }
                 }
             }
@@ -215,7 +208,7 @@ struct RadarChartView: View {
             Circle()
                 .frame(width: 50, height: 50)
                 .position(x: radius, y: radius)
-                .foregroundColor(AppColor.accent)
+                .foregroundColor(AppColor.background)
                 .accessibilityElement(children: .ignore)
                 .accessibility(label: Text("Orientation Anchor: Traffice Circle near Santos Bench"))
         }

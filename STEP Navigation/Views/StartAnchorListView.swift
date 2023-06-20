@@ -22,11 +22,6 @@ struct StartAnchorListView: View {
             NavigateAnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
                                       anchors: anchors)
             Spacer()
-//            if chosenStart != nil || outdoorsSelectedAsStart {
-//                SmallButtonComponent_NavigationLink(destination: {
-//                    NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: destinationAnchorDetails!)
-//                                }, label: "Navigate")
-//            }
         }
         .onChange(of: chosenStart) { newValue in
             print("HERE WE ARE")

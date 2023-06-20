@@ -23,7 +23,7 @@ struct ManageAnchorsListView: View {
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
-                    .foregroundColor(AppColor.light)
+                    .foregroundColor(AppColor.text_on_accent)
                 Spacer()
             }
             .padding(.bottom, 0.5)
@@ -32,7 +32,7 @@ struct ManageAnchorsListView: View {
                 Text("At")
                     .font(.title2)
                     .padding(.leading)
-                    .foregroundColor(AppColor.light)
+                    .foregroundColor(AppColor.text_on_accent)
                 OrganizationPicker(selectedOrganization: $selectedOrganization)
                 Spacer()
             }

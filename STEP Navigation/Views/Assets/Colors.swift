@@ -9,11 +9,11 @@ import Foundation
 import SwiftUI
 
 struct AppColor {
-    static var light: Color {
+    static var background: Color {
             return SettingsManager.shared.colorScheme[0]
         }
         
-    static var dark: Color {
+    static var foreground: Color {
         return SettingsManager.shared.colorScheme[1]
     }
         
@@ -21,21 +21,9 @@ struct AppColor {
         return SettingsManager.shared.colorScheme[2]
     }
     
-//    static let dark: Color = Color(.sRGB,
-//                                       red: 34/255,
-//                                       green: 34/255,
-//                                       blue: 34/255,
-//                                       opacity: 1)
-//    static let light: Color = Color(.sRGB,
-//                                       red: 255/255,
-//                                       green: 255/255,
-//                                       blue: 255/255,
-//                                       opacity: 1)
-//    static let accent: Color = Color(.sRGB,
-//                                       red: 171/255,
-//                                       green: 236/255,
-//                                       blue: 220/255,
-//                                       opacity: 1)
+    static var text_on_accent: Color {
+        return SettingsManager.shared.colorScheme[3]
+    }
 }
 
 struct StaticAppColor {

@@ -14,24 +14,14 @@ struct DestinationTypesView: View {
     @State var anchorTypes: [String] = []
     
     @AccessibilityFocusState var focusOnNearbyDistanceValue
-    // Sets the appearance of the Navigation Bar using UIKit
-    init() {
-        let appearance = UINavigationBarAppearance()
-        appearance.shadowColor = .clear
-        appearance.backgroundColor = UIColor(AppColor.accent)
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
     
     var body: some View {
         let anchorTypes = PositioningModel.shared.currentLatLon != nil ? DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance) : []
         
-        // Navigation Stack determines the Navigation Bar
-        NavigationStack {
-            let nearbyDistanceString = String(format: "%.0f", $nearbyDistance.wrappedValue) //calculating the nearbyDistance and turning it into a string to pass into ScreenTitleComponent
+        VStack {
+            let nearbyDistanceString = String(format: "%.0f", $nearbyDistance.wrappedValue)
             ScreenTitleComponent(titleText: "Destinations", subtitleText: "Within \(nearbyDistanceString) meters")
             
-            // The scroll view contains the main body of text
             ScrollView {
                 VStack(spacing: 20) {
                     // Creates a navigation button for each anchor type
@@ -49,5 +39,8 @@ struct DestinationTypesView: View {
                 }
             }
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

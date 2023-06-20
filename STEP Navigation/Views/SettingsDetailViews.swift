@@ -34,15 +34,15 @@ struct SettingsDetailView_CrumbColor: View {
                             .font(.title2)
                             .bold()
                             .frame(maxWidth: .infinity)
-                            .foregroundColor(AppColor.dark)
+                            .foregroundColor(AppColor.foreground)
                     }
-                    .tint(settingsManager.crumbColor == color.color ? color.color : AppColor.light)
+                    .tint(settingsManager.crumbColor == color.color ? color.color : AppColor.background)
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
                     .controlSize(.large)
                     .overlay(
                         RoundedRectangle(cornerRadius: 30)
-                            .stroke(settingsManager.crumbColor != color.color ? AppColor.dark : AppColor.light, lineWidth: 2)
+                            .stroke(settingsManager.crumbColor != color.color ? AppColor.foreground : AppColor.background, lineWidth: 2)
                     )
                     .padding(.horizontal)
                 }
@@ -59,60 +59,60 @@ struct CrumbColors: Identifiable {
     var id = UUID()
 }
 
-struct SettingsDetailView_ColorScheme: View {
-    @ObservedObject var settingsManager = SettingsManager.shared
-    @State var selectedColorScheme: String?
-    
-    init(selectedColorScheme: String? = "defaultColorScheme") {
-        self.selectedColorScheme = selectedColorScheme
-    }
-    
-    var body: some View {
-        
-        let colorSchemeOptions = [
-            ColorSchemes(label: "defaultColorScheme", backgroundColor: StaticAppColor.white, foregroundColor: StaticAppColor.defaultBlack, accentColor: StaticAppColor.defaultAccent),
-            ColorSchemes(label: "Black_White", backgroundColor: StaticAppColor.white, foregroundColor: StaticAppColor.black, accentColor: StaticAppColor.black),
-            ColorSchemes(label: "Yellow_Black", backgroundColor: StaticAppColor.black, foregroundColor: StaticAppColor.yellow, accentColor: StaticAppColor.yellow),
-            ColorSchemes(label: "Yellow_Blue", backgroundColor: StaticAppColor.blue, foregroundColor: StaticAppColor.yellow, accentColor: StaticAppColor.yellow)
-        ]
-        
-        VStack {
-            ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
-            
-            VStack(spacing: 10) {
-                ForEach(colorSchemeOptions) { scheme in
-                    Button(action: {
-                        UserDefaults.standard.setValue("\(scheme.label)", forKey: "colorScheme")
-                    }) {
-                        Text(scheme.label)
-                            .font(.title2)
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .foregroundColor(scheme.foregroundColor)
-//                            .foregroundColor(settingsManager.colorScheme == scheme.label ? scheme.backgroundColor : scheme.foregroundColor)
-                    }
-//                    .tint(settingsManager.colorScheme == scheme.label ? scheme.foregroundColor : scheme.backgroundColor)
-                    .tint(.white)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 30)
-                            .stroke(scheme.accentColor, lineWidth: 2)
-                    )
-                    .padding(.horizontal)
-                }
-            }
-            .padding(.top, 20)
-            
-            Text("ForegroundColor: ")
-            Text("BackgroundColor: ")
-            Text("AccentColor: ")
-            
-            Spacer()
-        }
-    }
-}
+//struct SettingsDetailView_ColorScheme: View {
+//    @ObservedObject var settingsManager = SettingsManager.shared
+//    @State var selectedColorScheme: String?
+//    
+//    init(selectedColorScheme: String? = "defaultColorScheme") {
+//        self.selectedColorScheme = selectedColorScheme
+//    }
+//    
+//    var body: some View {
+//        
+////        let colorSchemeOptions = [
+////            ColorSchemes(label: "defaultColorScheme", backgroundColor: StaticAppColor.white, foregroundColor: StaticAppColor.defaultBlack, accentColor: StaticAppColor.defaultAccent),
+////            ColorSchemes(label: "Black_White", backgroundColor: StaticAppColor.white, foregroundColor: StaticAppColor.black, accentColor: StaticAppColor.black),
+////            ColorSchemes(label: "Yellow_Black", backgroundColor: StaticAppColor.black, foregroundColor: StaticAppColor.yellow, accentColor: StaticAppColor.yellow),
+////            ColorSchemes(label: "Yellow_Blue", backgroundColor: StaticAppColor.blue, foregroundColor: StaticAppColor.yellow, accentColor: StaticAppColor.yellow)
+////        ]
+//        
+//        VStack {
+//            ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
+//            
+//            VStack(spacing: 10) {
+//                ForEach(colorSchemeOptions) { scheme in
+//                    Button(action: {
+//                        UserDefaults.standard.setValue("\(scheme.label)", forKey: "colorScheme")
+//                    }) {
+//                        Text(scheme.label)
+//                            .font(.title2)
+//                            .bold()
+//                            .frame(maxWidth: .infinity)
+//                            .foregroundColor(scheme.foregroundColor)
+////                            .foregroundColor(settingsManager.colorScheme == scheme.label ? scheme.backgroundColor : scheme.foregroundColor)
+//                    }
+////                    .tint(settingsManager.colorScheme == scheme.label ? scheme.foregroundColor : scheme.backgroundColor)
+//                    .tint(.white)
+//                    .buttonStyle(.borderedProminent)
+//                    .buttonBorderShape(.capsule)
+//                    .controlSize(.large)
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 30)
+//                            .stroke(scheme.accentColor, lineWidth: 2)
+//                    )
+//                    .padding(.horizontal)
+//                }
+//            }
+//            .padding(.top, 20)
+//            
+//            Text("ForegroundColor: ")
+//            Text("BackgroundColor: ")
+//            Text("AccentColor: ")
+//            
+//            Spacer()
+//        }
+//    }
+//}
 
 struct ColorSchemes: Identifiable {
     var label: String
@@ -149,15 +149,15 @@ struct SettingsDetailView_PhoneBodyOffset: View {
                     .font(.title2)
                     .bold()
                     .frame(maxWidth: .infinity)
-                    .foregroundColor(settingsManager.adjustPhoneBodyOffset == true ? AppColor.dark : AppColor.light)
+                    .foregroundColor(settingsManager.adjustPhoneBodyOffset == true ? AppColor.foreground : AppColor.text_on_accent)
             }
-            .tint(settingsManager.adjustPhoneBodyOffset == false ? AppColor.accent : AppColor.light)
+            .tint(settingsManager.adjustPhoneBodyOffset == true ? AppColor.background : AppColor.accent)
             .buttonStyle(.borderedProminent)
             .buttonBorderShape(.capsule)
             .controlSize(.large)
             .overlay(
                 RoundedRectangle(cornerRadius: 30)
-                    .stroke(settingsManager.adjustPhoneBodyOffset == true ? AppColor.dark : AppColor.light, lineWidth: 2)
+                    .stroke(settingsManager.adjustPhoneBodyOffset == true ? AppColor.foreground : AppColor.background, lineWidth: 2)
             )
             .padding(.horizontal)
             .padding(.top, 20)
@@ -171,15 +171,15 @@ struct SettingsDetailView_PhoneBodyOffset: View {
                     .font(.title2)
                     .bold()
                     .frame(maxWidth: .infinity)
-                    .foregroundColor(settingsManager.adjustPhoneBodyOffset == false ? AppColor.dark : AppColor.light)
+                    .foregroundColor(settingsManager.adjustPhoneBodyOffset == true ? AppColor.text_on_accent : AppColor.foreground)
             }
-            .tint(settingsManager.adjustPhoneBodyOffset == true ? AppColor.accent : AppColor.light)
+            .tint(settingsManager.adjustPhoneBodyOffset == true ? AppColor.accent : AppColor.background)
             .buttonStyle(.borderedProminent)
             .buttonBorderShape(.capsule)
             .controlSize(.large)
             .overlay(
                 RoundedRectangle(cornerRadius: 30)
-                    .stroke(settingsManager.adjustPhoneBodyOffset == false ? AppColor.dark : AppColor.light, lineWidth: 2)
+                    .stroke(settingsManager.adjustPhoneBodyOffset == true ? AppColor.background : AppColor.foreground, lineWidth: 2)
             )
             .padding(.horizontal)
             

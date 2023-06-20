@@ -15,7 +15,7 @@ class SettingsManager: ObservableObject {
     
     private var crumbColorStringToColor: [String: Color] = ["defaultCrumbColor": StaticAppColor.defaultAccent, "Green": StaticAppColor.lightgreen, "Red": StaticAppColor.lightred, "Blue": StaticAppColor.lightblue]
     
-    private var colorSchemeStringToColor: [String: [Color]] = ["defaultColorScheme": [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent], "Black_White": [StaticAppColor.white, StaticAppColor.black, StaticAppColor.black], "Yellow_Black": [StaticAppColor.black, StaticAppColor.yellow, StaticAppColor.yellow], "Yellow_Blue": [StaticAppColor.blue, StaticAppColor.yellow, StaticAppColor.yellow]]
+    private var colorSchemeStringToColor: [String: [Color]] = ["defaultColorScheme": [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent, StaticAppColor.defaultBlack], "Black_White": [StaticAppColor.white, StaticAppColor.black, StaticAppColor.black, StaticAppColor.white], "Yellow_Black": [StaticAppColor.black, StaticAppColor.yellow, StaticAppColor.yellow, StaticAppColor.black], "Yellow_Blue": [StaticAppColor.blue, StaticAppColor.yellow, StaticAppColor.yellow, StaticAppColor.blue]]
     
     /// if non-empty, put all mapping content in a subfolder
     @Published var mappingSubFolder = ""
