@@ -36,6 +36,8 @@ class PathRecorder {
     private var recordingTimer: Timer?
     /// A timer used to periodically host cloud anchors
     private var cloudAnchorTimer: Timer?
+    /// The amount of seconds to wait from last resolved anchor before hosting a path anchor
+    private var pathAnchorInterval: Double = 25
     /// The cloud identifier of the starting cloud anchor of this path
     var startAnchorID: String?
     /// The cloud identifier of the starting cloud anchor of this path
@@ -46,13 +48,16 @@ class PathRecorder {
     }
     
     ///Start recording path breadcrumbs and hosting path cloud anchors
-    func startRecording() {
+    func startRecording(){
         startRecordingPath(withFrequency: 5.0)
-        startRecordingCloudAnchors(withFrequency: 1/20.0)
+        restartPathAnchorTimer()
     }
     
-    func startRecordingPathonly(){
-        startRecordingPath(withFrequency: 5.0)
+    private func restartPathAnchorTimer () {
+        cloudAnchorTimer?.invalidate()
+        cloudAnchorTimer = Timer.scheduledTimer(withTimeInterval: pathAnchorInterval, repeats: false){ timer in
+            self.recordCloudAnchor()
+        }
     }
     
     /// Start recording the path with the specified frequency of pose capture.
@@ -71,18 +76,18 @@ class PathRecorder {
         }
     }
     
-    /// Start recording cloud anchors at the specified frequency
-    /// - Parameter hz: this is the frequency with which to initiate a host anchor request.  Cloud anchors uses about 30 seconds of data (as specified in Google's own documentation)
-    private func startRecordingCloudAnchors(withFrequency hz: Double) {
-        cloudAnchorTimer = Timer.scheduledTimer(withTimeInterval: 1/hz, repeats: true) { timer in
-            guard let geospatialTransform = PositioningModel.shared.cameraGeoSpatialTransform else {
-                return
-            }
-            // NOTE: the geospatial transform is not buffered in the same way as the pose
-            let _ = PositioningModel.shared.createCloudAnchorFromBufferedPose(
-                withMetadata: CloudAnchorMetadata(name: "", type: .path, associatedOutdoorFeature: "", geospatialTransform: GeospatialData(arCoreGeospatial: geospatialTransform), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true)
-            ) { wasSuccessful in
-                // TODO: handle this somehow
+    /// Host a cloud anchor
+    /// - Parameter sec the amount of seconds to wait before initiating another cloud anchor hosting request.  Cloud anchors uses about 30 seconds of data (as specified in Google's own documentation)
+    private func recordCloudAnchor() {
+        guard let geospatialTransform = PositioningModel.shared.cameraGeoSpatialTransform else {
+            return
+        }
+        // NOTE: the geospatial transform is not buffered in the same way as the pose
+        let _ = PositioningModel.shared.createCloudAnchorFromBufferedPose(
+            withMetadata: CloudAnchorMetadata(name: "Path Anchor", type: .path, associatedOutdoorFeature: "", geospatialTransform: GeospatialData(arCoreGeospatial: geospatialTransform), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true)
+        ) { wasSuccessful in
+            if !wasSuccessful { // if successful, already handled by addCloudAnchor
+                self.restartPathAnchorTimer()
             }
         }
     }
@@ -100,6 +105,9 @@ class PathRecorder {
             "poseId":  breadCrumbs.count,
             "cloudIdentifier": identifier
         ])
+        
+        // reset timer to wait pathAnchorInterval seconds before hosting anchor
+        restartPathAnchorTimer()
     }
     
     /// Stop recording the path.
@@ -108,7 +116,8 @@ class PathRecorder {
         cloudAnchorTimer?.invalidate()
     }
     
-    func manyAnchorstoFirebase(){
+    /// Stores the recorded data in firebase storage and the JSON path in realtime database
+    func toFirebase(){
         firebaseRef = Database.database(url: "https://stepnavigation-default-rtdb.firebaseio.com").reference()
         firebaseStorage = Storage.storage()
         firebaseStorageRef = firebaseStorage.reference()
@@ -119,7 +128,6 @@ class PathRecorder {
         let newCrumbs = PathRecorder.shared.breadCrumbs.map({ $0.pose.toColumnMajor() }).reduce(into: []) { partialResult, newPose in
             partialResult += newPose
         }
-        
 
         
         let formattedPoses = PathRecorder.shared.breadCrumbs.enumerated().map{
@@ -127,7 +135,7 @@ class PathRecorder {
                 "pose": $1.pose.toColumnMajor(),
                 "timestamp": $1.timestamp,
                 "id": $1.pose.toColumnMajor().count,
-                "planes": [:] as [String:Any]
+                "planes": []
             ] as [String: Any]
         }
 
@@ -140,55 +148,7 @@ class PathRecorder {
                 // Write to unprocessed maps node in database
                 firebaseRef.child("unprocessed_maps").child(String(describing: Auth.auth().currentUser!.uid)).child(mapId).setValue(filePath)
             }
-            let db = Firestore.firestore()
-            
-            let connectionCollection: CollectionReference = db.collection("JSON MAPPING")
-            let ref = connectionCollection.document(mapId)
-            
-            ref.setData([
-                "pathId" : "testing/\(mapId).json"
-            ]) { error in
-                print("error: \(error?.localizedDescription ?? "none")")
-            }
         }
     }
-    
-    
-    
-    /// Upload the path data to Firebase
-    func toFirebase(){
-        //currently broken bcs of type changes for connecting multiple
-//        guard let startAnchorID = startAnchorID, let stopAnchorID = stopAnchorID, let anchor1Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: startAnchorID), let anchor2Pose = PositioningModel.shared.currentLocation(ofCloudAnchor: stopAnchorID) else {
-//            return
-//        }
-        
-//        firebaseRef = Database.database(url: "https://stepnavigation-default-rtdb.firebaseio.com").reference()
-//        firebaseStorage = Storage.storage()
-//        firebaseStorageRef = firebaseStorage.reference()
-//
-//        let mapId = UUID().uuidString
-//
-//        var finalAnchors: [String: (CloudAnchorMetadata, simd_float4x4, Double)] = [:]
-//
-//        for anchor in cloudAnchors {
-//            if anchor["metadata"]!["type"] == .path {     // Note: the path anchors are not currently resolved, so they don't move around.  We should add them anyway
-//                finalAnchors[anchor["cloudIdentifier"]] = anchor
-//            } else {
-//                guard let currentPose = PositioningModel.shared.currentLocation(ofCloudAnchor: cloudIdentifier) else {
-//                    continue
-//                }
-//                finalAnchors[cloudIdentifier] = (anchorInfo.0, currentPose, anchorInfo.2)
-//            }
-//        }
-//
-//        FirebaseManager.shared.addConnection(
-//            anchorID1: startAnchorID,
-//            anchor1Pose: anchor1Pose,
-//            anchorID2: stopAnchorID,
-//            anchor2Pose: anchor2Pose,
-//            breadCrumbs: PathRecorder.shared.breadCrumbs,
-//            pathAnchors: finalAnchors)
-    }
-    
 }
 

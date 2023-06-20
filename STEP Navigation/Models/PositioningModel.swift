@@ -34,6 +34,13 @@ enum GeoLocationAccuracy: Int {
     }
 }
 
+struct ResolvingInfo {
+    let id: String
+    let location: CLLocation
+    let callback: GARResolveCloudAnchorFuture?
+    let type: AnchorType
+}
+
 //struct AnchorPoseData {
 //    var pose: simd_float4x4
 //    var timestamp: Double
@@ -116,7 +123,7 @@ class PositioningModel: NSObject, ObservableObject {
     /// the lookback in the pose buffer when estimating cloud anchor quality
     private static let poseBufferLookbackForCloudAnchorAssessment = 15
     /// the cloud anchors currently being resolved in this session
-    private var cloudAnchorsBeingResolved: Set<String> = []
+    private var beingResolved: [ResolvingInfo] = []
     
     /// the alignment that transforms the map coordinate system to the current ARKit session's coordinate system
     private var manualAlignment: simd_float4x4? {
@@ -198,7 +205,7 @@ class PositioningModel: NSObject, ObservableObject {
     /// Stop positioning using ARCore and ARKit
     func stopPositioning() {
         garSession = nil
-        cloudAnchorsBeingResolved = []
+        beingResolved = []
         arView.session.pause()
         resetAlignment()
     }
@@ -282,23 +289,55 @@ class PositioningModel: NSObject, ObservableObject {
         return nil
     }
     
-    /// Initiate a request to resolve a cloud anchor based on its cloud identifier
-    /// - Parameter cloudAnchorID: the cloud identifier
-    func resolveCloudAnchor(byID cloudAnchorID: String) {
-        
-        guard !cloudAnchorsBeingResolved.contains(cloudAnchorID) else {
+    /// Cancels resolve anchor requests of the furthest anchors when the number of requests is over Google's limit
+    private func cleanUpResolving() {
+        let limit = 39
+        guard currentLatLon != nil && beingResolved.count > limit else {
             return
         }
+        let curLoc = CLLocation(latitude: currentLatLon!.latitude, longitude: currentLatLon!.longitude)
+
+        beingResolved.sort{ anchor1, anchor2 in
+            return anchor1.location.distance(from: curLoc) < anchor2.location.distance(from: curLoc)
+        }
+        
+        let toCancel = Array(beingResolved[limit...])
+        beingResolved = Array(beingResolved[..<limit])
+        
+        toCancel.forEach{anchorInfo in
+            anchorInfo.callback?.cancel()
+            print("cancelling")
+            print(FirebaseManager.shared.getCloudAnchorName(byID: anchorInfo.id))
+        }
+    }
+    
+    func resolveAnchors(withInfo anchors: Set<LocationDataModel>){
+        for anchor in anchors {
+            guard !beingResolved.map({$0.id}).contains(anchor.id) else {
+                continue
+            }
+            cleanUpResolving()
+            
+            let locationCoordinate = anchor.getLocationCoordinate()
+            let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+            
+            let callback = resolveCloudAnchor(byID: anchor.id)
+            beingResolved.append(ResolvingInfo(id: anchor.id, location: location, callback: callback, type: anchor.getAnchorType()))
+        }
+    }
+    
+    /// Initiate a request to resolve a cloud anchor based on its cloud identifier
+    /// - Parameter cloudAnchorID: the cloud identifier
+    private func resolveCloudAnchor(byID cloudAnchorID: String) -> GARResolveCloudAnchorFuture? {
         do {
-            cloudAnchorsBeingResolved.insert(cloudAnchorID)
-            try garSession?.resolveCloudAnchor(cloudAnchorID) { garAnchor, anchorState in
+            return try garSession?.resolveCloudAnchor(cloudAnchorID) { garAnchor, anchorState in
                 guard anchorState == .success else {
                     return
                 }
                 guard let garAnchor = garAnchor else {
                     return
                 }
-//                self.anchorCrumbs.append(AnchorTimeData(pose: , timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0))
+                
                 self.identifierToCloudIdentifier[garAnchor.identifier] = cloudAnchorID
                 self.cloudAnchorAligner.cloudAnchorDidUpdate(
                     withCloudID: cloudAnchorID,
@@ -314,6 +353,7 @@ class PositioningModel: NSObject, ObservableObject {
         } catch {
             print("error \(error.localizedDescription)")
         }
+        return nil
     }
     
     /// Estimate the quality of data for creating a cloud anchor
@@ -442,12 +482,10 @@ class PositioningModel: NSObject, ObservableObject {
                 guard let cloudIdentifier = cloudIdentifier else {
                     return completionHandler(false)
                 }
-                switch metadata.type {
-                case .indoorDestination:
-                    FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
-                default:
+                FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
+                
+                if metadata.type == .path {
                     PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: pose, timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
-              // I'm taking the current timestamp but not totally sure if that's write
                 }
                 AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
                 return completionHandler(true)
