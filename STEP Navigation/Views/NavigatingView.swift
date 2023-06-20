@@ -75,9 +75,21 @@ struct NavigatingView: View {
                     .accessibilityAddTraits(.isModal)
             }
             
+//            if showingConfirmation {
+//                ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to exit?", subtitleText: "This will end the navigation session.", confirmButtonLabel: "Exit")
+//                {
+//                    HomeView()
+//                }
+//                    .accessibilityFocused($focusOnPopup)
+//                    .accessibilityAddTraits(.isModal)
+//            }
             if showingConfirmation {
-                ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to exit?", subtitleText: "This will end the navigation session.", confirmButtonLabel: "Exit") {
-                    HomeView()
+                ConfirmationPopup(showingConfirmation: $showingConfirmation,
+                                  titleText: "Are you sure you want to exit?",
+                                  subtitleText: "This will end the navigation session.",
+                                  confirmButtonLabel: "Exit")
+                {
+                    AnchorDetailView_ArrivedView(anchorDetails: destinationAnchorDetails)
                 }
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
