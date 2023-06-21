@@ -33,8 +33,12 @@ class Feedback: ObservableObject {
 // AnchorDetailView_ArrivedView
 struct AnchorDetailView_ArrivedView: View {
     @EnvironmentObject var feedback: Feedback
+    @ObservedObject var settingsManager = SettingsManager.shared
+    
+    @State var colorschemedefault: Bool = false
+    
     let anchorDetails: LocationDataModel
-   
+        
     var body: some View {
         NavigationView {
             VStack {
@@ -60,7 +64,8 @@ struct AnchorDetailView_ArrivedView: View {
                             .font(.title)
                             .padding(30)
                             .foregroundColor(.white)
-                            .background(Color.green)
+//                            .background(Color.green)
+                            .background(colorschemedefault ? Color.green : AppColor.foreground)
                             .cornerRadius(10)
                     }
                     NavigationLink(destination: MultipleChoice().environmentObject(feedback).onAppear {
@@ -69,9 +74,13 @@ struct AnchorDetailView_ArrivedView: View {
                         Image(systemName: "hand.thumbsdown")
                             .font(.title)
                             .padding(30)
-                            .foregroundColor(.white)
-                            .background(Color.red)
+                            .foregroundColor(AppColor.foreground)
+                            .background(AppColor.background)
                             .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(AppColor.foreground, lineWidth: 2)
+                            )
                     }
                 }
                 .padding()
@@ -83,6 +92,13 @@ struct AnchorDetailView_ArrivedView: View {
             .background(AppColor.background)
             .edgesIgnoringSafeArea([.bottom])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .onAppear() {
+                if settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) == "defaultColorScheme" {
+                    colorschemedefault = true
+                } else  {
+                    colorschemedefault = false
+                }
+            }
         }
     }
 }
