@@ -39,7 +39,7 @@ struct SettingsDetailView_CrumbColor: View {
                             .font(.title2)
                             .bold()
                             .frame(maxWidth: .infinity)
-                            .foregroundColor(selectedCrumb ? StaticAppColor.black : AppColor.foreground)
+                            .foregroundColor(selectedCrumb ? (color.label == "defaultCrumbColor" ? AppColor.text_on_accent : StaticAppColor.black) : AppColor.foreground)
                     }
                     .tint(selectedCrumb ? color.color : AppColor.background)
                     .buttonStyle(.borderedProminent)
@@ -115,7 +115,7 @@ struct SettingsDetailView_ColorScheme: View {
                         .controlSize(.large)
                         .overlay(
                             RoundedRectangle(cornerRadius: 30)
-                                .stroke(selectedScheme ? scheme.background : AppColor.foreground, lineWidth: 2)
+                                .stroke(selectedScheme ? AppColor.background : AppColor.foreground, lineWidth: 2)
                         )
                         .padding(.horizontal)
                     }
@@ -129,7 +129,7 @@ struct SettingsDetailView_ColorScheme: View {
                         showPopup.toggle()
                         UserDefaults.standard.setValue(selectedColorScheme, forKey: "colorScheme")
                     }) {
-                        Text("Next")
+                        Text("Apply")
                             .font(.title2)
                             .bold()
                             .frame(maxWidth: .infinity)

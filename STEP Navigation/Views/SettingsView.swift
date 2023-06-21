@@ -12,7 +12,7 @@ struct SettingsView: View {
         VStack {
             ScreenTitleComponent(titleText: "Settings")
                 ScrollView {
-                    VStack(spacing: 40) {
+                    VStack(spacing: 28) {
                         VStack {
                             HStack {
                                 Text("Color")
