@@ -13,9 +13,9 @@ class SettingsManager: ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = SettingsManager()
     
-    private var crumbColorStringToColor: [String: Color] = ["defaultCrumbColor": StaticAppColor.defaultAccent, "Green": StaticAppColor.lightgreen, "Red": StaticAppColor.lightred, "Blue": StaticAppColor.lightblue]
+    private var crumbColorStringToColor: [String: Color] = ["Mint Green": StaticAppColor.defaultAccent, "Yellow": StaticAppColor.yellow, "Blue": StaticAppColor.blue]
     
-    private var colorSchemeStringToColor: [String: [Color]] = ["defaultColorScheme": [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent, StaticAppColor.defaultBlack], "Black_White": [StaticAppColor.white, StaticAppColor.black, StaticAppColor.black, StaticAppColor.white], "Yellow_Black": [StaticAppColor.black, StaticAppColor.yellow, StaticAppColor.yellow, StaticAppColor.black], "Yellow_Blue": [StaticAppColor.blue, StaticAppColor.yellow, StaticAppColor.yellow, StaticAppColor.blue]]
+    private var colorSchemeStringToColor: [String: [Color]] = ["Default": [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent, StaticAppColor.defaultBlack], "Black and White": [StaticAppColor.white, StaticAppColor.black, StaticAppColor.black, StaticAppColor.white], "Yellow and Black": [StaticAppColor.black, StaticAppColor.yellow, StaticAppColor.yellow, StaticAppColor.black], "Yellow and Blue": [StaticAppColor.blue, StaticAppColor.yellow, StaticAppColor.yellow, StaticAppColor.blue]]
     
     /// if non-empty, put all mapping content in a subfolder
     @Published var mappingSubFolder = ""
@@ -86,8 +86,8 @@ class SettingsManager: ObservableObject {
             "adjustPhoneBodyOffset": false,
             "automaticDirectionsWhenUserIsLost": false,
             "visualizeStreetscapeData": false,
-            "crumbColor": "defaultCrumbColor",
-            "colorScheme": "defaultColorScheme",
+            "crumbColor": "Mint Green",
+            "colorScheme": "Default",
             "units": false
         ]
         UserDefaults.standard.register(defaults: appDefaults)

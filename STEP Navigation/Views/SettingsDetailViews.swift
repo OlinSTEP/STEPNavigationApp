@@ -18,10 +18,9 @@ struct SettingsDetailView_CrumbColor: View {
     var body: some View {
         
         let crumbColorOptions = [
-            CrumbColors(label: "defaultCrumbColor", color: AppColor.accent),
-            CrumbColors(label: "Green", color: StaticAppColor.lightgreen),
-            CrumbColors(label: "Red", color: StaticAppColor.lightred),
-            CrumbColors(label: "Blue", color: StaticAppColor.lightblue)
+            CrumbColors(label: "Mint Green", color: StaticAppColor.defaultAccent),
+            CrumbColors(label: "Yellow", color: StaticAppColor.yellow),
+            CrumbColors(label: "Blue", color: StaticAppColor.blue),
         ]
         
         VStack {
@@ -39,7 +38,7 @@ struct SettingsDetailView_CrumbColor: View {
                             .font(.title2)
                             .bold()
                             .frame(maxWidth: .infinity)
-                            .foregroundColor(selectedCrumb ? (color.label == "defaultCrumbColor" ? AppColor.text_on_accent : StaticAppColor.black) : AppColor.foreground)
+                            .foregroundColor(selectedCrumb ? StaticAppColor.black : AppColor.foreground)
                     }
                     .tint(selectedCrumb ? color.color : AppColor.background)
                     .buttonStyle(.borderedProminent)
@@ -79,10 +78,10 @@ struct SettingsDetailView_ColorScheme: View {
     var body: some View {
         
         let colorSchemeOptions = [
-            ColorSchemes(label: "defaultColorScheme", background: StaticAppColor.white, foreground: StaticAppColor.defaultBlack, accent: StaticAppColor.defaultAccent, text_on_accent: StaticAppColor.defaultBlack),
-            ColorSchemes(label: "Black_White", background: StaticAppColor.white, foreground: StaticAppColor.black, accent: StaticAppColor.black, text_on_accent: StaticAppColor.white),
-            ColorSchemes(label: "Yellow_Black", background: StaticAppColor.black, foreground: StaticAppColor.yellow, accent: StaticAppColor.yellow, text_on_accent: StaticAppColor.black),
-            ColorSchemes(label: "Yellow_Blue", background: StaticAppColor.blue, foreground: StaticAppColor.yellow, accent: StaticAppColor.yellow, text_on_accent: StaticAppColor.blue),
+            ColorSchemes(label: "Default", background: StaticAppColor.white, foreground: StaticAppColor.defaultBlack, accent: StaticAppColor.defaultAccent, text_on_accent: StaticAppColor.defaultBlack),
+            ColorSchemes(label: "Black and White", background: StaticAppColor.white, foreground: StaticAppColor.black, accent: StaticAppColor.black, text_on_accent: StaticAppColor.white),
+            ColorSchemes(label: "Yellow and Black", background: StaticAppColor.black, foreground: StaticAppColor.yellow, accent: StaticAppColor.yellow, text_on_accent: StaticAppColor.black),
+            ColorSchemes(label: "Yellow and Blue", background: StaticAppColor.blue, foreground: StaticAppColor.yellow, accent: StaticAppColor.yellow, text_on_accent: StaticAppColor.blue),
         ]
         
         ZStack {
