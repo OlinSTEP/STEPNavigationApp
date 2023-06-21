@@ -33,6 +33,7 @@ struct StaticAppColor {
     static let blue: Color = Color(.sRGB, red: 0/255, green: 0/255, blue: 255/255, opacity: 1)
     static let defaultAccent: Color = Color(.sRGB, red: 171/255, green: 236/255, blue: 220/255, opacity: 1)
     static let defaultBlack: Color = Color(.sRGB, red: 34/255, green: 34/255, blue: 34/255, opacity: 1)
+    static let grey: Color = Color(.sRGB, red: 231/255, green: 231/255, blue: 231/255, opacity: 1)
     
     static let lightred: Color = Color(.sRGB,
                                        red: 242/255,

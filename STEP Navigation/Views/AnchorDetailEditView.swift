@@ -60,9 +60,13 @@ struct AnchorDetailEditView<Destination: View>: View {
                         }
                         ZStack(alignment: Alignment(horizontal: .center, vertical: .top)) {
                             Group {
-                                TextField("", text: $newOrganization, onEditingChanged: { edit in
-                                            self.editing = edit}).padding(.horizontal, 10)
+                                TextField("", text: $newOrganization, onEditingChanged: {edit in
+                                            self.editing = edit
+                                            print("editing: \(editing)")
+                                })
+                                .padding(.horizontal, 10)
                             }
+                            .foregroundColor(AppColor.foreground)
                             .frame(height: 48)
 //                            .background(AppColor.background)
                             .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
@@ -71,6 +75,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(AppColor.foreground, lineWidth: 2)
                             )
+                            
                             OrganizationComboBox(editing: $editing, text: $newOrganization, verticalOffset: vOffset, horizontalOffset: hOffset)
                         }
                     }
@@ -169,7 +174,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                             Spacer()
                         }
                         
-                        CustomSegmentedControl(preselectedIndex: $newIsReadableIndex, isReadable: $newIsReadable, options: ["Public", "Private"])
+                        CustomSegmentedControl(preselectedIndex: $newIsReadableIndex, options: ["Public", "Private"])
                     }
                     .padding(.horizontal)
 
@@ -222,7 +227,6 @@ struct AnchorDetailEditView<Destination: View>: View {
 
 struct CustomSegmentedControl: View {
     @Binding var preselectedIndex: Int
-    @Binding var isReadable: Bool
     
     var options: [String]
 
@@ -231,27 +235,21 @@ struct CustomSegmentedControl: View {
             ForEach(options.indices, id:\.self) { index in
                 ZStack {
                     Rectangle()
-//                        .fill(StaticAppColor.white.opacity(0.2))
                         .fill(AppColor.background)
 
                     Rectangle()
-                        .fill(AppColor.accent)
+                        .fill(AppColor.foreground)
                         .cornerRadius(10)
                         .opacity(preselectedIndex == index ? 1 : 0.01)
                         .onTapGesture {
                                 withAnimation(.interactiveSpring()) {
                                     preselectedIndex = index
-                                    if preselectedIndex == 0 {
-                                        isReadable = true
-                                    } else {
-                                        isReadable = false
-                                    }
                                 }
                             }
                 }
                 .overlay(
                     Text(options[index])
-                        .foregroundColor(preselectedIndex == index ? AppColor.text_on_accent : AppColor.foreground)
+                        .foregroundColor(preselectedIndex == index ? AppColor.background : AppColor.foreground)
                         .bold()
                 )
             }
@@ -293,44 +291,88 @@ struct OrganizationComboBox: View {
     }
     
     public var body: some View {
-        VStack {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(filteredTexts.wrappedValue, id: \.self) { textSearched in
-                        Text(textSearched)
-                            .padding(.horizontal, 25)
-                            .padding(.vertical, 25)
-                            .frame(minWidth: 0,
-                                   maxWidth: .infinity,
-                                   minHeight: 0,
-                                   maxHeight: 50,
-                                   alignment: .leading)
-                            .contentShape(Rectangle())
-                            .onTapGesture(perform: {
-                                inputText = textSearched
-                                editing = false
-                                print(editing)
-                                self.endTextEditing()
-                            })
-                        Divider()
-                            .padding(.horizontal, 10)
+        if inputText == "" {
+            VStack {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(0..<allOrganizations.count, id: \.self) { idx in
+                            Text(allOrganizations[idx])
+                                .foregroundColor(AppColor.background)
+                                .padding(.horizontal, 25)
+                                .padding(.vertical, 25)
+                                .frame(minWidth: 0,
+                                       maxWidth: .infinity,
+                                       minHeight: 0,
+                                       maxHeight: 50,
+                                       alignment: .leading)
+                                .contentShape(Rectangle())
+                                .onTapGesture(perform: {
+                                    inputText = allOrganizations[idx]
+                                    editing = false
+                                    self.endTextEditing()
+                                })
+                            Divider()
+                                .overlay(AppColor.background)
+                                .padding(.horizontal, 10)
+                        }
                     }
                 }
+                .background(AppColor.foreground)
+                .cornerRadius(15)
+                .foregroundColor(AppColor.background)
+                .ignoresSafeArea()
+                .frame(maxWidth: .infinity,
+                       minHeight: 0,
+                       maxHeight: 50 * CGFloat((allOrganizations.count > 3 ? 3: allOrganizations.count))
+                )
+                .offset(x: horizontalOffset, y: verticalOffset)
+                .isHidden(!editing, remove: !editing)
+                
+                Spacer()
             }
-            .background(AppColor.background)
-            .cornerRadius(15)
-            .foregroundColor(AppColor.foreground)
-            .ignoresSafeArea()
-            .frame(maxWidth: .infinity,
-                   minHeight: 0,
-                   maxHeight: 50 * CGFloat( (filteredTexts.wrappedValue.count > 3 ? 3: filteredTexts.wrappedValue.count)))
-            .shadow(color: StaticAppColor.black, radius: 4)
-            .offset(x: horizontalOffset, y: verticalOffset)
-            .isHidden(!editing, remove: !editing)
-            
-            Spacer()
+//            .frame(height: (50 * CGFloat((allOrganizations.count > 3 ? 3 : allOrganizations.count)) + (editing == true ? verticalOffset : 0)))
+            .frame(height: (editing == false ? 0 : (50 * CGFloat((allOrganizations.count > 3 ? 3 : allOrganizations.count)) + (editing == true ? verticalOffset : 0))))
+        } else {
+            VStack {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(filteredTexts.wrappedValue, id: \.self) { textSearched in
+                            Text(textSearched)
+                                .foregroundColor(AppColor.background)
+                                .padding(.horizontal, 25)
+                                .padding(.vertical, 25)
+                                .frame(minWidth: 0,
+                                       maxWidth: .infinity,
+                                       minHeight: 0,
+                                       maxHeight: 50,
+                                       alignment: .leading)
+                                .contentShape(Rectangle())
+                                .onTapGesture(perform: {
+                                    inputText = textSearched
+                                    editing = false
+                                    self.endTextEditing()
+                                })
+                            Divider()
+                                .overlay(AppColor.background)
+                                .padding(.horizontal, 10)
+                        }
+                    }
+                }
+                .background(AppColor.foreground)
+                .cornerRadius(15)
+                .foregroundColor(AppColor.background)
+                .ignoresSafeArea()
+                .frame(maxWidth: .infinity,
+                       minHeight: 0,
+                       maxHeight: 50 * CGFloat((filteredTexts.wrappedValue.count > 3 ? 3: filteredTexts.wrappedValue.count))
+                )
+                .offset(x: horizontalOffset, y: verticalOffset)
+                .isHidden(!editing, remove: !editing)
+                
+                Spacer()
+            }
+            .frame(height: (50 * CGFloat((filteredTexts.wrappedValue.count > 3 ? 3 : filteredTexts.wrappedValue.count)) + (editing == true ? verticalOffset : 0)))
         }
-        .frame(height: (50 * CGFloat((filteredTexts.wrappedValue.count > 3 ? 3 : filteredTexts.wrappedValue.count)) + (editing == true ? verticalOffset : 0)))
     }
 }
 

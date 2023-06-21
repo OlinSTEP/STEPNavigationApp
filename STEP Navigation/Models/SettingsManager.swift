@@ -23,6 +23,9 @@ class SettingsManager: ObservableObject {
     /// true if we should adjust navigation based on phone / body offset
     @Published var adjustPhoneBodyOffset = false
     
+    /// boolean to toggle the units between imperial and metric. false for imperial units, true for metric units
+    @Published var units = false
+    
     /// true if we should provide the user with guidance when they appear to be lost
     @Published var automaticDirectionsWhenUserIsLost = false
     
@@ -41,6 +44,11 @@ class SettingsManager: ObservableObject {
     /// Function to get the string label of the color scheme
     func getColorSchemeLabel(forColorScheme colorScheme: [Color]) -> String? {
             return colorSchemeStringToColor.first(where: { $0.value == colorScheme })?.key
+        }
+    
+    /// Function to get the string label of the crumb color
+    func getCrumbColorLabel(forCrumbColor crumbColor: Color) -> String? {
+            return crumbColorStringToColor.first(where: { $0.value == crumbColor })?.key
         }
     
     /// Configure Settings Bundle and add observer for settings changes.
@@ -67,6 +75,8 @@ class SettingsManager: ObservableObject {
         if let colorSchemeAsString = defaults.string(forKey: "colorScheme"), let color = colorSchemeStringToColor[colorSchemeAsString] {
             colorScheme = color
         }
+        units = defaults.bool(forKey: "units")
+
     }
     
     /// Register settings bundle
@@ -77,7 +87,8 @@ class SettingsManager: ObservableObject {
             "automaticDirectionsWhenUserIsLost": false,
             "visualizeStreetscapeData": false,
             "crumbColor": "defaultCrumbColor",
-            "colorScheme": "defaultColorScheme"
+            "colorScheme": "defaultColorScheme",
+            "units": false
         ]
         UserDefaults.standard.register(defaults: appDefaults)
     }

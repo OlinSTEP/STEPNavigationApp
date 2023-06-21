@@ -17,32 +17,34 @@ struct StartAnchorListView: View {
     @State var anchors: [LocationDataModel] = []
         
     var body: some View {
-        ScreenTitleComponent(titleText:"Choose Start Anchor")
         VStack {
-            NavigateAnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
-                                      anchors: anchors)
-            Spacer()
+            ScreenTitleComponent(titleText:"Choose Start Anchor")
+            ScrollView {
+                NavigateAnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
+                                            anchors: anchors)
+                Spacer()
+            }
+            .onChange(of: chosenStart) { newValue in
+                print("HERE WE ARE")
+            }
+            .onReceive(positionModel.$currentLatLon) { latLon in
+                guard let latLon = latLon else {
+                    return
+                }
+                anchors = Array(
+                    DataModelManager.shared.getNearbyIndoorLocations(
+                        location: latLon,
+                        maxDistance: CLLocationDistance(nearbyDistance),
+                        withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                    )
+                )
+                .sorted(by: {
+                    $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
+                })
+            }
         }
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onChange(of: chosenStart) { newValue in
-            print("HERE WE ARE")
-        }
-        .onReceive(positionModel.$currentLatLon) { latLon in
-            guard let latLon = latLon else {
-                return
-            }
-            anchors = Array(
-                DataModelManager.shared.getNearbyIndoorLocations(
-                    location: latLon,
-                    maxDistance: CLLocationDistance(nearbyDistance),
-                    withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
-                )
-            )
-            .sorted(by: {
-                $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
-            })
-        }
     }
 }

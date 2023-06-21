@@ -11,24 +11,25 @@ struct SettingsView: View {
     var body: some View {
         VStack {
             ScreenTitleComponent(titleText: "Settings")
-            ScrollView {
-                VStack(spacing: 20) {
-                    VStack {
-                        HStack {
-                            Text("Color")
-                                .bold()
-                                .font(.title2)
-                                .foregroundColor(AppColor.foreground)
-                            Spacer()
+                ScrollView {
+                    VStack(spacing: 40) {
+                        VStack {
+                            HStack {
+                                Text("Color")
+                                    .bold()
+                                    .font(.title2)
+                                    .foregroundColor(AppColor.foreground)
+                                Spacer()
+                            }
+                            .padding()
+                            SmallButtonComponent_NavigationLink(destination: {
+                                SettingsDetailView_ColorScheme()
+                            }, label: "Color Scheme")
+                            .padding(.bottom, 5)
+                            SmallButtonComponent_NavigationLink(destination: {
+                                SettingsDetailView_CrumbColor()
+                            }, label: "Crumb Color")
                         }
-                        .padding()
-                        SmallButtonComponent_NavigationLink(destination: {
-                            SettingsDetailView_ColorScheme()
-                        }, label: "Color Scheme")
-                        .padding(.bottom, 5)
-                        SmallButtonComponent_NavigationLink(destination: {
-                            SettingsDetailView_CrumbColor()
-                        }, label: "Crumb Color")
                         
                         VStack {
                             HStack {
@@ -59,8 +60,10 @@ struct SettingsView: View {
                         }
                     }
                 }
-                Spacer()
-            }
+            Spacer()
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

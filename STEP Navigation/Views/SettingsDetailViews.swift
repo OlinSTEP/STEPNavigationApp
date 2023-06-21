@@ -9,16 +9,16 @@ import SwiftUI
 
 struct SettingsDetailView_CrumbColor: View {
     @ObservedObject var settingsManager = SettingsManager.shared
-    @State var selectedCrumbColor: Color?
+    @State var selectedCrumbColor: String?
     
-    init(selectedCrumbColor: Color? = StaticAppColor.defaultAccent) {
-        self.selectedCrumbColor = selectedCrumbColor
-    }
+    init() {
+            _selectedCrumbColor = State<String?>(initialValue: settingsManager.getCrumbColorLabel(forCrumbColor: settingsManager.crumbColor))
+        }
     
     var body: some View {
         
         let crumbColorOptions = [
-            CrumbColors(label: "Default", color: StaticAppColor.defaultAccent),
+            CrumbColors(label: "defaultCrumbColor", color: AppColor.accent),
             CrumbColors(label: "Green", color: StaticAppColor.lightgreen),
             CrumbColors(label: "Red", color: StaticAppColor.lightred),
             CrumbColors(label: "Blue", color: StaticAppColor.lightblue)
@@ -29,20 +29,25 @@ struct SettingsDetailView_CrumbColor: View {
             
             VStack(spacing: 10) {
                 ForEach(crumbColorOptions) { color in
-                    Button(action: {UserDefaults.standard.setValue("\(color.label)", forKey: "crumbColor")}) {
+                    var selectedCrumb: Bool = selectedCrumbColor == color.label
+                    
+                    Button(action: {
+                        UserDefaults.standard.setValue("\(color.label)", forKey: "crumbColor")
+                        selectedCrumbColor = color.label
+                    }) {
                         Text(color.label)
                             .font(.title2)
                             .bold()
                             .frame(maxWidth: .infinity)
-                            .foregroundColor(AppColor.foreground)
+                            .foregroundColor(selectedCrumb ? StaticAppColor.black : AppColor.foreground)
                     }
-                    .tint(settingsManager.crumbColor == color.color ? color.color : AppColor.background)
+                    .tint(selectedCrumb ? color.color : AppColor.background)
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
                     .controlSize(.large)
                     .overlay(
                         RoundedRectangle(cornerRadius: 30)
-                            .stroke(settingsManager.crumbColor != color.color ? AppColor.foreground : AppColor.background, lineWidth: 2)
+                            .stroke(selectedCrumb ? AppColor.background : AppColor.foreground, lineWidth: 2)
                     )
                     .padding(.horizontal)
                 }
@@ -50,6 +55,9 @@ struct SettingsDetailView_CrumbColor: View {
             .padding(.top, 20)
             Spacer()
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -79,17 +87,20 @@ struct SettingsDetailView_ColorScheme: View {
         
         ZStack {
             VStack {
-                ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
-                    .padding(.top, 20)
-                    .background(AppColor.accent)
+                if selectedColorScheme != settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) {
+                    ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
+                        .padding(.top, 20)
+                        .background(AppColor.accent)
+                } else {
+                    ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
+                }
                 
                 VStack(spacing: 10) {
                     ForEach(colorSchemeOptions) { scheme in
-                        let selectedScheme: Bool = selectedColorScheme == scheme.label
+                        var selectedScheme: Bool = selectedColorScheme == scheme.label
                         
                         Button(action: {
                             selectedColorScheme = scheme.label
-//                            print(selectedColorScheme)
                         }) {
                             Text(scheme.label)
                                 .font(.title2)
@@ -113,22 +124,27 @@ struct SettingsDetailView_ColorScheme: View {
                 
                 Spacer()
                 
-                Button(action: {
-                    showPopup.toggle()
-                    UserDefaults.standard.setValue(selectedColorScheme, forKey: "colorScheme")
-                }) {
-                    Text("Next")
-                        .font(.title2)
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(AppColor.text_on_accent)
+                if selectedColorScheme != settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) {
+                    Button(action: {
+                        showPopup.toggle()
+                        UserDefaults.standard.setValue(selectedColorScheme, forKey: "colorScheme")
+                    }) {
+                        Text("Next")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(AppColor.text_on_accent)
+                    }
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                    .padding(.horizontal)
+                    .padding(.bottom, 40)
                 }
-                .tint(AppColor.accent)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
-                .padding(.horizontal)
             }
+            .navigationBarBackButtonHidden(selectedColorScheme != settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme))
+
             
             if showPopup {
                 VStack {
@@ -142,14 +158,16 @@ struct SettingsDetailView_ColorScheme: View {
                     .padding()
                     Spacer()
                 }
+                .navigationBarBackButtonHidden()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .edgesIgnoringSafeArea(.all)
                 .background(StaticAppColor.white)
-                .cornerRadius(20)
                 .accessibilityAddTraits(.isModal)
             }
         }
-        .navigationBarBackButtonHidden()
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -164,19 +182,61 @@ struct ColorSchemes: Identifiable {
 
 struct SettingsDetailView_Units: View {
     @ObservedObject var settingsManager = SettingsManager.shared
-    @State var selectedUnit: String?
     
     var body: some View {
         VStack {
             ScreenTitleComponent(titleText: "Units", subtitleText: "Which units would you like Clew to use?")
+            
+            Button {
+                UserDefaults.standard.setValue(false, forKey: "units")
+            } label: {
+                Text("Imperial")
+                    .font(.title2)
+                    .bold()
+                    .frame(maxWidth: .infinity)
+                    .foregroundColor(settingsManager.units == true ? AppColor.foreground : AppColor.text_on_accent)
+            }
+            .tint(settingsManager.units == true ? AppColor.background : AppColor.accent)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.capsule)
+            .controlSize(.large)
+            .overlay(
+                RoundedRectangle(cornerRadius: 30)
+                    .stroke(settingsManager.units == true ? AppColor.foreground : AppColor.background, lineWidth: 2)
+            )
+            .padding(.horizontal)
+            .padding(.top, 20)
+            .padding(.bottom, 5)
+
+            Button {
+                UserDefaults.standard.setValue(true, forKey: "units")
+            } label: {
+                Text("Metric")
+                    .font(.title2)
+                    .bold()
+                    .frame(maxWidth: .infinity)
+                    .foregroundColor(settingsManager.units == true ? AppColor.text_on_accent : AppColor.foreground)
+            }
+            .tint(settingsManager.units == true ? AppColor.accent : AppColor.background)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.capsule)
+            .controlSize(.large)
+            .overlay(
+                RoundedRectangle(cornerRadius: 30)
+                    .stroke(settingsManager.units == true ? AppColor.background : AppColor.foreground, lineWidth: 2)
+            )
+            .padding(.horizontal)
+            
             Spacer()
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
 struct SettingsDetailView_PhoneBodyOffset: View {
     @ObservedObject var settingsManager = SettingsManager.shared
-    @State var offsetOn: Bool?
     
     var body: some View {
         VStack {
@@ -203,7 +263,6 @@ struct SettingsDetailView_PhoneBodyOffset: View {
             .padding(.top, 20)
             .padding(.bottom, 5)
 
-            
             Button {
                 UserDefaults.standard.setValue(true, forKey: "adjustPhoneBodyOffset")
             } label: {
@@ -225,5 +284,8 @@ struct SettingsDetailView_PhoneBodyOffset: View {
             
             Spacer()
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

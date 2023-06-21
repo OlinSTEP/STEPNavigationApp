@@ -18,65 +18,70 @@ struct ManageAnchorsListView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text("Anchors")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.horizontal)
-                    .foregroundColor(AppColor.text_on_accent)
-                Spacer()
+            VStack {
+                HStack {
+                    Text("Anchors")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.horizontal)
+                        .foregroundColor(AppColor.text_on_accent)
+                    Spacer()
+                }
+                .padding(.bottom, 0.5)
+                
+                HStack {
+                    Text("At")
+                        .font(.title2)
+                        .padding(.leading)
+                        .foregroundColor(AppColor.text_on_accent)
+                    OrganizationPicker(selectedOrganization: $selectedOrganization)
+                    Spacer()
+                }
+                .padding(.bottom, 20)
             }
-            .padding(.bottom, 0.5)
+            .background(AppColor.accent)
             
-            HStack {
-                Text("At")
-                    .font(.title2)
-                    .padding(.leading)
-                    .foregroundColor(AppColor.text_on_accent)
-                OrganizationPicker(selectedOrganization: $selectedOrganization)
-                Spacer()
-            }
-            .padding(.bottom, 20)
-        }
-        .background(AppColor.accent)
-        
-        ScrollView {
-            SmallButtonComponent_NavigationLink(destination: {
-                RecordAnchorView()
-            }, label: "Create New Anchor")
-            .padding(.top, 20)
-            
-            VStack(spacing: 20) {
-                ForEach(0..<anchors.count, id: \.self) { idx in
-                    if anchors[idx].cloudAnchorMetadata?.organization == selectedOrganization {
-                        LargeButtonComponent_NavigationLink(destination: {
-                            AnchorDetailView_Manage(anchorDetails: anchors[idx])
-                        }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+            ScrollView {
+                SmallButtonComponent_NavigationLink(destination: {
+                    RecordAnchorView()
+                }, label: "Create New Anchor")
+                .padding(.top, 20)
+                
+                VStack(spacing: 20) {
+                    ForEach(0..<anchors.count, id: \.self) { idx in
+                        if anchors[idx].cloudAnchorMetadata?.organization == selectedOrganization {
+                            LargeButtonComponent_NavigationLink(destination: {
+                                AnchorDetailView_Manage(anchorDetails: anchors[idx])
+                            }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+                        }
                     }
                 }
+                .padding(.vertical, 20)
+                Spacer()
             }
-            .padding(.vertical, 20)
-            Spacer()
+            .background(AppColor.background)
+            .edgesIgnoringSafeArea([.bottom])
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .onReceive(DataModelManager.shared.objectWillChange) {
+                anchors = []
+                if let latLon = lastQueryLocation {
+                    updateNearbyAnchors(latLon: latLon)
+                }
+            }
+            .onReceive(positionModel.$currentLatLon) { latLon in
+                guard let latLon = latLon else {
+                    return
+                }
+                guard lastQueryLocation == nil || lastQueryLocation!.distance(from: latLon) > 5.0 else {
+                    return
+                }
+                lastQueryLocation = latLon
+                updateNearbyAnchors(latLon: latLon)
+            }
         }
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onReceive(DataModelManager.shared.objectWillChange) {
-            anchors = []
-            if let latLon = lastQueryLocation {
-                updateNearbyAnchors(latLon: latLon)
-            }
-        }
-        .onReceive(positionModel.$currentLatLon) { latLon in
-            guard let latLon = latLon else {
-                return
-            }
-            guard lastQueryLocation == nil || lastQueryLocation!.distance(from: latLon) > 5.0 else {
-                return
-            }
-            lastQueryLocation = latLon
-            updateNearbyAnchors(latLon: latLon)
-        }
     }
     
     private func updateNearbyAnchors(latLon: CLLocationCoordinate2D) {

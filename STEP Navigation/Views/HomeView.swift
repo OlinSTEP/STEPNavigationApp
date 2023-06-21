@@ -31,36 +31,39 @@ struct HomeView: View {
                 .onTapGesture(perform: authHandler.startSignInWithAppleFlow)
         } else {
             NavigationStack {
+                VStack {
                 ScreenTitleComponent(titleText: "Clew Maps 2", subtitleText: "Precise Short Distance Navigation for the Blind and Visually Impaired")
                     .navigationBarBackButtonHidden()
                     .padding(.top, 60)
                     .background(AppColor.accent)
                 
-                VStack {
-                    if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
-                        if positionModel.currentLatLon == nil {
-                            GPSLocalizationPopup()
-                        } else {
-                            VStack(spacing: 20) {
-                                LargeButtonComponent_NavigationLink(destination: {
-                                    DestinationTypesView()
-                                }, label: "Navigate")
-                                LargeButtonComponent_NavigationLink(destination: {
-                                    RadarMapView()
-                                }, label: "Explore")
-                                LargeButtonComponent_NavigationLink(destination: {
-                                    ManageAnchorsListView()
-                                }, label: "Manage")
-                                Spacer()
-                                SmallButtonComponent_NavigationLink(destination: {
-                                    SettingsView()
-                                }, label: "Settings")
+                    ScrollView {
+                        if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
+                            if positionModel.currentLatLon == nil {
+                                GPSLocalizationPopup()
+                            } else {
+                                VStack(spacing: 20) {
+                                    LargeButtonComponent_NavigationLink(destination: {
+                                        DestinationTypesView()
+                                    }, label: "Navigate")
+                                    LargeButtonComponent_NavigationLink(destination: {
+                                        RadarMapView()
+                                    }, label: "Explore")
+                                    LargeButtonComponent_NavigationLink(destination: {
+                                        ManageAnchorsListView()
+                                    }, label: "Manage")
+                                    
+                                    Spacer()
+                                    
+                                    SmallButtonComponent_NavigationLink(destination: {
+                                        SettingsView()
+                                    }, label: "Settings")
+                                    .padding(.vertical, 32)
+                                }
+                                .padding(.top, 20)
                             }
-                            .padding(.top, 20)
-                            .padding(.bottom, 40)
                         }
                     }
-                    Spacer()
                 }
                 .background(AppColor.background)
                 .edgesIgnoringSafeArea([.bottom])
