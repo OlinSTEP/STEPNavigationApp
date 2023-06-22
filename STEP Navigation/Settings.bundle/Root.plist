@@ -25,20 +25,20 @@
 			<string>colorScheme</string>
 			<key>Titles</key>
 			<array>
-				<string>defaultColorScheme</string>
-				<string>Black_White</string>
-				<string>Yellow_Black</string>
-				<string>Yellow_Blue</string>
+				<string>Default</string>
+				<string>Black and White</string>
+				<string>Yellow and Black</string>
+				<string>Yellow and Blue</string>
 			</array>
 			<key>Values</key>
 			<array>
-				<string>defaultColorScheme</string>
-				<string>Black_White</string>
-				<string>Yellow_Black</string>
-				<string>Yellow_Blue</string>
+				<string>Default</string>
+				<string>Black and White</string>
+				<string>Yellow and Black</string>
+				<string>Yellow and Blue</string>
 			</array>
 			<key>DefaultValue</key>
-			<string>defaultColorScheme</string>
+			<string>Default</string>
 		</dict>
 		<dict>
 			<key>Type</key>
@@ -49,20 +49,18 @@
 			<string>crumbColor</string>
 			<key>Titles</key>
 			<array>
-				<string>defaultCrumbColor</string>
-				<string>Green</string>
-				<string>Red</string>
+				<string>Mint Green</string>
+				<string>Yellow</string>
 				<string>Blue</string>
 			</array>
 			<key>Values</key>
 			<array>
-				<string>defaultCrumbColor</string>
-				<string>Green</string>
-				<string>Red</string>
+				<string>Mint Green</string>
+				<string>Yellow</string>
 				<string>Blue</string>
 			</array>
 			<key>DefaultValue</key>
-			<string>defaultCrumbColor</string>
+			<string>Mint Green</string>
 		</dict>
 		<dict>
 			<key>Type</key>

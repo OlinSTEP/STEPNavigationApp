@@ -14,7 +14,7 @@ struct AnchorDetailEditView<Destination: View>: View {
     let visibilityOptions = [true, false]
     
     @State var confirmPressed: Bool = false
-    @State var newIsReadableIndex: Int = 0
+    @State var showAnchorTypeMenu: Bool = false
     
     @State var editing: Bool = false
     @State var inputText: String = ""
@@ -45,113 +45,76 @@ struct AnchorDetailEditView<Destination: View>: View {
     
     
     var body: some View {
-        VStack {
+        ZStack {
             VStack {
-                ScrollView {
-                    TextFieldComponent(entry: $newAnchorName, label: "Name")
-                    
-                    VStack {
-                        HStack {
-                            Text("Organization")
-                                .font(.title2)
-                                .bold()
-                                .foregroundColor(AppColor.foreground)
-                            Spacer()
-                        }
-                        ZStack(alignment: Alignment(horizontal: .center, vertical: .top)) {
-                            Group {
-                                TextField("", text: $newOrganization, onEditingChanged: {edit in
-                                            self.editing = edit
-                                            print("editing: \(editing)")
-                                })
-                                .padding(.horizontal, 10)
-                            }
-                            .foregroundColor(AppColor.foreground)
-                            .frame(height: 48)
-//                            .background(AppColor.background)
-                            .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(AppColor.foreground, lineWidth: 2)
-                            )
-                            
-                            OrganizationComboBox(editing: $editing, text: $newOrganization, verticalOffset: vOffset, horizontalOffset: hOffset)
-                        }
-                    }
-                    .padding(.horizontal)
-            
-                    VStack {
-                        HStack {
-                            Text("Type")
-                                .font(.title2)
-                                .bold()
-                                .foregroundColor(AppColor.foreground)
-                            Spacer()
-                        }
-                        HStack {
-//                            Picker(selection: $newCategory) {
-//                                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
-//                                    Text(category.rawValue)
-//                                }
-//                            } label: {
-//                                Text("AnchorType")
-//                            }
-//                            .pickerStyle(.menu)
-                            
-                            Menu {
-                                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
-                                    Button(action: {
-                                        newCategory = category
-                                    }, label: {
-                                        HStack {
-                                            Text(category.rawValue)
-                                            if newCategory == category {
-                                                Spacer()
-                                                Image(systemName: "checkmark")
-                                            }
-                                        }
-                                    })
-                                }
-                            } label: {
-                                HStack {
-                                    Text("\(newCategory.rawValue)")
-                                        .foregroundColor(AppColor.foreground)
-                                    Image(systemName: "chevron.up.chevron.down")
-                                        .foregroundColor(AppColor.foreground)
-                                }
-                            }
-
-                            Spacer()
-                        }
-                        .frame(height: 48)
-                        .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                        .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(AppColor.foreground, lineWidth: 2)
-                        )
-                    }
-                    .padding(.horizontal)
-                    
-                    if newCategory == .exit {
+                VStack {
+                    ScrollView {
+                        TextFieldComponent(entry: $newAnchorName, label: "Name")
+                        
                         VStack {
                             HStack {
-                                Text("Corresponding Exit")
+                                Text("Organization")
                                     .font(.title2)
                                     .bold()
                                     .foregroundColor(AppColor.foreground)
                                 Spacer()
                             }
-                            HStack {
-                                Picker("Select Corresponding Exit", selection: $newAssociatedOutdoorFeature) {
-                                    Text("").tag("")
-                                    ForEach(DataModelManager.shared.getLocationsByType(anchorType: .externalDoor).sorted(by: { $0.getName() < $1.getName() })) { outdoorFeature in
-                                        Text(outdoorFeature.getName()).tag(outdoorFeature.id)
-                                    }
+                            ZStack(alignment: Alignment(horizontal: .center, vertical: .top)) {
+                                Group {
+                                    TextField("", text: $newOrganization, onEditingChanged: {edit in
+                                        self.editing = edit
+                                        print("editing: \(editing)")
+                                    })
+                                    .padding(.horizontal, 10)
                                 }
+                                .foregroundColor(AppColor.foreground)
+                                .frame(height: 48)
+                                //                            .background(AppColor.background)
+                                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(AppColor.foreground, lineWidth: 2)
+                                )
+                                
+                                OrganizationComboBox(editing: $editing, text: $newOrganization, verticalOffset: vOffset, horizontalOffset: hOffset)
+                            }
+                        }
+                        .padding(.horizontal)
+                        
+                        VStack {
+                            HStack {
+                                Text("Type")
+                                    .font(.title2)
+                                    .bold()
+                                    .foregroundColor(AppColor.foreground)
                                 Spacer()
                             }
+                            
+                            //                        NavigationLink {
+                            //                            AnchorTypeMenu(newCategory: $newCategory, anchorID: anchorID)
+                            //                        } label: {
+                            //                            HStack {
+                            //                                Text("\(newCategory.rawValue)")
+                            //                                Spacer()
+                            //                                Image(systemName: "chevron.right")
+                            //                            }
+                            //                            .padding()
+                            //                        }
+                            
+                            Button(action: {
+                                withAnimation {
+                                    showAnchorTypeMenu = true
+                                }
+                            }, label: {
+                                HStack {
+                                    Text("\(newCategory.rawValue)")
+                                    Spacer()
+                                    Image(systemName: "chevron.up.chevron.down")
+                                }
+                                .foregroundColor(AppColor.foreground)
+                                .padding()
+                            })
                             .frame(height: 48)
                             .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
                             .cornerRadius(10)
@@ -159,57 +122,129 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(AppColor.foreground, lineWidth: 2)
                             )
+                            
+                            
+                            //                      HStack {
+                            //                            Menu {
+                            //                                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
+                            //                                    Button(action: {
+                            //                                        newCategory = category
+                            //                                    }, label: {
+                            //                                        HStack {
+                            //                                            Text(category.rawValue)
+                            //                                            if newCategory == category {
+                            //                                                Spacer()
+                            //                                                Image(systemName: "checkmark")
+                            //                                            }
+                            //                                        }
+                            //                                    })
+                            //                                }
+                            //                            } label: {
+                            //                                HStack {
+                            //                                    Text("\(newCategory.rawValue)")
+                            //                                        .foregroundColor(AppColor.foreground)
+                            //                                    Image(systemName: "chevron.up.chevron.down")
+                            //                                        .foregroundColor(AppColor.foreground)
+                            //                                }
+                            //                            }
+                            //
+                            //                            Spacer()
+                            //                        }
+                            //                        .frame(height: 48)
+                            //                        .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                            //                        .cornerRadius(10)
+                            //                        .overlay(
+                            //                            RoundedRectangle(cornerRadius: 10)
+                            //                                .stroke(AppColor.foreground, lineWidth: 2)
+                            //                        )
                         }
                         .padding(.horizontal)
                         
-                    }
-                    TextFieldComponent(entry: $newNotes, label: "Location Notes", textBoxSize: .large)
-                    
-                    VStack {
-                        HStack {
-                            Text("Visibility")
-                                .font(.title2)
-                                .bold()
-                                .foregroundColor(AppColor.foreground)
-                            Spacer()
+                        if newCategory == .exit {
+                            VStack {
+                                HStack {
+                                    Text("Corresponding Exit")
+                                        .font(.title2)
+                                        .bold()
+                                        .foregroundColor(AppColor.foreground)
+                                    Spacer()
+                                }
+                                HStack {
+                                    Picker("Select Corresponding Exit", selection: $newAssociatedOutdoorFeature) {
+                                        Text("").tag("")
+                                        ForEach(DataModelManager.shared.getLocationsByType(anchorType: .externalDoor).sorted(by: { $0.getName() < $1.getName() })) { outdoorFeature in
+                                            Text(outdoorFeature.getName()).tag(outdoorFeature.id)
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                                .frame(height: 48)
+                                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(AppColor.foreground, lineWidth: 2)
+                                )
+                            }
+                            .padding(.horizontal)
+                            
                         }
+                        TextFieldComponent(entry: $newNotes, label: "Location Notes", textBoxSize: .large)
                         
-                        CustomSegmentedControl(preselectedIndex: $newIsReadableIndex, options: ["Public", "Private"])
+                        VStack {
+                            HStack {
+                                Text("Visibility")
+                                    .font(.title2)
+                                    .bold()
+                                    .foregroundColor(AppColor.foreground)
+                                Spacer()
+                            }
+                            
+                            CustomSegmentedControl(isReadable: $newIsReadable)
+                        }
+                        .padding(.horizontal)
+                        
+                        
                     }
-                    .padding(.horizontal)
-
-                    
+                    Spacer()
                 }
+                .padding(.top, 20)
+                
                 Spacer()
-            }
-            .padding(.top, 20)
-            
-            Spacer()
-            NavigationLink(destination: buttonDestination(), isActive: $confirmPressed, label: {
-                Text("\(buttonLabel)")
-                    .font(.title2)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(AppColor.text_on_accent)
-            })
-            .onChange(of: confirmPressed) {
-                newValue in
-                if newValue {
-                    print("simultaneous action completed")
-                    self.updateMetadata()
+                NavigationLink(destination: buttonDestination(), isActive: $confirmPressed, label: {
+                    Text("\(buttonLabel)")
+                        .font(.title2)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(AppColor.text_on_accent)
+                })
+                .onChange(of: confirmPressed) {
+                    newValue in
+                    if newValue {
+                        print("simultaneous action completed")
+                        self.updateMetadata()
+                    }
                 }
+                .tint(AppColor.accent)
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+                .padding(.horizontal)
+                .padding(.bottom, 40)
             }
-            .tint(AppColor.accent)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.large)
-            .padding(.horizontal)
-            .padding(.bottom, 40)
+            
+            if showAnchorTypeMenu == true {
+                AnchorTypeMenu(newCategory: $newCategory, showAnchorTypeMenu: $showAnchorTypeMenu)
+            }
         }
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(.keyboard, edges: .bottom)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            Text("")
+        }
     }
     
     func updateMetadata() {
@@ -226,33 +261,47 @@ struct AnchorDetailEditView<Destination: View>: View {
 }
 
 struct CustomSegmentedControl: View {
-    @Binding var preselectedIndex: Int
+    @Binding var isReadable: Bool
     
-    var options: [String]
-
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(options.indices, id:\.self) { index in
-                ZStack {
-                    Rectangle()
-                        .fill(AppColor.background)
-
-                    Rectangle()
-                        .fill(AppColor.foreground)
-                        .cornerRadius(10)
-                        .opacity(preselectedIndex == index ? 1 : 0.01)
-                        .onTapGesture {
-                                withAnimation(.interactiveSpring()) {
-                                    preselectedIndex = index
-                                }
-                            }
-                }
-                .overlay(
-                    Text(options[index])
-                        .foregroundColor(preselectedIndex == index ? AppColor.background : AppColor.foreground)
-                        .bold()
-                )
+            ZStack {
+                Rectangle()
+                    .fill(AppColor.background)
+                Rectangle()
+                    .fill(AppColor.foreground)
+                   .cornerRadius(10)
+                   .opacity(isReadable ? 1 : 0.01)
+                   .onTapGesture {
+                           withAnimation(.interactiveSpring()) {
+                               isReadable.toggle()
+                           }
+                       }
             }
+            .overlay(
+               Text("Public")
+                   .foregroundColor(isReadable ? AppColor.background : AppColor.foreground)
+                   .bold()
+           )
+            
+            ZStack {
+                Rectangle()
+                    .fill(AppColor.background)
+                Rectangle()
+                    .fill(AppColor.foreground)
+                   .cornerRadius(10)
+                   .opacity(isReadable ? 0.01 : 1)
+                   .onTapGesture {
+                           withAnimation(.interactiveSpring()) {
+                               isReadable.toggle()
+                           }
+                       }
+            }
+            .overlay(
+               Text("Private")
+                   .foregroundColor(isReadable ? AppColor.foreground : AppColor.background)
+                   .bold()
+           )
         }
         .frame(height: 40)
         .cornerRadius(10)
@@ -391,5 +440,121 @@ public extension View {
     func endTextEditing() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                         to: nil, from: nil, for: nil)
+    }
+}
+
+//struct CustomMenu<Content: View>: View {
+//    @ViewBuilder let content: Content
+//
+//    var body: some View {
+//        VStack(spacing: 0) {
+//            content
+//        }
+//        .frame(width: 234)
+//        .background(
+//            AppColor.foreground
+////                .opacity(0.8)
+////                .blur(radius: 50)
+//        )
+//        .cornerRadius(14)
+//    }
+//}
+//
+//struct CustomMenuButtonStyle: ButtonStyle {
+//    func makeBody(configuration: Configuration) -> some View {
+//        HStack {
+//            configuration.label
+//        }
+//        .padding(.horizontal, 16)
+//        .foregroundColor(AppColor.background)
+//        .frame(height: 44)
+//    }
+//}
+//
+//struct CustomMenuBuilder: View {
+//    @Binding var newCategory: AnchorType
+//    @Binding var showMenu: Bool
+//
+//    var body: some View {
+//        CustomMenu {
+//            Group {
+//                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
+//                    Button(action: {
+//                        newCategory = category
+//                        showMenu = false
+//                    }, label: {
+//                        HStack {
+//                            Text(category.rawValue)
+//                            Spacer()
+//                            if newCategory == category {
+//                                Image(systemName: "checkmark")
+//                            }
+//                        }
+//                    })
+//                    .buttonStyle(CustomMenuButtonStyle())
+//                    Divider()
+//                        .overlay(AppColor.background)
+//                }
+//            }
+//        }
+//    }
+//}
+
+struct AnchorTypeMenu: View {
+    @Binding var newCategory: AnchorType
+    @Binding var showAnchorTypeMenu: Bool
+    
+    var body: some View {
+        VStack {
+            ScrollView {
+                Divider()
+                    .overlay(AppColor.foreground)
+                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
+                    Button(action: {
+                        newCategory = category
+                        showAnchorTypeMenu = false
+                    }, label: {
+                        if newCategory == category {
+                            HStack {
+                                Text(category.rawValue)
+                                    .font(.title2)
+                                Spacer()
+                                Image(systemName: "checkmark")
+                            }
+                        } else {
+                            HStack {
+                                Text(category.rawValue)
+                                    .font(.title2)
+                                Spacer()
+                            }
+                        }
+                    })
+                    .foregroundColor(AppColor.foreground)
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    Divider()
+                        .overlay(AppColor.foreground)
+                }
+            }
+            Spacer()
+        }
+        .accessibilityAddTraits(.isModal)
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                HStack {
+                    Image(systemName: "chevron.left")
+                        .bold()
+                    Text("Back")
+                        .foregroundColor(AppColor.text_on_accent)
+                        .onTapGesture {
+                            showAnchorTypeMenu = false
+                        }
+                    Spacer()
+                }
+            }
+        }
     }
 }
