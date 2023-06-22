@@ -5,15 +5,17 @@ class FeedbackModel {
     
     func saveFeedback(feedbackStatus: String,
                       response: String,
-                      isNavigationSelected: Bool,
-                      isRouteRecordingSelected: Bool,
-                      isLocationAnchorSelected: Bool,
+                      isInstructionsSelected: Bool,
+                      isObstacleSelected: Bool,
+                      isLostSelected: Bool,
+                      isLongerSelected: Bool,
                       isOtherSelected: Bool) {
         let feedback: [String: Any] = [
-            "Navigation Problem": isNavigationSelected,
-            "Route Recording": isRouteRecordingSelected,
-            "Location Anchor Problem": isLocationAnchorSelected,
-            "Others": isOtherSelected,
+            "Incorrect or unclear instructions": isInstructionsSelected,
+            "The route led me into a large obstacle": isObstacleSelected,
+            "The navigation took longer than expected": isLongerSelected,
+            "I got lost along the route": isLostSelected,
+            "Other": isOtherSelected,
             "Problem Description": response,
             "Good/Bad":feedbackStatus,
             "associatedLog": FirebaseManager.shared.lastLogPath ?? ""

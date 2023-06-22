@@ -89,7 +89,7 @@ struct NavigatingView: View {
                                   subtitleText: "This will end the navigation session.",
                                   confirmButtonLabel: "Exit")
                 {
-                    AnchorDetailView_ArrivedView(anchorDetails: destinationAnchorDetails)
+                   MultipleChoice()
                 }
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
