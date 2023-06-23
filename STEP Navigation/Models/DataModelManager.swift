@@ -274,13 +274,21 @@ class DataModelManager: ObservableObject {
                             withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
         let models = allLocationModels[anchorType] ?? []
         
+        print(models)
+        
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         
-        return models.filter { model in
+        let filtered =  models.filter { model in
             let locationCoordinate = model.getLocationCoordinate()
             let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+            
+            print(location.distance(from: threshold))
+            print(maxDistance + withBuffer)
             return location.distance(from: threshold) <= maxDistance + withBuffer
         }
+        
+        print(filtered)
+        return filtered
     }
      
 }

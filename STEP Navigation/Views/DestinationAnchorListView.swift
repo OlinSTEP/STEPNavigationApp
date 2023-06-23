@@ -44,6 +44,7 @@ struct DestinationAnchorListView: View {
                     .sorted(by: {
                         $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
                     })
+//                    print(anchors)
                 }
                 .background(AppColor.accent)
             

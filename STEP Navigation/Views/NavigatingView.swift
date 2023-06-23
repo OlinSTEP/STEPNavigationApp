@@ -75,14 +75,6 @@ struct NavigatingView: View {
                     .accessibilityAddTraits(.isModal)
             }
             
-//            if showingConfirmation {
-//                ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to exit?", subtitleText: "This will end the navigation session.", confirmButtonLabel: "Exit")
-//                {
-//                    HomeView()
-//                }
-//                    .accessibilityFocused($focusOnPopup)
-//                    .accessibilityAddTraits(.isModal)
-//            }
             if showingConfirmation {
                 ConfirmationPopup(showingConfirmation: $showingConfirmation,
                                   titleText: "Are you sure you want to exit?",
@@ -94,11 +86,7 @@ struct NavigatingView: View {
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
             }
-//        }.onReceive(routeNavigator.keypoints) { newKeypoints in
-//            if newKeypoints.count == 0 {
-//                // do some stuff
-//
-//            }
+
         }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
         }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
