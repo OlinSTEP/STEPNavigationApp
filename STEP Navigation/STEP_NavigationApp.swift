@@ -8,25 +8,6 @@
 import SwiftUI
 import Firebase
 
-
-//@main
-//struct STEP_NavigationApp: App {
-//    init() {
-//        FirebaseApp.configure()
-//    }
-//
-//    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-//
-//    var body: some Scene {
-//        WindowGroup {
-//            HomeView()
-//                .environmentObject(SettingsManager.shared)
-//                .onAppear() {
-//                    FirebaseManager.shared.setMode(mode: .navigation)
-//                }
-//        }
-//    }
-//}
 @main
 struct STEP_NavigationApp: App {
     @StateObject private var feedback = Feedback()
@@ -39,7 +20,7 @@ struct STEP_NavigationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            StartupPage1()
                 .environmentObject(SettingsManager.shared)
                 .environmentObject(feedback)
                 .onAppear() {

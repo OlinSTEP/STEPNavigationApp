@@ -8,20 +8,28 @@
 import SwiftUI
 import CoreLocation
 
+
 struct DestinationTypesView: View {
     @State var nearbyDistance: Double = 100
     @State var hasLocalized = false
     @State var anchorTypes: [String] = []
-    
+
     @AccessibilityFocusState var focusOnNearbyDistanceValue
-    
+
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let verticalIndicator: UIImageView = (scrollView.subviews[(scrollView.subviews.count - 1)] as! UIImageView)
+//        verticalIndicator.backgroundColor = UIColor(red: 211/255.0, green: 138/255.0, blue: 252/255.0, alpha: 1)
+        verticalIndicator.backgroundColor = UIColor.blue
+    }
+
     var body: some View {
         let anchorTypes = PositioningModel.shared.currentLatLon != nil ? DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance) : []
-        
+
         VStack {
             let nearbyDistanceString = String(format: "%.0f", $nearbyDistance.wrappedValue)
             ScreenTitleComponent(titleText: "Destinations", subtitleText: "Within \(nearbyDistanceString) meters")
-            
+
             ScrollView {
                 VStack(spacing: 20) {
                     // Creates a navigation button for each anchor type
@@ -45,3 +53,5 @@ struct DestinationTypesView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+

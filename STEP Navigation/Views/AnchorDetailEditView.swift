@@ -17,6 +17,7 @@ struct AnchorDetailEditView<Destination: View>: View {
     @State var showAnchorTypeMenu: Bool = false
     
     @State var editing: Bool = false
+    @FocusState var editingOrg: Bool
     @State var inputText: String = ""
     @State var vOffset: CGFloat = 52
     @State var hOffset: CGFloat = 0
@@ -63,9 +64,10 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 Group {
                                     TextField("", text: $newOrganization, onEditingChanged: {edit in
                                         self.editing = edit
-                                        print("editing: \(editing)")
+//                                        editingOrg = true
                                     })
                                     .padding(.horizontal, 10)
+                                    .focused($editingOrg)
                                 }
                                 .foregroundColor(AppColor.foreground)
                                 .frame(height: 48)
@@ -122,41 +124,6 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(AppColor.foreground, lineWidth: 2)
                             )
-                            
-                            
-                            //                      HStack {
-                            //                            Menu {
-                            //                                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
-                            //                                    Button(action: {
-                            //                                        newCategory = category
-                            //                                    }, label: {
-                            //                                        HStack {
-                            //                                            Text(category.rawValue)
-                            //                                            if newCategory == category {
-                            //                                                Spacer()
-                            //                                                Image(systemName: "checkmark")
-                            //                                            }
-                            //                                        }
-                            //                                    })
-                            //                                }
-                            //                            } label: {
-                            //                                HStack {
-                            //                                    Text("\(newCategory.rawValue)")
-                            //                                        .foregroundColor(AppColor.foreground)
-                            //                                    Image(systemName: "chevron.up.chevron.down")
-                            //                                        .foregroundColor(AppColor.foreground)
-                            //                                }
-                            //                            }
-                            //
-                            //                            Spacer()
-                            //                        }
-                            //                        .frame(height: 48)
-                            //                        .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                            //                        .cornerRadius(10)
-                            //                        .overlay(
-                            //                            RoundedRectangle(cornerRadius: 10)
-                            //                                .stroke(AppColor.foreground, lineWidth: 2)
-                            //                        )
                         }
                         .padding(.horizontal)
                         
@@ -235,6 +202,9 @@ struct AnchorDetailEditView<Destination: View>: View {
             
             if showAnchorTypeMenu == true {
                 AnchorTypeMenu(newCategory: $newCategory, showAnchorTypeMenu: $showAnchorTypeMenu)
+                    .onAppear() {
+                        editingOrg = false
+                    }
             }
         }
         .background(AppColor.background)
@@ -443,63 +413,6 @@ public extension View {
     }
 }
 
-//struct CustomMenu<Content: View>: View {
-//    @ViewBuilder let content: Content
-//
-//    var body: some View {
-//        VStack(spacing: 0) {
-//            content
-//        }
-//        .frame(width: 234)
-//        .background(
-//            AppColor.foreground
-////                .opacity(0.8)
-////                .blur(radius: 50)
-//        )
-//        .cornerRadius(14)
-//    }
-//}
-//
-//struct CustomMenuButtonStyle: ButtonStyle {
-//    func makeBody(configuration: Configuration) -> some View {
-//        HStack {
-//            configuration.label
-//        }
-//        .padding(.horizontal, 16)
-//        .foregroundColor(AppColor.background)
-//        .frame(height: 44)
-//    }
-//}
-//
-//struct CustomMenuBuilder: View {
-//    @Binding var newCategory: AnchorType
-//    @Binding var showMenu: Bool
-//
-//    var body: some View {
-//        CustomMenu {
-//            Group {
-//                ForEach(AnchorType.allCases.sorted(by: {$0.rawValue < $1.rawValue}), id: \.self) { category in
-//                    Button(action: {
-//                        newCategory = category
-//                        showMenu = false
-//                    }, label: {
-//                        HStack {
-//                            Text(category.rawValue)
-//                            Spacer()
-//                            if newCategory == category {
-//                                Image(systemName: "checkmark")
-//                            }
-//                        }
-//                    })
-//                    .buttonStyle(CustomMenuButtonStyle())
-//                    Divider()
-//                        .overlay(AppColor.background)
-//                }
-//            }
-//        }
-//    }
-//}
-
 struct AnchorTypeMenu: View {
     @Binding var newCategory: AnchorType
     @Binding var showAnchorTypeMenu: Bool
@@ -547,6 +460,7 @@ struct AnchorTypeMenu: View {
                 HStack {
                     Image(systemName: "chevron.left")
                         .bold()
+                        .accessibilityHidden(true)
                     Text("Back")
                         .foregroundColor(AppColor.text_on_accent)
                         .onTapGesture {

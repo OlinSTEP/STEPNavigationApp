@@ -11,6 +11,9 @@ struct SettingsDetailView_CrumbColor: View {
     @ObservedObject var settingsManager = SettingsManager.shared
     @State var selectedCrumbColor: String?
     
+    @State var showColorPicker: Bool = false
+    @State var selectedCustomColor: Color = AppColor.accent
+    
     init() {
             _selectedCrumbColor = State<String?>(initialValue: settingsManager.getCrumbColorLabel(forCrumbColor: settingsManager.crumbColor))
         }
@@ -20,35 +23,52 @@ struct SettingsDetailView_CrumbColor: View {
         let crumbColorOptions = [
             CrumbColors(label: "Mint Green", color: StaticAppColor.defaultAccent),
             CrumbColors(label: "Yellow", color: StaticAppColor.yellow),
-            CrumbColors(label: "Blue", color: StaticAppColor.blue),
+            CrumbColors(label: "Blue", color: StaticAppColor.blue)
         ]
         
         VStack {
             ScreenTitleComponent(titleText: "Crumb Color", subtitleText: "Set the color of the box-shaped crumb for navigating.")
             
-            VStack(spacing: 10) {
-                ForEach(crumbColorOptions) { color in
-                    var selectedCrumb: Bool = selectedCrumbColor == color.label
-                    
-                    Button(action: {
-                        UserDefaults.standard.setValue("\(color.label)", forKey: "crumbColor")
-                        selectedCrumbColor = color.label
-                    }) {
-                        Text(color.label)
-                            .font(.title2)
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .foregroundColor(selectedCrumb ? StaticAppColor.black : AppColor.foreground)
+            ZStack {
+                VStack(spacing: 10) {
+                    ForEach(crumbColorOptions) { color in
+                        var selectedCrumb: Bool = selectedCrumbColor == color.label
+                        
+                        Button(action: {
+                            UserDefaults.standard.setValue("\(color.label)", forKey: "crumbColor")
+                            selectedCrumbColor = color.label
+                        }) {
+                            Text(color.label)
+                                .font(.title2)
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                                .foregroundColor(selectedCrumb ? StaticAppColor.black : AppColor.foreground)
+                        }
+                        .tint(selectedCrumb ? color.color : AppColor.background)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.large)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30)
+                                .stroke(selectedCrumb ? AppColor.background : AppColor.foreground, lineWidth: 2)
+                        )
+                        .padding(.horizontal)
                     }
-                    .tint(selectedCrumb ? color.color : AppColor.background)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 30)
-                            .stroke(selectedCrumb ? AppColor.background : AppColor.foreground, lineWidth: 2)
-                    )
-                    .padding(.horizontal)
+                    
+//                    Button(action: {
+//                        showColorPicker = true
+//                    }) {
+//                        Text("Custom")
+//                            .font(.title2)
+//                            .bold()
+//                            .frame(maxWidth: .infinity)
+//                            .foregroundColor(AppColor.background)
+//                    }
+//                    .tint(AppColor.foreground)
+//                    .buttonStyle(.borderedProminent)
+//                    .buttonBorderShape(.capsule)
+//                    .controlSize(.large)
+//                    .padding(.horizontal)
                 }
             }
             .padding(.top, 20)
@@ -286,5 +306,20 @@ struct SettingsDetailView_PhoneBodyOffset: View {
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+struct SettingsDetailView_ColorPicker: View {
+    @Binding var customColor: Color
+    let pickerLabel: String
+    
+    var body: some View {
+        
+        VStack {
+            
+            ColorPicker(pickerLabel, selection: $customColor)
+                        .padding(.horizontal)
+                        .foregroundColor(AppColor.foreground)
+        }
     }
 }
