@@ -14,17 +14,19 @@ import Foundation
 class Feedback: ObservableObject {
     @Published var feedbackStatus: String = ""
     @Published var response: String = ""
-    @Published var isNavigationSelected: Bool = false
-    @Published var isRouteRecordingSelected: Bool = false
-    @Published var isLocationAnchorSelected: Bool = false
+    @Published var isInstructionsSelected: Bool = false
+    @Published var isObstacleSelected: Bool = false
+    @Published var isLostSelected: Bool = false
+    @Published var isLongerSelected: Bool = false
     @Published var isOtherSelected: Bool = false
     
     func reset() {
         self.feedbackStatus = ""
         self.response = ""
-        self.isNavigationSelected = false
-        self.isRouteRecordingSelected = false
-        self.isLocationAnchorSelected = false
+        self.isInstructionsSelected = false
+        self.isObstacleSelected = false
+        self.isLostSelected = false
+        self.isLongerSelected = false
         self.isOtherSelected = false
     }
 }
@@ -63,25 +65,35 @@ struct AnchorDetailView_ArrivedView: View {
                         Image(systemName: "hand.thumbsup")
                             .font(.title)
                             .padding(30)
-                            .foregroundColor(.white)
+                            .foregroundColor(colorschemedefault ? Color.white : AppColor.background)
 //                            .background(Color.green)
                             .background(colorschemedefault ? Color.green : AppColor.foreground)
                             .cornerRadius(10)
                     }
                     NavigationLink(destination: MultipleChoice().environmentObject(feedback).onAppear {
-                        feedback.feedbackStatus = "Bad"
-                    }) {
-                        Image(systemName: "hand.thumbsdown")
-                            .font(.title)
-                            .padding(30)
-                            .foregroundColor(AppColor.foreground)
-                            .background(AppColor.background)
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(AppColor.foreground, lineWidth: 2)
-                            )
-                    }
+                                        feedback.feedbackStatus = "Bad"
+                                    }) {
+                                        if colorschemedefault {
+                                            Image(systemName: "hand.thumbsdown")
+                                                .font(.title)
+                                                .padding(30)
+                                                .foregroundColor(Color.white)
+                                                .background(Color.red)
+                                                .cornerRadius(10)
+                                                
+                                        } else {
+                                            Image(systemName: "hand.thumbsdown")
+                                                .font(.title)
+                                                .padding(30)
+                                                .foregroundColor(AppColor.foreground)
+                                                .background(AppColor.background)
+                                                .cornerRadius(10)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 10)
+                                                        .stroke(AppColor.foreground, lineWidth: 2))
+                                        }
+                                    }
+
                 }
                 .padding()
                 Spacer()
@@ -106,7 +118,7 @@ struct AnchorDetailView_ArrivedView: View {
 // MultipleChoice after thumbs down
 struct MultipleChoice: View {
     @EnvironmentObject var feedback: Feedback
-
+    
     var body: some View {
         VStack {
             VStack {
@@ -115,88 +127,114 @@ struct MultipleChoice: View {
                     .multilineTextAlignment(.center)
                     .padding(.top)
                     .foregroundColor(AppColor.foreground)
-                Spacer().frame(height: 50)
+                Spacer().frame(height: 40)
                 Button(action: {
-                    print("Navigation Problem")
-                    feedback.isNavigationSelected.toggle()
+                    print("Incorrect or unclear instructions")
+                    feedback.isInstructionsSelected.toggle()
                 }) {
-                    Text("Navigation").bold()
-                        .font(.title)
-                        .padding(10)
-                    //            labelColor: AppColor.dark, backgroundColor: AppColor.lightred
-                        .foregroundColor(StaticAppColor.black)
-                        .background(feedback.isNavigationSelected ? StaticAppColor.lightgreen: StaticAppColor.lightyellow)
-                        .cornerRadius(15)
-                }
-                if feedback.isNavigationSelected {
-                    TextField("Problem Description", text: $feedback.response)
-                        .foregroundColor(Color.black)
-                        .padding(10)
-                        .border(Color.black, width: 0.5)
-                }
-                Button(action: {
-                    print("Route Recording")
-                    feedback.isRouteRecordingSelected.toggle()
-                }) {
-                    Text("Route Recording").bold()
-                        .font(.title)
-                        .padding(10)
-                        .foregroundColor(StaticAppColor.black)
-                        .background(feedback.isRouteRecordingSelected ? StaticAppColor.lightgreen: StaticAppColor.lightyellow)
-                        .cornerRadius(15)
-                }
-                if feedback.isRouteRecordingSelected {
-                    TextField("Problem Description", text: $feedback.response)
-                        .foregroundColor(Color.black)
-                        .padding(10)
-                        .border(Color.black, width: 0.5)
+                    HStack {
+                        Text("Incorrect or unclear instructions").bold()
+                            .font(.title)
+                            .padding(10)
+                            .foregroundColor(AppColor.foreground)
+                        if feedback.isInstructionsSelected {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 30))
+                                .fontWeight(.heavy)
+                                .foregroundColor(AppColor.foreground)
+                        }
+                    }
                 }
                 
                 Button(action: {
-                    print("Location Anchor Problem")
-                    feedback.isLocationAnchorSelected.toggle()
+                    print("The route led me into a large obstacle")
+                    feedback.isObstacleSelected.toggle()
                 }) {
-                    Text("Inaccurate Location Anchor").bold()
-                        .font(.title)
-                        .padding(10)
-                        .foregroundColor(StaticAppColor.black)
-                        .background(feedback.isLocationAnchorSelected ? StaticAppColor.lightgreen: StaticAppColor.lightyellow)
-                        .cornerRadius(15)
-                }
-                if feedback.isLocationAnchorSelected {
-                    TextField("Problem Description", text: $feedback.response)
-                        .foregroundColor(Color.black)
-                        .padding(10)
-                        .border(Color.black, width: 0.5)
+                    HStack {
+                        Text("The route led me into a large obstacle").bold()
+                            .font(.title)
+                            .padding(10)
+                            .foregroundColor(AppColor.foreground)
+                        if feedback.isObstacleSelected {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 30))
+                                .fontWeight(.heavy)
+                                .foregroundColor(AppColor.foreground)
+                        }
+                    }
                 }
                 
                 Button(action: {
-                    print("Others")
+                    print("I got lost along the route")
+                    feedback.isLostSelected.toggle()
+                }) {
+                    HStack {
+                        Text("I got lost along the route").bold()
+                            .font(.title)
+                            .padding(10)
+                            .foregroundColor(AppColor.foreground)
+                        if feedback.isLostSelected {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 30))
+                                .fontWeight(.heavy)
+                                .foregroundColor(AppColor.foreground)
+                        }
+                    }
+                }
+                
+                Button(action: {
+                    print("The navigation took longer than expected")
+                    feedback.isLongerSelected.toggle()
+                }) {
+                    HStack {
+                        Text("The navigation took longer than expected").bold()
+                            .font(.title)
+                            .padding(10)
+                            .foregroundColor(AppColor.foreground)
+                        if feedback.isLongerSelected {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 30))
+                                .fontWeight(.heavy)
+                                .foregroundColor(AppColor.foreground)
+                        }
+                    }
+                }
+                
+                
+                Button(action: {
+                    print("Other")
                     feedback.isOtherSelected.toggle()
                 }) {
-                    Text("Others").bold()
-                        .font(.title)
-                        .padding(10)
-                        .foregroundColor(StaticAppColor.black)
-                        .background(feedback.isOtherSelected ? StaticAppColor.lightgreen: StaticAppColor.lightyellow)
-                        .cornerRadius(15)
-                }
-                if feedback.isOtherSelected {
-                    TextField("Problem Description", text: $feedback.response)
-                        .foregroundColor(Color.black)
-                        .padding(10)
-                        .border(Color.black, width: 0.5)
+                    HStack {
+                        Text("Other").bold()
+                            .font(.title)
+                            .padding(10)
+                            .foregroundColor(AppColor.foreground)
+                        if feedback.isOtherSelected {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 30))
+                                .fontWeight(.heavy)
+                                .foregroundColor(AppColor.foreground)
+                        }
+                    }
                 }
                 
+                TextField("Optional: Problem Description", text: $feedback.response)
+                    .foregroundColor(AppColor.foreground)
+                    .padding(30)
+                    .border(AppColor.foreground, width: 1)
+                    .textFieldStyle(PlainTextFieldStyle())
             }
+            Spacer().frame(height: 50)
             NavigationLink(destination: HomeView().onAppear {
                 let feedbackModel = FeedbackModel()
                 feedbackModel.saveFeedback(
                     feedbackStatus: feedback.feedbackStatus,
                     response: feedback.response,
-                    isNavigationSelected: feedback.isNavigationSelected,
-                    isRouteRecordingSelected: feedback.isRouteRecordingSelected,
-                    isLocationAnchorSelected: feedback.isLocationAnchorSelected,
+                    isInstructionsSelected: feedback.isInstructionsSelected,
+                    isObstacleSelected: feedback.isObstacleSelected,
+                    isLostSelected: feedback.isLostSelected,
+                    isLongerSelected: feedback.isLongerSelected,
                     isOtherSelected: feedback.isOtherSelected
                 )
                 feedback.reset()
@@ -205,14 +243,14 @@ struct MultipleChoice: View {
                     .font(.title)
                     .padding(.horizontal, 80)
                     .padding(15)
-                    .foregroundColor(StaticAppColor.black)
-                    .background(AppColor.accent)
+                    .foregroundColor(AppColor.background)
+                    .background(AppColor.foreground)
                     .cornerRadius(15)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
+        
+    }
 }
-}
-

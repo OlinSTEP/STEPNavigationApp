@@ -110,6 +110,10 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    
+    /// Uploads feedback data to the Firebase storage. The data is stored under the 'feedbackSurveyData' folder,
+    /// and each feedback file is given a unique filename.
+    /// - Parameter data: The JSON formatted version of feeback data.
     func uploadFeedback(_ data: Data) {
         guard let uid = AuthHandler.shared.currentUID else {
             return

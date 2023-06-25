@@ -128,8 +128,6 @@ enum AnchorType: String, CaseIterable, Identifiable {
     case frontdesk = "Front Desk"
     /// Represents a junction anchor type (e.g., a hallway intersection)
     case junction = "Junction"
-//    /// Represents a generic indoor destination.  This is a placeholder value for when the specific category has not yet been set.
-//    case indoorDestination = "Indoor"
     /// Represents a room destination that doesn't fall into a more specific category
     case room = "Room"
     /// Represents a destination that is at the exit of the building
