@@ -93,17 +93,6 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 Spacer()
                             }
                             
-                            //                        NavigationLink {
-                            //                            AnchorTypeMenu(newCategory: $newCategory, anchorID: anchorID)
-                            //                        } label: {
-                            //                            HStack {
-                            //                                Text("\(newCategory.rawValue)")
-                            //                                Spacer()
-                            //                                Image(systemName: "chevron.right")
-                            //                            }
-                            //                            .padding()
-                            //                        }
-                            
                             Button(action: {
                                 withAnimation {
                                     showAnchorTypeMenu = true
@@ -244,7 +233,7 @@ struct CustomSegmentedControl: View {
                    .opacity(isReadable ? 1 : 0.01)
                    .onTapGesture {
                            withAnimation(.interactiveSpring()) {
-                               isReadable.toggle()
+                               isReadable = true
                            }
                        }
             }
@@ -252,6 +241,12 @@ struct CustomSegmentedControl: View {
                Text("Public")
                    .foregroundColor(isReadable ? AppColor.background : AppColor.foreground)
                    .bold()
+                   .accessibilityAction {
+                          withAnimation(.interactiveSpring()) {
+                              isReadable = true
+                          }
+                      }
+                .accessibilityAddTraits(isReadable ? .isSelected : [])
            )
             
             ZStack {
@@ -263,7 +258,7 @@ struct CustomSegmentedControl: View {
                    .opacity(isReadable ? 0.01 : 1)
                    .onTapGesture {
                            withAnimation(.interactiveSpring()) {
-                               isReadable.toggle()
+                               isReadable = false
                            }
                        }
             }
@@ -271,6 +266,12 @@ struct CustomSegmentedControl: View {
                Text("Private")
                    .foregroundColor(isReadable ? AppColor.foreground : AppColor.background)
                    .bold()
+                   .accessibilityAction {
+                          withAnimation(.interactiveSpring()) {
+                              isReadable = false
+                          }
+                      }
+                .accessibilityAddTraits(!isReadable ? .isSelected : [])
            )
         }
         .frame(height: 40)
@@ -349,7 +350,6 @@ struct OrganizationComboBox: View {
                 
                 Spacer()
             }
-//            .frame(height: (50 * CGFloat((allOrganizations.count > 3 ? 3 : allOrganizations.count)) + (editing == true ? verticalOffset : 0)))
             .frame(height: (editing == false ? 0 : (50 * CGFloat((allOrganizations.count > 3 ? 3 : allOrganizations.count)) + (editing == true ? verticalOffset : 0))))
         } else {
             VStack {

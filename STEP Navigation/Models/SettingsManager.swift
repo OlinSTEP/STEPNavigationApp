@@ -14,10 +14,6 @@ class SettingsManager: ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = SettingsManager()
     
-    private var crumbColorStringToColor: [String: Color] = ["Mint Green": StaticAppColor.defaultAccent, "Yellow": StaticAppColor.yellow, "Blue": StaticAppColor.blue]
-    
-    private var colorSchemeStringToColor: [String: [Color]] = ["Default": [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent, StaticAppColor.defaultBlack], "Black and White": [StaticAppColor.white, StaticAppColor.black, StaticAppColor.black, StaticAppColor.white], "Yellow and Black": [StaticAppColor.black, StaticAppColor.yellow, StaticAppColor.yellow, StaticAppColor.black], "Yellow and Blue": [StaticAppColor.blue, StaticAppColor.yellow, StaticAppColor.yellow, StaticAppColor.blue]]
-    
     /// if non-empty, put all mapping content in a subfolder
     @Published var mappingSubFolder = ""
     
@@ -33,24 +29,14 @@ class SettingsManager: ObservableObject {
     /// true if we should visualize streetscape data (requires resetting the app for the setting to take effect)
     @Published var visualizeStreetscapeData = false
     
-    @Published var crumbColor: Color = StaticAppColor.defaultAccent
-    @Published var colorScheme: [Color] = [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent, StaticAppColor.defaultBlack]
+//    @Published var crumbColor: Color = StaticAppColor.defaultAccent
+//    @Published var colorScheme: [Color] = [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent, StaticAppColor.defaultBlack]
 
     
     /// The private initializer.  This should not be called directly.
     private init() {
         createSettingsBundle()
     }
-    
-    /// Function to get the string label of the color scheme
-    func getColorSchemeLabel(forColorScheme colorScheme: [Color]) -> String? {
-            return colorSchemeStringToColor.first(where: { $0.value == colorScheme })?.key
-        }
-    
-    /// Function to get the string label of the crumb color
-    func getCrumbColorLabel(forCrumbColor crumbColor: Color) -> String? {
-            return crumbColorStringToColor.first(where: { $0.value == crumbColor })?.key
-        }
     
     /// Configure Settings Bundle and add observer for settings changes.
     func createSettingsBundle() {
@@ -70,12 +56,6 @@ class SettingsManager: ObservableObject {
         adjustPhoneBodyOffset = defaults.bool(forKey: "adjustPhoneBodyOffset")
         automaticDirectionsWhenUserIsLost = defaults.bool(forKey: "automaticDirectionsWhenUserIsLost")
         visualizeStreetscapeData = defaults.bool(forKey: "visualizeStreetscapeData")
-        if let crumbColorAsString = defaults.string(forKey: "crumbColor"), let color = crumbColorStringToColor[crumbColorAsString] {
-            crumbColor = color
-        }
-        if let colorSchemeAsString = defaults.string(forKey: "colorScheme"), let color = colorSchemeStringToColor[colorSchemeAsString] {
-            colorScheme = color
-        }
         units = defaults.bool(forKey: "units")
 
     }
@@ -87,8 +67,6 @@ class SettingsManager: ObservableObject {
             "adjustPhoneBodyOffset": false,
             "automaticDirectionsWhenUserIsLost": false,
             "visualizeStreetscapeData": false,
-            "crumbColor": "Mint Green",
-            "colorScheme": "Default",
             "units": false
         ]
         UserDefaults.standard.register(defaults: appDefaults)
@@ -97,6 +75,7 @@ class SettingsManager: ObservableObject {
 
 class UserSettings: ObservableObject {
     private var crumbColorKey = "crumbColor2"
+    private var colorSchemeKey = "colorScheme2"
     private let userDefaults = UserDefaults.standard
     
     func saveCrumbColor(color: Color) {
@@ -106,6 +85,18 @@ class UserSettings: ObservableObject {
             print("crumb color saved: \(components)")
         }
     }
+    
+    func saveColorScheme(color1: Color, color2: Color) {
+            let cgColor1 = UIColor(color1).cgColor
+            let cgColor2 = UIColor(color2).cgColor
+            
+            if let components1 = cgColor1.components,
+               let components2 = cgColor2.components {
+                let colorsArray = [components1, components2]
+                userDefaults.set(colorsArray, forKey: colorSchemeKey)
+                print("Color scheme saved: \(colorsArray)")
+            }
+        }
     
     func loadCrumbColor() -> Color {
         guard let array = UserDefaults.standard.object(forKey: crumbColorKey) as? [CGFloat] else { return StaticAppColor.black}
@@ -118,4 +109,26 @@ class UserSettings: ObservableObject {
         print("Color loaded: \(color)")
         return color
     }
+    
+    func loadColorScheme() -> (Color, Color) {
+            guard let colorsArray = UserDefaults.standard.object(forKey: colorSchemeKey) as? [[CGFloat]],
+                  colorsArray.count >= 2 else {
+                return (StaticAppColor.white, StaticAppColor.black)
+            }
+            
+            let color1 = Color(.sRGB,
+                               red: colorsArray[0][0],
+                               green: colorsArray[0][1],
+                               blue: colorsArray[0][2],
+                               opacity: colorsArray[0][3])
+            
+            let color2 = Color(.sRGB,
+                               red: colorsArray[1][0],
+                               green: colorsArray[1][1],
+                               blue: colorsArray[1][2],
+                               opacity: colorsArray[1][3])
+            
+            print("Color scheme loaded: \(color1), \(color2)")
+            return (color1, color2)
+        }
 }

@@ -105,11 +105,13 @@ struct AnchorDetailView_ArrivedView: View {
             .edgesIgnoringSafeArea([.bottom])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear() {
-                if settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) == "Default" {
-                    colorschemedefault = true
-                } else  {
-                    colorschemedefault = false
-                }
+//                if settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) == "Default" {
+//                    colorschemedefault = true
+//                } else  {
+//                    colorschemedefault = false
+//                }
+                //note to Muya: I got rid of the default color scheme after feedback from the NECO co-designers. I personally am trying to not use additional color (besides the foreground and background colors of the scheme) anywhere in the app. I would recommend you do the same. Let me know if you want to discuss!
+                colorschemedefault = false
             }
         }
     }
