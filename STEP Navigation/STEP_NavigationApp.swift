@@ -20,7 +20,7 @@ struct STEP_NavigationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            StartupPage1()
+            HomeView()
                 .environmentObject(SettingsManager.shared)
                 .environmentObject(feedback)
                 .onAppear() {

@@ -112,9 +112,43 @@ struct StartupPage3:  View {
             Text("connect your anchors here!")
             Spacer()
             SmallButtonComponent_NavigationLink(destination: {
-                HomeView()
-            }, label: "Get Started")
+                StartupPage_Preferences()
+            }, label: "Next")
             }
         .navigationBarBackButtonHidden()
         }
     }
+
+struct StartupPage_Preferences: View {
+    var body: some View {
+        VStack {
+//            ScreenTitleComponent(titleText: "Your Preferences")
+            
+            Text("Clew Maps 2 provides a variety of customizable settings. Learn about some of your options below. You can adjust these options after you complete the tutorial by navigating to the settings page, which is accessible using the settings button located on the home page.")
+            
+            Text("Color Scheme")
+                .font(.title)
+            Text("Choose from a variety of high-contrast color schemes including black and white, black and yellow, and blue and yellow. You can also create your own custom two-toned color schemes.")
+            
+            Text("Crumb Color")
+                .font(.title)
+            Text("This sets the color of the box-shaped crumb that visually denotes the anchor while navigating. Choose from a list of provided options or create your own custom colors.")
+            
+            Text("Units")
+                .font(.title)
+            Text("Select either imperial or metric to adjust the units used throughout the app.")
+
+            Text("Feedback Options")
+                .font(.title)
+            Text("Clew Maps 2 can provide navigation feedback in a variety of ways including haptics, beeps, voice instructions, and visual indicators on the screen. You can customize your feedback combination by toggling each option on or off.")
+            
+            
+            Spacer()
+            
+//            SmallButtonComponent_NavigationLink(destination: {
+//                HomeView()
+//            }, label: "Next")
+        }
+        .navigationBarBackButtonHidden()
+    }
+}

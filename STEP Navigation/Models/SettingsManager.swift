@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import SwiftUI
 
 /// This class manages the settings of the app
@@ -91,5 +92,30 @@ class SettingsManager: ObservableObject {
             "units": false
         ]
         UserDefaults.standard.register(defaults: appDefaults)
+    }
+}
+
+class UserSettings: ObservableObject {
+    private var crumbColorKey = "crumbColor2"
+    private let userDefaults = UserDefaults.standard
+    
+    func saveCrumbColor(color: Color) {
+        let color = UIColor(color).cgColor
+        if let components = color.components {
+            userDefaults.set(components, forKey: crumbColorKey)
+            print("crumb color saved: \(components)")
+        }
+    }
+    
+    func loadCrumbColor() -> Color {
+        guard let array = UserDefaults.standard.object(forKey: crumbColorKey) as? [CGFloat] else { return StaticAppColor.black}
+        
+        let color = Color(.sRGB,
+                          red: array[0],
+                          green: array[1],
+                          blue: array[2],
+                          opacity: array[3])
+        print("Color loaded: \(color)")
+        return color
     }
 }
