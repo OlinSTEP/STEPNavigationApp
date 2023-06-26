@@ -132,8 +132,14 @@ struct StartupPage3:  View {
             }
         .navigationBarBackButtonHidden()
         .toolbar {
-            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                HomeView()
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink {
+                    HomeView()
+                } label: {
+                    Text("Exit")
+                        .foregroundColor(AppColor.background)
+                        .bold()
+                }
             }
         }
         }
@@ -155,8 +161,14 @@ struct StartupPage4:  View {
             }
         .navigationBarBackButtonHidden()
         .toolbar {
-            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                HomeView()
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink {
+                    HomeView()
+                } label: {
+                    Text("Exit")
+                        .foregroundColor(AppColor.background)
+                        .bold()
+                }
             }
         }
         }
@@ -178,8 +190,14 @@ struct StartupPage5:  View {
             }
         .navigationBarBackButtonHidden()
         .toolbar {
-            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                HomeView()
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink {
+                    HomeView()
+                } label: {
+                    Text("Exit")
+                        .foregroundColor(AppColor.background)
+                        .bold()
+                }
             }
         }
         }
@@ -201,8 +219,14 @@ struct StartupPage6:  View {
             }
         .navigationBarBackButtonHidden()
         .toolbar {
-            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                HomeView()
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink {
+                    HomeView()
+                } label: {
+                    Text("Exit")
+                        .foregroundColor(AppColor.background)
+                        .bold()
+                }
             }
         }
         }
@@ -225,8 +249,14 @@ struct StartupPage7:  View {
             }
         .navigationBarBackButtonHidden()
         .toolbar {
-            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                HomeView()
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink {
+                    HomeView()
+                } label: {
+                    Text("Exit")
+                        .foregroundColor(AppColor.background)
+                        .bold()
+                }
             }
         }
         }
@@ -249,8 +279,14 @@ struct StartupPage8:  View {
             }
         .navigationBarBackButtonHidden()
         .toolbar {
-            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                HomeView()
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink {
+                    HomeView()
+                } label: {
+                    Text("Exit")
+                        .foregroundColor(AppColor.background)
+                        .bold()
+                }
             }
         }
         }
