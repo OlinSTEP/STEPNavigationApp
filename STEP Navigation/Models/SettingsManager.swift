@@ -74,15 +74,15 @@ class SettingsManager: ObservableObject {
 }
 
 class UserSettings: ObservableObject {
-    private var crumbColorKey = "crumbColor2"
-    private var colorSchemeKey = "colorScheme2"
+    private var crumbColorKey = "crumbColor"
+    private var colorSchemeKey = "colorScheme"
+    private var showTutorialsKey = "showTutorials"
     private let userDefaults = UserDefaults.standard
     
     func saveCrumbColor(color: Color) {
         let color = UIColor(color).cgColor
         if let components = color.components {
             userDefaults.set(components, forKey: crumbColorKey)
-            print("crumb color saved: \(components)")
         }
     }
     
@@ -94,9 +94,12 @@ class UserSettings: ObservableObject {
                let components2 = cgColor2.components {
                 let colorsArray = [components1, components2]
                 userDefaults.set(colorsArray, forKey: colorSchemeKey)
-                print("Color scheme saved: \(colorsArray)")
             }
         }
+    
+    func toggleShowTutorials(show: Bool) {
+        userDefaults.set(show, forKey: showTutorialsKey)
+    }
     
     func loadCrumbColor() -> Color {
         guard let array = UserDefaults.standard.object(forKey: crumbColorKey) as? [CGFloat] else { return StaticAppColor.black}
@@ -106,9 +109,14 @@ class UserSettings: ObservableObject {
                           green: array[1],
                           blue: array[2],
                           opacity: array[3])
-        print("Color loaded: \(color)")
         return color
     }
+    
+    func loadShowTutorials() -> Bool {
+        guard let show = UserDefaults.standard.object(forKey: showTutorialsKey) as? Bool else { return true}
+        return show
+    }
+    
     
     func loadColorScheme() -> (Color, Color) {
             guard let colorsArray = UserDefaults.standard.object(forKey: colorSchemeKey) as? [[CGFloat]],
@@ -128,7 +136,6 @@ class UserSettings: ObservableObject {
                                blue: colorsArray[1][2],
                                opacity: colorsArray[1][3])
             
-            print("Color scheme loaded: \(color1), \(color2)")
             return (color1, color2)
         }
 }
