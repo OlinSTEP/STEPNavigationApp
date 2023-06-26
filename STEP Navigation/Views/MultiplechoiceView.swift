@@ -218,8 +218,8 @@ struct RecordMultipleChoice: View {
                     .font(.title)
                     .padding(.horizontal, 80)
                     .padding(15)
-                    .foregroundColor(StaticAppColor.black)
-                    .background(AppColor.accent)
+                    .foregroundColor(AppColor.background)
+                    .background(AppColor.foreground)
                     .cornerRadius(15)
             }
         }
