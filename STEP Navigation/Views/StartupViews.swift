@@ -9,17 +9,18 @@ import SwiftUI
 
 struct StartupPage0: View {
     var body: some View {
-        VStack {
-            Spacer()
-            Text("Clew Maps 2")
-            Text("Designed by a research group at Olin College of Engineering")
-            Spacer()
-            SmallButtonComponent_NavigationLink(destination: {
-                StartupPage1()
-            }, label: "Get Started")
-            .padding(.bottom, 40)
+        NavigationStack {
+            VStack {
+                Spacer()
+                Text("Clew Maps 2")
+                Text("Designed by a research group at Olin College of Engineering")
+                Spacer()
+                SmallButtonComponent_NavigationLink(destination: {
+                    StartupPage1()
+                }, label: "Get Started")
+                .padding(.bottom, 40)
+            }
         }
-        .background(AppColor.background)
     }
 }
 
