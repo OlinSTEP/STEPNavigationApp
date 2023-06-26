@@ -78,6 +78,8 @@ class PathPlanner {
 class RouteNavigator: ObservableObject {
     /// list of keypoints calculated after path completion.  These keypoints are updated as they are checked off.
     @Published var keypoints: [KeypointInfo]?
+    /// anchor  points
+    @Published var anchorpoints: [AnchorPointInfo]?
     /// keep a list of the keypoints from the original route since the keypoints array is cleared as the user traverses the route (TODO: use an index instead of deleting)
     var originalKeypoints: [KeypointInfo]?
     /// The name of this particular route navigation (used for determining the filename of the log data)
@@ -119,6 +121,11 @@ class RouteNavigator: ObservableObject {
     var nextKeypoint: KeypointInfo? {
         return keypoints?.first
     }
+    
+//    var AnchorPoint: AnchorPointInfo? {
+//        return anchorpoints?.first
+//    }
+    
     
     /// The keypoint after the next one (this changes as keypoints are checked off).  If none exists, the value is nil.
     var nextNextKeypoint: KeypointInfo? {

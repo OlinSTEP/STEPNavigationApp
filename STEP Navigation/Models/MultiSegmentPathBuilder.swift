@@ -18,6 +18,26 @@ enum KeypointType {
 }
 
 /// Struct to store position and orientation of a keypoint
+public struct AnchorPointInfo: Identifiable {
+    /// The unique identifier of the keypoint
+    public let id: UUID
+    ///name of the cloud anchor
+    let CloudAnchorName : String
+    let CloudAnchorID : String
+    /// the type of keypoint (either latitude longitude based or cloud anchor based)
+    let mode: KeypointType
+    /// AR alignment
+//    let alignment: simd_float4x4?
+    /// the location of the keypoint
+    public var location: simd_float4x4
+    ///
+    var currentTransform: simd_float4x4? {
+        return PositioningModel.shared.currentLocation(ofCloudAnchor: CloudAnchorID)
+    }
+}
+
+
+/// Struct to store position and orientation of a keypoint
 public struct KeypointInfo: Identifiable {
     /// The unique identifier of the keypoint
     public let id: UUID
@@ -96,7 +116,7 @@ class MultiSegmentPathBuilder {
         }
         var keypoints = [KeypointInfo]()
         keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: firstKeypointLocation))
-        
+//        print(keypoints)
         keypoints += calculateKeypoints(edibleCrumbs: edibleCrumbs)
         
         let lastKeypointLocation = edibleCrumbs.last!

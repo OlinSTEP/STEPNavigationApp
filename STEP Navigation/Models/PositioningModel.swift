@@ -41,10 +41,6 @@ struct ResolvingInfo {
     let type: AnchorType
 }
 
-//struct AnchorPoseData {
-//    var pose: simd_float4x4
-//    var timestamp: Double
-//}
 
 /// This stores the metadata about the cloud anchor.  Note: that the cloudIdentifier is not stored here, but rather maintained as the key in various data structures that store ``CloudAnchorMetadata``
 struct CloudAnchorMetadata {
@@ -87,6 +83,10 @@ struct CloudAnchorResolutionInfomation {
     let lastUpdateTime: Date
     /// The pose of the cloud anchor in the current `ARSession`
     let pose: simd_float4x4
+    /// location for the cloud anchor in current AR session
+//    let location: simd_float4x4
+//    ///
+//    let mode : AnchorPointType
 }
 
 /// This class handles three basic functions.  First, it maintains the positioning information for the current session (in both AR space and in geolocation space).  Second, it handles the alignment of map space to the current AR space.  Third, it manages the rendering of content in the AR scene.
@@ -263,7 +263,10 @@ class PositioningModel: NSObject, ObservableObject {
     /// - Parameter id: the cloud identifier
     /// - Returns: the latest pose (if one is available) and nil if none is available
     func currentLocation(ofCloudAnchor id: String)->simd_float4x4? {
+        //        let latestGARAnchors = garSession?.update(frame).anchors
         guard let latestGARAnchors = latestGARAnchors else {
+            
+            print("latestGarAnchors\(latestGARAnchors)")
             return nil
         }
         for anchor in latestGARAnchors {
@@ -349,6 +352,17 @@ class PositioningModel: NSObject, ObservableObject {
                 self.manualAlignment = self.cloudAnchorAligner.adjust(currentAlignment: self.manualAlignment)
                 
                 PathRecorder.shared.addCloudAnchor(identifier: cloudAnchorID, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID)!, currentPose: garAnchor.transform, timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
+//                print("resolved it actually")
+                var anchorpoints = [AnchorPointInfo]()
+                anchorpoints.append(AnchorPointInfo(id: UUID(), CloudAnchorName : self.lastAnchor, CloudAnchorID: cloudAnchorID, mode: .cloudAnchorBased, location: garAnchor.transform))
+                
+                print("garanchor stuff \(garAnchor.transform)")
+                print("current phone pose \(PositioningModel.shared.cameraTransform)")
+    
+                PositioningModel.shared.renderer((anchorpoints.first ?? nil)!)
+
+                
+                
             }
         } catch {
             print("error \(error.localizedDescription)")
@@ -366,16 +380,23 @@ class PositioningModel: NSObject, ObservableObject {
         }
     }
     
-    func renderer() {
-        rendererHelper.renderer()
+    func renderer(_ anchorpoint: AnchorPointInfo){
+        let initialAlignment = anchorpoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
+        rendererHelper.renderKeypoint(at: anchorpoint.location, withInitialAlignment: initialAlignment, at: 0.5, at: 0.5, at: 0.5, at: UIColor.blue)
     }
+    
+//    func red_renderer(_ anchorpoint: AnchorPointInfo){
+//        let initialAlignment = anchorpoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
+//        rendererHelper.renderKeypoint(at: anchorpoint.location, withInitialAlignment: initialAlignment, at: 0.1, at: 0.1, at: 0.1, at: UIColor.red)
+//    }
+    
     
     /// Render the keypoint in the session
     /// - Parameter keypoint: the keypoint description
     func renderKeypoint(_ keypoint: KeypointInfo) {
         // if we are using a lat / lon based keypoint, we don't want to use manualAlignment
         let initialAlignment = keypoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
-        rendererHelper.renderKeypoint(at: keypoint.location, withInitialAlignment: initialAlignment)
+        rendererHelper.renderKeypoint(at: keypoint.location, withInitialAlignment: initialAlignment,  at: 0.5, at: 0.5, at: 0.5, at: UIColor.green)
     }
     
     /// Add a new terrain anchor at the specified location
@@ -630,39 +651,27 @@ class RendererHelper {
     }
     
     
-    func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
-        let mesh = SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0)
-        mesh.firstMaterial?.diffuse.contents = UIColor(AppColor.accent)
-        keypointNode?.removeFromParentNode()
-        keypointNode = SCNNode(geometry: mesh)
-        keypointNode!.simdPosition = location.translation
-        if anchorNode == nil {
-            anchorNode = SCNNode()
-            arView.scene.rootNode.addChildNode(anchorNode!)
-        }
-        let initialTransform = alignment ?? matrix_identity_float4x4
-        anchorNode?.simdTransform = initialTransform
-        anchorNode!.addChildNode(keypointNode!)
-    }
+    func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, at width: Float, at height: Float, at length: Float, at color: UIColor) {
+        //        let mesh = SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0)
+
+            let mesh = SCNBox(width: CGFloat(width), height: CGFloat(width), length: CGFloat(width), chamferRadius: 0)
+            //        mesh.firstMaterial?.diffuse.contents = UIColor(AppColor.accent)
+            mesh.firstMaterial?.diffuse.contents = color
+            keypointNode?.removeFromParentNode()
+            keypointNode = SCNNode(geometry: mesh)
+            keypointNode!.simdPosition = location.translation
+
     
-    func renderer() {
-        // change this function to make boxes at poses and cloud anchors
-        
-        
-        let mesh = SCNBox(width: 0.2, height: 0.2, length: 0.2, chamferRadius: 0)
-        mesh.firstMaterial?.diffuse.contents = UIColor(AppColor.accent)
-        keypointNode?.removeFromParentNode()
-        keypointNode = SCNNode(geometry: mesh)
-//        keypointNode!.simdPosition = location.translation
-        keypointNode?.position = SCNVector3(0, 0, -1)
         if anchorNode == nil {
             anchorNode = SCNNode()
             arView.scene.rootNode.addChildNode(anchorNode!)
+            
+            let initialTransform = alignment ?? matrix_identity_float4x4
+            anchorNode?.simdTransform = initialTransform
+            anchorNode!.addChildNode(keypointNode!)
         }
-//        let initialTransform = alignment ?? matrix_identity_float4x4
-//        anchorNode?.simdTransform = initialTransform
-        anchorNode!.addChildNode(keypointNode!)
-    }
+}
+    
     
     /// Get rid of any content that has been rendered in the scene
     func removeRenderedContent() {
@@ -690,3 +699,4 @@ extension PositioningModel: CLLocationManagerDelegate {
         geoLocalizationAccuracy = .coarse
     }
 }
+
