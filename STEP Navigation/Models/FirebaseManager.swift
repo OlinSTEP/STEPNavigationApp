@@ -124,6 +124,19 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    /// Uploads feedback data to the Firebase storage. The data is stored under the 'feedbackSurveyData' folder,
+    /// and each feedback file is given a unique filename.
+    /// - Parameter data: The JSON formatted version of feeback data.
+    func uploadRecordFeedback(_ data: Data) {
+        guard let uid = AuthHandler.shared.currentUID else {
+            return
+        }
+        let filename = "\(UUID().uuidString).json"
+        Storage.storage().reference().child("recordFeedback").child(uid).child(filename).putData(data) { (metadata, error) in
+            print("error: \(error?.localizedDescription ?? "none")")
+        }
+    }
+    
     /// Download the path data from Firestore corresponding to the specified edges.
     /// - Parameters:
     ///   - edges: The edges to download specified as a list of String tuples.  Each tuple contains the start cloud anchor ID and end cloud anchor ID for the requested edge.
