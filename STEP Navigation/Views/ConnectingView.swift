@@ -221,7 +221,7 @@ struct ConnectingView: View {
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                NavigationLink(destination: HomeView(), label: {
+                NavigationLink(destination: RecordMultipleChoice(), label: {
                     Text("Cancel")
                         .bold()
                         .font(.title2)
