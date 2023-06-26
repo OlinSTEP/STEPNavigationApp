@@ -387,7 +387,6 @@ struct NavigateAnchorListComponent: View {
             }
         }
         .padding(.top, 10)
-        Spacer()
     }
 }
 
