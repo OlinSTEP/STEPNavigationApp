@@ -99,11 +99,12 @@ struct RecordThumbsView: View {
             .edgesIgnoringSafeArea([.bottom])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear() {
-                if settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) == "Default" {
-                    colorschemedefault = true
-                } else  {
-                    colorschemedefault = false
-                }
+//                if settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) == "Default" {
+//                    colorschemedefault = true
+//                } else  {
+//                    colorschemedefault = false
+//                }
+                colorschemedefault = false
             }
         }
     }
@@ -202,16 +203,16 @@ struct RecordMultipleChoice: View {
             }
             Spacer().frame(height: 50)
             NavigationLink(destination: HomeView().onAppear {
-                    let RecordFeedbackModel = RecordFeedbackDataModel()
-                RecordFeedbackModel.saveRecordFeedback(
-                        recordFeedbackStatus: recordfeedback.recordFeedbackStatus,
-                        recordResponse: recordfeedback.recordResponse,
-                        isHoldAnchorSelected: recordfeedback.isHoldAnchorSelected,
-                        isRecordingInstructionSelected: recordfeedback.isRecordingInstructionSelected,
-                        isRecordLongerSelected: recordfeedback.isRecordLongerSelected,
-                        isRecordOtherSelected: recordfeedback.isRecordOtherSelected
-                    )
-                    recordfeedback.reset()
+//                    let RecordFeedbackModel = RecordFeedbackDataModel()
+//                RecordFeedbackModel.saveRecordFeedback(
+//                        recordFeedbackStatus: recordfeedback.recordFeedbackStatus,
+//                        recordResponse: recordfeedback.recordResponse,
+//                        isHoldAnchorSelected: recordfeedback.isHoldAnchorSelected,
+//                        isRecordingInstructionSelected: recordfeedback.isRecordingInstructionSelected,
+//                        isRecordLongerSelected: recordfeedback.isRecordLongerSelected,
+//                        isRecordOtherSelected: recordfeedback.isRecordOtherSelected
+//                    )
+//                    recordfeedback.reset()
             }) {
                 Text("Done").bold()
                     .font(.title)

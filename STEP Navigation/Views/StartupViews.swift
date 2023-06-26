@@ -108,7 +108,7 @@ struct StartupPage2:  View {
                 StartupPage3()
             }, label: "Launch Tutorial")
             SmallButtonComponent_NavigationLink(destination: {
-                StartupPage_Preferences()
+                HomeView()
             }, label: "Skip Tutorial")
             }
         .navigationBarBackButtonHidden()
@@ -125,14 +125,14 @@ struct StartupPage3:  View {
                 .padding()
             Spacer()
             SmallButtonComponent_NavigationLink(destination: {
-                StartupPage_Preferences()
+                StartupPage4()
             }, label: "Next")
             .padding()
             }
         .navigationBarBackButtonHidden()
         .toolbar {
             CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                StartupPage_Preferences()
+                HomeView()
             }
         }
         }
@@ -148,14 +148,14 @@ struct StartupPage4:  View {
                 .padding()
             Spacer()
             SmallButtonComponent_NavigationLink(destination: {
-                StartupPage_Preferences()
+                StartupPage5()
             }, label: "Next")
             .padding()
             }
         .navigationBarBackButtonHidden()
         .toolbar {
             CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                StartupPage_Preferences()
+                HomeView()
             }
         }
         }
@@ -171,14 +171,14 @@ struct StartupPage5:  View {
                 .padding()
             Spacer()
             SmallButtonComponent_NavigationLink(destination: {
-                StartupPage_Preferences()
+                StartupPage6()
             }, label: "Next")
             .padding()
             }
         .navigationBarBackButtonHidden()
         .toolbar {
             CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                StartupPage_Preferences()
+                HomeView()
             }
         }
         }
@@ -194,14 +194,14 @@ struct StartupPage6:  View {
                 .padding()
             Spacer()
             SmallButtonComponent_NavigationLink(destination: {
-                StartupPage_Preferences()
+                StartupPage7()
             }, label: "Next")
             .padding()
             }
         .navigationBarBackButtonHidden()
         .toolbar {
             CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                StartupPage_Preferences()
+                HomeView()
             }
         }
         }
@@ -218,14 +218,14 @@ struct StartupPage7:  View {
             }
             Spacer()
             SmallButtonComponent_NavigationLink(destination: {
-                StartupPage_Preferences()
+                StartupPage8()
             }, label: "Next")
             .padding()
             }
         .navigationBarBackButtonHidden()
         .toolbar {
             CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                StartupPage_Preferences()
+                HomeView()
             }
         }
         }
@@ -242,14 +242,14 @@ struct StartupPage8:  View {
                 .padding()
             Spacer()
             SmallButtonComponent_NavigationLink(destination: {
-                StartupPage_Preferences()
+                HomeView()
             }, label: "Finish Tutorial")
             .padding()
             }
         .navigationBarBackButtonHidden()
         .toolbar {
             CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                StartupPage_Preferences()
+                HomeView()
             }
         }
         }
@@ -258,7 +258,7 @@ struct StartupPage8:  View {
 struct StartupPage_Preferences: View {
     var body: some View {
         VStack {
-            ScreenTitleComponent(titleText: "Your Preference Options")
+//            ScreenTitleComponent(titleText: "Your Preference Options")
             
             Text("Clew Maps 2 provides a variety of customizable settings. Learn about some of your options below. You can adjust these options after you complete the tutorial by navigating to the settings page, which is accessible using the settings button located on the home page.")
             
@@ -281,9 +281,10 @@ struct StartupPage_Preferences: View {
             
             Spacer()
             
-            SmallButtonComponent_NavigationLink(destination: {
-                HomeView()
-            }, label: "Next")
+//            SmallButtonComponent_NavigationLink(destination: {
+//                HomeView()
+//            }, label: "Next")
+
         }
         .navigationBarBackButtonHidden()
     }
