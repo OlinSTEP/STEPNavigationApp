@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingsDetailView_CrumbColor: View {
-    var userSettings = UserSettings()
+    var settingsManager = SettingsManager.shared
     @State var selectedCrumbColor: Color = StaticAppColor.black
     
     @State var customCrumbPopup: Bool = false
@@ -30,7 +30,7 @@ struct SettingsDetailView_CrumbColor: View {
                 VStack(spacing: 10) {
                     ForEach(crumbColorOptions) { color in
                         Button(action: {
-                            userSettings.saveCrumbColor(color: color.color)
+                            settingsManager.saveCrumbColor(color: color.color)
                             isCustomColorSelected = false
                             selectedCrumbColor = color.color
                         }) {
@@ -61,7 +61,7 @@ struct SettingsDetailView_CrumbColor: View {
                             .frame(maxWidth: .infinity)
                             .foregroundColor(isCustomColorSelected ? StaticAppColor.black : AppColor.foreground)
                     }
-                    .tint(isCustomColorSelected ? userSettings.loadCrumbColor() : AppColor.background)
+                    .tint(isCustomColorSelected ? settingsManager.loadCrumbColor() : AppColor.background)
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
                     .controlSize(.large)
@@ -75,23 +75,24 @@ struct SettingsDetailView_CrumbColor: View {
             Spacer()
         }
             .onAppear() {
-                selectedCrumbColor = userSettings.loadCrumbColor()
+                selectedCrumbColor = settingsManager.loadCrumbColor()
                 print(selectedCrumbColor)
-                if selectedCrumbColor != crumbColorOptions[0].color && selectedCrumbColor != crumbColorOptions[1].color && selectedCrumbColor != crumbColorOptions[2].color && selectedCrumbColor != crumbColorOptions[3].color {
-                    isCustomColorSelected = true
-                } else {
+                
+                if crumbColorOptions.contains(where: {$0.color == selectedCrumbColor}) {
                     isCustomColorSelected = false
+                } else {
+                    isCustomColorSelected = true
                 }
             }
             
         if customCrumbPopup == true {
             CustomCrumbColor(customCrumbPopup: $customCrumbPopup, selectedCrumbColor: $selectedCrumbColor)
                 .onDisappear() {
-                    selectedCrumbColor = userSettings.loadCrumbColor()
-                    if selectedCrumbColor != crumbColorOptions[0].color && selectedCrumbColor != crumbColorOptions[1].color && selectedCrumbColor != crumbColorOptions[2].color && selectedCrumbColor != crumbColorOptions[3].color {
-                        isCustomColorSelected = true
-                    } else {
+                    selectedCrumbColor = settingsManager.loadCrumbColor()
+                    if crumbColorOptions.contains(where: {$0.color == selectedCrumbColor}) {
                         isCustomColorSelected = false
+                    } else {
+                        isCustomColorSelected = true
                     }
                 }
         }
@@ -109,7 +110,7 @@ struct CrumbColors: Identifiable {
 }
 
 struct SettingsDetailView_ColorScheme: View {
-    let userSettings = UserSettings()
+    let settingsManager = SettingsManager.shared
     @State var selectedColorScheme: (Color, Color) = (StaticAppColor.white, StaticAppColor.black)
     @State var showPopup: Bool = false
     
@@ -125,7 +126,7 @@ struct SettingsDetailView_ColorScheme: View {
         
         ZStack {
             VStack {
-                if selectedColorScheme != userSettings.loadColorScheme() {
+                if selectedColorScheme != settingsManager.loadColorScheme() {
                     ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
                         .padding(.top, 20)
                         .background(AppColor.accent)
@@ -183,10 +184,10 @@ struct SettingsDetailView_ColorScheme: View {
                 
                 Spacer()
                 
-                if selectedColorScheme != userSettings.loadColorScheme() {
+                if selectedColorScheme != settingsManager.loadColorScheme() {
                     Button(action: {
                         let (color1, color2) = selectedColorScheme
-                        userSettings.saveColorScheme(color1: color1, color2: color2)
+                        settingsManager.saveColorScheme(color1: color1, color2: color2)
                         showPopup.toggle()
                     }) {
                         Text("Apply")
@@ -203,7 +204,7 @@ struct SettingsDetailView_ColorScheme: View {
                     .padding(.bottom, 40)
                 }
             }
-            .navigationBarBackButtonHidden(selectedColorScheme != userSettings.loadColorScheme())
+            .navigationBarBackButtonHidden(selectedColorScheme != settingsManager.loadColorScheme())
 
             if customSchemePopup == true {
                 CustomColorScheme(customSchemePopup: $customSchemePopup, selectedColorScheme: $selectedColorScheme)
@@ -241,7 +242,7 @@ struct SettingsDetailView_ColorScheme: View {
     }
     
     private func updateColorScheme() {
-            let (color1, color2) = userSettings.loadColorScheme()
+            let (color1, color2) = settingsManager.loadColorScheme()
             selectedColorScheme = (color1, color2)
         }
 }
@@ -364,7 +365,7 @@ struct SettingsDetailView_PhoneBodyOffset: View {
 }
 
 struct CustomCrumbColor: View {
-    var userSettings = UserSettings()
+    var settingsManager = SettingsManager.shared
     @Binding var customCrumbPopup: Bool
     @Binding var selectedCrumbColor: Color
     
@@ -396,14 +397,14 @@ struct CustomCrumbColor: View {
             
             Spacer()
             
-            SmallButtonComponent_Button(label: "Save") {
-                userSettings.saveCrumbColor(color: selectedCrumbColor)
+            SmallButtonComponent_Button(label: "Apply") {
+                settingsManager.saveCrumbColor(color: selectedCrumbColor)
                 customCrumbPopup = false
             }
             .padding(.bottom, 40)
         }
         .onAppear() {
-            selectedCrumbColor = userSettings.loadCrumbColor()
+            selectedCrumbColor = settingsManager.loadCrumbColor()
         }
         .navigationBarBackButtonHidden()
         .background(AppColor.background)
@@ -413,7 +414,7 @@ struct CustomCrumbColor: View {
 }
 
 struct CustomColorScheme: View {
-    var userSettings = UserSettings()
+    var settingsManager = SettingsManager.shared
     @Binding var customSchemePopup: Bool
     @Binding var selectedColorScheme: (Color, Color)
     
@@ -543,7 +544,7 @@ struct CustomColorScheme: View {
     }
     
     private func updateColorScheme() {
-            let (color1, color2) = userSettings.loadColorScheme()
+            let (color1, color2) = settingsManager.loadColorScheme()
             selectedColorScheme = (color1, color2)
         }
 }

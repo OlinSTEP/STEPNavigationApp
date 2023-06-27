@@ -124,7 +124,6 @@ struct RecordMultipleChoice: View {
                     .foregroundColor(AppColor.foreground)
                 Spacer().frame(height: 40)
                 Button(action: {
-                    print("Phone could not host the anchor")
                     recordfeedback.isHoldAnchorSelected.toggle()
                 }) {
                     HStack {
@@ -142,7 +141,6 @@ struct RecordMultipleChoice: View {
                 }
 
                 Button(action: {
-                    print("Unclear Instructions")
                     recordfeedback.isRecordingInstructionSelected.toggle()
                 }) {
                     HStack {
@@ -160,7 +158,6 @@ struct RecordMultipleChoice: View {
                 }
 
                 Button(action: {
-                    print("Took longer than expected")
                     recordfeedback.isRecordLongerSelected.toggle()
                 }) {
                     HStack {
@@ -178,7 +175,6 @@ struct RecordMultipleChoice: View {
                 }
 
                 Button(action: {
-                    print("Other")
                     recordfeedback.isRecordOtherSelected.toggle()
                 }) {
                     HStack {
@@ -203,16 +199,16 @@ struct RecordMultipleChoice: View {
             }
             Spacer().frame(height: 50)
             NavigationLink(destination: HomeView().onAppear {
-//                    let RecordFeedbackModel = RecordFeedbackDataModel()
-//                RecordFeedbackModel.saveRecordFeedback(
-//                        recordFeedbackStatus: recordfeedback.recordFeedbackStatus,
-//                        recordResponse: recordfeedback.recordResponse,
-//                        isHoldAnchorSelected: recordfeedback.isHoldAnchorSelected,
-//                        isRecordingInstructionSelected: recordfeedback.isRecordingInstructionSelected,
-//                        isRecordLongerSelected: recordfeedback.isRecordLongerSelected,
-//                        isRecordOtherSelected: recordfeedback.isRecordOtherSelected
-//                    )
-//                    recordfeedback.reset()
+                    let RecordFeedbackModel = RecordFeedbackDataModel()
+                RecordFeedbackModel.saveRecordFeedback(
+                        recordFeedbackStatus: recordfeedback.recordFeedbackStatus,
+                        recordResponse: recordfeedback.recordResponse,
+                        isHoldAnchorSelected: recordfeedback.isHoldAnchorSelected,
+                        isRecordingInstructionSelected: recordfeedback.isRecordingInstructionSelected,
+                        isRecordLongerSelected: recordfeedback.isRecordLongerSelected,
+                        isRecordOtherSelected: recordfeedback.isRecordOtherSelected
+                    )
+                    recordfeedback.reset()
             }) {
                 Text("Done").bold()
                     .font(.title)

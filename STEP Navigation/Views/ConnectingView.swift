@@ -129,7 +129,7 @@ struct ConnectingView: View {
                 if savePressed == true {
                     VStack {
                         HStack {
-                            Text("The conection will automatically work in both directions, but you can improve the path by walking from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!). Would you like to improve the connection now?")
+                            Text("The connection will automatically work in both directions, but you can improve the path by walking from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!). Would you like to improve the connection now?")
                                 .foregroundColor(AppColor.text_on_accent)
                                 .bold()
                                 .font(.title2)
@@ -184,6 +184,7 @@ struct ConnectingView: View {
             if showInstructions == true {
                 VStack {
                     HStack {
+                        //Insert instructions here Lisan
                         Text("Instructions here. Go to your first anchor. Etc etc.")
                             .foregroundColor(AppColor.foreground)
                         Spacer()

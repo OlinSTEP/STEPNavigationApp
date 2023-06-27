@@ -337,10 +337,6 @@ class FirebaseManager: ObservableObject {
         }
     }
     
-    private func observeQuery(query: Query) {
-        
-    }
-    
     private func handleCloudAnchorSnapshot(snapshot: QuerySnapshot) {
         snapshot.documentChanges.forEach { diff in
             switch diff.type {

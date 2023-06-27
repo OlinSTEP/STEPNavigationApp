@@ -66,7 +66,6 @@ struct AnchorDetailView_ArrivedView: View {
                             .font(.title)
                             .padding(30)
                             .foregroundColor(colorschemedefault ? Color.white : AppColor.background)
-//                            .background(Color.green)
                             .background(colorschemedefault ? Color.green : AppColor.foreground)
                             .cornerRadius(10)
                     }
@@ -131,7 +130,6 @@ struct MultipleChoice: View {
                     .foregroundColor(AppColor.foreground)
                 Spacer().frame(height: 40)
                 Button(action: {
-                    print("Incorrect or unclear instructions")
                     feedback.isInstructionsSelected.toggle()
                 }) {
                     HStack {
@@ -149,7 +147,6 @@ struct MultipleChoice: View {
                 }
                 
                 Button(action: {
-                    print("The route led me into a large obstacle")
                     feedback.isObstacleSelected.toggle()
                 }) {
                     HStack {
@@ -167,7 +164,6 @@ struct MultipleChoice: View {
                 }
                 
                 Button(action: {
-                    print("I got lost along the route")
                     feedback.isLostSelected.toggle()
                 }) {
                     HStack {
@@ -185,7 +181,6 @@ struct MultipleChoice: View {
                 }
                 
                 Button(action: {
-                    print("The navigation took longer than expected")
                     feedback.isLongerSelected.toggle()
                 }) {
                     HStack {
@@ -204,7 +199,6 @@ struct MultipleChoice: View {
                 
                 
                 Button(action: {
-                    print("Other")
                     feedback.isOtherSelected.toggle()
                 }) {
                     HStack {

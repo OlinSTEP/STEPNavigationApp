@@ -9,23 +9,23 @@ import Foundation
 import SwiftUI
 
 struct AppColor {
-    static let userSettings = UserSettings()
+    static let settingsManager = SettingsManager.shared
     
     static var background: Color {
-        userSettings.loadColorScheme().0
+        settingsManager.loadColorScheme().0
     }
         
     static var foreground: Color {
-        userSettings.loadColorScheme().1
+        settingsManager.loadColorScheme().1
     }
         
     // leaving the accent and text_on_accent variables here in case we want to reintroduce a tri-color scheme later, but for now all available color schemes are only two colors so I set the accent and text_on accent accordingly
     static var accent: Color {
-        userSettings.loadColorScheme().1
+        settingsManager.loadColorScheme().1
     }
     
     static var text_on_accent: Color {
-        userSettings.loadColorScheme().0
+        settingsManager.loadColorScheme().0
     }
 }
 
@@ -36,8 +36,6 @@ struct StaticAppColor {
     static let green: Color = Color(.sRGB, red: 0/255, green: 255/255, blue: 0/255, opacity: 1)
     static let red: Color = Color(.sRGB, red: 255/255, green: 0/255, blue: 0/255, opacity: 1)
     static let blue: Color = Color(.sRGB, red: 0/255, green: 0/255, blue: 255/255, opacity: 1)
-//    static let defaultAccent: Color = Color(.sRGB, red: 171/255, green: 236/255, blue: 220/255, opacity: 1)
-//    static let defaultBlack: Color = Color(.sRGB, red: 34/255, green: 34/255, blue: 34/255, opacity: 1)
     static let grey: Color = Color(.sRGB, red: 231/255, green: 231/255, blue: 231/255, opacity: 1)
     
     static let lightred: Color = Color(.sRGB,

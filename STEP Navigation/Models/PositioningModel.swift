@@ -197,7 +197,6 @@ class PositioningModel: NSObject, ObservableObject {
     /// Stop positioning using ARCore and ARKit
     func stopPositioning() {
         garSession = nil
-        print("Resetting condition!")
         sessionReadyCondition.lock()
         sessionReady = false
         sessionReadyCondition.unlock()
@@ -589,7 +588,7 @@ class RendererHelper {
     /// The streetscape meshes that have been rendered
     var renderedStreetscapes: [UUID: SCNNode] = [:]
     
-    var userSettings = UserSettings()
+    var settingsManager = SettingsManager.shared
     
     
     init(arView: ARSCNView) {
@@ -624,7 +623,7 @@ class RendererHelper {
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
         let mesh = SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0)
-        mesh.firstMaterial?.diffuse.contents = UIColor(userSettings.loadCrumbColor())
+        mesh.firstMaterial?.diffuse.contents = UIColor(settingsManager.loadCrumbColor())
         keypointNode?.removeFromParentNode()
         keypointNode = SCNNode(geometry: mesh)
         keypointNode!.simdPosition = location.translation

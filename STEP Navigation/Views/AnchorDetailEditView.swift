@@ -64,14 +64,12 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 Group {
                                     TextField("", text: $newOrganization, onEditingChanged: {edit in
                                         self.editing = edit
-//                                        editingOrg = true
                                     })
                                     .padding(.horizontal, 10)
                                     .focused($editingOrg)
                                 }
                                 .foregroundColor(AppColor.foreground)
                                 .frame(height: 48)
-                                //                            .background(AppColor.background)
                                 .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
                                 .cornerRadius(10)
                                 .overlay(

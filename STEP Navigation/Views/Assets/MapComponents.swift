@@ -14,10 +14,10 @@ struct calculateScreenSize {
 }
 
 struct MapPointComponent {
-    var distance: Double
-    var angle: Double
-    var name: String
-    var quality: Quality
+    let distance: Double
+    let angle: Double
+    let name: String
+    let quality: Quality
     
     var adjustedAngle: Double {
         return angle + 180

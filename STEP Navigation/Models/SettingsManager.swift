@@ -14,6 +14,11 @@ class SettingsManager: ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = SettingsManager()
     
+    private var crumbColorKey = "crumbColor"
+    private var colorSchemeKey = "colorScheme"
+    private var showTutorialsKey = "showTutorials"
+    private let userDefaults = UserDefaults.standard
+    
     /// if non-empty, put all mapping content in a subfolder
     @Published var mappingSubFolder = ""
     
@@ -71,13 +76,6 @@ class SettingsManager: ObservableObject {
         ]
         UserDefaults.standard.register(defaults: appDefaults)
     }
-}
-
-class UserSettings: ObservableObject {
-    private var crumbColorKey = "crumbColor"
-    private var colorSchemeKey = "colorScheme"
-    private var showTutorialsKey = "showTutorials"
-    private let userDefaults = UserDefaults.standard
     
     func saveCrumbColor(color: Color) {
         let color = UIColor(color).cgColor

@@ -12,8 +12,6 @@ import Firebase
 struct STEP_NavigationApp: App {
     @StateObject private var feedback = Feedback()
     @StateObject private var recordFeedback = RecordFeedback()
-    var userSettings = UserSettings()
-    @State var showTutorials: Bool = true
     
     init() {
         FirebaseApp.configure()
@@ -24,7 +22,7 @@ struct STEP_NavigationApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if showTutorials {
+                if SettingsManager.shared.loadShowTutorials() {
                     StartupPage0()
                 } else {
                     HomeView()
@@ -34,7 +32,6 @@ struct STEP_NavigationApp: App {
             .environmentObject(feedback)
             .environmentObject(recordFeedback)
             .onAppear {
-                showTutorials = userSettings.loadShowTutorials() // if you want to work on the tutorials, set this to showTutorials = true
                 FirebaseManager.shared.setMode(mode: .navigation)
             }
         }

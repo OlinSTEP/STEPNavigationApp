@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StartupPage0: View {
-    var userSettings = UserSettings()
+    var settingsManager = SettingsManager.shared
     @State var showTutorials: Bool = true
     
     var body: some View {
@@ -35,7 +35,7 @@ struct StartupPage0: View {
             .edgesIgnoringSafeArea([.bottom])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear() {
-                userSettings.toggleShowTutorials(show: false)
+                settingsManager.toggleShowTutorials(show: false)
             }
         }
     }
