@@ -282,18 +282,66 @@ struct ResolvingCloudAnchorsView: View {
     }
 }
 
+
 struct VisualizingARMapView: View{
-    @ObservedObject var positioningModel = PositioningModel.shared
+    //    @ObservedObject var positioningModel = PositioningModel.shared
+    @ObservedObject var positionModel = STEP_Mapping.PositioningModel.shared
+    @State var loc:CLLocationCoordinate2D = CLLocationCoordinate2D()
+    @State var newResolved : String = ""
     
     var body: some View {
-        Text("Visualizing")
-            .onAppear {
-                PositioningModel.shared.startPositioning()
-                PositioningModel.shared.renderer()
+        HStack{
+            VStack {
+                Text("Go to the next anchor.")
+                Text("Resolved " + newResolved)
+                
+                Button("save"){
+                    PathRecorder.shared.toFirebase()
+                }
+                .onAppear() {
+                    PositioningModel.shared.startPositioning()
+                    PathRecorder.shared.startRecording()
+
+                }
             }
-        
+        }
+        .onReceive(positionModel.$currentLatLon) { latLon in
+            guard let latLon = latLon else {
+                return
+            }
+            loc = latLon
+            let indoorAnchors = DataModelManager.shared.getNearbyLocations(
+                for: .indoorDestination,
+                location: loc,
+                maxDistance: CLLocationDistance(100)
+            )
+            
+            
+            PositioningModel.shared.resolveAnchors(withInfo: indoorAnchors)
+        }
+        .onReceive(PositioningModel.shared.$lastAnchor) { anchorName in
+            newResolved = anchorName
+            let _ = Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { timer in
+                newResolved = ""
+            }
+        }
     }
 }
+    
+    
+    
+    
+    
+//    var body: some View {
+//        Text("Visualizing")
+//            .onAppear {
+//                PositioningModel.shared.startPositioning()
+//                PathRecorder.shared.startRecording()
+//                PositioningModel.shared.renderer()
+//            }
+//
+//    }
+//}
 
 
 //struct PathPlot: View {
