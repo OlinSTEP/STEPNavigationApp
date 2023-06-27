@@ -46,9 +46,10 @@ struct HomeView: View {
                                     LargeButtonComponent_NavigationLink(destination: {
                                         DestinationTypesView()
                                     }, label: "Navigate")
-                                    LargeButtonComponent_NavigationLink(destination: {
-                                        RadarMapView()
-                                    }, label: "Explore")
+                                    //removed explore feature until it is complete
+//                                    LargeButtonComponent_NavigationLink(destination: {
+//                                        RadarMapView()
+//                                    }, label: "Explore")
                                     LargeButtonComponent_NavigationLink(destination: {
                                         ManageAnchorsListView()
                                     }, label: "Manage")
@@ -58,7 +59,8 @@ struct HomeView: View {
                                     SmallButtonComponent_NavigationLink(destination: {
                                         SettingsView()
                                     }, label: "Settings")
-                                    .padding(.vertical, 32)
+                                    .padding(.bottom, 32)
+                                    .padding(.top, 190)
                                 }
                                 .padding(.top, 20)
                             }

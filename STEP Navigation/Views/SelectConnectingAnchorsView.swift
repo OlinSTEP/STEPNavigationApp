@@ -29,18 +29,58 @@ struct SelectConnectingAnchorsView: View {
 
     
     var body: some View {
+        
         VStack {
-            ScreenTitleComponent(titleText: "Select Second Anchor")
-            Text("Connect \(anchorName) to:")
-                .foregroundColor(AppColor.foreground)
+            ScreenTitleComponent(titleText: "Select Anchor to Connect to \(anchorName)")
             
             ScrollView {
                 VStack(spacing: 20) {
-                    ForEach(0..<anchors.count, id: \.self) { idx in
-                        if anchors[idx].id != anchorID1 {
-                            LargeButtonComponent_NavigationLink(destination: {
-                                ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)
-                            }, label: "\(anchors[idx].getName())", labelColor: connectionStatuses[idx].connectionColor, labelTextSize: .title, labelTextLeading: true)
+                    ForEach(ConnectionStatus.allCases, id: \.self) { status in
+                        if connectionStatuses.contains(status) {
+                            VStack {
+                                HStack {
+                                    Text(status.connectionText)
+                                        .font(.title)
+                                        .bold()
+                                    Spacer()
+                                }
+                                if status == .connectedDirectly {
+                                    HStack {
+                                        Text("Selecting one of these anchors will override the existing connection.")
+                                            .font(.title3)
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            .foregroundColor(AppColor.foreground)
+                            .padding(.horizontal)
+                            .padding(.vertical, 4)
+                        }
+                        ForEach(0..<anchors.count, id: \.self) { idx in
+                            if connectionStatuses[idx] == status {
+                                NavigationLink (
+                                    destination: {ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)},
+                                    label: {
+                                        HStack {
+                                            Text("\(anchors[idx].getName())")
+                                                .font(.title)
+                                                .bold()
+                                                .padding(30)
+                                                .foregroundColor(status == .connectedDirectly ? AppColor.foreground: AppColor.background)
+                                                .multilineTextAlignment(.leading)
+                                            Spacer()
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                        .frame(minHeight: 140)
+                                    })
+                                .background(status == .connectedDirectly ? AppColor.background: AppColor.foreground)
+                                .cornerRadius(20)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                     .stroke(status == .connectedDirectly ? AppColor.foreground: AppColor.background, lineWidth: 5)
+                                )
+                                .padding(.horizontal)
+                            }
                         }
                     }
                 }
@@ -48,6 +88,9 @@ struct SelectConnectingAnchorsView: View {
             }
             Spacer()
         }
+        .background(AppColor.background)
+        .frame(maxWidth: .infinity)
+        .frame(maxHeight: .infinity)
         .onReceive(positionModel.$currentLatLon) { latLon in
             guard let latLon = latLon else {
                 return
@@ -66,9 +109,55 @@ struct SelectConnectingAnchorsView: View {
             .sorted(by: {
                 $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
             })
+            
+            anchors.removeAll{$0.id == anchorID1}
             connectionStatuses = FirebaseManager.shared.mapGraph.getConnectionStatus(from: anchorID1, to: anchors)
+            print(connectionStatuses)
         }
         
     }
 }
 
+
+//struct sortByConnectionStatus: View {
+//
+//    var body: some View {
+//        ForEach(0..<ConnectionStatus.self, id: \.self) { status in
+//            Text(status.connectionText)
+//        }
+//        ForEach(0..<anchors.count, id: \.self) { idx in
+//            if anchors[idx].id != anchorID1 {
+//                NavigationLink (
+//                    destination: {ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)},
+//                    label: {
+//                        VStack {
+//                            HStack {
+//                                Text("\(anchors[idx].getName())")
+//                                    .font(.title)
+//                                    .bold()
+//                                    .padding(.top, 30)
+//                                    .padding(.horizontal, 30)
+//                                    .foregroundColor(AppColor.background)
+//                                    .multilineTextAlignment(.leading)
+//                                Spacer()
+//                            }
+//                            HStack {
+//                                Text(connectionStatuses[idx].connectionText)
+//                                    .font(.title2)
+//                                    .padding(.bottom, 30)
+//                                    .padding(.horizontal, 30)
+//                                    .foregroundColor(AppColor.background)
+//                                    .multilineTextAlignment(.leading)
+//                                Spacer()
+//                            }
+//                        }
+//                        .frame(maxWidth: .infinity)
+//                        .frame(minHeight: 140)
+//                    })
+//                .background(connectionStatuses[idx].connectionColor)
+//                .cornerRadius(20)
+//                .padding(.horizontal)
+//            }
+//        }
+//    }
+//}
