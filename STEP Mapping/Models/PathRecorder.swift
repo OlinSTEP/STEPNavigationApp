@@ -20,6 +20,7 @@ var firebaseStorageRef: StorageReference!
 struct PoseData {
     var pose: simd_float4x4
     var timestamp: Double
+    var id: Int
 }
 
 
@@ -35,7 +36,7 @@ class PathRecorder {
     /// cloud anchor metadata and itse pose in the recording session)
 //    private (set) var cloudAnchors: [String: (CloudAnchorMetadata, simd_float4x4, Double)] = [:]
     /// dictioanry of cloudAnchor information
-    private (set) var cloudAnchors: [[String:Any]] = []
+    private (set) var cloudAnchors: [[[String:Any]]] = []
     /// A timer used to periodically capture poses
     private var recordingTimer: Timer?
     /// A timer used to periodically host cloud anchors
@@ -76,7 +77,7 @@ class PathRecorder {
             guard let currentPose = PositioningModel.shared.cameraTransform else {
                 return
             }
-            self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0))
+            self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0, id: self.breadCrumbs.count))
         }
     }
     
@@ -102,13 +103,13 @@ class PathRecorder {
     ///   - metadata: the metadata describing the cloud anchor
     ///   - currentPose: the pose of the cloud anchor as specified in the corresponding `GARAnchor`
     func addCloudAnchor(identifier: String, metadata: CloudAnchorMetadata, currentPose: simd_float4x4, timestamp: Double) {
-        cloudAnchors.append([
+        cloudAnchors.append([[
 //            "metadata": metadata,
             "timestamp": timestamp,
             "pose": currentPose.toColumnMajor(),
             "poseId":  breadCrumbs.count,
             "cloudIdentifier": identifier
-        ])
+        ]])
         
         // reset timer to wait pathAnchorInterval seconds before hosting anchor
         restartPathAnchorTimer()
@@ -139,7 +140,7 @@ class PathRecorder {
             [
                 "pose": $1.pose.toColumnMajor(),
                 "timestamp": $1.timestamp,
-                "id": $1.pose.toColumnMajor().count,
+                "id": $1.id,
                 "planes": []
             ] as [String: Any]
         }
