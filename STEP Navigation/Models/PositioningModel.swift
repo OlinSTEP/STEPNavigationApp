@@ -353,6 +353,7 @@ class PositioningModel: NSObject, ObservableObject {
                 self.manualAlignment = self.cloudAnchorAligner.adjust(currentAlignment: self.manualAlignment)
                 
                 PathRecorder.shared.addCloudAnchor(identifier: cloudAnchorID, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID)!, currentPose: garAnchor.transform, timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
+                PathRecorder.shared.resolvedAnchor()
                 
                 PositioningModel.shared.anchorpoints.append(AnchorPointInfo(id: UUID(), CloudAnchorName : self.lastAnchor, CloudAnchorID: cloudAnchorID, mode: .cloudAnchorBased, location: garAnchor.transform))
     
