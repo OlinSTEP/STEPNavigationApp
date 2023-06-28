@@ -58,7 +58,11 @@ struct SettingsView: View {
                                 SettingsDetailView_PhoneBodyOffset()
                             }, label: "Phone - Body Offset")
                         }
+<<<<<<< HEAD
                         
+=======
+           
+>>>>>>> main
                         //add settings to replay tutorial? Or have chapters they can look at. 
                     }
                 }

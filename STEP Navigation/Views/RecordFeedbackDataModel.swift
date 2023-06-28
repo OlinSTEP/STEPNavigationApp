@@ -9,6 +9,7 @@ import Foundation
 
 /// A class to handle creating route recording feedback and uploading it to Firebase
 class RecordFeedbackDataModel {
+<<<<<<< HEAD
     /// Saves route recording feedback information given by the user. The feedback is serialized to JSON format and then uploaded.
         /// - Parameters:
         ///   - recordFeedbackStatus: A string representing the user's choice, either 'thumbs up' or 'thumbs down'.
@@ -17,6 +18,16 @@ class RecordFeedbackDataModel {
         ///   - isRecordingInstructionSelected: A boolean indicating whether the user had issues with the instructions.
         ///   - isRecordLongerSelected: A boolean  indicating whether the navigation took longer than anticipated.
         ///   - isRecordOtherSelected: A boolean indicating whether the user encountered other issues in the above.
+=======
+/// Saves route recording feedback information given by the user. The feedback is serialized to JSON format and then uploaded.
+    /// - Parameters:
+    ///   - recordFeedbackStatus: A string representing the user's choice, either 'thumbs up' or 'thumbs down'.
+    ///   - recordResponse: A string containing additional descriptions or comments added by the user.
+    ///   - isHoldAnchorSelected: A boolean indicating whether the user experienced problems with phone could not host the anchor.
+    ///   - isRecordingInstructionSelected: A boolean indicating whether the user had issues with the instructions.
+    ///   - isRecordLongerSelected: A boolean  indicating whether the navigation took longer than anticipated.
+    ///   - isRecordOtherSelected: A boolean indicating whether the user encountered other issues in the above.
+>>>>>>> main
     func saveRecordFeedback(
         recordFeedbackStatus: RecordFeedbackStatus.RawValue,
                     recordResponse: String,

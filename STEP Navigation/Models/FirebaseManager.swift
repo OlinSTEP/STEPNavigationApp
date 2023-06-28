@@ -332,6 +332,7 @@ class FirebaseManager: ObservableObject {
                         return
                     }
                     self.handleCloudAnchorSnapshot(snapshot: snapshot)
+<<<<<<< HEAD
                 }
             )
         }
@@ -349,6 +350,29 @@ class FirebaseManager: ObservableObject {
                         self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
                     }
                 }
+=======
+                }
+            )
+        }
+    }
+    
+    private func observeQuery(query: Query) {
+        
+    }
+    
+    private func handleCloudAnchorSnapshot(snapshot: QuerySnapshot) {
+        snapshot.documentChanges.forEach { diff in
+            switch diff.type {
+            case .added:
+                if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()) {
+                    self.mapAnchors[diff.document.documentID] = cloudMetadata
+                    DataModelManager.shared.addDataModel(dataModel)
+                    self.mapGraph.cloudNodes.insert(diff.document.documentID)
+                    for (toID, simpleEdge) in lightweightConnections {
+                        self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
+                    }
+                }
+>>>>>>> main
             case .removed:
                 if DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
                     self.mapAnchors.removeValue(forKey: diff.document.documentID)

@@ -587,6 +587,7 @@ class RendererHelper {
     var keypointNode: SCNNode?
     /// The streetscape meshes that have been rendered
     var renderedStreetscapes: [UUID: SCNNode] = [:]
+      
     
     var settingsManager = SettingsManager.shared
     
@@ -623,7 +624,11 @@ class RendererHelper {
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
         let mesh = SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0)
+<<<<<<< HEAD
         mesh.firstMaterial?.diffuse.contents = UIColor(settingsManager.loadCrumbColor())
+=======
+        mesh.firstMaterial?.diffuse.contents = UIColor(SettingsManager.shared.loadCrumbColor())
+>>>>>>> main
         keypointNode?.removeFromParentNode()
         keypointNode = SCNNode(geometry: mesh)
         keypointNode!.simdPosition = location.translation

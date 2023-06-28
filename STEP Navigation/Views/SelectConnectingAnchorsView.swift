@@ -29,7 +29,10 @@ struct SelectConnectingAnchorsView: View {
 
     
     var body: some View {
+<<<<<<< HEAD
         
+=======
+>>>>>>> main
         VStack {
             ScreenTitleComponent(titleText: "Select Anchor to Connect to \(anchorName)")
             
@@ -109,7 +112,10 @@ struct SelectConnectingAnchorsView: View {
             .sorted(by: {
                 $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
             })
+<<<<<<< HEAD
             
+=======
+>>>>>>> main
             anchors.removeAll{$0.id == anchorID1}
             connectionStatuses = FirebaseManager.shared.mapGraph.getConnectionStatus(from: anchorID1, to: anchors)
             print(connectionStatuses)
