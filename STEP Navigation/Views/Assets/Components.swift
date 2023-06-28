@@ -166,7 +166,7 @@ struct InformationPopupComponent: View {
             if case .arrived = popupType {
                 if let anchorDetails = popupType.additionalAnchorDetails {
                     SmallButtonComponent_NavigationLink(destination: {
-                        AnchorDetailView_ArrivedView(anchorDetails: anchorDetails)
+                        AnchorDetailView_ArrivedView(feedback: Feedback(), anchorDetails: anchorDetails)
                     }, label: "Go to Destination Details", labelColor: AppColor.accent, backgroundColor: AppColor.text_on_accent)
                 }
             }

@@ -188,6 +188,19 @@ class MapGraph {
         return statuses
     }
     
+    func isDirectlyConnected(from anchorID1: String, to anchorID2: String) -> Bool {
+        // start out by assuming nothing is connected
+        var status = ConnectionStatus.notConnected
+        
+        for (nodePair, simpleEdge) in lightweightConnections {
+            if nodePair.from == anchorID1, nodePair.to == anchorID2 {
+                status = simpleEdge.wasReversed ? .connectedThroughReverseEdge : .connectedDirectly
+            }
+        }
+        
+        return status == .connectedDirectly
+    }
+    
     /// Print the edges in the graph
     func printEdges() {
         for key in connections.keys {

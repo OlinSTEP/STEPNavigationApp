@@ -81,7 +81,7 @@ struct NavigatingView: View {
                                   subtitleText: "This will end the navigation session.",
                                   confirmButtonLabel: "Exit")
                 {
-                   MultipleChoice()
+                   MultipleChoice(feedback: Feedback())
                 }
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
@@ -94,21 +94,22 @@ struct NavigatingView: View {
                 return
             }
             // plan path
+            
             if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
-                didPrepareToNavigate = true
-                PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
-                    guard wasSuccesful else {
-                        return
-                    }
-                    checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
-                }
-            } else if newValue.isAtLeastAsGoodAs(other: .high) {
-                didLocalize = true
-                if !didPrepareToNavigate {
-                    didPrepareToNavigate = true
-                    PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
-                }
-            }
+                            didPrepareToNavigate = true
+                            PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
+                                guard wasSuccesful else {
+                                    return
+                                }
+                                checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
+                            }
+                        } else if newValue.isAtLeastAsGoodAs(other: .high) {
+                            didLocalize = true
+                            if !didPrepareToNavigate {
+                                didPrepareToNavigate = true
+                                PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
+                            }
+                        }
         }.onReceive(navigationManager.$navigationDirection) {
             newValue in
             hideNavTimer?.invalidate()
@@ -148,3 +149,5 @@ struct ARViewContainer: UIViewRepresentable {
     func updateUIView(_ uiView: ARSCNView, context: Context) {}
     
 }
+
+

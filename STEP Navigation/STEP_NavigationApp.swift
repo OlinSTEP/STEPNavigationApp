@@ -10,9 +10,6 @@ import Firebase
 
 @main
 struct STEP_NavigationApp: App {
-    @StateObject private var feedback = Feedback()
-    @StateObject private var recordFeedback = RecordFeedback()
-    
     init() {
         FirebaseApp.configure()
     }
@@ -29,8 +26,6 @@ struct STEP_NavigationApp: App {
                 }
             }
             .environmentObject(SettingsManager.shared)
-            .environmentObject(feedback)
-            .environmentObject(recordFeedback)
             .onAppear {
                 FirebaseManager.shared.setMode(mode: .navigation)
             }

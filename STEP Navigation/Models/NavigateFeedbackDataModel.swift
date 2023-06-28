@@ -13,7 +13,7 @@ class FeedbackModel {
     ///   - isLostSelected: A boolean indicating whether the user got lost during navigation.
     ///   - isLongerSelected: A boolean indicating whether the navigation took longer than expected.
     ///   - isOtherSelected: A boolean indicating whether the user experienced other issues not listed above.
-    func saveFeedback(feedbackStatus: String,
+    func saveFeedback(feedbackStatus: FeedbackStatus.RawValue,
                       response: String,
                       isInstructionsSelected: Bool,
                       isObstacleSelected: Bool,
@@ -22,7 +22,7 @@ class FeedbackModel {
                       isOtherSelected: Bool) {
         let feedback: [String: Any] = [
             "Incorrect or unclear instructions": isInstructionsSelected,
-            "The route led me into a large obstacle": isObstacleSelected,
+            "Directed me into a wall": isObstacleSelected,
             "The navigation took longer than expected": isLongerSelected,
             "I got lost along the route": isLostSelected,
             "Other": isOtherSelected,

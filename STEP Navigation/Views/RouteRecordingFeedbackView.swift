@@ -1,40 +1,46 @@
 //
-//  AnchorDetailView_ArrivedView.swift
+//  ThumbsDownMultiplechoice.swift
 //  STEP Navigation
 //
-//  Created by Evelyn on 6/9/23.
+//  Created by Muya Guoji on 6/12/23.
 //
 
+//import SwiftUI
+//import CoreLocation
+//import Foundation
+//
+// recording feedback Model
 
 import SwiftUI
 import CoreLocation
 import Foundation
 
-// Feedback Model
-class Feedback: ObservableObject {
-    @Published var feedbackStatus: String = ""
-    @Published var response: String = ""
-    @Published var isInstructionsSelected: Bool = false
-    @Published var isObstacleSelected: Bool = false
-    @Published var isLostSelected: Bool = false
-    @Published var isLongerSelected: Bool = false
-    @Published var isOtherSelected: Bool = false
+enum RecordFeedbackStatus: String {
+    case good
+    case bad
+    case notDefined
+}
+
+class RecordFeedback: ObservableObject{
+    var recordFeedbackStatus: RecordFeedbackStatus = .notDefined
+    var recordResponse: String = ""
+    var isHoldAnchorSelected: Bool = false
+    var isRecordingInstructionSelected: Bool = false
+    var isRecordLongerSelected: Bool = false
+    var isRecordOtherSelected: Bool = false
     
     func reset() {
-        self.feedbackStatus = ""
-        self.response = ""
-        self.isInstructionsSelected = false
-        self.isObstacleSelected = false
-        self.isLostSelected = false
-        self.isLongerSelected = false
-        self.isOtherSelected = false
+        self.recordFeedbackStatus = .notDefined
+        self.recordResponse = ""
+        self.isHoldAnchorSelected = false
+        self.isRecordingInstructionSelected = false
+        self.isRecordLongerSelected = false
+        self.isRecordOtherSelected = false
     }
 }
 
-
-// AnchorDetailView_ArrivedView
-struct AnchorDetailView_ArrivedView: View {
-    @EnvironmentObject var feedback: Feedback
+struct RecordThumbsView: View {
+    @StateObject var recordfeedback: RecordFeedback
     @ObservedObject var settingsManager = SettingsManager.shared
     
     @State var colorschemedefault: Bool = false
@@ -44,13 +50,7 @@ struct AnchorDetailView_ArrivedView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if let currentLocation = PositioningModel.shared.currentLatLon {
-                    let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                    let formattedDistance = String(format: "%.0f", distance)
-                    AnchorDetailsComponent(title: anchorDetails.getName(), distanceAway: formattedDistance)
-                        .padding(.top)
-                }
-                Text("How was your experience with this navigation session?")
+                Text("How was your experience with this recording session?")
                     .bold()
                     .font(.title)
                     .multilineTextAlignment(.center)
@@ -60,8 +60,8 @@ struct AnchorDetailView_ArrivedView: View {
                     .frame(height: 30)
                 HStack {
                     NavigationLink(destination: HomeView().onAppear {
-                        feedback.feedbackStatus = "Good"
-                    }) {
+                        recordfeedback.recordFeedbackStatus = .good
+                        }) {
                         Image(systemName: "hand.thumbsup")
                             .font(.title)
                             .padding(30)
@@ -69,9 +69,10 @@ struct AnchorDetailView_ArrivedView: View {
                             .background(colorschemedefault ? Color.green : AppColor.foreground)
                             .cornerRadius(10)
                     }
-                    NavigationLink(destination: MultipleChoice().environmentObject(feedback).onAppear {
-                                        feedback.feedbackStatus = "Bad"
-                                    }) {
+                    NavigationLink(destination: RecordMultipleChoice(recordfeedback: recordfeedback).onAppear {
+                        recordfeedback.recordFeedbackStatus = .bad
+                    })
+ {
                                         if colorschemedefault {
                                             Image(systemName: "hand.thumbsdown")
                                                 .font(.title)
@@ -109,18 +110,17 @@ struct AnchorDetailView_ArrivedView: View {
 //                } else  {
 //                    colorschemedefault = false
 //                }
-                //note to Muya: I got rid of the default color scheme after feedback from the NECO co-designers. I personally am trying to not use additional color (besides the foreground and background colors of the scheme) anywhere in the app. I would recommend you do the same. Let me know if you want to discuss!
                 colorschemedefault = false
             }
         }
     }
 }
 
-// MultipleChoice after thumbs down
-struct MultipleChoice: View {
-    @EnvironmentObject var feedback: Feedback
-    
-    var body: some View {
+
+struct RecordMultipleChoice: View {
+    @StateObject var recordfeedback: RecordFeedback
+
+    var body: some View { ScrollView{
         VStack {
             VStack {
                 Text("What was the issue?").bold()
@@ -130,14 +130,14 @@ struct MultipleChoice: View {
                     .foregroundColor(AppColor.foreground)
                 Spacer().frame(height: 40)
                 Button(action: {
-                    feedback.isInstructionsSelected.toggle()
+                    recordfeedback.isHoldAnchorSelected.toggle()
                 }) {
                     HStack {
-                        Text("Incorrect or unclear instructions").bold()
+                        Text("Phone could not host the anchor").bold()
                             .font(.title)
                             .padding(10)
                             .foregroundColor(AppColor.foreground)
-                        if feedback.isInstructionsSelected {
+                        if recordfeedback.isHoldAnchorSelected {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 30))
                                 .fontWeight(.heavy)
@@ -147,14 +147,14 @@ struct MultipleChoice: View {
                 }
                 
                 Button(action: {
-                    feedback.isObstacleSelected.toggle()
+                    recordfeedback.isRecordingInstructionSelected.toggle()
                 }) {
                     HStack {
-                        Text("The route led me into a large obstacle").bold()
+                        Text("Unclear Instructions").bold()
                             .font(.title)
                             .padding(10)
                             .foregroundColor(AppColor.foreground)
-                        if feedback.isObstacleSelected {
+                        if recordfeedback.isRecordingInstructionSelected {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 30))
                                 .fontWeight(.heavy)
@@ -164,14 +164,14 @@ struct MultipleChoice: View {
                 }
                 
                 Button(action: {
-                    feedback.isLostSelected.toggle()
+                    recordfeedback.isRecordLongerSelected.toggle()
                 }) {
                     HStack {
-                        Text("I got lost along the route").bold()
+                        Text("Took longer than expected").bold()
                             .font(.title)
                             .padding(10)
                             .foregroundColor(AppColor.foreground)
-                        if feedback.isLostSelected {
+                        if recordfeedback.isRecordLongerSelected {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 30))
                                 .fontWeight(.heavy)
@@ -181,32 +181,14 @@ struct MultipleChoice: View {
                 }
                 
                 Button(action: {
-                    feedback.isLongerSelected.toggle()
-                }) {
-                    HStack {
-                        Text("The navigation took longer than expected").bold()
-                            .font(.title)
-                            .padding(10)
-                            .foregroundColor(AppColor.foreground)
-                        if feedback.isLongerSelected {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 30))
-                                .fontWeight(.heavy)
-                                .foregroundColor(AppColor.foreground)
-                        }
-                    }
-                }
-                
-                
-                Button(action: {
-                    feedback.isOtherSelected.toggle()
+                    recordfeedback.isRecordOtherSelected.toggle()
                 }) {
                     HStack {
                         Text("Other").bold()
                             .font(.title)
                             .padding(10)
                             .foregroundColor(AppColor.foreground)
-                        if feedback.isOtherSelected {
+                        if recordfeedback.isRecordOtherSelected {
                             Image(systemName: "checkmark")
                                 .font(.system(size: 30))
                                 .fontWeight(.heavy)
@@ -215,7 +197,7 @@ struct MultipleChoice: View {
                     }
                 }
                 
-                TextField("Optional: Problem Description", text: $feedback.response)
+                TextField("Optional: Problem Description", text: $recordfeedback.recordResponse)
                     .foregroundColor(AppColor.foreground)
                     .padding(30)
                     .border(AppColor.foreground, width: 1)
@@ -223,17 +205,16 @@ struct MultipleChoice: View {
             }
             Spacer().frame(height: 50)
             NavigationLink(destination: HomeView().onAppear {
-                let feedbackModel = FeedbackModel()
-                feedbackModel.saveFeedback(
-                    feedbackStatus: feedback.feedbackStatus,
-                    response: feedback.response,
-                    isInstructionsSelected: feedback.isInstructionsSelected,
-                    isObstacleSelected: feedback.isObstacleSelected,
-                    isLostSelected: feedback.isLostSelected,
-                    isLongerSelected: feedback.isLongerSelected,
-                    isOtherSelected: feedback.isOtherSelected
+                let RecordFeedbackModel = RecordFeedbackDataModel()
+                RecordFeedbackModel.saveRecordFeedback(
+                    recordFeedbackStatus: recordfeedback.recordFeedbackStatus.rawValue,
+                    recordResponse: recordfeedback.recordResponse,
+                    isHoldAnchorSelected: recordfeedback.isHoldAnchorSelected,
+                    isRecordingInstructionSelected: recordfeedback.isRecordingInstructionSelected,
+                    isRecordLongerSelected: recordfeedback.isRecordLongerSelected,
+                    isRecordOtherSelected: recordfeedback.isRecordOtherSelected
                 )
-                feedback.reset()
+                recordfeedback.reset()
             }) {
                 Text("Done").bold()
                     .font(.title)
@@ -247,6 +228,10 @@ struct MultipleChoice: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
-        
+    }
+    .background(AppColor.background)
     }
 }
+
+
+

@@ -11,6 +11,7 @@ import ARCoreCloudAnchors
 
 struct ConnectingView: View {
     @ObservedObject var positioningModel = PositioningModel.shared
+    @StateObject var recordFeedback = RecordFeedback()
 
     @State var anchorID1: String
     @State var anchorID2: String
@@ -19,6 +20,7 @@ struct ConnectingView: View {
     @State var currentQuality: GARFeatureMapQuality?
     
     @State var showInstructions: Bool = true
+    @State var forwardAndBackwardConnected: Bool = false
     
     @State var savePressed: Bool = false
     @AccessibilityFocusState var focusOnImprovePopup
@@ -29,30 +31,7 @@ struct ConnectingView: View {
     var body: some View {
         ZStack {
             ARViewContainer()
-            
             VStack {
-                if startAnchor != "" && stopAnchor != "" {
-                    VStack {
-                        HStack {
-                            Text("START ANCHOR: \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!)")
-                                .padding(.horizontal)
-                                .padding(.top, 5)
-                            Spacer()
-                        }
-                        HStack {
-                            Text("STOP ANCHOR: \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!)")
-                                .padding(.horizontal)
-                                .padding(.bottom, 5)
-                            Spacer()
-                        }
-                    }
-                    .frame(width: .infinity)
-                    .border(width: 2, edges: [.top], color: AppColor.text_on_accent)
-                    .background(AppColor.accent)
-                    .foregroundColor(AppColor.text_on_accent)
-                    .bold()
-                }
-                
                 Spacer()
                 
                 if !positioningModel.resolvedCloudAnchors.contains(startAnchor) && showInstructions == false {
@@ -89,7 +68,7 @@ struct ConnectingView: View {
                     }
                 }
                 
-                if positioningModel.resolvedCloudAnchors.contains(startAnchor) && positioningModel.resolvedCloudAnchors.contains(stopAnchor) {
+                if positioningModel.resolvedCloudAnchors.contains(startAnchor) && positioningModel.resolvedCloudAnchors.contains(stopAnchor) && !savePressed {
                     VStack {
                         HStack {
                             Text("\(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) anchor successfully resolved. Connection created.")
@@ -98,84 +77,106 @@ struct ConnectingView: View {
                                 .font(.title2)
                                 .multilineTextAlignment(.center)
                         }
-                        
-                        Button {
-                            PathRecorder.shared.stopRecordingPath()
-                            PathRecorder.shared.toFirebase()
-                            focusOnImprovePopup = true
-                            savePressed = true
-                        } label: {
-                            Text("Save")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.accent)
-                        }
-                        .tint(AppColor.text_on_accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .padding(.horizontal)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(AppColor.accent)
                     .onAppear {
                         AnnouncementManager.shared.announce(announcement: "\(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) anchor successfully resolved. Connection created.")
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            savePressed = true
+                        }
                     }
                 }
                 
-                // add if statement to check if the two aren't already backwards connected, and if so, display:
-                if savePressed == true {
-                    VStack {
-                        HStack {
-                            Text("The connection will automatically work in both directions, but you can improve the path by walking from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!). Would you like to improve the connection now?")
-                                .foregroundColor(AppColor.text_on_accent)
-                                .bold()
-                                .font(.title2)
-                                .multilineTextAlignment(.center)
-                                .accessibilityFocused($focusOnImprovePopup)
+                if savePressed {
+                    if FirebaseManager.shared.mapGraph.isDirectlyConnected(from: anchorID2, to: anchorID1) {
+                        VStack {
+                            HStack {
+                                Text("Anchors fully connected.")
+                                    .foregroundColor(AppColor.text_on_accent)
+                                    .bold()
+                                    .font(.title2)
+                                    .multilineTextAlignment(.center)
+                                    .accessibilityFocused($focusOnImprovePopup)
+                            }
+                            NavigationLink(destination: HomeView(), label: {
+                                Text("Home")
+                                    .font(.title2)
+                                    .bold()
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundColor(AppColor.accent)
+                            })
+                            .tint(AppColor.text_on_accent)
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.capsule)
+                            .controlSize(.large)
+                            .padding(.horizontal)
                         }
-                        Button {
-                            PositioningModel.shared.startPositioning()
-                            PositioningModel.shared.resolveCloudAnchor(byID: anchorID1)
-                            PositioningModel.shared.resolveCloudAnchor(byID: anchorID2)
-                            PathRecorder.shared.startAnchorID = anchorID2
-                            startAnchor = anchorID2
-                            PathRecorder.shared.stopAnchorID = anchorID1
-                            stopAnchor = anchorID1
-                        } label: {
-                            Text("Improve connection")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.accent)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(AppColor.accent)
+                        .accessibilityAddTraits(.isModal)
+                    } else {
+                        VStack {
+                            HStack {
+                                Text("The connection will automatically work in both directions, but you can improve the path by walking from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!). Would you like to improve the connection now?")
+                                    .foregroundColor(AppColor.text_on_accent)
+                                    .bold()
+                                    .font(.title2)
+                                    .multilineTextAlignment(.center)
+                                    .accessibilityFocused($focusOnImprovePopup)
+                            }
+                            Button {
+                                PositioningModel.shared.startPositioning()
+                                PositioningModel.shared.resolveCloudAnchor(byID: anchorID1)
+                                PositioningModel.shared.resolveCloudAnchor(byID: anchorID2)
+                                PathRecorder.shared.startAnchorID = anchorID2
+                                startAnchor = anchorID2
+                                PathRecorder.shared.stopAnchorID = anchorID1
+                                stopAnchor = anchorID1
+                                savePressed = false
+                            } label: {
+                                Text("Improve connection")
+                                    .font(.title2)
+                                    .bold()
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundColor(AppColor.accent)
+                            }
+                            .tint(AppColor.text_on_accent)
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.capsule)
+                            .controlSize(.large)
+                            .padding(.horizontal)
+                            
+                            NavigationLink(destination: HomeView(), label: {
+                                Text("Home")
+                                    .font(.title2)
+                                    .bold()
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundColor(AppColor.background)
+                            })
+                            .tint(AppColor.foreground)
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.capsule)
+                            .controlSize(.large)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 30)
+                                    .stroke(AppColor.background, lineWidth: 2)
+                            )
+                            .padding(.horizontal)
+                            
                         }
-                        .tint(AppColor.text_on_accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .padding(.horizontal)
-                        
-                        NavigationLink(destination: HomeView(), label: {
-                            Text("Return to Home")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.accent)
-                        })
-                        .tint(AppColor.text_on_accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .padding(.horizontal)
-                        
+                        .onAppear() {
+                            PathRecorder.shared.stopRecordingPath()
+                            PathRecorder.shared.toFirebase()
+                            focusOnImprovePopup = true
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(AppColor.foreground)
+                        .accessibilityAddTraits(.isModal)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(AppColor.accent)
-                    .accessibilityAddTraits(.isModal)
-                    
                 }
                 
                 Spacer()
@@ -222,7 +223,7 @@ struct ConnectingView: View {
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                NavigationLink(destination: RecordMultipleChoice(), label: {
+                NavigationLink(destination: RecordMultipleChoice(recordfeedback: self.recordFeedback), label: {
                     Text("Cancel")
                         .bold()
                         .font(.title2)

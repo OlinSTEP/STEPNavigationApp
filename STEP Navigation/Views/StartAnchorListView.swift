@@ -48,3 +48,4 @@ struct StartAnchorListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
