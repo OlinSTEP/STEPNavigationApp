@@ -66,11 +66,11 @@ struct ComplexEdge {
     }
 }
 
-enum ConnectionStatus {
+enum ConnectionStatus: CaseIterable {
+    case notConnected
+    case connectedThroughMultipleHops
     case connectedThroughReverseEdge
     case connectedDirectly
-    case connectedThroughMultipleHops
-    case notConnected
     
     var connectionColor: Color {
         switch self {
@@ -84,6 +84,28 @@ enum ConnectionStatus {
             return .blue
         }
     }
+  
+    var connectionText: String {
+        switch self {
+        case .connectedDirectly:
+            return "Directly Connected"
+        case .connectedThroughReverseEdge:
+            return "Connected in Reverse"
+        case .notConnected:
+            return "Not Connected"
+        case .connectedThroughMultipleHops:
+            return "Indirectly Connected"
+        }
+    }
+    
+    static var allCases: [ConnectionStatus] {
+            return [
+                .notConnected,
+                .connectedThroughMultipleHops,
+                .connectedThroughReverseEdge,
+                .connectedDirectly
+            ]
+        }
 }
 
 /// This class encompasses a map consisting of cloud anchors (nodes) and paths connecting cloud
@@ -163,6 +185,19 @@ class MapGraph {
             }
         }
         return statuses
+    }
+    
+    func isDirectlyConnected(from anchorID1: String, to anchorID2: String) -> Bool {
+        // start out by assuming nothing is connected
+        var status = ConnectionStatus.notConnected
+        
+        for (nodePair, simpleEdge) in lightweightConnections {
+            if nodePair.from == anchorID1, nodePair.to == anchorID2 {
+                status = simpleEdge.wasReversed ? .connectedThroughReverseEdge : .connectedDirectly
+            }
+        }
+        
+        return status == .connectedDirectly
     }
     
     /// Print the edges in the graph

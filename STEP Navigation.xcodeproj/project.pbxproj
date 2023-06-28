@@ -140,6 +140,7 @@
 		A83CBC672A38C6CB00E8E3CF /* SettingsDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */; };
 		A83CBC682A38C83200E8E3CF /* SettingsDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */; };
 		A83CBC6A2A38E28900E8E3CF /* RecordAnchorInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */; };
+		A867F9452A462E2400006DBC /* StartupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9442A462E2400006DBC /* StartupViews.swift */; };
 		A89CAA6A2A28EFC100E3A03D /* Popups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A89CAA692A28EFC100E3A03D /* Popups.swift */; };
 		A8B7CB4E2A2A592E004468B8 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B7CB4D2A2A592E004468B8 /* Components.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* Colors.swift */; };
@@ -156,6 +157,19 @@
 			remoteInfo = "STEP Navigation";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A8EDC9422A4624D600F4B302 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		130862B629E479C500CADE79 /* STEP NavigationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "STEP NavigationTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -227,6 +241,7 @@
 		A83CBC5A2A37515A00E8E3CF /* RecordAnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAnchorView.swift; sourceTree = "<group>"; };
 		A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailViews.swift; sourceTree = "<group>"; };
 		A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAnchorInstructionsView.swift; sourceTree = "<group>"; };
+		A867F9442A462E2400006DBC /* StartupViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupViews.swift; sourceTree = "<group>"; };
 		A89CAA692A28EFC100E3A03D /* Popups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popups.swift; sourceTree = "<group>"; };
 		A8B7CB4D2A2A592E004468B8 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
@@ -365,6 +380,7 @@
 				A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */,
 				A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */,
 				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
+				A867F9442A462E2400006DBC /* StartupViews.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -501,6 +517,7 @@
 				8241734929DE0C6F001599B1 /* Sources */,
 				8241734A29DE0C6F001599B1 /* Frameworks */,
 				8241734B29DE0C6F001599B1 /* Resources */,
+				A8EDC9422A4624D600F4B302 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -691,6 +708,7 @@
 				A83CBC672A38C6CB00E8E3CF /* SettingsDetailViews.swift in Sources */,
 				A80CDCC02A33A808007FA7CE /* SettingsView.swift in Sources */,
 				825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */,
+				A867F9452A462E2400006DBC /* StartupViews.swift in Sources */,
 				821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */,
 				825F1F4029E9C65F0043BD98 /* simd_extensions.swift in Sources */,
 				A80CDCCB2A33C646007FA7CE /* MapComponents.swift in Sources */,

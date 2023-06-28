@@ -111,11 +111,7 @@ struct AnchorDetailView_ArrivedView: View {
             .edgesIgnoringSafeArea([.bottom])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear() {
-                if settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) == "Default" {
-                    colorschemedefault = true
-                } else  {
-                    colorschemedefault = false
-                }
+                colorschemedefault = false
             }
         }
     }
@@ -127,139 +123,134 @@ struct MultipleChoice: View {
     
     var body: some View {
         ScrollView{
-        VStack {
             VStack {
-                Text("What was the issue?").bold()
-                    .font(.largeTitle)
-                    .multilineTextAlignment(.center)
-                    .padding(.top)
-                    .foregroundColor(AppColor.foreground)
-                Spacer().frame(height: 40)
-                Button(action: {
-                    print("Incorrect or unclear instructions")
-                    feedback.isInstructionsSelected.toggle()
-                    print(feedback.isInstructionsSelected)
-                }) {
-                    HStack {
-                        Text("Incorrect or unclear instructions").bold()
-                            .font(.title)
-                            .padding(10)
-                            .foregroundColor(AppColor.foreground)
-                        if feedback.isInstructionsSelected {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 30))
-                                .fontWeight(.heavy)
+                VStack {
+                    Text("What was the issue?").bold()
+                        .font(.largeTitle)
+                        .multilineTextAlignment(.center)
+                        .padding(.top)
+                        .foregroundColor(AppColor.foreground)
+                    Spacer().frame(height: 40)
+                    Button(action: {
+                        feedback.isInstructionsSelected.toggle()
+                        print(feedback.isInstructionsSelected)
+                    }) {
+                        HStack {
+                            Text("Incorrect or unclear instructions").bold()
+                                .font(.title)
+                                .padding(10)
                                 .foregroundColor(AppColor.foreground)
+                            if feedback.isInstructionsSelected {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 30))
+                                    .fontWeight(.heavy)
+                                    .foregroundColor(AppColor.foreground)
+                            }
                         }
                     }
-                }
-                
-                Button(action: {
-                    print("Directed me into a wall")
-                    feedback.isObstacleSelected.toggle()
-                }) {
-                    HStack {
-                        Text("Directed me into a wall").bold()
-                            .font(.title)
-                            .padding(10)
-                            .foregroundColor(AppColor.foreground)
-                        if feedback.isObstacleSelected {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 30))
-                                .fontWeight(.heavy)
+                    
+                    Button(action: {
+                        feedback.isObstacleSelected.toggle()
+                    }) {
+                        HStack {
+                            Text("Directed me into a wall").bold()
+                                .font(.title)
+                                .padding(10)
                                 .foregroundColor(AppColor.foreground)
+                            if feedback.isObstacleSelected {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 30))
+                                    .fontWeight(.heavy)
+                                    .foregroundColor(AppColor.foreground)
+                            }
                         }
                     }
-                }
-                
-                Button(action: {
-                    print("I got lost along the route")
-                    feedback.isLostSelected.toggle()
-                }) {
-                    HStack {
-                        Text("I got lost along the route").bold()
-                            .font(.title)
-                            .padding(10)
-                            .foregroundColor(AppColor.foreground)
-                        if feedback.isLostSelected {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 30))
-                                .fontWeight(.heavy)
+                    
+                    Button(action: {
+                        feedback.isLostSelected.toggle()
+                    }) {
+                        HStack {
+                            Text("I got lost along the route").bold()
+                                .font(.title)
+                                .padding(10)
                                 .foregroundColor(AppColor.foreground)
+                            if feedback.isLostSelected {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 30))
+                                    .fontWeight(.heavy)
+                                    .foregroundColor(AppColor.foreground)
+                            }
                         }
                     }
-                }
-                
-                Button(action: {
-                    print("The navigation took longer than expected")
-                    feedback.isLongerSelected.toggle()
-                }) {
-                    HStack {
-                        Text("The navigation took longer than expected").bold()
-                            .font(.title)
-                            .padding(10)
-                            .foregroundColor(AppColor.foreground)
-                        if feedback.isLongerSelected {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 30))
-                                .fontWeight(.heavy)
+                    
+                    Button(action: {
+                        feedback.isLongerSelected.toggle()
+                    }) {
+                        HStack {
+                            Text("The navigation took longer than expected").bold()
+                                .font(.title)
+                                .padding(10)
                                 .foregroundColor(AppColor.foreground)
+                            if feedback.isLongerSelected {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 30))
+                                    .fontWeight(.heavy)
+                                    .foregroundColor(AppColor.foreground)
+                            }
                         }
                     }
-                }
-                
-                
-                Button(action: {
-                    print("Other")
-                    feedback.isOtherSelected.toggle()
-                }) {
-                    HStack {
-                        Text("Other").bold()
-                            .font(.title)
-                            .padding(10)
-                            .foregroundColor(AppColor.foreground)
-                        if feedback.isOtherSelected {
-                            Image(systemName: "checkmark")
-                                .font(.system(size: 30))
-                                .fontWeight(.heavy)
+                    
+                    
+                    Button(action: {
+                        feedback.isOtherSelected.toggle()
+                    }) {
+                        HStack {
+                            Text("Other").bold()
+                                .font(.title)
+                                .padding(10)
                                 .foregroundColor(AppColor.foreground)
+                            if feedback.isOtherSelected {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 30))
+                                    .fontWeight(.heavy)
+                                    .foregroundColor(AppColor.foreground)
+                            }
                         }
                     }
+                    
+                    TextField("Optional: Problem Description", text: $feedback.response)
+                        .foregroundColor(AppColor.foreground)
+                        .padding(30)
+                        .border(AppColor.foreground, width: 1)
+                        .textFieldStyle(PlainTextFieldStyle())
                 }
-                
-                TextField("Optional: Problem Description", text: $feedback.response)
-                    .foregroundColor(AppColor.foreground)
-                    .padding(30)
-                    .border(AppColor.foreground, width: 1)
-                    .textFieldStyle(PlainTextFieldStyle())
+                Spacer().frame(height: 50)
+                NavigationLink(destination: HomeView().onAppear {
+                    let feedbackModel = FeedbackModel()
+                    feedbackModel.saveFeedback(
+                        feedbackStatus: feedback.feedbackStatus.rawValue,
+                        response: feedback.response,
+                        isInstructionsSelected: feedback.isInstructionsSelected,
+                        isObstacleSelected: feedback.isObstacleSelected,
+                        isLostSelected: feedback.isLostSelected,
+                        isLongerSelected: feedback.isLongerSelected,
+                        isOtherSelected: feedback.isOtherSelected
+                    )
+                    feedback.reset()
+                }) {
+                    Text("Done").bold()
+                        .font(.title)
+                        .padding(.horizontal, 80)
+                        .padding(15)
+                        .foregroundColor(AppColor.background)
+                        .background(AppColor.foreground)
+                        .cornerRadius(15)
+                }
             }
-            Spacer().frame(height: 50)
-            NavigationLink(destination: HomeView().onAppear {
-                let feedbackModel = FeedbackModel()
-                feedbackModel.saveFeedback(
-                    feedbackStatus: feedback.feedbackStatus.rawValue,
-                    response: feedback.response,
-                    isInstructionsSelected: feedback.isInstructionsSelected,
-                    isObstacleSelected: feedback.isObstacleSelected,
-                    isLostSelected: feedback.isLostSelected,
-                    isLongerSelected: feedback.isLongerSelected,
-                    isOtherSelected: feedback.isOtherSelected
-                )
-                feedback.reset()
-            }) {
-                Text("Done").bold()
-                    .font(.title)
-                    .padding(.horizontal, 80)
-                    .padding(15)
-                    .foregroundColor(AppColor.background)
-                    .background(AppColor.foreground)
-                    .cornerRadius(15)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(AppColor.background)
+            .edgesIgnoringSafeArea([.bottom])
     }
+        .background(AppColor.background)
     }
 }

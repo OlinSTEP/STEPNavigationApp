@@ -119,7 +119,6 @@ class DataModelManager: ObservableObject {
     /// Returns a set of all AnchorTypes currently in the system
     /// - Returns: the anchor types that exist
     func getAnchorTypes() -> Set<AnchorType> {
-        // TODO: make sure removing .indoorLocations isn't causing issues
         return Set(allLocationModels.keys)
     }
     
@@ -249,14 +248,20 @@ class DataModelManager: ObservableObject {
         for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
             models.formUnion(allLocationModels[anchorTypeCase] ?? [])
         }
-        
+    
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         
-        return models.filter { model in
+        let filtered =  models.filter { model in
             let locationCoordinate = model.getLocationCoordinate()
             let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+            
+            print(location.distance(from: threshold))
+            print(maxDistance + withBuffer)
             return location.distance(from: threshold) <= maxDistance + withBuffer
         }
+        
+        print(filtered)
+        return filtered
     }
     
     /**
@@ -273,17 +278,12 @@ class DataModelManager: ObservableObject {
                             maxDistance: CLLocationDistance,
                             withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
         let models = allLocationModels[anchorType] ?? []
-        
-        print(models)
-        
+                
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         
         let filtered =  models.filter { model in
             let locationCoordinate = model.getLocationCoordinate()
             let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
-            
-            print(location.distance(from: threshold))
-            print(maxDistance + withBuffer)
             return location.distance(from: threshold) <= maxDistance + withBuffer
         }
         

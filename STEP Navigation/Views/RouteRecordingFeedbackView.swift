@@ -105,11 +105,7 @@ struct RecordThumbsView: View {
             .edgesIgnoringSafeArea([.bottom])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear() {
-                if settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) == "Default" {
-                    colorschemedefault = true
-                } else  {
-                    colorschemedefault = false
-                }
+                colorschemedefault = false
             }
         }
     }
@@ -129,7 +125,6 @@ struct RecordMultipleChoice: View {
                     .foregroundColor(AppColor.foreground)
                 Spacer().frame(height: 40)
                 Button(action: {
-                    print("Phone could not host the anchor")
                     recordfeedback.isHoldAnchorSelected.toggle()
                 }) {
                     HStack {
@@ -147,7 +142,6 @@ struct RecordMultipleChoice: View {
                 }
                 
                 Button(action: {
-                    print("Unclear Instructions")
                     recordfeedback.isRecordingInstructionSelected.toggle()
                 }) {
                     HStack {
@@ -165,7 +159,6 @@ struct RecordMultipleChoice: View {
                 }
                 
                 Button(action: {
-                    print("Took longer than expected")
                     recordfeedback.isRecordLongerSelected.toggle()
                 }) {
                     HStack {
@@ -183,7 +176,6 @@ struct RecordMultipleChoice: View {
                 }
                 
                 Button(action: {
-                    print("Other")
                     recordfeedback.isRecordOtherSelected.toggle()
                 }) {
                     HStack {
@@ -232,7 +224,7 @@ struct RecordMultipleChoice: View {
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
     }
-
+    .background(AppColor.background)
     }
 }
 

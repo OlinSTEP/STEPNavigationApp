@@ -23,9 +23,8 @@ struct RecordAnchorView: View {
         ZStack {
             ARViewContainer()
             
-            if showNextButton == false && showInstructions == false {
+            if !showNextButton && !showInstructions {
                 InformationPopupComponent(popupType: .countdown(countdown: timeRemaining))
-                //                Text("\(timeRemaining)")
                     .onReceive(timer) { time in
                         if timeRemaining > 0 {
                             timeRemaining -= 1
@@ -45,6 +44,7 @@ struct RecordAnchorView: View {
                                     print("something went wrong with creating the cloud anchor")
                                     return
                                 }
+                                //delay is used to ensure that there is sufficient time to create the anchor in the firebase before presenting the next button. if there is not enough time there is a possibility of the user selecting next before the anchor has been properly stored, which will then prevent the anchor from creating properly
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                     showNextButton = true
                                     self.anchorID = anchorID

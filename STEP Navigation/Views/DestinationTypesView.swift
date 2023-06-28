@@ -8,20 +8,21 @@
 import SwiftUI
 import CoreLocation
 
+
 struct DestinationTypesView: View {
     @State var nearbyDistance: Double = 10000
     @State var hasLocalized = false
     @State var anchorTypes: [String] = []
-    
+
     @AccessibilityFocusState var focusOnNearbyDistanceValue
-    
+
     var body: some View {
         let anchorTypes = PositioningModel.shared.currentLatLon != nil ? DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance) : []
-        
+
         VStack {
             let nearbyDistanceString = String(format: "%.0f", $nearbyDistance.wrappedValue)
             ScreenTitleComponent(titleText: "Destinations", subtitleText: "Within \(nearbyDistanceString) meters")
-            
+
             ScrollView {
                 VStack(spacing: 20) {
                     // Creates a navigation button for each anchor type
@@ -45,3 +46,5 @@ struct DestinationTypesView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
+

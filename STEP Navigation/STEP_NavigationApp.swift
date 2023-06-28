@@ -20,13 +20,17 @@ struct STEP_NavigationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .environmentObject(SettingsManager.shared)
-//                .environmentObject(feedback)
-//                .environmentObject(recordFeedback)
-                .onAppear() {
-                    FirebaseManager.shared.setMode(mode: .navigation)
+            Group {
+                if SettingsManager.shared.loadShowTutorials() {
+                    StartupPage0()
+                } else {
+                    HomeView()
                 }
+            }
+            .environmentObject(SettingsManager.shared)
+            .onAppear {
+                FirebaseManager.shared.setMode(mode: .navigation)
+            }
         }
     }
 }

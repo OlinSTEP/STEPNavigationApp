@@ -197,7 +197,6 @@ class PositioningModel: NSObject, ObservableObject {
     /// Stop positioning using ARCore and ARKit
     func stopPositioning() {
         garSession = nil
-        print("Resetting condition!")
         sessionReadyCondition.lock()
         sessionReady = false
         sessionReadyCondition.unlock()
@@ -588,7 +587,7 @@ class RendererHelper {
     var keypointNode: SCNNode?
     /// The streetscape meshes that have been rendered
     var renderedStreetscapes: [UUID: SCNNode] = [:]
-    
+      
     
     init(arView: ARSCNView) {
         self.arView = arView

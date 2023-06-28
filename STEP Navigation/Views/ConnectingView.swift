@@ -20,6 +20,7 @@ struct ConnectingView: View {
     @State var currentQuality: GARFeatureMapQuality?
     
     @State var showInstructions: Bool = true
+    @State var forwardAndBackwardConnected: Bool = false
     
     @State var savePressed: Bool = false
     @AccessibilityFocusState var focusOnImprovePopup
@@ -30,30 +31,7 @@ struct ConnectingView: View {
     var body: some View {
         ZStack {
             ARViewContainer()
-            
             VStack {
-//                if startAnchor != "" && stopAnchor != "" {
-//                    VStack {
-//                        HStack {
-//                            Text("START ANCHOR: \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!)")
-//                                .padding(.horizontal)
-//                                .padding(.top, 5)
-//                            Spacer()
-//                        }
-//                        HStack {
-//                            Text("STOP ANCHOR: \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!)")
-//                                .padding(.horizontal)
-//                                .padding(.bottom, 5)
-//                            Spacer()
-//                        }
-//                    }
-//                    .frame(maxWidth: .infinity)
-//                    .border(width: 2, edges: [.top], color: AppColor.text_on_accent)
-//                    .background(AppColor.accent)
-//                    .foregroundColor(AppColor.text_on_accent)
-//                    .bold()
-//                }
-                
                 Spacer()
                 
                 if !positioningModel.resolvedCloudAnchors.contains(startAnchor) && showInstructions == false {
@@ -90,7 +68,7 @@ struct ConnectingView: View {
                     }
                 }
                 
-                if positioningModel.resolvedCloudAnchors.contains(startAnchor) && positioningModel.resolvedCloudAnchors.contains(stopAnchor) {
+                if positioningModel.resolvedCloudAnchors.contains(startAnchor) && positioningModel.resolvedCloudAnchors.contains(stopAnchor) && !savePressed {
                     VStack {
                         HStack {
                             Text("\(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) anchor successfully resolved. Connection created.")
@@ -99,84 +77,12 @@ struct ConnectingView: View {
                                 .font(.title2)
                                 .multilineTextAlignment(.center)
                         }
-                        
-                        Button {
-                            PathRecorder.shared.stopRecordingPath()
-                            PathRecorder.shared.toFirebase()
-                            focusOnImprovePopup = true
-                            savePressed = true
-                        } label: {
-                            Text("Save")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.accent)
-                        }
-                        .tint(AppColor.text_on_accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .padding(.horizontal)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(AppColor.accent)
                     .onAppear {
                         AnnouncementManager.shared.announce(announcement: "\(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) anchor successfully resolved. Connection created.")
-                    }
-                }
-                
-                // add if statement to check if the two aren't already backwards connected, and if so, display:
-                if savePressed == true {
-                    VStack {
-                        HStack {
-                            Text("The conection will automatically work in both directions, but you can improve the path by walking from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!). Would you like to improve the connection now?")
-                                .foregroundColor(AppColor.text_on_accent)
-                                .bold()
-                                .font(.title2)
-                                .multilineTextAlignment(.center)
-                                .accessibilityFocused($focusOnImprovePopup)
-                        }
-                        Button {
-                            PositioningModel.shared.startPositioning()
-                            PositioningModel.shared.resolveCloudAnchor(byID: anchorID1)
-                            PositioningModel.shared.resolveCloudAnchor(byID: anchorID2)
-                            PathRecorder.shared.startAnchorID = anchorID2
-                            startAnchor = anchorID2
-                            PathRecorder.shared.stopAnchorID = anchorID1
-                            stopAnchor = anchorID1
-                        } label: {
-                            Text("Improve connection")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.accent)
-                        }
-                        .tint(AppColor.text_on_accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .padding(.horizontal)
-                        
-                        NavigationLink(destination: HomeView(), label: {
-                            Text("Return to Home")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.accent)
-                        })
-                        .tint(AppColor.text_on_accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .padding(.horizontal)
-                        
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(AppColor.accent)
-                    .accessibilityAddTraits(.isModal)
-                    
                 }
                 
                 Spacer()
@@ -185,6 +91,7 @@ struct ConnectingView: View {
             if showInstructions == true {
                 VStack {
                     HStack {
+                        //Insert instructions here Lisan
                         Text("Instructions here. Go to your first anchor. Etc etc.")
                             .foregroundColor(AppColor.foreground)
                         Spacer()
