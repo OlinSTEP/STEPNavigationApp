@@ -239,11 +239,12 @@ struct SettingsDetailView_ColorScheme: View {
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     private func updateColorScheme() {
             let (color1, color2) = settingsManager.loadColorScheme()
             selectedColorScheme = (color1, color2)
         }
+
 }
 
 struct ColorSchemes: Identifiable {
@@ -362,7 +363,6 @@ struct SettingsDetailView_PhoneBodyOffset: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
-
 struct CustomCrumbColor: View {
     var settingsManager = SettingsManager.shared
     @Binding var customCrumbPopup: Bool

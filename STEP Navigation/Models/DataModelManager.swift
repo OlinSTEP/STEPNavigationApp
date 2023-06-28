@@ -248,14 +248,20 @@ class DataModelManager: ObservableObject {
         for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
             models.formUnion(allLocationModels[anchorTypeCase] ?? [])
         }
-        
+    
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         
-        return models.filter { model in
+        let filtered =  models.filter { model in
             let locationCoordinate = model.getLocationCoordinate()
             let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+            
+            print(location.distance(from: threshold))
+            print(maxDistance + withBuffer)
             return location.distance(from: threshold) <= maxDistance + withBuffer
         }
+        
+        print(filtered)
+        return filtered
     }
     
     /**

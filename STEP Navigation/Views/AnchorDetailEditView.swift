@@ -64,6 +64,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 Group {
                                     TextField("", text: $newOrganization, onEditingChanged: {edit in
                                         self.editing = edit
+
                                     })
                                     .padding(.horizontal, 10)
                                     .focused($editingOrg)

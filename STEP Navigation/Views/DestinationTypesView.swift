@@ -10,7 +10,7 @@ import CoreLocation
 
 
 struct DestinationTypesView: View {
-    @State var nearbyDistance: Double = 100
+    @State var nearbyDistance: Double = 10000
     @State var hasLocalized = false
     @State var anchorTypes: [String] = []
 
