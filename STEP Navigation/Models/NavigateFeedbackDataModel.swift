@@ -13,7 +13,7 @@ class FeedbackModel {
     ///   - isLostSelected: A boolean indicating whether the user got lost during navigation.
     ///   - isLongerSelected: A boolean indicating whether the navigation took longer than expected.
     ///   - isOtherSelected: A boolean indicating whether the user experienced other issues not listed above.
-    func saveFeedback(feedbackStatus: FeedbackStatus,
+    func saveFeedback(feedbackStatus: FeedbackStatus.RawValue,
                       response: String,
                       isInstructionsSelected: Bool,
                       isObstacleSelected: Bool,

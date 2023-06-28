@@ -126,6 +126,7 @@ struct MultipleChoice: View {
     @StateObject var feedback: Feedback
     
     var body: some View {
+        ScrollView{
         VStack {
             VStack {
                 Text("What was the issue?").bold()
@@ -137,6 +138,7 @@ struct MultipleChoice: View {
                 Button(action: {
                     print("Incorrect or unclear instructions")
                     feedback.isInstructionsSelected.toggle()
+                    print(feedback.isInstructionsSelected)
                 }) {
                     HStack {
                         Text("Incorrect or unclear instructions").bold()
@@ -235,7 +237,7 @@ struct MultipleChoice: View {
             NavigationLink(destination: HomeView().onAppear {
                 let feedbackModel = FeedbackModel()
                 feedbackModel.saveFeedback(
-                    feedbackStatus: feedback.feedbackStatus,
+                    feedbackStatus: feedback.feedbackStatus.rawValue,
                     response: feedback.response,
                     isInstructionsSelected: feedback.isInstructionsSelected,
                     isObstacleSelected: feedback.isObstacleSelected,
@@ -258,5 +260,6 @@ struct MultipleChoice: View {
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
         
+    }
     }
 }

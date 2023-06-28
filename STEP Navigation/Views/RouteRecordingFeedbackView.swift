@@ -119,7 +119,7 @@ struct RecordThumbsView: View {
 struct RecordMultipleChoice: View {
     @StateObject var recordfeedback: RecordFeedback
 
-    var body: some View {
+    var body: some View { ScrollView{
         VStack {
             VStack {
                 Text("What was the issue?").bold()
@@ -145,7 +145,7 @@ struct RecordMultipleChoice: View {
                         }
                     }
                 }
-
+                
                 Button(action: {
                     print("Unclear Instructions")
                     recordfeedback.isRecordingInstructionSelected.toggle()
@@ -163,7 +163,7 @@ struct RecordMultipleChoice: View {
                         }
                     }
                 }
-
+                
                 Button(action: {
                     print("Took longer than expected")
                     recordfeedback.isRecordLongerSelected.toggle()
@@ -181,7 +181,7 @@ struct RecordMultipleChoice: View {
                         }
                     }
                 }
-
+                
                 Button(action: {
                     print("Other")
                     recordfeedback.isRecordOtherSelected.toggle()
@@ -199,7 +199,7 @@ struct RecordMultipleChoice: View {
                         }
                     }
                 }
-
+                
                 TextField("Optional: Problem Description", text: $recordfeedback.recordResponse)
                     .foregroundColor(AppColor.foreground)
                     .padding(30)
@@ -208,16 +208,16 @@ struct RecordMultipleChoice: View {
             }
             Spacer().frame(height: 50)
             NavigationLink(destination: HomeView().onAppear {
-                    let RecordFeedbackModel = RecordFeedbackDataModel()
+                let RecordFeedbackModel = RecordFeedbackDataModel()
                 RecordFeedbackModel.saveRecordFeedback(
-                        recordFeedbackStatus: recordfeedback.recordFeedbackStatus,
-                        recordResponse: recordfeedback.recordResponse,
-                        isHoldAnchorSelected: recordfeedback.isHoldAnchorSelected,
-                        isRecordingInstructionSelected: recordfeedback.isRecordingInstructionSelected,
-                        isRecordLongerSelected: recordfeedback.isRecordLongerSelected,
-                        isRecordOtherSelected: recordfeedback.isRecordOtherSelected
-                    )
-                    recordfeedback.reset()
+                    recordFeedbackStatus: recordfeedback.recordFeedbackStatus.rawValue,
+                    recordResponse: recordfeedback.recordResponse,
+                    isHoldAnchorSelected: recordfeedback.isHoldAnchorSelected,
+                    isRecordingInstructionSelected: recordfeedback.isRecordingInstructionSelected,
+                    isRecordLongerSelected: recordfeedback.isRecordLongerSelected,
+                    isRecordOtherSelected: recordfeedback.isRecordOtherSelected
+                )
+                recordfeedback.reset()
             }) {
                 Text("Done").bold()
                     .font(.title)
@@ -231,6 +231,7 @@ struct RecordMultipleChoice: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
+    }
 
     }
 }

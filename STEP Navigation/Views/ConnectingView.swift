@@ -32,27 +32,27 @@ struct ConnectingView: View {
             ARViewContainer()
             
             VStack {
-                if startAnchor != "" && stopAnchor != "" {
-                    VStack {
-                        HStack {
-                            Text("START ANCHOR: \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!)")
-                                .padding(.horizontal)
-                                .padding(.top, 5)
-                            Spacer()
-                        }
-                        HStack {
-                            Text("STOP ANCHOR: \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!)")
-                                .padding(.horizontal)
-                                .padding(.bottom, 5)
-                            Spacer()
-                        }
-                    }
-                    .frame(width: .infinity)
-                    .border(width: 2, edges: [.top], color: AppColor.text_on_accent)
-                    .background(AppColor.accent)
-                    .foregroundColor(AppColor.text_on_accent)
-                    .bold()
-                }
+//                if startAnchor != "" && stopAnchor != "" {
+//                    VStack {
+//                        HStack {
+//                            Text("START ANCHOR: \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!)")
+//                                .padding(.horizontal)
+//                                .padding(.top, 5)
+//                            Spacer()
+//                        }
+//                        HStack {
+//                            Text("STOP ANCHOR: \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!)")
+//                                .padding(.horizontal)
+//                                .padding(.bottom, 5)
+//                            Spacer()
+//                        }
+//                    }
+//                    .frame(maxWidth: .infinity)
+//                    .border(width: 2, edges: [.top], color: AppColor.text_on_accent)
+//                    .background(AppColor.accent)
+//                    .foregroundColor(AppColor.text_on_accent)
+//                    .bold()
+//                }
                 
                 Spacer()
                 
