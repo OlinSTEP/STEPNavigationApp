@@ -11,6 +11,7 @@ import ARCoreCloudAnchors
 
 struct ConnectingView: View {
     @ObservedObject var positioningModel = PositioningModel.shared
+    @StateObject var recordFeedback = RecordFeedback()
 
     @State var anchorID1: String
     @State var anchorID2: String
@@ -221,7 +222,7 @@ struct ConnectingView: View {
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                NavigationLink(destination: RecordMultipleChoice(), label: {
+                NavigationLink(destination: RecordMultipleChoice(recordfeedback: self.recordFeedback), label: {
                     Text("Cancel")
                         .bold()
                         .font(.title2)

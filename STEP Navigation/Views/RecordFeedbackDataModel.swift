@@ -18,7 +18,7 @@ class RecordFeedbackDataModel {
     ///   - isRecordLongerSelected: A boolean  indicating whether the navigation took longer than anticipated.
     ///   - isRecordOtherSelected: A boolean indicating whether the user encountered other issues in the above.
     func saveRecordFeedback(
-                    recordFeedbackStatus: String,
+                    recordFeedbackStatus: RecordFeedbackStatus,
                     recordResponse: String,
                  isHoldAnchorSelected: Bool,
                isRecordingInstructionSelected: Bool,

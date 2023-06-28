@@ -11,17 +11,24 @@ import CoreLocation
 import Foundation
 
 // Feedback Model
+
+enum FeedbackStatus: String {
+    case good
+    case bad
+    case notDefined
+}
+
 class Feedback: ObservableObject {
-    @Published var feedbackStatus: String = ""
-    @Published var response: String = ""
-    @Published var isInstructionsSelected: Bool = false
-    @Published var isObstacleSelected: Bool = false
-    @Published var isLostSelected: Bool = false
-    @Published var isLongerSelected: Bool = false
-    @Published var isOtherSelected: Bool = false
+    var feedbackStatus: FeedbackStatus = .notDefined
+    var response: String = ""
+    var isInstructionsSelected: Bool = false
+    var isObstacleSelected: Bool = false
+    var isLostSelected: Bool = false
+    var isLongerSelected: Bool = false
+    var isOtherSelected: Bool = false
     
     func reset() {
-        self.feedbackStatus = ""
+        self.feedbackStatus = .notDefined
         self.response = ""
         self.isInstructionsSelected = false
         self.isObstacleSelected = false
@@ -34,7 +41,7 @@ class Feedback: ObservableObject {
 
 // AnchorDetailView_ArrivedView
 struct AnchorDetailView_ArrivedView: View {
-    @EnvironmentObject var feedback: Feedback
+    @StateObject var feedback: Feedback
     @ObservedObject var settingsManager = SettingsManager.shared
     
     @State var colorschemedefault: Bool = false
@@ -60,18 +67,17 @@ struct AnchorDetailView_ArrivedView: View {
                     .frame(height: 30)
                 HStack {
                     NavigationLink(destination: HomeView().onAppear {
-                        feedback.feedbackStatus = "Good"
+                        feedback.feedbackStatus = .good
                     }) {
                         Image(systemName: "hand.thumbsup")
                             .font(.title)
                             .padding(30)
                             .foregroundColor(colorschemedefault ? Color.white : AppColor.background)
-//                            .background(Color.green)
                             .background(colorschemedefault ? Color.green : AppColor.foreground)
                             .cornerRadius(10)
                     }
-                    NavigationLink(destination: MultipleChoice().environmentObject(feedback).onAppear {
-                                        feedback.feedbackStatus = "Bad"
+                    NavigationLink(destination: MultipleChoice(feedback:feedback).onAppear {
+                        feedback.feedbackStatus = .bad
                                     }) {
                                         if colorschemedefault {
                                             Image(systemName: "hand.thumbsdown")
@@ -117,7 +123,7 @@ struct AnchorDetailView_ArrivedView: View {
 
 // MultipleChoice after thumbs down
 struct MultipleChoice: View {
-    @EnvironmentObject var feedback: Feedback
+    @StateObject var feedback: Feedback
     
     var body: some View {
         VStack {
@@ -147,11 +153,11 @@ struct MultipleChoice: View {
                 }
                 
                 Button(action: {
-                    print("The route led me into a large obstacle")
+                    print("Directed me into a wall")
                     feedback.isObstacleSelected.toggle()
                 }) {
                     HStack {
-                        Text("The route led me into a large obstacle").bold()
+                        Text("Directed me into a wall").bold()
                             .font(.title)
                             .padding(10)
                             .foregroundColor(AppColor.foreground)

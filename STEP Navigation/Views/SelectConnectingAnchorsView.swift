@@ -36,11 +36,25 @@ struct SelectConnectingAnchorsView: View {
             
             ScrollView {
                 VStack(spacing: 20) {
+//                    ForEach(0..<anchors.count, id: \.self) { idx in
+//                        if anchors[idx].id != anchorID1 {
+//                            LargeButtonComponent_NavigationLink(destination: {
+//                                ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)
+//                            }, label: "\(anchors[idx].getName())", labelColor: connectionStatuses[idx].connectionColor, labelTextSize: .title, labelTextLeading: true)
+//                        }
+//                    }
                     ForEach(0..<anchors.count, id: \.self) { idx in
                         if anchors[idx].id != anchorID1 {
-                            LargeButtonComponent_NavigationLink(destination: {
-                                ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)
-                            }, label: "\(anchors[idx].getName())", labelColor: connectionStatuses[idx].connectionColor, labelTextSize: .title, labelTextLeading: true)
+                            VStack {
+                                LargeButtonComponent_NavigationLink(destination: {
+                                    ConnectingView(anchorID1: anchorID1, anchorID2: anchors[idx].id)
+                                }, label: "\(anchors[idx].getName())", labelColor: connectionStatuses[idx].connectionColor, labelTextSize: .title, labelTextLeading: true)
+
+                                if connectionStatuses[idx] == .notConnected {
+                                    Text("Not connected to any other anchors")
+                                        .foregroundColor(.red)
+                                }
+                            }
                         }
                     }
                 }

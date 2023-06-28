@@ -15,16 +15,22 @@ import SwiftUI
 import CoreLocation
 import Foundation
 
+enum RecordFeedbackStatus: String {
+    case good
+    case bad
+    case notDefined
+}
+
 class RecordFeedback: ObservableObject{
-    @Published var recordFeedbackStatus: String = ""
-    @Published var recordResponse: String = ""
-    @Published var isHoldAnchorSelected: Bool = false
-    @Published var isRecordingInstructionSelected: Bool = false
-    @Published var isRecordLongerSelected: Bool = false
-    @Published var isRecordOtherSelected: Bool = false
+    var recordFeedbackStatus: RecordFeedbackStatus = .notDefined
+    var recordResponse: String = ""
+    var isHoldAnchorSelected: Bool = false
+    var isRecordingInstructionSelected: Bool = false
+    var isRecordLongerSelected: Bool = false
+    var isRecordOtherSelected: Bool = false
     
     func reset() {
-        self.recordFeedbackStatus = ""
+        self.recordFeedbackStatus = .notDefined
         self.recordResponse = ""
         self.isHoldAnchorSelected = false
         self.isRecordingInstructionSelected = false
@@ -34,7 +40,7 @@ class RecordFeedback: ObservableObject{
 }
 
 struct RecordThumbsView: View {
-    @EnvironmentObject var recordfeedback: RecordFeedback
+    @StateObject var recordfeedback: RecordFeedback
     @ObservedObject var settingsManager = SettingsManager.shared
     
     @State var colorschemedefault: Bool = false
@@ -54,19 +60,19 @@ struct RecordThumbsView: View {
                     .frame(height: 30)
                 HStack {
                     NavigationLink(destination: HomeView().onAppear {
-                            recordfeedback.recordFeedbackStatus = "Good"
+                        recordfeedback.recordFeedbackStatus = .good
                         }) {
                         Image(systemName: "hand.thumbsup")
                             .font(.title)
                             .padding(30)
                             .foregroundColor(colorschemedefault ? Color.white : AppColor.background)
-//                            .background(Color.green)
                             .background(colorschemedefault ? Color.green : AppColor.foreground)
                             .cornerRadius(10)
                     }
-                    NavigationLink(destination: RecordMultipleChoice().environmentObject(recordfeedback).onAppear {
-                            recordfeedback.recordFeedbackStatus = "Bad"
-                        }) {
+                    NavigationLink(destination: RecordMultipleChoice(recordfeedback: recordfeedback).onAppear {
+                        recordfeedback.recordFeedbackStatus = .bad
+                    })
+ {
                                         if colorschemedefault {
                                             Image(systemName: "hand.thumbsdown")
                                                 .font(.title)
@@ -111,7 +117,7 @@ struct RecordThumbsView: View {
 
 
 struct RecordMultipleChoice: View {
-    @EnvironmentObject var recordfeedback: RecordFeedback
+    @StateObject var recordfeedback: RecordFeedback
 
     var body: some View {
         VStack {
@@ -228,4 +234,6 @@ struct RecordMultipleChoice: View {
 
     }
 }
+
+
 

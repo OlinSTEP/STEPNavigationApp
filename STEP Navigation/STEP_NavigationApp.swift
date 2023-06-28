@@ -9,9 +9,8 @@ import SwiftUI
 import Firebase
 
 @main
+
 struct STEP_NavigationApp: App {
-    @StateObject private var feedback = Feedback()
-    @StateObject private var recordFeedback = RecordFeedback()
     
     init() {
         FirebaseApp.configure()
@@ -23,8 +22,8 @@ struct STEP_NavigationApp: App {
         WindowGroup {
             HomeView()
                 .environmentObject(SettingsManager.shared)
-                .environmentObject(feedback)
-                .environmentObject(recordFeedback)
+//                .environmentObject(feedback)
+//                .environmentObject(recordFeedback)
                 .onAppear() {
                     FirebaseManager.shared.setMode(mode: .navigation)
                 }
