@@ -266,7 +266,7 @@ class NavigationManager: ObservableObject {
         hapticTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: (#selector(getHapticFeedback)), userInfo: nil, repeats: true)
         followingCrumbs = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: (#selector(self.followCrumb)), userInfo: nil, repeats: true)
         HapticFeedbackAdapter.shared.startHaptics()
-        PositioningModel.shared.renderKeypoint(RouteNavigator.shared.nextKeypoint!)
+//        PositioningModel.shared.renderKeypoint(RouteNavigator.shared.nextKeypoint!)
     }
     
     /// Stop navigating.  This will clear out various data structures and stop feedback to the user.
@@ -451,7 +451,7 @@ class NavigationManager: ObservableObject {
                 RouteNavigator.shared.checkOffKeypoint()
                 
                 // erase current keypoint and render next keypoint node
-                PositioningModel.shared.renderKeypoint(RouteNavigator.shared.nextKeypoint!)
+//                PositioningModel.shared.renderKeypoint(RouteNavigator.shared.nextKeypoint!)
                 updateDirections()
             } else {
                 // arrived at final keypoint

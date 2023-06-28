@@ -301,7 +301,7 @@ struct VisualizingARMapView: View{
                 .onAppear() {
                     PositioningModel.shared.startPositioning()
                     PathRecorder.shared.startRecording()
-
+                    
                 }
             }
         }
@@ -316,8 +316,13 @@ struct VisualizingARMapView: View{
                 maxDistance: CLLocationDistance(100)
             )
             
+            let pathAnchors = DataModelManager.shared.getNearbyLocations(
+                for: .path,
+                location: loc,
+                maxDistance: CLLocationDistance(100)
+            )
             
-            PositioningModel.shared.resolveAnchors(withInfo: indoorAnchors)
+            PositioningModel.shared.resolveAnchors(withInfo: indoorAnchors.union(pathAnchors))
         }
         .onReceive(PositioningModel.shared.$lastAnchor) { anchorName in
             newResolved = anchorName

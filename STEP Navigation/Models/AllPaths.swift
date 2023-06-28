@@ -121,10 +121,10 @@ class RouteNavigator: ObservableObject {
     var nextKeypoint: KeypointInfo? {
         return keypoints?.first
     }
-    
-//    var AnchorPoint: AnchorPointInfo? {
-//        return anchorpoints?.first
-//    }
+    // PROBLEM
+    var AnchorPoint: AnchorPointInfo? {
+        return anchorpoints?.last
+    }
     
     
     /// The keypoint after the next one (this changes as keypoints are checked off).  If none exists, the value is nil.
