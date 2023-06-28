@@ -137,7 +137,6 @@ struct SettingsDetailView_ColorScheme: View {
                 VStack(spacing: 10) {
                     ForEach(colorSchemeOptions) { scheme in
                         let selectedScheme: Bool = (scheme.background, scheme.foreground) == selectedColorScheme
-//                        print(selectedScheme)
                         
                         Button(action: {
                             selectedColorScheme = (scheme.background, scheme.foreground)

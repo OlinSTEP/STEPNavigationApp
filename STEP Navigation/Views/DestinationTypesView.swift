@@ -16,13 +16,6 @@ struct DestinationTypesView: View {
 
     @AccessibilityFocusState var focusOnNearbyDistanceValue
 
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let verticalIndicator: UIImageView = (scrollView.subviews[(scrollView.subviews.count - 1)] as! UIImageView)
-//        verticalIndicator.backgroundColor = UIColor(red: 211/255.0, green: 138/255.0, blue: 252/255.0, alpha: 1)
-        verticalIndicator.backgroundColor = UIColor.blue
-    }
-
     var body: some View {
         let anchorTypes = PositioningModel.shared.currentLatLon != nil ? DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance) : []
 

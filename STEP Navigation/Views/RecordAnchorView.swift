@@ -25,7 +25,6 @@ struct RecordAnchorView: View {
             
             if !showNextButton && !showInstructions {
                 InformationPopupComponent(popupType: .countdown(countdown: timeRemaining))
-                //                Text("\(timeRemaining)")
                     .onReceive(timer) { time in
                         if timeRemaining > 0 {
                             timeRemaining -= 1

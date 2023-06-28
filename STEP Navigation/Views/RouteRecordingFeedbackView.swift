@@ -105,11 +105,6 @@ struct RecordThumbsView: View {
             .edgesIgnoringSafeArea([.bottom])
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onAppear() {
-//                if settingsManager.getColorSchemeLabel(forColorScheme: settingsManager.colorScheme) == "Default" {
-//                    colorschemedefault = true
-//                } else  {
-//                    colorschemedefault = false
-//                }
                 colorschemedefault = false
             }
         }
