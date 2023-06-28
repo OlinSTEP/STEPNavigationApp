@@ -17,35 +17,35 @@ struct StartAnchorListView: View {
     @State var anchors: [LocationDataModel] = []
         
     var body: some View {
-        ScreenTitleComponent(titleText:"Choose Start Anchor")
         VStack {
-            AnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
-                                      anchors: anchors)
-            Spacer()
-//            if chosenStart != nil || outdoorsSelectedAsStart {
-//                SmallButtonComponent_NavigationLink(destination: {
-//                    NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: destinationAnchorDetails!)
-//                                }, label: "Navigate")
-//            }
-        }
-        .onChange(of: chosenStart) { newValue in
-            print("HERE WE ARE")
-        }
-        .onReceive(positionModel.$currentLatLon) { latLon in
-            guard let latLon = latLon else {
-                return
+            ScreenTitleComponent(titleText:"Choose Start Anchor")
+            ScrollView {
+                NavigateAnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
+                                            anchors: anchors)
+                Spacer()
             }
-            anchors = Array(
-                DataModelManager.shared.getNearbyLocations(
-                    for: .indoorDestination,
-                    location: latLon,
-                    maxDistance: CLLocationDistance(nearbyDistance),
-                    withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
+            .onChange(of: chosenStart) { newValue in
+                print("HERE WE ARE")
+            }
+            .onReceive(positionModel.$currentLatLon) { latLon in
+                guard let latLon = latLon else {
+                    return
+                }
+                anchors = Array(
+                    DataModelManager.shared.getNearbyIndoorLocations(
+                        location: latLon,
+                        maxDistance: CLLocationDistance(nearbyDistance),
+                        withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                    )
                 )
-            )
-            .sorted(by: {
-                $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
-            })
+                .sorted(by: {
+                    $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
+                })
+            }
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+

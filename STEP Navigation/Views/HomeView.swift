@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AuthenticationServices
+import CoreLocation
 
 struct HomeView: View {
     @ObservedObject var authHandler = AuthHandler.shared
@@ -15,6 +16,14 @@ struct HomeView: View {
     
     @AccessibilityFocusState var focusOnPopup
     
+    init() {
+        let appearance = UINavigationBarAppearance()
+        appearance.shadowColor = .clear
+        appearance.backgroundColor = UIColor(AppColor.accent)
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
+    
     var body: some View {
         if authHandler.currentUID == nil {
             SignInWithApple()
@@ -22,33 +31,54 @@ struct HomeView: View {
                 .onTapGesture(perform: authHandler.startSignInWithAppleFlow)
         } else {
             NavigationStack {
+                VStack {
                 ScreenTitleComponent(titleText: "Clew Maps 2", subtitleText: "Precise Short Distance Navigation for the Blind and Visually Impaired")
                     .navigationBarBackButtonHidden()
                     .padding(.top, 60)
                     .background(AppColor.accent)
-                VStack {
-                    if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
-                        if positionModel.currentLatLon == nil {
-                            GPSLocalizationPopup()
-                        } else {
-                            VStack(spacing: 20) {
-                                LargeButtonComponent_NavigationLink(destination: {
-                                    DestinationTypesView()
-                                }, label: "Navigate a Route")
-                                LargeButtonComponent_NavigationLink(destination: {
-                                    RadarMapView_Dev()
-                                }, label: "Explore your Surroundings")
+                
+                    ScrollView {
+                        if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
+                            if positionModel.currentLatLon == nil {
+                                GPSLocalizationPopup()
+                            } else {
+                                VStack(spacing: 20) {
+                                    LargeButtonComponent_NavigationLink(destination: {
+                                        DestinationTypesView()
+                                    }, label: "Navigate")
+                                    //removed explore feature until it is complete
+//                                    LargeButtonComponent_NavigationLink(destination: {
+//                                        RadarMapView()
+//                                    }, label: "Explore")
+                                    LargeButtonComponent_NavigationLink(destination: {
+                                        ManageAnchorsListView()
+                                    }, label: "Manage")
+                                    
+                                    Spacer()
+                                    
+                                    SmallButtonComponent_NavigationLink(destination: {
+                                        SettingsView()
+                                    }, label: "Settings")
+                                    .padding(.bottom, 32)
+                                    .padding(.top, 190)
+                                }
+                                .padding(.top, 20)
                             }
-                            .padding(.top, 20)
                         }
                     }
-                    Spacer()
+                }
+                .background(AppColor.background)
+                .edgesIgnoringSafeArea([.bottom])
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .onAppear() {
+                    positionModel.startCoarsePositioning()
+                    UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation") // Forcing the rotation back to portrait
+                    AppDelegate.orientationLock = .portrait // And making sure it stays that way
                 }
             }
-            .onAppear() {
-                positionModel.startCoarsePositioning()
-            }
-            .accentColor(AppColor.dark)
+            .accentColor(AppColor.text_on_accent)
         }
     }
 }
+
+

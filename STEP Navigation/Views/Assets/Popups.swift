@@ -24,6 +24,7 @@ struct HelpPopup: View {
                         .padding(.horizontal)
                         .padding(.top)
                         .padding(.bottom, 1)
+                        .foregroundColor(AppColor.foreground)
                     Spacer()
                 }
             if let anchorDetailsStart = anchorDetailsStart {
@@ -38,6 +39,7 @@ struct HelpPopup: View {
                         .font(.largeTitle)
                         .bold()
                         .padding(.horizontal)
+                        .foregroundColor(AppColor.foreground)
                     Spacer()
                 }
             }
@@ -48,6 +50,8 @@ struct HelpPopup: View {
                         .padding(.horizontal)
                         .padding(.top)
                         .padding(.bottom, 1)
+                        .foregroundColor(AppColor.foreground)
+
                     Spacer()
                 }
                                 
@@ -58,40 +62,102 @@ struct HelpPopup: View {
                 }
             
                 Spacer()
-                SmallButtonComponent_Button(label: "Dismiss", popupTrigger: $showHelp)
+                SmallButtonComponent_PopupTrigger(label: "Dismiss", popupTrigger: $showHelp)
             }
-            .background(AppColor.light)
+            .background(AppColor.background)
     }
 }
 
 ///This struct displays a confirmation  popup when a user attempts to exit the navigation session.
-struct ExitPopup: View {
+struct ConfirmationPopup<Destination: View>: View {
     /// Binding to a boolean value that indicates whether the confirmation popup is showing.
     @Binding var showingConfirmation: Bool
+    let titleText: String
+    let subtitleText: String?
+    let confirmButtonLabel: String
+    let confirmButtonDestination: () -> Destination
+    let simultaneousAction: (() -> Void)?
+    
+    @State var deletePressed: Bool = false
+
+    
+    init(showingConfirmation: Binding<Bool>, titleText: String, subtitleText: String?, confirmButtonLabel: String, confirmButtonDestination: @escaping () -> Destination, simultaneousAction: (() -> Void)? = nil) {
+        self._showingConfirmation = showingConfirmation
+        self.titleText = titleText
+        self.subtitleText = subtitleText
+        self.confirmButtonLabel = confirmButtonLabel
+        self.confirmButtonDestination = confirmButtonDestination
+        self.simultaneousAction = simultaneousAction
+    }
     
     var body: some View {
         VStack {
             VStack {
-                Text("Are you sure you want to exit?")
+                Text(titleText)
                     .bold()
                     .font(.title2)
-                Text("This will end the navigation session.")
-                    .font(.title3)
+                    .foregroundColor(AppColor.foreground)
+                if let subtitleText = subtitleText {
+                    Text(subtitleText)
+                        .font(.title3)
+                        .foregroundColor(AppColor.foreground)
+                }
             }
             .padding(.vertical, 10)
             .padding(.horizontal)
             
             VStack {
-                SmallButtonComponent_NavigationLink(destination: {
-                                    HomeView()
-                                }, label: "Exit")
-                .padding(.bottom, 2)
-                SmallButtonComponent_Button(label: "Cancel", labelColor: AppColor.dark, backgroundColor: AppColor.grey, popupTrigger: $showingConfirmation, role: .cancel)
+                if let simultaneousAction = simultaneousAction {
+                    NavigationLink(destination: confirmButtonDestination(), isActive: $deletePressed, label: {
+                        Text("\(confirmButtonLabel)")
+                            .font(.title2)
+                            .bold()
+                            .frame(maxWidth: .infinity)
+                            .foregroundColor(AppColor.text_on_accent)
+                    })
+                    .onChange(of: deletePressed) {
+                        newValue in
+                        if newValue {
+                            print("simultaneous action completed")
+                            simultaneousAction()
+                        }
+                    }
+                    .tint(AppColor.accent)
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
+                    .padding(.horizontal)
+                    .padding(.bottom, 2)
+
+                } else {
+                    SmallButtonComponent_NavigationLink(destination: confirmButtonDestination, label: "\(confirmButtonLabel)")
+                        .padding(.bottom, 2)
+                }
+                
+                Button(role: .cancel) {
+                    showingConfirmation.toggle()
+                } label: {
+                    Text("Cancel")
+                        .font(.title2)
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(AppColor.foreground)
+                }
+                .tint(AppColor.background)
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(AppColor.foreground, lineWidth: 2)
+                )
+                .padding(.horizontal)
+
             }
             .padding()
         }
         .frame(width: 360, height: 250)
-        .background(AppColor.light)
+        .background(AppColor.background)
         .cornerRadius(20)
     }
 }
@@ -103,7 +169,7 @@ struct GPSLocalizationPopup: View {
         VStack {
             HStack {
                 Text("Finding Destinations Near You")
-                    .foregroundColor(AppColor.dark)
+                    .foregroundColor(AppColor.foreground)
                     .bold()
                     .font(.title)
                     .multilineTextAlignment(.center)
@@ -114,12 +180,12 @@ struct GPSLocalizationPopup: View {
             
             ZStack {
                 Circle()
-                    .stroke(AppColor.dark, lineWidth: 5)
+                    .stroke(AppColor.foreground, lineWidth: 5)
                     .frame(width: 100, height: 100)
                     .opacity(0.25)
                 Circle()
                     .trim(from: 0.25, to: 1)
-                    .stroke(AppColor.dark, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                    .stroke(AppColor.foreground, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                     .frame(width: 100, height: 100)
                     .rotationEffect(.degrees(isAnimating ? 360 : 0))
                     .onAppear {

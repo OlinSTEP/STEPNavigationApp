@@ -7,14 +7,76 @@
 
 import SwiftUI
 
-// Components in this file:
-//  - Screen Title
-//  - Custom Header Button
-//  - Information Popup
-//  - Anchor Details
-//  - Action Bar Button
-//  - Anchor List
-//  - NearbyDistanceThreshold
+struct TextFieldComponent: View {
+    @Binding var entry: String
+    let instructions: String?
+    let label: String?
+    let textBoxSize: TextBoxSize?
+    
+    @FocusState private var entryIsFocused: Bool
+    
+    init(entry: Binding<String>, instructions: String? = "", label: String? = nil, textBoxSize: TextBoxSize? = .small) {
+        self._entry = entry
+        self.instructions = instructions
+        self.label = label
+        self.textBoxSize = textBoxSize
+    }
+    
+    var body: some View {
+        VStack {
+            if let label = label {
+                HStack {
+                    Text(label)
+                        .font(.title2)
+                        .bold()
+                        .foregroundColor(AppColor.foreground)
+                    Spacer()
+                }
+            }
+            
+            if let instructions = instructions {
+                if textBoxSize == .small {
+                    TextField("\(instructions)", text: $entry)
+                        .foregroundColor(AppColor.foreground)
+                        .frame(height: 48)
+                        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(AppColor.foreground, lineWidth: 2)
+                        )
+                        .submitLabel(.done)
+                } else {
+                    TextField("\(instructions)", text: $entry, axis: .vertical)
+                        .foregroundColor(AppColor.foreground)
+                        .frame(height: 146)
+                        .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(AppColor.foreground, lineWidth: 2)
+                        )
+                        .lineLimit(6, reservesSpace: true)
+                        .submitLabel(.done)
+                        .focused($entryIsFocused)
+                        .onChange(of: entry) { newValue in
+                            guard let newValueLastChar = newValue.last else { return }
+                            if newValueLastChar == "\n" {
+                                entry.removeLast()
+                                entryIsFocused = false
+                            }
+                        }
+                }
+            }
+        }
+        .padding(.horizontal)
+    }
+    
+    enum TextBoxSize {
+        case small, large
+    }
+}
+
 
 /// This struct manages the appearance of the titles for each screen.
 struct ScreenTitleComponent: View {
@@ -52,6 +114,7 @@ struct ScreenTitleComponent: View {
             }
         }
         .background(AppColor.accent)
+        .foregroundColor(AppColor.text_on_accent)
     }
 }
 
@@ -72,6 +135,7 @@ struct CustomHeaderButtonComponent: ToolbarContent {
             Text(label)
                 .bold()
                 .font(.title2)
+                .foregroundColor(AppColor.text_on_accent)
                 .onTapGesture {
                     onTapGesture()
                 }
@@ -94,7 +158,7 @@ struct InformationPopupComponent: View {
         VStack {
             HStack {
                 Text(popupType.messageText)
-                    .foregroundColor(AppColor.light)
+                    .foregroundColor(AppColor.text_on_accent)
                     .bold()
                     .font(.title2)
                     .multilineTextAlignment(.center)
@@ -102,17 +166,15 @@ struct InformationPopupComponent: View {
             if case .arrived = popupType {
                 if let anchorDetails = popupType.additionalAnchorDetails {
                     SmallButtonComponent_NavigationLink(destination: {
-                        AnchorDetailView(anchorDetails: anchorDetails, buttonLabel: "Home") {
-                            GPSLocalizationPopup()
-                        .navigationBarBackButtonHidden()
-                        }
-                    }, label: "Go to Destination Details")
+                        AnchorDetailView_ArrivedView(feedback: Feedback(), anchorDetails: anchorDetails)
+                    }, label: "Go to Destination Details", labelColor: AppColor.accent, backgroundColor: AppColor.text_on_accent)
                 }
             }
+        
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(AppColor.dark)
+        .background(AppColor.accent)
     }
     
     /// This enumeration represents the different types of popups that can be presented.
@@ -124,6 +186,7 @@ struct InformationPopupComponent: View {
         case waitingToLocalize
         case arrived(destinationAnchorDetails: LocationDataModel)
         case direction(directionText: String)
+        case countdown(countdown: Int)
         
         var messageText: String {
             switch self {
@@ -133,6 +196,8 @@ struct InformationPopupComponent: View {
                 return "Trying to align to your route. Scan your phone around to recognize your surroundings."
             case .direction(let directionText):
                 return directionText
+            case .countdown(let countdown):
+                return String(countdown)
             }
         }
         
@@ -202,6 +267,7 @@ struct AnchorDetailsComponent: View {
             .padding(.horizontal)
             .padding(.vertical, 2)
         }
+        .foregroundColor(AppColor.foreground)
         
     }
 }
@@ -212,7 +278,7 @@ struct ActionBarButtonComponent: View {
     let color: Color?
     let accessibilityLabel: String
     
-    init(action: @escaping () -> Void, iconSystemName: String, color: Color? = AppColor.accent, accessibilityLabel: String) {
+    init(action: @escaping () -> Void, iconSystemName: String, color: Color? = AppColor.text_on_accent, accessibilityLabel: String) {
         self.action = action
         self.iconSystemName = iconSystemName
         self.color = color
@@ -225,12 +291,13 @@ struct ActionBarButtonComponent: View {
                 .resizable()
                 .frame(width: 80, height: 80)
                 .foregroundColor(color)
-        }.accessibilityLabel(accessibilityLabel)
+        }
+        .accessibilityLabel(accessibilityLabel)
     }
 }
 
 /// This type is used to specify to the ChooseAnchorComponentView whether we are choosing the anchor in the context of indoor or outdoor navigation.  Further, if indoors, we differentiate between the start and end of a route
-struct AnchorListComponent: View {
+struct NavigateAnchorListComponent: View {
     var anchors: [LocationDataModel]
     let anchorSelectionType: AnchorSelectionType
     
@@ -260,10 +327,32 @@ struct AnchorListComponent: View {
             ScrollView {
                 if case .indoorStartingPoint(let destinationAnchor) = anchorSelectionType {
                    if NavigationManager.shared.getReachabilityFromOutdoors(outOf: [destinationAnchor]).first == true {
-                       LargeButtonComponent_NavigationLink(destination: {
-                           NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: destinationAnchor)
-                       }, label: "Start Outside", labelColor: AppColor.grey, backgroundColor: AppColor.dark, labelTextSize: .title, labelTextLeading: true)
-                       .padding(.bottom, 10)
+
+                       NavigationLink (
+                           destination: {
+                               NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: destinationAnchor)
+                           },
+                           label: {
+                               HStack {
+                                   Text("Start Outside")
+                                       .font(.title)
+                                       .bold()
+                                       .padding(30)
+                                       .foregroundColor(AppColor.foreground)
+                                       .multilineTextAlignment(.leading)
+                                       Spacer()
+                               }
+                               .frame(maxWidth: .infinity)
+                               .frame(minHeight: 140)
+                           })
+//                       .background(AppColor.background)
+                       .cornerRadius(20)
+                       .overlay(
+                           RoundedRectangle(cornerRadius: 20)
+                            .stroke(AppColor.foreground, lineWidth: 5)
+                       )
+                       .padding(.horizontal)
+                       .padding(.top, 5)
                    }
                 }
                 VStack(spacing: 20) {
@@ -294,10 +383,10 @@ struct AnchorListComponent: View {
                         }
                     }
                 }
+                .padding(.top, 10)
             }
         }
         .padding(.top, 10)
-        Spacer()
     }
 }
 
@@ -320,6 +409,7 @@ struct NearbyDistanceThresholdComponent: View {
                     .bold()
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
+                    .foregroundColor(AppColor.foreground)
                 Spacer()
             }
             Button {
@@ -330,7 +420,7 @@ struct NearbyDistanceThresholdComponent: View {
                     .font(.title2)
                     .bold()
                     .frame(maxWidth: 300)
-                    .foregroundColor(AppColor.dark)
+                    .foregroundColor(AppColor.text_on_accent)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)

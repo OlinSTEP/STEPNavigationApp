@@ -52,7 +52,7 @@ struct NavigatingView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .frame(height: 140)
-                        .background(AppColor.dark)
+                        .background(AppColor.accent)
                     }
                 }
                 .padding(.vertical, 100)
@@ -76,15 +76,17 @@ struct NavigatingView: View {
             }
             
             if showingConfirmation {
-                ExitPopup(showingConfirmation: $showingConfirmation)
+                ConfirmationPopup(showingConfirmation: $showingConfirmation,
+                                  titleText: "Are you sure you want to exit?",
+                                  subtitleText: "This will end the navigation session.",
+                                  confirmButtonLabel: "Exit")
+                {
+                   MultipleChoice(feedback: Feedback())
+                }
                     .accessibilityFocused($focusOnPopup)
                     .accessibilityAddTraits(.isModal)
             }
-//        }.onReceive(routeNavigator.keypoints) { newKeypoints in
-//            if newKeypoints.count == 0 {
-//                // do some stuff
-//
-//            }
+
         }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
             checkLocalization(cloudAnchorsToCheck: newValue)
         }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
@@ -92,21 +94,22 @@ struct NavigatingView: View {
                 return
             }
             // plan path
+            
             if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
-                didPrepareToNavigate = true
-                PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
-                    guard wasSuccesful else {
-                        return
-                    }
-                    checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
-                }
-            } else if newValue.isAtLeastAsGoodAs(other: .high) {
-                didLocalize = true
-                if !didPrepareToNavigate {
-                    didPrepareToNavigate = true
-                    PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
-                }
-            }
+                            didPrepareToNavigate = true
+                            PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
+                                guard wasSuccesful else {
+                                    return
+                                }
+                                checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
+                            }
+                        } else if newValue.isAtLeastAsGoodAs(other: .high) {
+                            didLocalize = true
+                            if !didPrepareToNavigate {
+                                didPrepareToNavigate = true
+                                PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
+                            }
+                        }
         }.onReceive(navigationManager.$navigationDirection) {
             newValue in
             hideNavTimer?.invalidate()
@@ -146,3 +149,5 @@ struct ARViewContainer: UIViewRepresentable {
     func updateUIView(_ uiView: ARSCNView, context: Context) {}
     
 }
+
+

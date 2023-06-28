@@ -10,6 +10,16 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
+			<string>Units</string>
+			<key>Key</key>
+			<string>units</string>
+			<key>DefaultValue</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
 			<string>Visualize Google Streetscape Data</string>
 			<key>Key</key>
 			<string>visualizeStreetscapeData</string>

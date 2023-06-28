@@ -30,7 +30,7 @@ class FirebaseManager: ObservableObject {
     /// Keeps track of new cloud anchor connections that get added to the database
     private var connectionObserver: ListenerRegistration?
     /// Keeps track of new cloud anchors that get added to the database
-    private var cloudAnchorObserver: ListenerRegistration?
+    private var cloudAnchorObservers: [ListenerRegistration] = []
     /// Keeps track of the location at which we last probed for nearby destinations
     private var lastQueryLocation: CLLocationCoordinate2D?
     /// The mode the database is currently operating within.  This mode is useful for setting various listeners.
@@ -39,6 +39,11 @@ class FirebaseManager: ObservableObject {
     let mapGraph = MapGraph()
     /// A connection to the Firestore database
     private let db: Firestore
+    /// the path where we last stored a log file
+    var lastLogPath: String?
+    
+    /// Stores the current version of the edge connecting two nodes.  This is used for path versioning
+    private var currentVersionMap: [NodePair<String, String>: Int] = [:]
     
     /// a handle to the cloud anchor collection.  This handle is affected by the the mapping sub folder setting.
     private var cloudAnchorCollection: CollectionReference {
@@ -99,9 +104,35 @@ class FirebaseManager: ObservableObject {
     /// - Parameters:
     ///   - identifier: the ARCore Cloud Anchor ID
     ///   - metadata: the data to store with the cloud anchor
-    ///   TODO: need to support geo hash
     func updateCloudAnchor(identifier: String, metadata: CloudAnchorMetadata) {
         self.cloudAnchorCollection.document(identifier).updateData(metadata.asDict()) { error in
+            print("error: \(error?.localizedDescription ?? "none")")
+        }
+    }
+    
+    
+    /// Uploads feedback data to the Firebase storage. The data is stored under the 'feedbackSurveyData' folder,
+    /// and each feedback file is given a unique filename.
+    /// - Parameter data: The JSON formatted version of feeback data.
+    func uploadFeedback(_ data: Data) {
+        guard let uid = AuthHandler.shared.currentUID else {
+            return
+        }
+        let filename = "\(UUID().uuidString).json"
+        Storage.storage().reference().child("feedbackSurveyData").child(uid).child(filename).putData(data) { (metadata, error) in
+            print("error: \(error?.localizedDescription ?? "none")")
+        }
+    }
+    
+    /// Uploads feedback data to the Firebase storage. The data is stored under the 'feedbackSurveyData' folder,
+    /// and each feedback file is given a unique filename.
+    /// - Parameter data: The JSON formatted version of feeback data.
+    func uploadRecordFeedback(_ data: Data) {
+        guard let uid = AuthHandler.shared.currentUID else {
+            return
+        }
+        let filename = "\(UUID().uuidString).json"
+        Storage.storage().reference().child("recordFeedback").child(uid).child(filename).putData(data) { (metadata, error) in
             print("error: \(error?.localizedDescription ?? "none")")
         }
     }
@@ -138,6 +169,7 @@ class FirebaseManager: ObservableObject {
     /// - Parameter id: the identifier of the cloud anchor ID to delete.
     func deleteCloudAnchor(id: String) {
         cloudAnchorCollection.document(id).delete()
+        let _ = DataModelManager.shared.deleteDataModel(byCloudAnchorID: id)
     }
     
     /// Upload the log data to the storage bucket
@@ -146,6 +178,7 @@ class FirebaseManager: ObservableObject {
         let uniqueId = RouteNavigator.shared.routeNameForLogging ?? UUID().uuidString
         print("UPLOADING LOG \(RouteNavigator.shared.routeNameForLogging ?? "nil")")
         Storage.storage().reference().child("take2logs").child("\(uniqueId).log").putData(data) { (metadata, error) in
+            self.lastLogPath = metadata?.path
             print("error: \(error?.localizedDescription ?? "none")")
         }
     }
@@ -194,9 +227,22 @@ class FirebaseManager: ObservableObject {
             "connections": FieldValue.arrayUnion(
                 [["toID": anchorID2,
                   "weight": edgeWeight,
-                  "pathID": id] as [String : Any]])
+                  "pathID": id,
+                  "version": getConnectionVersion(from: anchorID1, to: anchorID2)] as [String : Any]])
         ])
-
+    }
+    
+    /// Get the next version for the connection to use between the two anchors
+    /// - Parameters:
+    ///   - anchorID1: the "from" anchor
+    ///   - anchorID2: the "to" anchor
+    /// - Returns: the integer to use for the version (this will increase by one with each new recorded path)
+    private func getConnectionVersion(from anchorID1: String, to anchorID2: String)->Int {
+        if let currentVersion = currentVersionMap[NodePair(from: anchorID1, to: anchorID2)] {
+            return currentVersion + 1
+        } else {
+            return 0
+        }
     }
     
     /// Parse the data from Firebase containing the cloud anchor
@@ -217,7 +263,9 @@ class FirebaseManager: ObservableObject {
         }
         let anchorTypeString = (data["category"] as? String) ?? ""
         let associatedOutdoorFeature = (data["associatedOutdoorFeature"] as? String) ?? ""
-        let anchorType = AnchorType(rawValue: anchorTypeString) ?? .indoorDestination
+        let anchorType = AnchorType(rawValue: anchorTypeString) ?? .other
+        let organization = (data["organization"] as? String) ?? ""
+        let notes = (data["notes"] as? String) ?? ""
         let creatorUID = (data["creatorUID"] as? String) ?? ""
         let isReadable = (data["isReadable"] as? Bool) ?? true
         var simpleConnections: [String: SimpleEdge] = [:]
@@ -227,14 +275,18 @@ class FirebaseManager: ObservableObject {
                   let weight = connection["weight"] as? Double else {
                 continue
             }
-            simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight))
+            let version = connection["version"] as? Int ?? 0
+            currentVersionMap[NodePair(from: id, to: toID)] = max(version, currentVersionMap[NodePair(from: id, to: toID)] ?? 0)
+            simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight), wasReversed: false, version: version)
         }
         return (
             CloudAnchorMetadata(name: anchorName,
                                 type: anchorType,
                                 associatedOutdoorFeature: associatedOutdoorFeature,
                                 geospatialTransform: geospatialData, creatorUID: creatorUID,
-                                isReadable: isReadable
+                                isReadable: isReadable,
+                                organization: organization,
+                                notes: notes
             ),
             LocationDataModel(anchorType: anchorType,
                               associatedOutdoorFeature: associatedOutdoorFeature,
@@ -271,64 +323,64 @@ class FirebaseManager: ObservableObject {
                 .start(at: [bound.startValue])
                 .end(at: [bound.endValue])
         }
+        removeAllCloudAnchorObservers()
         for query in queries {
-            query.getDocuments() { (snapshot, error) in
-                guard let documents = snapshot?.documents else {
-                    print("Unable to fetch snapshot data. \(String(describing: error))")
-                    return
+            cloudAnchorObservers.append(
+                query.addSnapshotListener() { (snapshot, error) in
+                    guard let snapshot = snapshot else {
+                        print("Error fetching snapshots: \(error!)")
+                        return
+                    }
+                    self.handleCloudAnchorSnapshot(snapshot: snapshot)
                 }
-                print("querying \(documents.count)")
-                for document in documents {
-                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: document.documentID, document.data()) {
-                        // we could wind up adding the same model multiple times, but that is okay
-                        self.mapAnchors[document.documentID] = cloudMetadata
-                        DataModelManager.shared.addDataModel(dataModel)
-                        self.mapGraph.cloudNodes.insert(document.documentID)
-                        for (toID, simpleEdge) in lightweightConnections {
-                            print("added lightweight \(document.documentID) to \(toID)")
-                            self.mapGraph.addLightweightConnection(from: document.documentID, to: toID, withEdge: simpleEdge)
-                        }
+            )
+        }
+    }
+    
+    private func handleCloudAnchorSnapshot(snapshot: QuerySnapshot) {
+        snapshot.documentChanges.forEach { diff in
+            switch diff.type {
+            case .added:
+                if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()) {
+                    self.mapAnchors[diff.document.documentID] = cloudMetadata
+                    DataModelManager.shared.addDataModel(dataModel)
+                    self.mapGraph.cloudNodes.insert(diff.document.documentID)
+                    for (toID, simpleEdge) in lightweightConnections {
+                        self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
+                    }
+                }
+            case .removed:
+                if DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
+                    self.mapAnchors.removeValue(forKey: diff.document.documentID)
+                    self.mapGraph.cloudNodes.remove(diff.document.documentID)
+                }
+            case .modified:
+                if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()), DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
+                    self.mapAnchors[diff.document.documentID] = cloudMetadata
+                    DataModelManager.shared.addDataModel(dataModel)
+                    for (toID, simpleEdge) in lightweightConnections {
+                        self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
                     }
                 }
             }
         }
     }
     
+    private func removeAllCloudAnchorObservers() {
+        cloudAnchorObservers.map({$0.remove()})
+        cloudAnchorObservers = []
+    }
+    
     /// Create a snapshot listener for all the cloud anchors.
     private func observeAllCloudAnchors() {
-        cloudAnchorObserver?.remove()
-        cloudAnchorObserver = cloudAnchorCollection.addSnapshotListener() { snapshot, error  in
-            guard let snapshot = snapshot else {
-                print("Error fetching snapshots: \(error!)")
-                return
-            }
-            snapshot.documentChanges.forEach { diff in
-                switch diff.type {
-                case .added:
-                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()) {
-                        self.mapAnchors[diff.document.documentID] = cloudMetadata
-                        DataModelManager.shared.addDataModel(dataModel)
-                        self.mapGraph.cloudNodes.insert(diff.document.documentID)
-                        for (toID, simpleEdge) in lightweightConnections {
-                            self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
-                        }
-                    }
-                case .removed:
-                    if DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
-                        self.mapAnchors.removeValue(forKey: diff.document.documentID)
-                        self.mapGraph.cloudNodes.remove(diff.document.documentID)
-                    }
-                case .modified:
-                    if let (cloudMetadata, dataModel, lightweightConnections) = self.parseCloudAnchor(id: diff.document.documentID, diff.document.data()), DataModelManager.shared.deleteDataModel(byCloudAnchorID: diff.document.documentID) {
-                        self.mapAnchors[diff.document.documentID] = cloudMetadata
-                        DataModelManager.shared.addDataModel(dataModel)
-                        for (toID, simpleEdge) in lightweightConnections {
-                            self.mapGraph.addLightweightConnection(from: diff.document.documentID, to: toID, withEdge: simpleEdge)
-                        }
-                    }
+        cloudAnchorObservers.append( cloudAnchorCollection.addSnapshotListener() { snapshot, error  in
+                guard let snapshot = snapshot else {
+                    print("Error fetching snapshots: \(error!)")
+                    return
                 }
+                self.handleCloudAnchorSnapshot(snapshot: snapshot)
             }
-        }
+        )
     }
     
     /// Create a snapshot listener for all of the connection objects in the database
@@ -407,3 +459,4 @@ class FirebaseManager: ObservableObject {
         return mapAnchors[id]
     }
 }
+ 

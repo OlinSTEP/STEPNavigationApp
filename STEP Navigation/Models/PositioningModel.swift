@@ -48,6 +48,10 @@ struct CloudAnchorMetadata {
     let creatorUID: String
     /// True if the cloud anchor can be read by the general public, false if it can only be ready by the user who created it
     let isReadable: Bool
+    /// The organization that the cloud anchor is associated with
+    let organization: String
+    /// The notes for the cloud anchor
+    let notes: String
     
     /// Convert the cloud anchor data to a dictionary that is suitable for serialization or storage in a database
     /// - Returns: the dictionary as key-value pairs
@@ -59,6 +63,8 @@ struct CloudAnchorMetadata {
                 "isReadable": isReadable,
                 "type": type.rawValue,
                 "category": type.rawValue,
+                "organization": organization,
+                "notes": notes,
                 "associatedOutdoorFeature": associatedOutdoorFeature,
                 "geospatialTransform": geospatialTransform.asDict(),
                 "geohash": hash]
@@ -92,6 +98,10 @@ class PositioningModel: NSObject, ObservableObject {
     private var qualityChecker: Timer?
     /// a mapping from anchor identifiers to cloud identifiers
     private var identifierToCloudIdentifier: [UUID: String] = [:]
+    private var arCoreDispatchQueue = DispatchQueue(label: "arCoreQueue")
+    private var sessionReadyCondition = NSCondition()
+    /// keeps track of whether the GARSession is ready
+    private var sessionReady = false
     /// the most recent quality (useful for updating SwiftUI-based views)
     @Published var currentQuality: GARFeatureMapQuality?
     /// the cloud anchors that have been resolved so far.  The elements of the set are the cloud identifiers
@@ -172,7 +182,7 @@ class PositioningModel: NSObject, ObservableObject {
         // in case we have already positioned, use it here
         if let location = locationManager.location, -location.timestamp.timeIntervalSinceNow < 1000.0 {
             // we do this on a delay to give the view a chance to observe this change
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 guard self.geoLocalizationAccuracy == .none else {
                     return
                 }
@@ -187,6 +197,9 @@ class PositioningModel: NSObject, ObservableObject {
     /// Stop positioning using ARCore and ARKit
     func stopPositioning() {
         garSession = nil
+        sessionReadyCondition.lock()
+        sessionReady = false
+        sessionReadyCondition.unlock()
         arView.session.pause()
         resetAlignment()
     }
@@ -273,35 +286,45 @@ class PositioningModel: NSObject, ObservableObject {
     /// Initiate a request to resolve a cloud anchor based on its cloud identifier
     /// - Parameter cloudAnchorID: the cloud identifier
     func resolveCloudAnchor(byID cloudAnchorID: String) {
-        do {
-            try garSession?.resolveCloudAnchor(cloudAnchorID) { garAnchor, anchorState in
-                guard anchorState == .success else {
-                    return
+        arCoreDispatchQueue.async {
+            self.waitOnSession()
+            do {
+                print("RESOLVING \(cloudAnchorID)")
+                try self.garSession?.resolveCloudAnchor(cloudAnchorID) { garAnchor, anchorState in
+                    guard anchorState == .success else {
+                        return
+                    }
+                    guard let garAnchor = garAnchor else {
+                        return
+                    }
+                    self.identifierToCloudIdentifier[garAnchor.identifier] = cloudAnchorID
+                    self.cloudAnchorAligner.cloudAnchorDidUpdate(
+                        withCloudID: cloudAnchorID,
+                        withIdentifier: garAnchor.identifier.uuidString,
+                        withPose: garAnchor.transform,
+                        timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
+                    self.resolvedCloudAnchors.insert(cloudAnchorID)
+                    self.manualAlignment = self.cloudAnchorAligner.adjust(currentAlignment: self.manualAlignment)
                 }
-                guard let garAnchor = garAnchor else {
-                    return
-                }
-                self.identifierToCloudIdentifier[garAnchor.identifier] = cloudAnchorID
-                self.cloudAnchorAligner.cloudAnchorDidUpdate(
-                    withCloudID: cloudAnchorID,
-                    withIdentifier: garAnchor.identifier.uuidString,
-                    withPose: garAnchor.transform,
-                    timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
-                self.resolvedCloudAnchors.insert(cloudAnchorID)
-                self.manualAlignment = self.cloudAnchorAligner.adjust(currentAlignment: self.manualAlignment)
+            } catch {
+                print("error \(error.localizedDescription)")
             }
-        } catch {
-            print("error \(error.localizedDescription)")
         }
     }
     
     /// Estimate the quality of data for creating a cloud anchor
     /// - Parameter pose: the pose to use as a reference
     private func estimateFeatureMapQualityForHosting(pose: simd_float4x4) {
-        do {
-            currentQuality = try garSession?.estimateFeatureMapQualityForHosting(pose)
-        } catch {
-            print("quality estimation error: \(error.localizedDescription)")
+        arCoreDispatchQueue.async {
+            self.waitOnSession()
+            do {
+                let quality = try self.garSession?.estimateFeatureMapQualityForHosting(pose)
+                DispatchQueue.main.async {
+                    self.currentQuality = quality
+                }
+            } catch {
+                print("quality estimation error: \(error.localizedDescription)")
+            }
         }
     }
     
@@ -319,16 +342,19 @@ class PositioningModel: NSObject, ObservableObject {
     ///   - name: the name to use for the terrain anchor
     /// - Returns: the initial GARAnchor that tracks the terrain anchor
     func addTerrainAnchor(at location: CLLocationCoordinate2D, withName name: String, completionHandler: @escaping (GARAnchor?, GARTerrainAnchorState)->()) {
-        guard let garSession = garSession else {
-            completionHandler(nil, .errorInternal)
-            return
-        }
-        do {
-            try garSession.createAnchorOnTerrain(coordinate: location, altitudeAboveTerrain: 1.0, eastUpSouthQAnchor: simd_quatf()) { garAnchor, anchorState in
-                completionHandler(garAnchor, anchorState)
+        arCoreDispatchQueue.async {
+            self.waitOnSession()
+            guard let garSession = self.garSession else {
+                completionHandler(nil, .errorInternal)
+                return
             }
-        } catch {
-            completionHandler(nil, .errorInternal)
+            do {
+                try garSession.createAnchorOnTerrain(coordinate: location, altitudeAboveTerrain: 1.0, eastUpSouthQAnchor: simd_quatf()) { garAnchor, anchorState in
+                    completionHandler(garAnchor, anchorState)
+                }
+            } catch {
+                completionHandler(nil, .errorInternal)
+            }
         }
     }
     
@@ -365,36 +391,44 @@ class PositioningModel: NSObject, ObservableObject {
     /// - Parameters:
     ///   - delay: the delay in seconds before creating the cloud anchor
     ///   - name: the name to associate with the cloud anchor
-    ///   - completionHandler: called with true if the cloud anchor is successful created and false otherwise
-    func createCloudAnchor(afterDelay delay: Double, withName name: String, completionHandler: @escaping (Bool)->()) {
+    ///   - completionHandler: called with an input of the cloud anchor identifier if successful, nil otherwise
+    func createCloudAnchor(afterDelay delay: Double, withName name: String, completionHandler: @escaping (String?)->()) {
         guard !name.isEmpty else {
             AnnouncementManager.shared.announce(announcement: "Please enter an anchor name")
             return
         }
         AnnouncementManager.shared.announce(announcement: "Creating cloud anchor in \(round(delay)) seconds")
-        guard let cameraTransform = self.arView.session.currentFrame?.camera.transform,
-              let geoSpatialTransfrom = garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform else {
-            return
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            self.createCloudAnchor(
-                atPose: cameraTransform.alignY(),
-                withMetadata: CloudAnchorMetadata(
-                    name: name,
-                    type: .indoorDestination,
-                    associatedOutdoorFeature: "",
-                    geospatialTransform: GeospatialData(arCoreGeospatial: geoSpatialTransfrom), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true),
-                completionHandler: completionHandler
-            )
+        arCoreDispatchQueue.async {
+            self.waitOnSession()
+            guard let cameraTransform = self.arView.session.currentFrame?.camera.transform,
+                  let geoSpatialTransfrom = self.garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform else {
+                print("transform was nil!")
+                AnnouncementManager.shared.announce(announcement: "Transform was nil")
+                return
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.createCloudAnchor(
+                    atPose: cameraTransform.alignY(),
+                    withMetadata: CloudAnchorMetadata(
+                        name: name,
+                        type: .other,
+                        associatedOutdoorFeature: "",
+                        geospatialTransform: GeospatialData(arCoreGeospatial: geoSpatialTransfrom), creatorUID: AuthHandler.shared.currentUID ?? "",
+                        isReadable: true,
+                        organization: "",
+                        notes: ""),
+                    completionHandler: completionHandler
+                )
+            }
         }
     }
 
     /// Create a new cloud anchor using a pose from several seconds ago
     /// - Parameters:
     ///     - metadata: the metadata for the cloud anchor
-    ///     - completionHandler: called with an input of true if the cloud anchor is successfully created and false otherwise
-    func createCloudAnchorFromBufferedPose(withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (Bool)->()) {
+    ///     - completionHandler: called with an input of the cloud anchor identifier if successful, nil otherwise
+    func createCloudAnchorFromBufferedPose(withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (String?)->()) {
         guard !poseBuffer.isEmpty else {
             return
         }
@@ -403,37 +437,50 @@ class PositioningModel: NSObject, ObservableObject {
         createCloudAnchor(atPose: poseToUseForQualityEstimation, withMetadata: metadata, completionHandler: completionHandler)
     }
     
+    /// Wait on the ``sessionIsReadyCondition``
+    private func waitOnSession() {
+        sessionReadyCondition.lock()
+        while !sessionReady {
+            sessionReadyCondition.wait()
+        }
+        sessionReadyCondition.unlock()
+    }
+    
     /// Create a new cloud anchor
     /// - Parameters:
     ///   - pose: the pose of the cloud anchor in the current tracking session
     ///   - metadata: the metadata to be associated with the cloud anchor
-    ///   - completionHandler: called with an input of true if the cloud anchor is successfully created and false otherwise
-    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (Bool)->()) {
-        let newAnchor = ARAnchor(transform: pose)
-        arView.session.add(anchor: newAnchor)
-        do {
-            AnnouncementManager.shared.announce(announcement: "Trying to host anchor")
-            try garSession?.hostCloudAnchor(newAnchor, ttlDays: 1) { cloudIdentifier, anchorState in
-                guard anchorState == .success else {
-                    AnnouncementManager.shared.announce(announcement: "Failed to host anchor")
-                    return completionHandler(false)
+    ///   - completionHandler: called with an input of the cloud anchor identifier if successful, nil otherwise
+    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (String?)->()) {
+        arCoreDispatchQueue.async {
+            self.waitOnSession()
+            let newAnchor = ARAnchor(transform: pose)
+            self.arView.session.add(anchor: newAnchor)
+            do {
+                AnnouncementManager.shared.announce(announcement: "Trying to host anchor")
+                try self.garSession?.hostCloudAnchor(newAnchor, ttlDays: 1) { cloudIdentifier, anchorState in
+                    guard anchorState == .success else {
+                        AnnouncementManager.shared.announce(announcement: "Failed to host anchor")
+                        return completionHandler(nil)
+                    }
+                    guard let cloudIdentifier = cloudIdentifier else {
+                        return completionHandler(nil)
+                    }
+                    // TODO: rethink this when we have a category for new cloud anchors
+                    switch metadata.type {
+                    case .other:
+                        FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
+                    default:
+                        PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: pose)
+                        
+                    }
+                    AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
+                    return completionHandler(cloudIdentifier)
                 }
-                guard let cloudIdentifier = cloudIdentifier else {
-                    return completionHandler(false)
-                }
-                switch metadata.type {
-                case .indoorDestination:
-                    FirebaseManager.shared.storeCloudAnchor(identifier: cloudIdentifier, metadata: metadata)
-                default:
-                    PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: pose)
-                    
-                }
-                AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
-                return completionHandler(true)
+            } catch {
+                print("host cloud anchor failed \(error.localizedDescription)")
+                return completionHandler(nil)
             }
-        } catch {
-            print("host cloud anchor failed \(error.localizedDescription)")
-            return completionHandler(false)
         }
     }
     
@@ -477,6 +524,12 @@ extension PositioningModel: ARSessionDelegate {
         }
         do {
             if let garFrame = try garSession?.update(frame) {
+                if garSession?.currentFramePair?.garFrame.earth?.cameraGeospatialTransform != nil {
+                    sessionReadyCondition.lock()
+                    sessionReady = true
+                    sessionReadyCondition.signal()
+                    sessionReadyCondition.unlock()
+                }
                 latestGARAnchors = garFrame.anchors
                 if let nextKeypoint = RouteNavigator.shared.nextKeypoint,
                    nextKeypoint.mode == .latLonBased {
@@ -535,6 +588,9 @@ class RendererHelper {
     /// The streetscape meshes that have been rendered
     var renderedStreetscapes: [UUID: SCNNode] = [:]
     
+    var settingsManager = SettingsManager.shared
+    
+    
     init(arView: ARSCNView) {
         self.arView = arView
     }
@@ -567,7 +623,7 @@ class RendererHelper {
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?) {
         let mesh = SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0)
-        mesh.firstMaterial?.diffuse.contents = UIColor(AppColor.accent)
+        mesh.firstMaterial?.diffuse.contents = UIColor(settingsManager.loadCrumbColor())
         keypointNode?.removeFromParentNode()
         keypointNode = SCNNode(geometry: mesh)
         keypointNode!.simdPosition = location.translation

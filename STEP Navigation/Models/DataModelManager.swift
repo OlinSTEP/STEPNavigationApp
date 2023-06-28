@@ -20,7 +20,7 @@ class DataModelManager: ObservableObject {
     public static var shared = DataModelManager()
     
     // Dictionary that stores all the location models
-    private var allLocationModels = [AnchorType: Set<LocationDataModel>]()
+    @Published var allLocationModels = [AnchorType: Set<LocationDataModel>]()
     
     private var idMap: [String: LocationDataModel] = [:]
     
@@ -103,11 +103,12 @@ class DataModelManager: ObservableObject {
     /// - Parameter byCloudAnchorID: the cloud anchorID associated with the data model to delete
     /// TODO: this is a bad linear search.  Need to have a better way to get the element (e.g., if we hashed on just the ID or something of that nature)
     func deleteDataModel(byCloudAnchorID id: String)->Bool {
-        for var (_, models) in allLocationModels {
+        for var (anchorType, models) in allLocationModels {
             for model in models {
                 if model.getCloudAnchorID() == id {
                     models.remove(model)
                     idMap.removeValue(forKey: model.id)
+                    allLocationModels[anchorType] = models
                     return true
                 }
             }
@@ -118,7 +119,7 @@ class DataModelManager: ObservableObject {
     /// Returns a set of all AnchorTypes currently in the system
     /// - Returns: the anchor types that exist
     func getAnchorTypes() -> Set<AnchorType> {
-        return Set(allLocationModels.keys + [.indoorDestination])
+        return Set(allLocationModels.keys)
     }
     
     /// Lookup a location data model associated by ID
@@ -159,6 +160,20 @@ class DataModelManager: ObservableObject {
             }
         }
         return Array(reachableTypesAsSet)
+    }
+    
+    /// Get an array of all organizations that have been loaded by the `FirebaseManager`.
+    /// - Returns: A alphabetically sorted list of organizations.  The empty organization is not returned.
+    func getAllNearbyOrganizations()-> [String] {
+        var returnValueAsSet: Set<String> = []
+        for model in getAllIndoorLocationModels() {
+            if let cloudIdentifier = model.getCloudAnchorID(),
+               let metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudIdentifier),
+               !metadata.organization.isEmpty {
+                returnValueAsSet.insert(metadata.organization)
+            }
+        }
+        return Array(returnValueAsSet).sorted()
     }
     
     /**
@@ -226,17 +241,12 @@ class DataModelManager: ObservableObject {
             - parameter maxDistance: The maximum distance in meters.
             - returns: A set containing all location data models within the specified distance from the specified location.
     */
-    func getNearbyLocations(for anchorType: AnchorType,
-                            location: CLLocationCoordinate2D,
-                            maxDistance: CLLocationDistance,
-                            withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
+    func getNearbyIndoorLocations(location: CLLocationCoordinate2D,
+                                  maxDistance: CLLocationDistance,
+                                  withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
         var models = Set<LocationDataModel>()
-        if anchorType == .indoorDestination {
-            for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
-                models.formUnion(allLocationModels[anchorTypeCase] ?? [])
-            }
-        } else {
-            models.formUnion(allLocationModels[anchorType] ?? [])
+        for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
+            models.formUnion(allLocationModels[anchorTypeCase] ?? [])
         }
         
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
@@ -246,6 +256,33 @@ class DataModelManager: ObservableObject {
             let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
             return location.distance(from: threshold) <= maxDistance + withBuffer
         }
+    }
+    
+    /**
+            Returns a set containing all location data models within the specified distance from the specified location.
+         
+            - parameter anchorType: The type of the anchor.  If the anchorType is the special value
+                    .indoorDestination, then any anchorType that has isIndoor set to true is okay
+            - parameter location: The location to use as the center point for the distance calculation.
+            - parameter maxDistance: The maximum distance in meters.
+            - returns: A set containing all location data models within the specified distance from the specified location.
+    */
+    func getNearbyLocations(for anchorType: AnchorType,
+                            location: CLLocationCoordinate2D,
+                            maxDistance: CLLocationDistance,
+                            withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
+        let models = allLocationModels[anchorType] ?? []
+                
+        let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        
+        let filtered =  models.filter { model in
+            let locationCoordinate = model.getLocationCoordinate()
+            let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+            return location.distance(from: threshold) <= maxDistance + withBuffer
+        }
+        
+        print(filtered)
+        return filtered
     }
      
 }

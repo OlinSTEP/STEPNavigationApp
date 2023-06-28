@@ -16,8 +16,13 @@ struct LocationDataModel: Hashable, Identifiable {
     private let associatedOutdoorFeature: String?
     /// the latitude / longitude for the data model
     private let coordinates: CLLocationCoordinate2D
-    /// the notes for the data model
-    private let notes: String?
+    /// the cloud anchor metadata (only applies to LocationDataModels that are Cloud anchors
+    var cloudAnchorMetadata: CloudAnchorMetadata? {
+        if let cloudAnchorID = cloudAnchorID {
+            return FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID)
+        }
+        return nil
+    }
     /// the name of the data model
     private let name: String
     /// the identifier for this data model
@@ -39,14 +44,12 @@ struct LocationDataModel: Hashable, Identifiable {
     init(anchorType: AnchorType,
          associatedOutdoorFeature: String?=nil,
          coordinates: CLLocationCoordinate2D,
-         notes: String? = "",
          name: String,
          id: String,
          cloudAnchorID: String?=nil) {
         self.anchorType = anchorType
         self.associatedOutdoorFeature = associatedOutdoorFeature
         self.coordinates = coordinates
-        self.notes = notes
         self.name = name
         self.id = id
         self.cloudAnchorID = cloudAnchorID
@@ -61,7 +64,6 @@ struct LocationDataModel: Hashable, Identifiable {
             hasher.combine(anchorType)
             hasher.combine(coordinates.latitude)
             hasher.combine(coordinates.longitude)
-            hasher.combine(notes ?? "")
             hasher.combine(name)
         }
     
@@ -76,7 +78,6 @@ struct LocationDataModel: Hashable, Identifiable {
         return lhs.anchorType == rhs.anchorType &&
             lhs.coordinates.latitude == rhs.coordinates.latitude &&
             lhs.coordinates.longitude == rhs.coordinates.longitude &&
-            lhs.notes == rhs.notes &&
             lhs.name == rhs.name
     }
     
@@ -96,12 +97,6 @@ struct LocationDataModel: Hashable, Identifiable {
     /// - Returns: the name of the model
     func getName() -> String {
         return self.name
-    }
-    
-    /// Return the associated notes
-    /// - Returns: the associated notes or nil if none exist
-    func getNotes() -> String? {
-        return self.notes
     }
     
     /// Return the associated cloud identifier
@@ -133,8 +128,6 @@ enum AnchorType: String, CaseIterable, Identifiable {
     case frontdesk = "Front Desk"
     /// Represents a junction anchor type (e.g., a hallway intersection)
     case junction = "Junction"
-    /// Represents a generic indoor destination.  This is a placeholder value for when the specific category has not yet been set.
-    case indoorDestination = "Indoor"
     /// Represents a room destination that doesn't fall into a more specific category
     case room = "Room"
     /// Represents a destination that is at the exit of the building
@@ -142,7 +135,8 @@ enum AnchorType: String, CaseIterable, Identifiable {
     /// Represents a water fountain anchor type
     case waterFountain = "Water Fountain"
     /// Represents an anchor type that is part of a path (not a destination in and of itself)
-    case path = "path"
+    case path = "Path"
+    case other = "Other"
     
     /// True if and only if the category corresponds to an indoor feature (i.e., not latitude / longitude based)
     var isIndoors: Bool {
@@ -155,7 +149,7 @@ enum AnchorType: String, CaseIterable, Identifiable {
             return true
         case .room:
             return true
-        case .indoorDestination:
+        case .other:
             return true
         case .junction:
             return true

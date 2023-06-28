@@ -23,21 +23,10 @@ struct AnchorDetailView<Destination: View>: View {
             }
             Spacer()
             SmallButtonComponent_NavigationLink(destination: buttonDestination, label: buttonLabel)
-            
-//            if anchorDetails.getAnchorType().isIndoors {
-//                SmallButtonComponent_NavigationLink(destination: {
-//                    StartAnchorListView(destinationAnchorDetails: anchorDetails)
-//                                }, label: "Find Start Anchor")
-//            } else {
-//                SmallButtonComponent_NavigationLink(destination: {
-//                    NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchorDetails)
-//                                }, label: "Navigate")
-//
-//                SmallButtonComponent_NavigationLink(destination: {
-//                    NavigatingView(startAnchorDetails: chosenStart, destinationAnchorDetails: destinationAnchorDetails!)
-//                                }, label: "Navigate")
-//
-//            }
+                .padding(.bottom, 40)
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

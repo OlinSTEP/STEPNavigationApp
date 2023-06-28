@@ -11,6 +11,7 @@ import FirebaseDatabase
 import ARKit
 import FirebaseStorage
 import SwiftGraph
+import SwiftUI
 
 /// A pair of nodes suitable for specifying the start and end of an edge
 struct NodePair<T: Hashable, U: Hashable>: Hashable {
@@ -26,6 +27,10 @@ struct SimpleEdge {
     let pathID: String
     /// The cost of traversing the edge (currently based on the length of the path)
     let cost: Float
+    /// True if this simple edge was created from reversing an edge
+    let wasReversed: Bool
+    /// The sequential 
+    let version: Int
 }
 
 /// A complex edge that allows for multiple paths to be stitched together into a single, unified path.
@@ -59,6 +64,49 @@ struct ComplexEdge {
             return simd_distance(startAnchorTransform.columns.3, endAnchorTransform.columns.3)
         }
     }
+}
+
+enum ConnectionStatus: CaseIterable {
+    case notConnected
+    case connectedThroughMultipleHops
+    case connectedThroughReverseEdge
+    case connectedDirectly
+    
+    var connectionColor: Color {
+        switch self {
+        case .connectedDirectly:
+            return .green
+        case .connectedThroughReverseEdge:
+            return .yellow
+        case .notConnected:
+            return .red
+        case .connectedThroughMultipleHops:
+            return .blue
+        }
+    }
+    
+    var connectionText: String {
+        switch self {
+        case .connectedDirectly:
+            return "Directly Connected"
+        case .connectedThroughReverseEdge:
+            return "Connected in Reverse"
+        case .notConnected:
+            return "Not Connected"
+        case .connectedThroughMultipleHops:
+            return "Indirectly Connected"
+        }
+    }
+    
+    static var allCases: [ConnectionStatus] {
+            return [
+                .notConnected,
+                .connectedThroughMultipleHops,
+                .connectedThroughReverseEdge,
+                .connectedDirectly
+            ]
+        }
+
 }
 
 /// This class encompasses a map consisting of cloud anchors (nodes) and paths connecting cloud
@@ -99,6 +147,60 @@ class MapGraph {
         lightweightConnections = [:]
     }
     
+    /// Using the vertices currently downloaded from the database, determine which the connection status between the the specified cloud anchor (`anchorID1`) and each cloud anchor in the pool
+    /// - Parameters:
+    ///   - anchorID1: the cloud anchor to start from
+    ///   - pool: the pool of anchors (only cloud anchors are tested for connectivity)
+    /// - Returns: an array where the `i`th entry indicates the connection status
+    func getConnectionStatus(from anchorID1: String, to pool: [LocationDataModel])->[ConnectionStatus] {
+        // start out by assuming nothing is connected
+        var statuses = Array(repeating: ConnectionStatus.notConnected, count: pool.count)
+        
+        // create this map to speed up search later
+        var cloudAnchorIDToIndex : [String: Int] = [:]
+        for i in 0..<pool.count {
+            if let cloudAnchorID = pool[i].getCloudAnchorID() {
+                cloudAnchorIDToIndex[cloudAnchorID] = i
+            }
+        }
+        
+        // check direct connections
+        for (nodePair, simpleEdge) in lightweightConnections {
+            if nodePair.from == anchorID1, let connectedNodeIndex = cloudAnchorIDToIndex[nodePair.to] {
+                statuses[connectedNodeIndex] = simpleEdge.wasReversed ? .connectedThroughReverseEdge : .connectedDirectly
+            }
+        }
+        
+        // do a breadth first search to find connected nodes
+        let allPaths = weightedGraph.findAllBfs(from: anchorID1, goalTest: { vertex in
+            return true
+        })
+        // get the reachable vertex indices
+        let reachableVertexIndices = allPaths.compactMap({$0.last?.v})
+        // convert to cloud anchor IDs and make it into a set
+        let reachableCloudAnchorIds = Set<String>(reachableVertexIndices.map({weightedGraph.vertexAtIndex($0)}))
+        // mark the appropriate cloud anchor IDs that haven't yet been marked as connected
+        for i in 0..<statuses.count {
+            if statuses[i] == .notConnected, let cloudAnchorID = pool[i].getCloudAnchorID(), reachableCloudAnchorIds.contains(cloudAnchorID) {
+                statuses[i] = .connectedThroughMultipleHops
+            }
+        }
+        return statuses
+    }
+    
+    func isDirectlyConnected(from anchorID1: String, to anchorID2: String) -> Bool {
+        // start out by assuming nothing is connected
+        var status = ConnectionStatus.notConnected
+        
+        for (nodePair, simpleEdge) in lightweightConnections {
+            if nodePair.from == anchorID1, nodePair.to == anchorID2 {
+                status = simpleEdge.wasReversed ? .connectedThroughReverseEdge : .connectedDirectly
+            }
+        }
+        
+        return status == .connectedDirectly
+    }
+    
     /// Print the edges in the graph
     func printEdges() {
         for key in connections.keys {
@@ -120,11 +222,17 @@ class MapGraph {
     ///   - simpleEdge: the simple edge that encodes that path ID and the edge cost
     func addLightweightConnection(from fromID: String, to toID: String, withEdge simpleEdge: SimpleEdge) {
         isDirty = true
-        lightweightConnections[NodePair(from: fromID, to: toID)] = simpleEdge
-        // add reverse edge if it doesn't exist yet
-        if lightweightConnections[NodePair(from: toID, to: fromID)] == nil {
+        let currentConnection = lightweightConnections[NodePair(from: fromID, to: toID)]
+        if currentConnection == nil || (currentConnection!.version < simpleEdge.version || currentConnection!.wasReversed) {
+            lightweightConnections[NodePair(from: fromID, to: toID)] = simpleEdge
+        }
+        let reverseConnection = lightweightConnections[NodePair(from: toID, to: fromID)]
+        // add reverse edge if it doesn't exist yet or if it was reversed and has a lower version
+        if reverseConnection == nil || (reverseConnection!.wasReversed && reverseConnection!.version < simpleEdge.version) {
             let reversed = SimpleEdge(pathID: simpleEdge.pathID,
-                                      cost: simpleEdge.cost)
+                                      cost: simpleEdge.cost,
+                                      wasReversed: true,
+                                      version: simpleEdge.version)
             lightweightConnections[NodePair(from: toID, to: fromID)] = reversed
         }
     }
