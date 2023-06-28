@@ -48,6 +48,7 @@ class PathRecorder {
     /// The cloud identifier of the starting cloud anchor of this path
     var stopAnchorID: String?
     
+    
     /// The private initializer (this should not be called directly)
     private init() {
     }
@@ -95,6 +96,13 @@ class PathRecorder {
                 self.restartPathAnchorTimer()
             }
         }
+    }
+    
+    func resolvedAnchor () {
+        guard let currentPose = PositioningModel.shared.cameraTransform else {
+            return
+        }
+        self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0, id: self.breadCrumbs.count))
     }
     
     /// Add the specified cloud anchor to the path recording
