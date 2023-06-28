@@ -6,21 +6,13 @@
 //
 
 import Foundation
-<<<<<<< HEAD
-import Combine
-=======
->>>>>>> main
+
 import SwiftUI
 
 /// This class manages the settings of the app
 class SettingsManager: ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = SettingsManager()
-    private var crumbColorKey = "crumbColor"
-    private var colorSchemeKey = "colorScheme"
-    private var showTutorialsKey = "showTutorials"
-    private let userDefaults = UserDefaults.standard
-    
     private var crumbColorKey = "crumbColor"
     private var colorSchemeKey = "colorScheme"
     private var showTutorialsKey = "showTutorials"
@@ -40,12 +32,6 @@ class SettingsManager: ObservableObject {
     
     /// true if we should visualize streetscape data (requires resetting the app for the setting to take effect)
     @Published var visualizeStreetscapeData = false
-<<<<<<< HEAD
-    
-//    @Published var crumbColor: Color = StaticAppColor.defaultAccent
-//    @Published var colorScheme: [Color] = [StaticAppColor.white, StaticAppColor.defaultBlack, StaticAppColor.defaultAccent, StaticAppColor.defaultBlack]
-=======
->>>>>>> main
 
     
     /// The private initializer.  This should not be called directly.

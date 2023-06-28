@@ -84,11 +84,6 @@ enum ConnectionStatus: CaseIterable {
             return .blue
         }
     }
-<<<<<<< HEAD
-    
-=======
-  
->>>>>>> main
     var connectionText: String {
         switch self {
         case .connectedDirectly:
@@ -110,10 +105,6 @@ enum ConnectionStatus: CaseIterable {
                 .connectedDirectly
             ]
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 }
 
 /// This class encompasses a map consisting of cloud anchors (nodes) and paths connecting cloud

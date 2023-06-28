@@ -248,10 +248,6 @@ class DataModelManager: ObservableObject {
         for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
             models.formUnion(allLocationModels[anchorTypeCase] ?? [])
         }
-<<<<<<< HEAD
-        
-=======
-    
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         
         let filtered =  models.filter { model in
@@ -260,34 +256,6 @@ class DataModelManager: ObservableObject {
             
             print(location.distance(from: threshold))
             print(maxDistance + withBuffer)
-            return location.distance(from: threshold) <= maxDistance + withBuffer
-        }
-        
-        print(filtered)
-        return filtered
-    }
-    
-    /**
-            Returns a set containing all location data models within the specified distance from the specified location.
-         
-            - parameter anchorType: The type of the anchor.  If the anchorType is the special value
-                    .indoorDestination, then any anchorType that has isIndoor set to true is okay
-            - parameter location: The location to use as the center point for the distance calculation.
-            - parameter maxDistance: The maximum distance in meters.
-            - returns: A set containing all location data models within the specified distance from the specified location.
-    */
-    func getNearbyLocations(for anchorType: AnchorType,
-                            location: CLLocationCoordinate2D,
-                            maxDistance: CLLocationDistance,
-                            withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
-        let models = allLocationModels[anchorType] ?? []
-                
->>>>>>> main
-        let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
-        
-        let filtered =  models.filter { model in
-            let locationCoordinate = model.getLocationCoordinate()
-            let location = CLLocation(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
             return location.distance(from: threshold) <= maxDistance + withBuffer
         }
         
