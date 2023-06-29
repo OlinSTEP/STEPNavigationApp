@@ -10,7 +10,6 @@ import SwiftUI
 
 struct AppColor {
     static let settingsManager = SettingsManager.shared
-    
     static var background: Color {
         settingsManager.loadColorScheme().0
     }
@@ -18,14 +17,16 @@ struct AppColor {
     static var foreground: Color {
         settingsManager.loadColorScheme().1
     }
-        
-    // leaving the accent and text_on_accent variables here in case we want to reintroduce a tri-color scheme later, but for now all available color schemes are only two colors so I set the accent and text_on accent accordingly
-    static var accent: Color {
-        settingsManager.loadColorScheme().1
-    }
     
     static var text_on_accent: Color {
         settingsManager.loadColorScheme().0
+<<<<<<< HEAD
+=======
+    }
+        
+    static var accent: Color {
+        settingsManager.loadColorScheme().1
+>>>>>>> frontend-refactor-2-electric-boogaloo
     }
 }
 
@@ -36,6 +37,7 @@ struct StaticAppColor {
     static let green: Color = Color(.sRGB, red: 0/255, green: 255/255, blue: 0/255, opacity: 1)
     static let red: Color = Color(.sRGB, red: 255/255, green: 0/255, blue: 0/255, opacity: 1)
     static let blue: Color = Color(.sRGB, red: 0/255, green: 0/255, blue: 255/255, opacity: 1)
+<<<<<<< HEAD
     static let grey: Color = Color(.sRGB, red: 231/255, green: 231/255, blue: 231/255, opacity: 1)
     
     static let lightred: Color = Color(.sRGB,
@@ -74,4 +76,6 @@ struct StaticAppColor {
                                        blue: 82/255,
                                        opacity: 1)
     
+=======
+>>>>>>> frontend-refactor-2-electric-boogaloo
 }

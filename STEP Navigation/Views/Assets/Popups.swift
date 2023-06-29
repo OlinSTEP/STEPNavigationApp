@@ -162,42 +162,42 @@ struct ConfirmationPopup<Destination: View>: View {
     }
 }
 
-struct GPSLocalizationPopup: View {
-    @State private var isAnimating = false
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Text("Finding Destinations Near You")
-                    .foregroundColor(AppColor.foreground)
-                    .bold()
-                    .font(.title)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 200)
-            .padding(.horizontal)
-            
-            ZStack {
-                Circle()
-                    .stroke(AppColor.foreground, lineWidth: 5)
-                    .frame(width: 100, height: 100)
-                    .opacity(0.25)
-                Circle()
-                    .trim(from: 0.25, to: 1)
-                    .stroke(AppColor.foreground, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                    .frame(width: 100, height: 100)
-                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
-                    .onAppear {
-                        withAnimation(Animation.linear(duration: 1).repeatForever(autoreverses: false)) {
-                            self.isAnimating = true
-                        }
-                    }
-                }
-                .frame(height: 100)
-                .padding()
-                .drawingGroup()
-            }
-            .padding(.top, 20)
-        }
-    }
+//struct GPSLocalizationPopup: View {
+//    @State private var isAnimating = false
+//    
+//    var body: some View {
+//        VStack {
+//            HStack {
+//                Text("Finding Destinations Near You")
+//                    .foregroundColor(AppColor.foreground)
+//                    .bold()
+//                    .font(.title)
+//                    .multilineTextAlignment(.center)
+//            }
+//            .frame(maxWidth: .infinity)
+//            .frame(height: 200)
+//            .padding(.horizontal)
+//            
+//            ZStack {
+//                Circle()
+//                    .stroke(AppColor.foreground, lineWidth: 5)
+//                    .frame(width: 100, height: 100)
+//                    .opacity(0.25)
+//                Circle()
+//                    .trim(from: 0.25, to: 1)
+//                    .stroke(AppColor.foreground, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+//                    .frame(width: 100, height: 100)
+//                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
+//                    .onAppear {
+//                        withAnimation(Animation.linear(duration: 1).repeatForever(autoreverses: false)) {
+//                            self.isAnimating = true
+//                        }
+//                    }
+//                }
+//                .frame(height: 100)
+//                .padding()
+//                .drawingGroup()
+//            }
+//            .padding(.top, 20)
+//        }
+//    }

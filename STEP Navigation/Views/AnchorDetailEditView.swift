@@ -10,22 +10,29 @@ import SwiftUI
 struct AnchorDetailEditView<Destination: View>: View {
     let buttonLabel: String
     let buttonDestination: () -> Destination
-    
-    let visibilityOptions = [true, false]
-    
-    @State var confirmPressed: Bool = false
+        
     @State var showAnchorTypeMenu: Bool = false
+    @State var showCorrespondingExitMenu: Bool = false
+
     
+    @ObservedObject var dataModelManager = DataModelManager.shared
     @State var editing: Bool = false
     @FocusState var editingOrg: Bool
+<<<<<<< HEAD
+=======
+    @State var allOrganizations: [String] = []
+    
+    @State var allCategories: [String] = AnchorType.allCases.map { $0.rawValue}
+    @State var allCorrespondingExits: [String] = DataModelManager.shared.getLocationsByType(anchorType: .externalDoor)
+        .sorted(by: { $0.getName() < $1.getName() })
+        .map { $0.getName() }
+>>>>>>> frontend-refactor-2-electric-boogaloo
     @State var inputText: String = ""
-    @State var vOffset: CGFloat = 52
-    @State var hOffset: CGFloat = 0
     
     let anchorID: String
     @State var newAnchorName: String
     @State var newOrganization: String
-    @State var newCategory: AnchorType
+    @State var newCategory: String
     @State var newNotes: String
     @State var newAssociatedOutdoorFeature: String
     @State var newIsReadable: Bool
@@ -36,19 +43,20 @@ struct AnchorDetailEditView<Destination: View>: View {
         metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: anchorID)!
         newAnchorName = metadata.name
         newAssociatedOutdoorFeature = metadata.associatedOutdoorFeature
-        newCategory = metadata.type
+        newCategory = metadata.type.rawValue
         newIsReadable = metadata.isReadable
         newOrganization = metadata.organization
         newNotes = metadata.notes
         self.buttonLabel = buttonLabel
         self.buttonDestination = buttonDestination
+        self.allOrganizations = dataModelManager.getAllNearbyOrganizations()
     }
     
-    
     var body: some View {
-        ZStack {
-            VStack {
+        ScreenBackground {
+            ZStack {
                 VStack {
+<<<<<<< HEAD
                     ScrollView {
                         TextFieldComponent(entry: $newAnchorName, label: "Name")
                         
@@ -95,13 +103,34 @@ struct AnchorDetailEditView<Destination: View>: View {
                             Button(action: {
                                 withAnimation {
                                     showAnchorTypeMenu = true
+=======
+                    ScreenHeader(title: "Edit Anchor", backButtonHidden: true)
+                    VStack {
+                        ScrollView {
+                            VStack(spacing: 12) {
+                                VStack {
+                                    LeftLabel(text: "Name", textSize: .title2)
+                                    CustomTextField(entry: $newAnchorName)
                                 }
-                            }, label: {
-                                HStack {
-                                    Text("\(newCategory.rawValue)")
-                                    Spacer()
-                                    Image(systemName: "chevron.up.chevron.down")
+                                
+                                VStack {
+                                    LeftLabel(text: "Organization", textSize: .title2)
+                                    ComboBox(allOptions: allOrganizations, editing: $editing, inputText: $newOrganization)
                                 }
+                                
+                                VStack {
+                                    LeftLabel(text: "Type", textSize: .title2)
+                                    PickerButton(selection: $newCategory, showPage: $showAnchorTypeMenu)
+>>>>>>> frontend-refactor-2-electric-boogaloo
+                                }
+                                
+                                if newCategory == "Exit" {
+                                    VStack {
+                                        LeftLabel(text: "Corresponding Exit", textSize: .title2)
+                                        PickerButton(selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
+                                    }
+                                }
+<<<<<<< HEAD
                                 .foregroundColor(AppColor.foreground)
                                 .padding()
                             })
@@ -123,63 +152,31 @@ struct AnchorDetailEditView<Destination: View>: View {
                                         .bold()
                                         .foregroundColor(AppColor.foreground)
                                     Spacer()
+=======
+                                
+                                VStack {
+                                    LeftLabel(text: "Location Notes", textSize: .title2)
+                                    CustomTextField(entry: $newNotes, textBoxSize: .large)
+>>>>>>> frontend-refactor-2-electric-boogaloo
                                 }
-                                HStack {
-                                    Picker("Select Corresponding Exit", selection: $newAssociatedOutdoorFeature) {
-                                        Text("").tag("")
-                                        ForEach(DataModelManager.shared.getLocationsByType(anchorType: .externalDoor).sorted(by: { $0.getName() < $1.getName() })) { outdoorFeature in
-                                            Text(outdoorFeature.getName()).tag(outdoorFeature.id)
-                                        }
-                                    }
-                                    Spacer()
+                                
+                                VStack {
+                                    LeftLabel(text: "Visibility", textSize: .title2)
+                                    SegmentedToggle(toggle: $newIsReadable, trueLabel: "Public", falseLabel: "Private")
                                 }
-                                .frame(height: 48)
-                                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(AppColor.foreground, lineWidth: 2)
-                                )
                             }
-                            .padding(.horizontal)
-                            
                         }
-                        TextFieldComponent(entry: $newNotes, label: "Location Notes", textBoxSize: .large)
-                        
-                        VStack {
-                            HStack {
-                                Text("Visibility")
-                                    .font(.title2)
-                                    .bold()
-                                    .foregroundColor(AppColor.foreground)
-                                Spacer()
-                            }
-                            
-                            CustomSegmentedControl(isReadable: $newIsReadable)
-                        }
-                        .padding(.horizontal)
-                        
-                        
                     }
+                    .padding(.horizontal)
+                    .padding(.top, 10)
+                    
                     Spacer()
-                }
-                .padding(.top, 20)
-                
-                Spacer()
-                NavigationLink(destination: buttonDestination(), isActive: $confirmPressed, label: {
-                    Text("\(buttonLabel)")
-                        .font(.title2)
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(AppColor.text_on_accent)
-                })
-                .onChange(of: confirmPressed) {
-                    newValue in
-                    if newValue {
-                        print("simultaneous action completed")
+                    
+                    SmallNavigationLink(destination: buttonDestination(), label: buttonLabel) {
                         self.updateMetadata()
                     }
                 }
+<<<<<<< HEAD
                 .tint(AppColor.accent)
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
@@ -193,22 +190,30 @@ struct AnchorDetailEditView<Destination: View>: View {
                     .onAppear() {
                         editingOrg = false
                     }
+=======
+                
+                if showAnchorTypeMenu == true {
+                    PickerPage(allOptions: allCategories, selection: $newCategory, showPage: $showAnchorTypeMenu)
+                        .onAppear() {
+                            editingOrg = false
+                        }
+                }
+                if showCorrespondingExitMenu == true {
+                    PickerPage(allOptions: allCorrespondingExits, selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
+                        .onAppear() {
+                            editingOrg = false
+                        }
+                }
+>>>>>>> frontend-refactor-2-electric-boogaloo
             }
-        }
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .ignoresSafeArea(.keyboard, edges: .bottom)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            Text("")
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }
     
     func updateMetadata() {
         let newMetadata =
         CloudAnchorMetadata(name: newAnchorName,
-                                type: newCategory,
+                            type: AnchorType(rawValue: newCategory) ?? .other,
                                 associatedOutdoorFeature: newAssociatedOutdoorFeature,
                                 geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
                             isReadable: newIsReadable,
@@ -217,6 +222,7 @@ struct AnchorDetailEditView<Destination: View>: View {
         FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
     }
 }
+<<<<<<< HEAD
 
 struct CustomSegmentedControl: View {
     @Binding var isReadable: Bool
@@ -471,3 +477,5 @@ struct AnchorTypeMenu: View {
         }
     }
 }
+=======
+>>>>>>> frontend-refactor-2-electric-boogaloo

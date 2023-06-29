@@ -248,7 +248,10 @@ class DataModelManager: ObservableObject {
         for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
             models.formUnion(allLocationModels[anchorTypeCase] ?? [])
         }
+<<<<<<< HEAD
     
+=======
+>>>>>>> frontend-refactor-2-electric-boogaloo
         let threshold = CLLocation(latitude: location.latitude, longitude: location.longitude)
         
         let filtered =  models.filter { model in

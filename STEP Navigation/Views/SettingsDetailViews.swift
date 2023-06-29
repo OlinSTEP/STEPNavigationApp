@@ -239,12 +239,18 @@ struct SettingsDetailView_ColorScheme: View {
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> frontend-refactor-2-electric-boogaloo
     private func updateColorScheme() {
             let (color1, color2) = settingsManager.loadColorScheme()
             selectedColorScheme = (color1, color2)
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> frontend-refactor-2-electric-boogaloo
 }
 
 struct ColorSchemes: Identifiable {
@@ -363,6 +369,10 @@ struct SettingsDetailView_PhoneBodyOffset: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> frontend-refactor-2-electric-boogaloo
 struct CustomCrumbColor: View {
     var settingsManager = SettingsManager.shared
     @Binding var customCrumbPopup: Bool

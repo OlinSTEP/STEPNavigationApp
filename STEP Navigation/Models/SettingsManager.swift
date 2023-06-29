@@ -6,6 +6,10 @@
 //
 
 import Foundation
+<<<<<<< HEAD
+=======
+
+>>>>>>> frontend-refactor-2-electric-boogaloo
 import SwiftUI
 
 /// This class manages the settings of the app
@@ -37,16 +41,6 @@ class SettingsManager: ObservableObject {
     private init() {
         createSettingsBundle()
     }
-    
-    /// Function to get the string label of the color scheme
-    func getColorSchemeLabel(forColorScheme colorScheme: [Color]) -> String? {
-            return colorSchemeStringToColor.first(where: { $0.value == colorScheme })?.key
-        }
-    
-    /// Function to get the string label of the crumb color
-    func getCrumbColorLabel(forCrumbColor crumbColor: Color) -> String? {
-            return crumbColorStringToColor.first(where: { $0.value == crumbColor })?.key
-        }
     
     /// Configure Settings Bundle and add observer for settings changes.
     func createSettingsBundle() {

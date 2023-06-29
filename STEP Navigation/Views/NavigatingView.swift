@@ -25,109 +25,111 @@ struct NavigatingView: View {
     @AccessibilityFocusState var focusOnPopup
     
     var body: some View {
-        ZStack {
-            ARViewContainer()
-            VStack {
-                Spacer()
+        ScreenBackground {
+            ZStack {
+                ARViewContainer()
                 VStack {
-                    if !didLocalize {
-                        InformationPopupComponent(popupType: .waitingToLocalize)
-                    } else {
-                        if RouteNavigator.shared.keypoints?.isEmpty == true {
-                            InformationPopupComponent(popupType: .arrived(destinationAnchorDetails: destinationAnchorDetails))
-                        } else if !navigationDirection.isEmpty {
-                            InformationPopupComponent(popupType: .direction(directionText: navigationDirection))
-                        }
-                    }
                     Spacer()
-                    if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
-                        HStack(spacing: 100) {
-                            ActionBarButtonComponent(action: {
-                                print("pressed pause")
-                            }, iconSystemName: "pause.circle.fill", accessibilityLabel: "Pause Navigation")
-                            
-                            ActionBarButtonComponent(action: {
-                                navigationManager.updateDirections()
-                            }, iconSystemName: "repeat", accessibilityLabel: "Repeat Directions")
+                    VStack {
+                        if !didLocalize {
+                            InformationPopupComponent(popupType: .waitingToLocalize)
+                        } else {
+                            if RouteNavigator.shared.keypoints?.isEmpty == true {
+                                InformationPopupComponent(popupType: .arrived(destinationAnchorDetails: destinationAnchorDetails))
+                            } else if !navigationDirection.isEmpty {
+                                InformationPopupComponent(popupType: .direction(directionText: navigationDirection))
+                            }
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 140)
-                        .background(AppColor.accent)
+                        Spacer()
+                        if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
+                            HStack(spacing: 100) {
+                                ActionBarButtonComponent(action: {
+                                    print("pressed pause")
+                                }, iconSystemName: "pause.circle.fill", accessibilityLabel: "Pause Navigation")
+                                
+                                ActionBarButtonComponent(action: {
+                                    navigationManager.updateDirections()
+                                }, iconSystemName: "repeat", accessibilityLabel: "Repeat Directions")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 140)
+                            .background(AppColor.accent)
+                        }
+                    }
+                    .padding(.vertical, 100)
+                }.onAppear() {
+                    // start up the positioning
+                    didLocalize = false
+                    didPrepareToNavigate = false
+                    PositioningModel.shared.startPositioning()
+                    if !didLocalize {
+                        AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
+                    }
+                }.onDisappear() {
+                    PositioningModel.shared.stopPositioning()
+                    NavigationManager.shared.stopNavigating()
+                }
+                
+                if showingHelp {
+                    HelpPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showingHelp)
+                        .accessibilityFocused($focusOnPopup)
+                        .accessibilityAddTraits(.isModal)
+                }
+                
+                if showingConfirmation {
+                    ConfirmationPopup(showingConfirmation: $showingConfirmation,
+                                      titleText: "Are you sure you want to exit?",
+                                      subtitleText: "This will end the navigation session.",
+                                      confirmButtonLabel: "Exit")
+                    {
+                        MultipleChoice(feedback: Feedback())
+                    }
+                    .accessibilityFocused($focusOnPopup)
+                    .accessibilityAddTraits(.isModal)
+                }
+                
+            }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
+                checkLocalization(cloudAnchorsToCheck: newValue)
+            }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
+                guard !didPrepareToNavigate else {
+                    return
+                }
+                // plan path
+                
+                if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
+                    didPrepareToNavigate = true
+                    PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
+                        guard wasSuccesful else {
+                            return
+                        }
+                        checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
+                    }
+                } else if newValue.isAtLeastAsGoodAs(other: .high) {
+                    didLocalize = true
+                    if !didPrepareToNavigate {
+                        didPrepareToNavigate = true
+                        PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
                     }
                 }
-                .padding(.vertical, 100)
-            }.onAppear() {
-                // start up the positioning
-                didLocalize = false
-                didPrepareToNavigate = false
-                PositioningModel.shared.startPositioning()
-                if !didLocalize {
-                    AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
+            }.onReceive(navigationManager.$navigationDirection) {
+                newValue in
+                hideNavTimer?.invalidate()
+                navigationDirection = newValue ?? ""
+                hideNavTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { timer in
+                    navigationDirection = ""
                 }
-            }.onDisappear() {
-                PositioningModel.shared.stopPositioning()
-                NavigationManager.shared.stopNavigating()
             }
-            
-            if showingHelp {
-                HelpPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showingHelp)
-                    .accessibilityFocused($focusOnPopup)
-                    .accessibilityAddTraits(.isModal)
-            }
-            
-            if showingConfirmation {
-                ConfirmationPopup(showingConfirmation: $showingConfirmation,
-                                  titleText: "Are you sure you want to exit?",
-                                  subtitleText: "This will end the navigation session.",
-                                  confirmButtonLabel: "Exit")
-                {
-                   MultipleChoice(feedback: Feedback())
+            .background(AppColor.accent)
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
+                    showingConfirmation = true
+                    focusOnPopup = true
                 }
-                    .accessibilityFocused($focusOnPopup)
-                    .accessibilityAddTraits(.isModal)
-            }
-
-        }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
-            checkLocalization(cloudAnchorsToCheck: newValue)
-        }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
-            guard !didPrepareToNavigate else {
-                return
-            }
-            // plan path
-            
-            if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
-                            didPrepareToNavigate = true
-                            PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
-                                guard wasSuccesful else {
-                                    return
-                                }
-                                checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
-                            }
-                        } else if newValue.isAtLeastAsGoodAs(other: .high) {
-                            didLocalize = true
-                            if !didPrepareToNavigate {
-                                didPrepareToNavigate = true
-                                PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
-                            }
-                        }
-        }.onReceive(navigationManager.$navigationDirection) {
-            newValue in
-            hideNavTimer?.invalidate()
-            navigationDirection = newValue ?? ""
-            hideNavTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { timer in
-                navigationDirection = ""
-            }
-        }
-        .background(AppColor.accent)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                showingConfirmation = true
-                focusOnPopup = true
-            }
-            CustomHeaderButtonComponent(label: "Help", placement: .navigationBarTrailing) {
-                showingHelp = true
-                focusOnPopup = true
+                CustomHeaderButtonComponent(label: "Help", placement: .navigationBarTrailing) {
+                    showingHelp = true
+                    focusOnPopup = true
+                }
             }
         }
     }

@@ -17,51 +17,45 @@ struct ManageAnchorsListView: View {
     @State var selectedOrganization = ""
     
     var body: some View {
-        VStack {
+        ScreenBackground {
             VStack {
-                HStack {
-                    Text("Anchors")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.horizontal)
-                        .foregroundColor(AppColor.text_on_accent)
-                    Spacer()
+                //Custom Header Component for Select Organization Picker integration
+                VStack {
+                    HStack {
+                        Text("Anchors")
+                            .font(.largeTitle)
+                            .bold()
+                            .padding(.horizontal)
+                            .foregroundColor(AppColor.text_on_accent)
+                        Spacer()
+                    }
+                    .padding(.bottom, 0.5)
+                    HStack {
+                        Text("At")
+                            .font(.title2)
+                            .padding(.leading)
+                            .foregroundColor(AppColor.background)
+                        OrganizationPicker(selectedOrganization: $selectedOrganization)
+                        Spacer()
+                    }
+                    .padding(.bottom, 20)
                 }
-                .padding(.bottom, 0.5)
+                .background(AppColor.foreground)
                 
-                HStack {
-                    Text("At")
-                        .font(.title2)
-                        .padding(.leading)
-                        .foregroundColor(AppColor.text_on_accent)
-                    OrganizationPicker(selectedOrganization: $selectedOrganization)
-                    Spacer()
-                }
-                .padding(.bottom, 20)
-            }
-            .background(AppColor.accent)
-            
-            ScrollView {
-                SmallButtonComponent_NavigationLink(destination: {
-                    RecordAnchorView()
-                }, label: "Create New Anchor")
-                .padding(.top, 20)
-                
-                VStack(spacing: 20) {
-                    ForEach(0..<anchors.count, id: \.self) { idx in
-                        if anchors[idx].cloudAnchorMetadata?.organization == selectedOrganization {
-                            LargeButtonComponent_NavigationLink(destination: {
-                                AnchorDetailView_Manage(anchorDetails: anchors[idx])
-                            }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
+                ScrollView {
+                    SmallNavigationLink(destination: RecordAnchorView(), label: "Create New Anchor")
+                        .padding(.top, 32)
+                    
+                    VStack(spacing: 32) {
+                        ForEach(0..<anchors.count, id: \.self) { idx in
+                            if anchors[idx].cloudAnchorMetadata?.organization == selectedOrganization {
+                                LargeNavigationLink(destination: AnchorDetailView_Manage(anchorDetails: anchors[idx]), label: "\(anchors[idx].getName())")
+                            }
                         }
                     }
+                    .padding(.vertical, 32)
                 }
-                .padding(.vertical, 20)
-                Spacer()
             }
-            .background(AppColor.background)
-            .edgesIgnoringSafeArea([.bottom])
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .onReceive(DataModelManager.shared.objectWillChange) {
                 anchors = []
                 if let latLon = lastQueryLocation {
@@ -79,9 +73,6 @@ struct ManageAnchorsListView: View {
                 updateNearbyAnchors(latLon: latLon)
             }
         }
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private func updateNearbyAnchors(latLon: CLLocationCoordinate2D) {
@@ -93,7 +84,7 @@ struct ManageAnchorsListView: View {
             )
         )
         .sorted(by: {
-            $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
+            $0.getName() < $1.getName()
         })
     }
 }

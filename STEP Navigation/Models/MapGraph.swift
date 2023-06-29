@@ -84,7 +84,10 @@ enum ConnectionStatus: CaseIterable {
             return .blue
         }
     }
+<<<<<<< HEAD
   
+=======
+>>>>>>> frontend-refactor-2-electric-boogaloo
     var connectionText: String {
         switch self {
         case .connectedDirectly:

@@ -361,24 +361,21 @@ struct NavigateAnchorListComponent: View {
                         case .indoorStartingPoint(let destinationAnchor):
                             if isReachable[idx] {
                                 LargeButtonComponent_NavigationLink(destination: {
-                                    AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: {
-                                        NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor)
-                                    })
+                                    AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination:
+                                        NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor))
                                 }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
                             }
                         case .indoorEndingPoint:
                             if isReachable[idx] {
                                 LargeButtonComponent_NavigationLink(destination: {
-                                    AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Choose Start Anchor", buttonDestination: {
-                                        StartAnchorListView(destinationAnchorDetails: anchors[idx])
-                                    })
+                                    AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Choose Start Anchor", buttonDestination:
+                                        StartAnchorListView(destinationAnchorDetails: anchors[idx]))
                                 }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
                             }
                         case .outdoorEndingPoint:
                             LargeButtonComponent_NavigationLink(destination: {
-                                AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: {
-                                    NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx])
-                                })
+                                AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination:
+                                    NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx]))
                             }, label: "\(anchors[idx].getName())", labelTextSize: .title, labelTextLeading: true)
                         }
                     }
@@ -390,11 +387,11 @@ struct NavigateAnchorListComponent: View {
     }
 }
 
-enum AnchorSelectionType {
-    case indoorStartingPoint(selectedDestination: LocationDataModel)
-    case indoorEndingPoint
-    case outdoorEndingPoint
-}
+//enum AnchorSelectionType {
+//    case indoorStartingPoint(selectedDestination: LocationDataModel)
+//    case indoorEndingPoint
+//    case outdoorEndingPoint
+//}
 
 struct NearbyDistanceThresholdComponent: View {
     @Binding var nearbyDistance: Double
