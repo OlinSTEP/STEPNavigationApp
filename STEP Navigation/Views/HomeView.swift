@@ -28,7 +28,7 @@ struct HomeView: View {
                         ScrollView {
                             if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
                                 if positionModel.currentLatLon == nil {
-                                    GPSLocalizationPopup()
+                                    LoadingPopup(text: "Finding Destinations Near You")
                                 } else {
                                     VStack {
                                         LargeNavigationLink(destination: DestinationTypesView(), label: "Navigate", alignment: .center)
@@ -39,10 +39,7 @@ struct HomeView: View {
                                     .padding(.top, 6)
                                 }
                             } else {
-                                Text("Unable to Geo Localize")
-                                    .font(.title)
-                                    .bold()
-                                    .foregroundColor(AppColor.foreground)
+                                LoadingPopup(text: "Trying to Geo Localize")
                             }
                         }
                         Spacer()
