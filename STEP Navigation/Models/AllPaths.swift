@@ -80,6 +80,7 @@ class RouteNavigator: ObservableObject {
     @Published var keypoints: [KeypointInfo]?
     /// anchor  points
     @Published var anchorpoints: [AnchorPointInfo]?
+    @Published var posepoints: [PoseData]?
     /// keep a list of the keypoints from the original route since the keypoints array is cleared as the user traverses the route (TODO: use an index instead of deleting)
     var originalKeypoints: [KeypointInfo]?
     /// The name of this particular route navigation (used for determining the filename of the log data)

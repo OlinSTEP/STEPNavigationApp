@@ -112,6 +112,7 @@ class PositioningModel: NSObject, ObservableObject {
     @Published var resolvedCloudAnchors = Set<String>()
     /// cloud anchors
     var anchorpoints = [AnchorPointInfo]()
+    var posepoints = [PoseData]()
     /// the name of the anchor that was most recently resolved
     @Published var lastAnchor : String = ""
     /// the current geo localization accuracy
@@ -380,17 +381,23 @@ class PositioningModel: NSObject, ObservableObject {
     
     func renderer(_ anchorpoint: AnchorPointInfo){
         let initialAlignment = anchorpoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
-        rendererHelper.renderKeypoint(at: anchorpoint.location, withInitialAlignment: initialAlignment, id: anchorpoint.id)
-        rendererHelper.idList.append(anchorpoint.id)
+        rendererHelper.renderKeypoint(at: anchorpoint.location, withInitialAlignment: initialAlignment, id: anchorpoint.id, name: anchorpoint.CloudAnchorName)
+        rendererHelper.idlist.append(anchorpoint.id)
+    }
+    
+    func poserender(_ posepoint: PoseData){
+        let initialAlignment = posepoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
+        rendererHelper.renderCircle(at: posepoint.pose, withInitialAlignment: initialAlignment, id: posepoint.ID)
+        rendererHelper.poseidlist.append(posepoint.ID)
     }
     
     /// Render the keypoint in the session
     /// - Parameter keypoint: the keypoint description
-//    func renderKeypoint(_ keypoint: KeypointInfo) {
-//        // if we are using a lat / lon based keypoint, we don't want to use manualAlignment
-//        let initialAlignment = keypoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
-//        rendererHelper.renderKeypoint(at: keypoint.location, withInitialAlignment: initialAlignment,  at: 0.5, at: 0.5, at: 0.5, at: UIColor.green)
-//    }
+    func renderKeypoint(_ keypoint: KeypointInfo) {
+        // if we are using a lat / lon based keypoint, we don't want to use manualAlignment
+        let initialAlignment = keypoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
+        rendererHelper.renderKeypoint(at: keypoint.location, withInitialAlignment: initialAlignment, id: keypoint.id, name: keypoint.name)
+    }
     
     /// Add a new terrain anchor at the specified location
     /// - Parameters:
@@ -616,8 +623,11 @@ class RendererHelper {
     /// The node used to render the keypoint
     var keypointNode: SCNNode?
     /// ID list
-    var idList: [UUID] = []
+    var idlist: [UUID] = []
+    var poseidlist: [UUID] = []
+    var textNodelist : [SCNNode] = []
     var nodes: [UUID: SCNNode] = [:]
+    var PoseNodes: [UUID: SCNNode] = [:]
     /// The streetscape meshes that have been rendered
     var renderedStreetscapes: [UUID: SCNNode] = [:]
     
@@ -650,16 +660,51 @@ class RendererHelper {
         renderedStreetscapes[geometries.identifier]!.simdTransform = geometries.meshTransform
     }
     
-    
-    func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: UUID) {
+    func createLabelNode(text: String) -> SCNNode {
+            
         
-        let mesh = SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0)
+        let textGeometry = SCNText(string: text, extrusionDepth: 0.1)
+        textGeometry.firstMaterial?.diffuse.contents = UIColor.white
+        
+        let textNode = SCNNode(geometry: textGeometry)
+        textNode.scale = SCNVector3(0.005, 0.005, 0.005)
+        
+//        adjustlabels(nodelist: textNodelist)
+        
+        textNodelist.append(textNode)
+        
+        return textNode
+    }
+    
+    
+    func adjustlabels(nodelist : [SCNNode]){
+        
+        guard let cameraTransform = arView.session.currentFrame?.camera.transform else {
+                fatalError("Camera transform not available")
+            }
+        
+        let cameraRotation = SCNVector3(cameraTransform.columns.2.x, cameraTransform.columns.2.y, cameraTransform.columns.2.z)
+        
+        for textNode in nodelist {
+            textNode.eulerAngles = SCNVector3(0, atan2(cameraRotation.x, cameraRotation.z), 0)
+        }
+        
+    }
+    
+    
+    func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: UUID, name: String) {
+        
+        let mesh = SCNBox(width: 0.3, height: 0.3, length: 0.3, chamferRadius: 0)
         
         mesh.firstMaterial?.diffuse.contents = UIColor(AppColor.accent)
         
         let node : SCNNode? = SCNNode(geometry: mesh)
         
         node?.simdPosition = location.translation
+        
+        let labelNode = createLabelNode(text: "Cloud Anchor \(name)")
+        
+        node?.addChildNode(labelNode)
         
         node?.removeFromParentNode()
 
@@ -675,9 +720,29 @@ class RendererHelper {
             anchorNode!.addChildNode(node!)
         }
     
-
-  
-    
+    func renderCircle(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: UUID) {
+        
+        let radius: CGFloat = 0.05
+        
+        let circle = SCNSphere(radius: radius)
+        circle.firstMaterial?.diffuse.contents = UIColor.red
+        
+        let node : SCNNode? = SCNNode(geometry: circle)
+        node?.simdPosition = location.translation
+        node?.removeFromParentNode()
+        
+        PoseNodes[id] = node
+        
+        adjustlabels(nodelist: textNodelist)
+        
+        if anchorNode == nil {
+            anchorNode = SCNNode()
+            arView.scene.rootNode.addChildNode(anchorNode!)
+        }
+        let initialTransform = alignment ?? matrix_identity_float4x4
+        anchorNode?.simdTransform = initialTransform
+        anchorNode!.addChildNode(node!)
+    }
     
     /// Get rid of any content that has been rendered in the scene
     func removeRenderedContent() {

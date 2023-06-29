@@ -26,8 +26,6 @@ public struct AnchorPointInfo: Identifiable {
     let CloudAnchorID : String
     /// the type of keypoint (either latitude longitude based or cloud anchor based)
     let mode: KeypointType
-    /// AR alignment
-//    let alignment: simd_float4x4?
     /// the location of the keypoint
     public var location: simd_float4x4
     ///
@@ -43,6 +41,7 @@ public struct KeypointInfo: Identifiable {
     public let id: UUID
     /// the type of keypoint (either latitude longitude based or cloud anchor based)
     let mode: KeypointType
+    let name: String
     /// the location of the keypoint
     public var location: simd_float4x4
     /// the orientation of a keypoint is a unit vector that points from the previous keypoint to current keypoint.  The orientation is useful for defining the area where we check off the user as having reached a keypoint
@@ -112,15 +111,15 @@ class MultiSegmentPathBuilder {
     func getKeypoints(edibleCrumbs: [simd_float4x4]) -> [KeypointInfo] {
         let firstKeypointLocation = edibleCrumbs.first!
         if edibleCrumbs.count == 1 {
-            return [KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: firstKeypointLocation)]
+            return [KeypointInfo(id: UUID(), mode: .cloudAnchorBased, name: "keypoint", location: firstKeypointLocation)]
         }
         var keypoints = [KeypointInfo]()
-        keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: firstKeypointLocation))
+        keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, name: "keypoint", location: firstKeypointLocation))
 //        print(keypoints)
         keypoints += calculateKeypoints(edibleCrumbs: edibleCrumbs)
         
         let lastKeypointLocation = edibleCrumbs.last!
-        keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: lastKeypointLocation))
+        keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, name: "keypoint", location: lastKeypointLocation))
         return keypoints
     }
     
@@ -180,7 +179,7 @@ class MultiSegmentPathBuilder {
             }
                         
             let newKeypointLocation = edibleCrumbs[maxIndex!]
-            keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased, location: newKeypointLocation))
+            keypoints.append(KeypointInfo(id: UUID(), mode: .cloudAnchorBased,name: "keypoint", location: newKeypointLocation))
             
             if (!postKeypoints.isEmpty) {
                 keypoints += postKeypoints

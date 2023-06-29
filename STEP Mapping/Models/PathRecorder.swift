@@ -21,6 +21,9 @@ struct PoseData {
     var pose: simd_float4x4
     var timestamp: Double
     var id: Int
+    let mode: KeypointType
+    public let ID: UUID
+    
 }
 
 
@@ -78,7 +81,10 @@ class PathRecorder {
             guard let currentPose = PositioningModel.shared.cameraTransform else {
                 return
             }
-            self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0, id: self.breadCrumbs.count))
+            self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0, id: self.breadCrumbs.count, mode: .cloudAnchorBased, ID: UUID()))
+            
+            PositioningModel.shared.poserender(self.breadCrumbs.last!)
+            
         }
     }
     
@@ -102,7 +108,7 @@ class PathRecorder {
         guard let currentPose = PositioningModel.shared.cameraTransform else {
             return
         }
-        self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0, id: self.breadCrumbs.count))
+        self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0, id: self.breadCrumbs.count, mode: .cloudAnchorBased, ID: UUID()))
     }
     
     /// Add the specified cloud anchor to the path recording

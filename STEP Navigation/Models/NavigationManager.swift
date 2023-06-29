@@ -170,7 +170,7 @@ class NavigationManager: ObservableObject {
             guard anchorState == .success, let garAnchor = garAnchor else {
                 return
             }
-            let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
+            let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased,name: "keypoint", location: garAnchor.transform)
             RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint])
             completionHandler()
         }
@@ -244,7 +244,7 @@ class NavigationManager: ObservableObject {
                         return completionHandler(false)
                     }
                     
-                    let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
+                    let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, name: "keypoint", location: garAnchor.transform)
                     RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint] + routeKeypoints)
                     RouteNavigator.shared.routeNameForLogging = "outside_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
                     PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
