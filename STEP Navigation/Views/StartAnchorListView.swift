@@ -11,41 +11,36 @@ import CoreLocation
 struct StartAnchorListView: View {
     @State var destinationAnchorDetails: LocationDataModel?
     @State var nearbyDistance: Double = 300.0
-    @State var chosenStart: LocationDataModel?
-    @State var outdoorsSelectedAsStart = false
+//    @State var chosenStart: LocationDataModel?
+//    @State var outdoorsSelectedAsStart = false
     @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
         
     var body: some View {
-        VStack {
-            ScreenTitleComponent(titleText:"Choose Start Anchor")
-            ScrollView {
-                NavigateAnchorListComponent(anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!),
-                                            anchors: anchors)
-                Spacer()
-            }
-            .onChange(of: chosenStart) { newValue in
-                print("HERE WE ARE")
-            }
-            .onReceive(positionModel.$currentLatLon) { latLon in
-                guard let latLon = latLon else {
-                    return
+        ScreenBackground {
+            VStack {
+                ScreenHeader(title: "Choose Start Anchor")
+                ScrollView {
+                    ListOfAnchors(anchors: anchors, anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!))
+                    Spacer()
                 }
-                anchors = Array(
-                    DataModelManager.shared.getNearbyIndoorLocations(
-                        location: latLon,
-                        maxDistance: CLLocationDistance(nearbyDistance),
-                        withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                .onReceive(positionModel.$currentLatLon) { latLon in
+                    guard let latLon = latLon else {
+                        return
+                    }
+                    anchors = Array(
+                        DataModelManager.shared.getNearbyIndoorLocations(
+                            location: latLon,
+                            maxDistance: CLLocationDistance(nearbyDistance),
+                            withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                        )
                     )
-                )
-                .sorted(by: {
-                    $0.getName() < $1.getName()         // sort in alphabetical order (could also do by distance as we have done in another branch)
-                })
+                    .sorted(by: {
+                        $0.getName() < $1.getName()
+                    })
+                }
             }
         }
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

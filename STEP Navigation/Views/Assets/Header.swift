@@ -10,11 +10,13 @@ import SwiftUI
 struct HeaderButton: ToolbarContent {
     let label: String
     let placement: ToolbarItemPlacement
+    let color: Color
     let action: () -> Void
     
-    init(label: String, placement: ToolbarItemPlacement, action: @escaping () -> Void) {
+    init(label: String, placement: ToolbarItemPlacement, color: Color = AppColor.background, action: @escaping () -> Void) {
         self.label = label
         self.placement = placement
+        self.color = color
         self.action = action
     }
     
@@ -24,7 +26,7 @@ struct HeaderButton: ToolbarContent {
             Text(label)
                 .bold()
                 .font(.title2)
-                .foregroundColor(AppColor.background)
+                .foregroundColor(color)
                 .onTapGesture {
                     action()
                 }

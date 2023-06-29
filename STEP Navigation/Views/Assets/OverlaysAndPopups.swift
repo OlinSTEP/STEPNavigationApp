@@ -50,6 +50,7 @@ struct ConfirmationPopup2<Destination: View>: View {
     let confirmButtonLabel: String
     let confirmButtonDestination: Destination
     let secondaryAction: () -> Void
+    @AccessibilityFocusState var focusOnPopup
         
     init(showingConfirmation: Binding<Bool>, titleText: String, subtitleText: String = "", confirmButtonLabel: String, confirmButtonDestination: Destination, secondaryAction: @escaping () -> Void = {}) {
         self._showingConfirmation = showingConfirmation
@@ -66,13 +67,13 @@ struct ConfirmationPopup2<Destination: View>: View {
                 Text(titleText)
                     .bold()
                     .font(.title2)
-                    .foregroundColor(AppColor.background)
                 if !subtitleText.isEmpty {
                     Text(subtitleText)
                         .font(.title3)
-                        .foregroundColor(AppColor.background)
                 }
             }
+            .foregroundColor(AppColor.background)
+            .multilineTextAlignment(.center)
             .padding(.vertical, 10)
             .padding(.horizontal)
             
@@ -85,6 +86,8 @@ struct ConfirmationPopup2<Destination: View>: View {
             }
             .padding()
         }
+        .accessibilityAddTraits(.isModal)
+        .accessibilityFocused($focusOnPopup)
         .frame(width: 360, height: 250)
         .background(AppColor.foreground)
         .cornerRadius(20)

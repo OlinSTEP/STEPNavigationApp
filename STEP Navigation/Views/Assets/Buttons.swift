@@ -35,7 +35,7 @@ struct LargeNavigationLink<Destination: View>: View {
             label: {
                 HStack {
                     Text(label)
-                        .font(.title)
+                        .font(alignment == .left ? .title : .largeTitle)
                         .bold()
                         .padding(30)
                         .foregroundColor(invert ? foregroundColor : backgroundColor)
@@ -84,7 +84,7 @@ struct LargeButton: View {
         Button(action: action) {
             HStack {
                 Text(label)
-                    .font(.title)
+                    .font(alignment == .left ? .title : .largeTitle)
                     .bold()
                     .padding(30)
                     .foregroundColor(invert ? foregroundColor : backgroundColor)
@@ -143,12 +143,12 @@ struct SmallNavigationLink<Destination: View>: View {
                 }
             })
         .frame(maxWidth: .infinity)
-        .frame(minHeight: 50)
+        .frame(minHeight: 54)
         .background(invert ? backgroundColor : foregroundColor)
-        .cornerRadius(50)
+        .cornerRadius(54)
         .overlay(
-            RoundedRectangle(cornerRadius: 50)
-                .stroke(foregroundColor, lineWidth: 5)
+            RoundedRectangle(cornerRadius: 54)
+                .stroke(foregroundColor, lineWidth: 3)
         )
         .padding(.horizontal)
         .onChange(of: pressed) {
@@ -186,12 +186,12 @@ struct SmallButton: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .frame(minHeight: 50)
+        .frame(minHeight: 54)
         .background(invert ? backgroundColor : foregroundColor)
-        .cornerRadius(50)
+        .cornerRadius(54)
         .overlay(
-            RoundedRectangle(cornerRadius: 50)
-                .stroke(foregroundColor, lineWidth: 5)
+            RoundedRectangle(cornerRadius: 54)
+                .stroke(foregroundColor, lineWidth: 3)
         )
         .padding(.horizontal)
     }

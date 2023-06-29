@@ -80,36 +80,24 @@ struct SegmentedToggle: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(foregroundColor, lineWidth: 2)
         )
-        .padding(.horizontal)
     }
 }
 
 struct CustomTextField: View {
     @Binding var entry: String
-    let label: String
     let textBoxSize: TextBoxSizes
     let foregroundColor: Color
 
     @FocusState private var entryIsFocused: Bool
 
-    init(entry: Binding<String>, label: String = "", textBoxSize: TextBoxSizes = .small, foregroundColor: Color = AppColor.foreground) {
+    init(entry: Binding<String>, textBoxSize: TextBoxSizes = .small, foregroundColor: Color = AppColor.foreground) {
         self._entry = entry
-        self.label = label
         self.textBoxSize = textBoxSize
         self.foregroundColor = foregroundColor
     }
 
     var body: some View {
         VStack {
-            if label != "" {
-                HStack {
-                    Text(label)
-                        .font(.title2)
-                        .bold()
-                        .foregroundColor(foregroundColor)
-                    Spacer()
-                }
-            }
             if textBoxSize == .small {
                 TextField("", text: $entry)
                     .foregroundColor(foregroundColor)
@@ -143,7 +131,6 @@ struct CustomTextField: View {
                 }
             }
         }
-        .padding(.horizontal)
     }
 }
 
@@ -321,7 +308,6 @@ struct ComboBox: View {
             ComboBoxMenu(allOptions: allOptions, editing: $editing, text: $inputText, verticalOffset: verticalOffset, horizontalOffset: horizontalOffset, foregroundColor: foregroundColor, backgroundColor: backgroundColor)
             Spacer()
         }
-        .padding(.horizontal)
     }
 }
 
@@ -331,53 +317,50 @@ struct PickerPage: View {
     @Binding var showPage: Bool
     
     var body: some View {
-        VStack {
-            ScrollView {
-                Divider()
-                    .overlay(AppColor.foreground)
-                ForEach(allOptions, id: \.self) { option in
-                    Button(action: {
-                        selection = option
-                        showPage = false
-                    }, label: {
-                        if selection == option {
-                            HStack {
-                                Text(option)
-                                    .font(.title2)
-                                Spacer()
-                                Image(systemName: "checkmark")
-                            }
-                        } else {
-                            HStack {
-                                Text(option)
-                                    .font(.title2)
-                                Spacer()
-                            }
-                        }
-                    })
-                    .foregroundColor(AppColor.foreground)
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
+        ScreenBackground {
+            VStack {
+                ScrollView {
                     Divider()
                         .overlay(AppColor.foreground)
+                    ForEach(allOptions, id: \.self) { option in
+                        Button(action: {
+                            selection = option
+                            showPage = false
+                        }, label: {
+                            
+                            HStack {
+                                Text(option)
+                                    .font(.title2)
+                                    .multilineTextAlignment(.leading)
+                                Spacer()
+                                if selection == option {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        })
+                        .foregroundColor(AppColor.foreground)
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        Divider()
+                            .overlay(AppColor.foreground)
+                    }
                 }
+                Spacer()
             }
-            Spacer()
-        }
-        .accessibilityAddTraits(.isModal)
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .toolbar {
-            HeaderButton(label: "Done", placement: .navigationBarLeading) {
-                showPage = false
+            .accessibilityAddTraits(.isModal)
+            .toolbar {
+                HeaderButton(label: "Done", placement: .navigationBarLeading, action:  {
+                    showPage = false
+                })
             }
+            .navigationTitle("")
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(AppColor.foreground, for: .navigationBar)
         }
     }
 }
 
 struct PickerButton: View {
-    let allOptions: [String]
     @Binding var selection: String
     @Binding var showPage: Bool
 
@@ -404,6 +387,5 @@ struct PickerButton: View {
                     .stroke(AppColor.foreground, lineWidth: 2)
             )
         }
-        .padding(.horizontal)
     }
 }

@@ -19,19 +19,13 @@ struct STEP_NavigationApp: App {
     
     var body: some Scene {
         WindowGroup {
-//            Group {
-//                if SettingsManager.shared.loadShowTutorials() {
-//                    StartupPage0()
-//                } else {
-//                    HomeView()
-//                }
-//            }
-//            .environmentObject(SettingsManager.shared)
-//            .onAppear {
-//                FirebaseManager.shared.setMode(mode: .navigation)
-//            }
-            //loading the component testing view for testing purposes. will revert back to the commented code above after testing
-            ComponentTesting()
+            Group {
+                if SettingsManager.shared.loadShowTutorials() {
+                    StartupPage0()
+                } else {
+                    HomeView()
+                }
+            }
             .environmentObject(SettingsManager.shared)
             .onAppear {
                 FirebaseManager.shared.setMode(mode: .navigation)

@@ -42,7 +42,7 @@ struct ComponentTesting: View {
                             //
                             //                        ComboBox(allOptions: ["Apple", "Pear", "Pineapple", "Lemon"], editing: $editing, inputText: $testingTextEntry)
                             
-//                            PickerButton(allOptions: ["Apple", "Pear", "Pineapple"], selection: $pickerSelected, showPage: $showPicker)
+                            PickerButton(selection: $pickerSelected, showPage: $showPicker)
 //
 //                            ARViewTextOverlay(text: "Testing text here. adskfjsa asdlkfj sdf asdlkgja hfaj sadflakjsd fslkj.", buttonLabel: "next", buttonDestination: HomeView(), announce: "Testing text here. This is an announcement")
                             
