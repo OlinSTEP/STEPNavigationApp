@@ -10,10 +10,10 @@ import SwiftUI
 struct AnchorDetailEditView<Destination: View>: View {
     let buttonLabel: String
     let buttonDestination: () -> Destination
-        
+    
     @State var showAnchorTypeMenu: Bool = false
     @State var showCorrespondingExitMenu: Bool = false
-
+    
     
     @State var editing: Bool = false
     @FocusState var editingOrg: Bool
@@ -48,8 +48,8 @@ struct AnchorDetailEditView<Destination: View>: View {
     }
     
     var body: some View {
-        ScreenBackground {
-            ZStack {
+        ZStack {
+            ScreenBackground {
                 VStack {
                     ScreenHeader(title: "Edit Anchor", backButtonHidden: true)
                     VStack {
@@ -99,23 +99,24 @@ struct AnchorDetailEditView<Destination: View>: View {
                         self.updateMetadata()
                     }
                 }
-                
-                if showAnchorTypeMenu == true {
-                    PickerPage(allOptions: allCategories, selection: $newCategory, showPage: $showAnchorTypeMenu)
-                        .onAppear() {
-                            editingOrg = false
-                        }
-                }
-                if showCorrespondingExitMenu == true {
-                    PickerPage(allOptions: allCorrespondingExits, selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
-                        .onAppear() {
-                            editingOrg = false
-                        }
-                }
+                .ignoresSafeArea(.keyboard, edges: .bottom)
             }
-            .ignoresSafeArea(.keyboard, edges: .bottom)
+            
+            if showAnchorTypeMenu == true {
+                PickerPage(allOptions: allCategories, selection: $newCategory, showPage: $showAnchorTypeMenu)
+                    .onAppear() {
+                        editingOrg = false
+                    }
+            }
+            if showCorrespondingExitMenu == true {
+                PickerPage(allOptions: allCorrespondingExits, selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
+                    .onAppear() {
+                        editingOrg = false
+                    }
+            }
         }
     }
+
     
     func updateMetadata() {
         let newMetadata =

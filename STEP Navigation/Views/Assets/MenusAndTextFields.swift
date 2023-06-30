@@ -335,7 +335,7 @@ struct PickerPage: View {
     @Binding var showPage: Bool
     
     var body: some View {
-        ScreenBackground {
+        Group {
             VStack {
                 ScreenHeader()
                 ScrollView {
@@ -372,6 +372,9 @@ struct PickerPage: View {
                 }
             }
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

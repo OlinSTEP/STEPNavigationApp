@@ -108,8 +108,10 @@ struct ScreenBackground<Content: View>: View {
     }
     
     var body: some View {
-        content
-            .padding(.bottom, 48)
+        Group {
+            content
+                .padding(.bottom, 48)
+        }
             .background(AppColor.background)
             .edgesIgnoringSafeArea([.bottom])
             .frame(maxWidth: .infinity, maxHeight: .infinity)

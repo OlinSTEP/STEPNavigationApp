@@ -81,7 +81,7 @@ struct RecordAnchorView: View {
             PositioningModel.shared.startPositioning()
         }
         .onDisappear() {
-            PositioningModel.shared.stopPositioning()
+            PositioningModel.shared.stopPositioning() //TODO: double check this is properly stopping the positioning and any announcements, etc
             timerManager.stopTimer()
         }
         .onReceive(PositioningModel.shared.$currentQuality) { newValue in

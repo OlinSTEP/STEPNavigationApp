@@ -41,11 +41,10 @@ struct StartupPage1:  View {
     @State var showFullTerms: Bool = false
     
     var body: some View {
-        ScreenBackground {
-            VStack {
-                ScreenHeader(title: "Welcome to Clew Maps 2", subtitle: "Precise short distance navigation for the blind and visually impaired", backButtonHidden: true)
-                ZStack {
-                    VStack {
+        ZStack {
+            ScreenBackground {
+                VStack {
+                    ScreenHeader(title: "Welcome to Clew Maps 2", subtitle: "Precise short distance navigation for the blind and visually impaired", backButtonHidden: true)
                         StartupText("Before getting started please note the following: This is not a cane replacement. Please use your own judgment while traveling. Please be aware of your surroundings while using the app. It is your responsibility to maintain your personal safety at all times while using Clew Maps 2.")
                         Spacer()
                         
@@ -54,28 +53,30 @@ struct StartupPage1:  View {
                                 showFullTerms = true
                             }, label: "View Full Terms and Conditions", invert: true)
                             SmallNavigationLink(destination: StartupPage2(), label: "Accept")
-                        }
-                    }
-                    
-                    if showFullTerms == true {
-                        VStack {
-                            VStack {
-                                LeftLabel(text: "Privacy")
-                                Text("Clew Maps 2 will log the 3D path that your phone travels when using the app. We use this 3D path information to understand the app's shortcomings and to improve its accuracy. We do not tie this 3D path information to the location where the path was traveled (e.g., it is not linked to GPS position). We will not share these data logs with any third party; however, we may make aggregate analysis of this data public (e.g., in an academic paper). Any changes to this privacy policy will be detailed in the app store release notes of future versions of Clew Maps 2.")
-                                    .padding(.bottom, 4)
-                                
-                                LeftLabel(text: "Contact")
-                                Text("Want to get involved with Clew Maps 2? Have some feedback for us about the app? Reach out to the team at example@example.com.")
-                            }
-                            Spacer()
-                            SmallNavigationLink(destination: StartupPage2(), label: "Accept")
-                        }
-                        .padding(.horizontal)
-                        .foregroundColor(AppColor.foreground)
-                        .accessibilityAddTraits(.isModal)
-                        .background(AppColor.background)
                     }
                 }
+            }
+            if showFullTerms == true {
+                VStack {
+                    ScreenHeader(title: "Terms and Conditions", backButtonHidden: true)
+                    ScrollView {
+                        LeftLabel(text: "Privacy")
+                        Text("Clew Maps 2 will log the 3D path that your phone travels when using the app. We use this 3D path information to understand the app's shortcomings and to improve its accuracy. We do not tie this 3D path information to the location where the path was traveled (e.g., it is not linked to GPS position). We will not share these data logs with any third party; however, we may make aggregate analysis of this data public (e.g., in an academic paper). Any changes to this privacy policy will be detailed in the app store release notes of future versions of Clew Maps 2.")
+                            .padding(.bottom, 4)
+                        
+                        LeftLabel(text: "Contact")
+                        Text("Want to get involved with Clew Maps 2? Have some feedback for us about the app? Reach out to the team at example@example.com.")
+                    }
+                    .padding(.horizontal)
+                    Spacer()
+                    SmallNavigationLink(destination: StartupPage2(), label: "Accept")
+                        .padding(.bottom, 48)
+                }
+                .foregroundColor(AppColor.foreground)
+                .accessibilityAddTraits(.isModal)
+                .background(AppColor.background)
+                .edgesIgnoringSafeArea([.bottom])
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
