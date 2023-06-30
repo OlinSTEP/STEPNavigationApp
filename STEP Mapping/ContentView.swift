@@ -138,7 +138,9 @@ struct EditingAnchorView: View {
                                             type: AnchorType(rawValue: newCategory) ?? .other,
                                             associatedOutdoorFeature: newAssociatedOutdoorFeature,
                                             geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
-                                            isReadable: newIsReadable)
+                                            isReadable: newIsReadable,
+                                            organization: "",
+                                            notes: "")
                     FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
                     MainUIStateContainer.shared.currentScreen = .createAnchor
                 }

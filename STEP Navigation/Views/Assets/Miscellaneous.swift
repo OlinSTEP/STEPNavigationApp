@@ -81,8 +81,8 @@ struct ChecklistItem: View {
             }) {
                 HStack {
                     Text(label)
-                        .font(.title2)
-                        .padding(4)
+                        .font(.title)
+                        .padding(8)
                         .foregroundColor(textColor)
                         .multilineTextAlignment(.leading)
                         .bold(toggle)
@@ -199,7 +199,7 @@ struct LeftLabel: View {
     let textSize: Font
     let color: Color
     
-    init(text: String, textSize: Font = .title, color: Color = AppColor.foreground) {
+    init(text: String, textSize: Font = .largeTitle, color: Color = AppColor.foreground) {
             self.text = text
             self.textSize = textSize
             self.color = color

@@ -17,6 +17,15 @@
 		6569872F2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872E2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift */; };
 		656987302A38DD2400F5C584 /* NavigateFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872E2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift */; };
 		656987352A4A08DC00F5C584 /* RecordFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */; };
+		656987362A4F159800F5C584 /* MenusAndTextFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F94A2A4CFF1B00006DBC /* MenusAndTextFields.swift */; };
+		656987372A4F15A500F5C584 /* Miscellaneous.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9502A4D2A7F00006DBC /* Miscellaneous.swift */; };
+		656987382A4F15B000F5C584 /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9462A4CEEF300006DBC /* Buttons.swift */; };
+		656987392A4F15C000F5C584 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F94C2A4D150C00006DBC /* Header.swift */; };
+		6569873A2A4F15E800F5C584 /* RecordFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */; };
+		6569873B2A4F15F200F5C584 /* OverlaysAndPopups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F94E2A4D275D00006DBC /* OverlaysAndPopups.swift */; };
+		6569873C2A4F15FD00F5C584 /* StartupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9442A462E2400006DBC /* StartupViews.swift */; };
+		6569873D2A4F161B00F5C584 /* RecordAnchorInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */; };
+		6569873E2A4F162500F5C584 /* SelectConnectingAnchorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */; };
 		821C89752A336837006FD745 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
 		821C89762A336842006FD745 /* RadarMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView.swift */; };
 		821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
@@ -388,7 +397,6 @@
 		8241735F29DE1370001599B1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */,
 				8241737329DE1440001599B1 /* AllPaths.swift */,
 				130E7C4029E23494004B1E81 /* LocationDataModel.swift */,
 				130E7C4229E236BD004B1E81 /* DataModelManager.swift */,
@@ -405,6 +413,7 @@
 				82A016952A0057A400EAA526 /* GeospatialData.swift */,
 				82A016A02A02D3CE00EAA526 /* SettingsManager.swift */,
 				82811EE42A0C32B900D1BE96 /* AuthHandler.swift */,
+				656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */,
 				6569872E2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift */,
 			);
 			path = Models;
@@ -737,7 +746,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				656987382A4F15B000F5C584 /* Buttons.swift in Sources */,
 				A80CDCAE2A30F58D007FA7CE /* NavigatingView.swift in Sources */,
+				6569873A2A4F15E800F5C584 /* RecordFeedbackDataModel.swift in Sources */,
 				82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */,
 				A83CBC682A38C83200E8E3CF /* SettingsDetailViews.swift in Sources */,
 				A83CBC622A3768DC00E8E3CF /* ConnectingView.swift in Sources */,
@@ -752,13 +763,16 @@
 				A83CBC5D2A3768CB00E8E3CF /* AnchorDetailView_Manage.swift in Sources */,
 				656987302A38DD2400F5C584 /* NavigateFeedbackDataModel.swift in Sources */,
 				A83CBC5F2A3768D400E8E3CF /* SettingsView.swift in Sources */,
+				656987392A4F15C000F5C584 /* Header.swift in Sources */,
 				A80CDCAD2A30F578007FA7CE /* Colors.swift in Sources */,
 				82811EE62A0C32B900D1BE96 /* AuthHandler.swift in Sources */,
 				A83CBC612A3768DA00E8E3CF /* AnchorDetailEditView.swift in Sources */,
 				82A016882A0016B400EAA526 /* simd_extensions.swift in Sources */,
 				A83CBC632A3768DF00E8E3CF /* RecordAnchorView.swift in Sources */,
 				82A016892A00173400EAA526 /* AllPaths.swift in Sources */,
+				6569873E2A4F162500F5C584 /* SelectConnectingAnchorsView.swift in Sources */,
 				82A016842A00161E00EAA526 /* MultiSegmentPathBuilder.swift in Sources */,
+				656987372A4F15A500F5C584 /* Miscellaneous.swift in Sources */,
 				821C89762A336842006FD745 /* RadarMapView.swift in Sources */,
 				A80CDCB42A30F5AE007FA7CE /* DestinationAnchorListView.swift in Sources */,
 				82A016902A0017A700EAA526 /* SoundEffectManager.swift in Sources */,
@@ -766,15 +780,19 @@
 				82A0167E2A0015B800EAA526 /* TextFeedbackAdapter.swift in Sources */,
 				82A0168F2A00179E00EAA526 /* HapticFeedbackAdapter.swift in Sources */,
 				82A016A52A02E51800EAA526 /* RingBuffer.swift in Sources */,
+				6569873B2A4F15F200F5C584 /* OverlaysAndPopups.swift in Sources */,
 				82A0168E2A00179600EAA526 /* PathLogger.swift in Sources */,
 				A80CDCB32A30F5AC007FA7CE /* DestinationTypesView.swift in Sources */,
 				82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */,
 				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,
 				82A0168B2A00177000EAA526 /* DataModelManager.swift in Sources */,
+				6569873D2A4F161B00F5C584 /* RecordAnchorInstructionsView.swift in Sources */,
+				6569873C2A4F15FD00F5C584 /* StartupViews.swift in Sources */,
 				82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */,
 				82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */,
 				A80CDCB22A30F5AA007FA7CE /* AnchorDetailView.swift in Sources */,
 				82A0167D2A0015AA00EAA526 /* NavigationManager.swift in Sources */,
+				656987362A4F159800F5C584 /* MenusAndTextFields.swift in Sources */,
 				82A016A22A02D3CE00EAA526 /* SettingsManager.swift in Sources */,
 				A83CBC5E2A3768CD00E8E3CF /* FeedbackViews.swift in Sources */,
 				A83CBC5C2A3768BA00E8E3CF /* MapComponents.swift in Sources */,

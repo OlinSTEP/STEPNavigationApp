@@ -79,7 +79,11 @@ struct NavigationFeedbackView: View {
             VStack {
                 ScreenHeader()
                 ScrollView {
-                    LeftLabel(text: "What was the issue?")
+                    VStack {Spacer().frame(height: 30)
+                        LeftLabel(text: "What was the issue?")
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        Spacer().frame(height: 30)
+                    }
                     
                     ChecklistItem(toggle: $isInstructionsSelected, label: "Incorrect or unclear instructions")
                     ChecklistItem(toggle: $isObstacleSelected, label: "Directed me into a wall")
@@ -175,7 +179,10 @@ struct RecordingFeedbackView: View {
             VStack {
                 ScreenHeader()
                 ScrollView {
+                    Spacer().frame(height: 80)
                     LeftLabel(text: "What was the issue?")
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        Spacer().frame(height: 30)
                     
                     ChecklistItem(toggle: $isHoldAnchorSelected, label: "Phone could not host anchor")
                     ChecklistItem(toggle: $isInstructionSelected, label: "Incorrect or unclear instructions")
