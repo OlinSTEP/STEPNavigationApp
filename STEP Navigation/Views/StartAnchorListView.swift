@@ -19,7 +19,7 @@ struct StartAnchorListView: View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "Choose Start Anchor")
+                ScreenHeader(title: "Choose Start Anchor") //TODO: text "back" on back button doesn't display; back arrow displays and takes you back, but text isn't there
                 ScrollView {
                     ListOfAnchors(anchors: anchors, anchorSelectionType: .indoorStartingPoint(selectedDestination: destinationAnchorDetails!))
                     Spacer()

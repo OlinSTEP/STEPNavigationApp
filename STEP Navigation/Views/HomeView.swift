@@ -52,7 +52,7 @@ struct HomeView: View {
                     }
                 }
             }
-            .accentColor(AppColor.text_on_accent)
+            .accentColor(AppColor.background)
         }
     }
 }

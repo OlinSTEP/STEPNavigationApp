@@ -36,7 +36,7 @@ struct AnchorDetailView_Manage: View {
                 }
                 
                 if showingConfirmation {
-                    ConfirmationPopup2(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to delete this anchor?", subtitleText: "This action cannot be undone.", confirmButtonLabel: "Delete", confirmButtonDestination: HomeView()) {
+                    ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to delete this anchor?", subtitleText: "This action cannot be undone.", confirmButtonLabel: "Delete", confirmButtonDestination: HomeView()) {
                         FirebaseManager.shared.deleteCloudAnchor(id: anchorDetails.id)
                     }
                 }

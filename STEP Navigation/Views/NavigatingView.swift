@@ -22,38 +22,44 @@ struct NavigatingView: View {
     
     @State var showingConfirmation = false
     @State var showingHelp = false
-    @AccessibilityFocusState var focusOnPopup
-    
+    @AccessibilityFocusState var focusOnAnchorInfo
+    @AccessibilityFocusState var focusOnExit
+
     var body: some View {
-        ScreenBackground {
+        Group {
             ZStack {
                 ARViewContainer()
                 VStack {
                     Spacer()
                     VStack {
                         if !didLocalize {
-                            InformationPopupComponent(popupType: .waitingToLocalize)
+                            ARViewTextOverlay(text: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
                         } else {
                             if RouteNavigator.shared.keypoints?.isEmpty == true {
-                                InformationPopupComponent(popupType: .arrived(destinationAnchorDetails: destinationAnchorDetails))
+                                ARViewTextOverlay(text: "Arrived. You should be withing a cane's length of your destination.", navLabel: "Go to Destination Details", navDestination: AnchorDetailView_NavigationArrived(anchorDetails: destinationAnchorDetails))
                             } else if !navigationDirection.isEmpty {
-                                InformationPopupComponent(popupType: .direction(directionText: navigationDirection))
+                                ARViewTextOverlay(text: navigationDirection)
                             }
                         }
                         Spacer()
                         if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
-                            HStack(spacing: 100) {
-                                ActionBarButtonComponent(action: {
-                                    print("pressed pause")
-                                }, iconSystemName: "pause.circle.fill", accessibilityLabel: "Pause Navigation")
-                                
-                                ActionBarButtonComponent(action: {
+                            HStack {
+                                Spacer()
+                                Button(action: {
                                     navigationManager.updateDirections()
-                                }, iconSystemName: "repeat", accessibilityLabel: "Repeat Directions")
+                                }, label: {
+                                    Image(systemName: "repeat")
+                                        .resizable()
+                                        .frame(width: 80, height: 80)
+                                        .foregroundColor(AppColor.background)
+                                })
+                                .accessibilityLabel("Repeat Directions")
+                                
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 140)
-                            .background(AppColor.accent)
+                            .background(AppColor.foreground)
+                            Spacer()
                         }
                     }
                     .padding(.vertical, 100)
@@ -71,21 +77,13 @@ struct NavigatingView: View {
                 }
                 
                 if showingHelp {
-                    HelpPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showingHelp)
-                        .accessibilityFocused($focusOnPopup)
-                        .accessibilityAddTraits(.isModal)
+                    AnchorInfoPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showingHelp)
+                        .accessibilityFocused($focusOnAnchorInfo)
                 }
                 
                 if showingConfirmation {
-                    ConfirmationPopup(showingConfirmation: $showingConfirmation,
-                                      titleText: "Are you sure you want to exit?",
-                                      subtitleText: "This will end the navigation session.",
-                                      confirmButtonLabel: "Exit")
-                    {
-                        MultipleChoice(feedback: Feedback())
-                    }
-                    .accessibilityFocused($focusOnPopup)
-                    .accessibilityAddTraits(.isModal)
+                    ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to exit?", subtitleText: "This will end the navigation session.", confirmButtonLabel: "Exit", confirmButtonDestination: NavigationFeedbackView())
+                        .accessibilityFocused($focusOnExit)
                 }
                 
             }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
@@ -119,19 +117,22 @@ struct NavigatingView: View {
                     navigationDirection = ""
                 }
             }
-            .background(AppColor.accent)
+            .background(AppColor.foreground)
             .navigationBarBackButtonHidden()
             .toolbar {
-                CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
+                HeaderButton(label: "Exit", placement: .navigationBarLeading) {
                     showingConfirmation = true
-                    focusOnPopup = true
+
                 }
-                CustomHeaderButtonComponent(label: "Help", placement: .navigationBarTrailing) {
-                    showingHelp = true
-                    focusOnPopup = true
+                HeaderButton(label: "Anchor Info", placement: .navigationBarTrailing) {
+                    showingHelp.toggle()
                 }
             }
         }
+        .padding(.bottom, 48)
+        .background(AppColor.foreground)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private func checkLocalization(cloudAnchorsToCheck: Set<String>) {

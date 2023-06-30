@@ -9,15 +9,22 @@ import SwiftUI
 
 struct ARViewTextOverlay<Destination: View>: View {
     let text: String
-    let buttonLabel: String
-    let buttonDestination: Destination?
+    let navLabel: String
+    let navDestination: Destination
     let announce: String
     
-    init(text: String = "", buttonLabel: String = "", buttonDestination: Destination? = nil, announce: String = "") {
+    let buttonLabel: String
+    let buttonAction: () -> Void
+    let onAppear: () -> Void
+    
+    init(text: String = "", navLabel: String = "", navDestination: Destination = HomeView(), announce: String = "", buttonLabel: String = "", buttonAction: @escaping () -> Void = {}, onAppear: @escaping () -> Void = {}) {
         self.text = text
-        self.buttonLabel = buttonLabel
-        self.buttonDestination = buttonDestination
+        self.navLabel = navLabel
+        self.navDestination = navDestination
         self.announce = announce
+        self.buttonLabel = buttonLabel
+        self.buttonAction = buttonAction
+        self.onAppear = onAppear
     }
     
     var body: some View {
@@ -27,30 +34,38 @@ struct ARViewTextOverlay<Destination: View>: View {
                     .foregroundColor(AppColor.background)
                     .font(.title2)
                     .multilineTextAlignment(.center)
+                    .bold()
             }
-            if !buttonLabel.isEmpty && buttonDestination != nil {
-                SmallNavigationLink(destination: buttonDestination, label: buttonLabel, foregroundColor: AppColor.background, backgroundColor: AppColor.foreground)
+            if !buttonLabel.isEmpty && buttonAction() != {}() {
+                SmallButton(action: {
+                    buttonAction()
+                }, label: buttonLabel, foregroundColor: AppColor.background, backgroundColor: AppColor.foreground, invert: true)
+            }
+            if !navLabel.isEmpty {
+                SmallNavigationLink(destination: navDestination, label: navLabel, foregroundColor: AppColor.background, backgroundColor: AppColor.foreground)
             }
         }
         .frame(maxWidth: .infinity)
         .padding()
         .background(AppColor.foreground)
-        .onAppear() {
+        .onAppear {
             if !announce.isEmpty {
                 AnnouncementManager.shared.announce(announcement: announce)
+            }
+            if onAppear() != {}() {
+                onAppear()
             }
         }
     }
 }
 
-struct ConfirmationPopup2<Destination: View>: View {
+struct ConfirmationPopup<Destination: View>: View {
     @Binding var showingConfirmation: Bool
     let titleText: String
     let subtitleText: String
     let confirmButtonLabel: String
     let confirmButtonDestination: Destination
     let secondaryAction: () -> Void
-    @AccessibilityFocusState var focusOnPopup
         
     init(showingConfirmation: Binding<Bool>, titleText: String, subtitleText: String = "", confirmButtonLabel: String, confirmButtonDestination: Destination, secondaryAction: @escaping () -> Void = {}) {
         self._showingConfirmation = showingConfirmation
@@ -67,27 +82,28 @@ struct ConfirmationPopup2<Destination: View>: View {
                 Text(titleText)
                     .bold()
                     .font(.title2)
+                    .multilineTextAlignment(.center)
                 if !subtitleText.isEmpty {
                     Text(subtitleText)
                         .font(.title3)
+                        .multilineTextAlignment(.center)
                 }
             }
             .foregroundColor(AppColor.background)
-            .multilineTextAlignment(.center)
-            .padding(.vertical, 10)
+            .padding(.vertical, 6)
             .padding(.horizontal)
             
-            VStack {
+            VStack(spacing: 12) {
                 SmallNavigationLink(destination: confirmButtonDestination, label: confirmButtonLabel, foregroundColor: AppColor.background, backgroundColor: AppColor.foreground, secondaryAction: secondaryAction)
                 
                 SmallButton(action: {
                     showingConfirmation = false
                 }, label: "Cancel", foregroundColor: AppColor.background, backgroundColor: AppColor.foreground, invert: true)
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.bottom, 6)
         }
         .accessibilityAddTraits(.isModal)
-        .accessibilityFocused($focusOnPopup)
         .frame(width: 360, height: 250)
         .background(AppColor.foreground)
         .cornerRadius(20)
@@ -135,5 +151,65 @@ struct LoadingPopup: View {
         }
         .accessibilityAddTraits(.isModal)
         .padding(.top, 20)
+    }
+}
+
+///  This struct manages a help popup that displays the details of the user's start locations, end locations and their distances.
+struct AnchorInfoPopup: View {
+    let anchorDetailsStart: LocationDataModel?
+    let anchorDetailsEnd: LocationDataModel
+    @ObservedObject var positioningModel = PositioningModel.shared
+    
+    @Binding var showHelp: Bool
+
+    var body: some View {
+        VStack {
+            ScreenHeader()
+            HStack {
+                Text("FROM")
+                    .font(.title2)
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 1)
+                    .foregroundColor(AppColor.foreground)
+                Spacer()
+            }
+            if let anchorDetailsStart = anchorDetailsStart {
+                if let currentLocation = PositioningModel.shared.currentLatLon {
+                    let distance = currentLocation.distance(from: anchorDetailsStart.getLocationCoordinate())
+                    AnchorDetailsText(title: anchorDetailsStart.getName(), distanceAway: distance)
+                }
+            } else {
+                HStack {
+                    Text("Started Outside")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.horizontal)
+                        .foregroundColor(AppColor.foreground)
+                    Spacer()
+                }
+            }
+            HStack {
+                Text("TO")
+                    .font(.title2)
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 1)
+                    .foregroundColor(AppColor.foreground)
+
+                Spacer()
+            }
+            if let currentLocation = positioningModel.currentLatLon {
+                let distance = currentLocation.distance(from: anchorDetailsEnd.getLocationCoordinate())
+                AnchorDetailsText(title: anchorDetailsEnd.getName(), distanceAway: distance)
+            }
+            Spacer()
+            SmallButton(action: {
+                showHelp.toggle()
+            }, label: "Dismiss")
+            .padding(.bottom, 40)
+        }
+        .accessibilityAddTraits(.isModal)
+        .background(AppColor.background)
     }
 }

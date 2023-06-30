@@ -31,8 +31,9 @@ struct SettingsView: View {
                             SmallNavigationLink(destination: SettingsDetailView_Units(), label: "Units")
                         }
                         VStack(spacing: 14) {
-                            LeftLabel(text: "Additional Features")
+                            LeftLabel(text: "Miscellaneous")
                             SmallNavigationLink(destination: SettingsDetailView_PhoneBodyOffset(), label: "Phone - Body Offset")
+                            SmallNavigationLink(destination: StartupPage3(), label: "Replay Tutorial")
                         }
                     }
                 }

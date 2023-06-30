@@ -52,8 +52,6 @@ struct ComponentTesting: View {
                                 showConfirmationPopup = true
                             }, label: "Confirmation Popup")
                             
-                            ChecklistItem(toggle: $firstCheck, label: "First Check")
-                            ChecklistItem(toggle: $secondCheck, label: "Second Check")
 
                         }
                     }
@@ -67,7 +65,7 @@ struct ComponentTesting: View {
                 }
                 
                 if showConfirmationPopup {
-                    ConfirmationPopup2(showingConfirmation: $showConfirmationPopup, titleText: "Confirm the thing here. This is a title.", confirmButtonLabel: "Yes", confirmButtonDestination: HomeView())
+                    ConfirmationPopup(showingConfirmation: $showConfirmationPopup, titleText: "Confirm the thing here. This is a title.", confirmButtonLabel: "Yes", confirmButtonDestination: HomeView())
                 }
             }
         }

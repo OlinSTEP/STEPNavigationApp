@@ -26,7 +26,7 @@ struct ManageAnchorsListView: View {
                             .font(.largeTitle)
                             .bold()
                             .padding(.horizontal)
-                            .foregroundColor(AppColor.text_on_accent)
+                            .foregroundColor(AppColor.background)
                         Spacer()
                     }
                     .padding(.bottom, 0.5)

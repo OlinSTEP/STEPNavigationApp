@@ -32,10 +32,10 @@ struct RadarMapView: View {
                 MapPointComponent(distance: 0.75, angle: 150, name: "Library", quality: .medium)
             ]
             
-        let toolbarColor = focusedIndex != nil && focusedIndex! != 0 ? RadarMapView.getQualityColor(quality: points[focusedIndex!].quality).light : AppColor.accent
+        let toolbarColor = focusedIndex != nil && focusedIndex! != 0 ? RadarMapView.getQualityColor(quality: points[focusedIndex!].quality).light : AppColor.foreground
 
             ZStack {
-                //TODO: add a component here that dispalys "adjusting to landscape mode" or something like that for a few seconds while the phone adjusts, then disappear to display the map
+                //TODO: add a component here that displays "adjusting to landscape mode" or something like that for a few seconds while the phone adjusts, then disappear to display the map
                 VStack {
                     Spacer()
                     HStack {

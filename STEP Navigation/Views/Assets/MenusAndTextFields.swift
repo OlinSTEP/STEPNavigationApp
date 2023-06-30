@@ -107,6 +107,10 @@ struct CustomTextField: View {
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(foregroundColor, lineWidth: 2)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure overlay occupies full button area
+                            .padding(1) // Adjust padding to control the position of the overlay
+                            .alignmentGuide(.top) { d in d[.top] } // Adjust alignment to position the overlay within the button
+                            .alignmentGuide(.leading) { d in d[.leading] } // Adjust alignment to position the overlay within the button
                     )
                     .submitLabel(.done)
             } else if textBoxSize == .large {
@@ -116,9 +120,13 @@ struct CustomTextField: View {
                     .padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     .cornerRadius(10)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(foregroundColor, lineWidth: 2)
-                    )
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(foregroundColor, lineWidth: 2)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure overlay occupies full button area
+                                .padding(1) // Adjust padding to control the position of the overlay
+                                .alignmentGuide(.top) { d in d[.top] } // Adjust alignment to position the overlay within the button
+                                .alignmentGuide(.leading) { d in d[.leading] } // Adjust alignment to position the overlay within the button
+                        )
                     .lineLimit(6, reservesSpace: true)
                     .submitLabel(.done)
                     .focused($entryIsFocused)
@@ -275,9 +283,16 @@ struct ComboBox: View {
     let horizontalOffset: CGFloat
     let foregroundColor: Color
     let backgroundColor: Color
-    @FocusState var editingFocus: Bool
     
-    init(allOptions: [String], editing: Binding<Bool>, inputText: Binding<String>, verticalOffset: CGFloat = 52, horizontalOffset: CGFloat = 0, foregroundColor: Color = AppColor.background, backgroundColor: Color = AppColor.foreground) {
+    init(
+        allOptions: [String],
+        editing: Binding<Bool>,
+        inputText: Binding<String>,
+        verticalOffset: CGFloat = 52,
+        horizontalOffset: CGFloat = 0,
+        foregroundColor: Color = AppColor.background,
+        backgroundColor: Color = AppColor.foreground
+    ) {
         self.allOptions = allOptions
         self._editing = editing
         self._inputText = inputText
@@ -286,30 +301,33 @@ struct ComboBox: View {
         self.foregroundColor = foregroundColor
         self.backgroundColor = backgroundColor
     }
-
-
+    
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .top)) {
             Group {
-                TextField("", text: $inputText, onEditingChanged: {edit in
+                TextField("", text: $inputText, onEditingChanged: { edit in
                     self.editing = edit
                 })
                 .padding(.horizontal, 10)
-                .focused($editingFocus)
             }
             .foregroundColor(backgroundColor)
             .frame(height: 48)
             .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
             .cornerRadius(10)
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(backgroundColor, lineWidth: 2)
-            )
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(backgroundColor, lineWidth: 2)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure overlay occupies full area
+                        .padding(1) // Adjust padding to control the position of the overlay
+                        .alignmentGuide(.top) { d in d[.top] } // Adjust alignment to position the overlay within the area
+                        .alignmentGuide(.leading) { d in d[.leading] } // Adjust alignment to position the overlay within the area
+                )
             ComboBoxMenu(allOptions: allOptions, editing: $editing, text: $inputText, verticalOffset: verticalOffset, horizontalOffset: horizontalOffset, foregroundColor: foregroundColor, backgroundColor: backgroundColor)
             Spacer()
         }
     }
 }
+
 
 struct PickerPage: View {
     let allOptions: [String]
@@ -319,6 +337,7 @@ struct PickerPage: View {
     var body: some View {
         ScreenBackground {
             VStack {
+                ScreenHeader()
                 ScrollView {
                     Divider()
                         .overlay(AppColor.foreground)
@@ -327,7 +346,6 @@ struct PickerPage: View {
                             selection = option
                             showPage = false
                         }, label: {
-                            
                             HStack {
                                 Text(option)
                                     .font(.title2)
@@ -349,16 +367,14 @@ struct PickerPage: View {
             }
             .accessibilityAddTraits(.isModal)
             .toolbar {
-                HeaderButton(label: "Done", placement: .navigationBarLeading, action:  {
+                HeaderButton(label: "Done", placement: .navigationBarLeading) {
                     showPage = false
-                })
+                }
             }
-            .navigationTitle("")
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(AppColor.foreground, for: .navigationBar)
         }
     }
 }
+
 
 struct PickerButton: View {
     @Binding var selection: String
@@ -382,9 +398,13 @@ struct PickerButton: View {
             .frame(height: 48)
             .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
             .cornerRadius(10)
-            .overlay(
+            .overlay (
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(AppColor.foreground, lineWidth: 2)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure overlay occupies full area
+                    .padding(1) // Adjust padding to control the position of the overlay
+                    .alignmentGuide(.top) { d in d[.top] } // Adjust alignment to position the overlay within the area
+                    .alignmentGuide(.leading) { d in d[.leading] } // Adjust alignment to position the overlay within the area
             )
         }
     }

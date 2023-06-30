@@ -17,14 +17,6 @@ struct AppColor {
     static var foreground: Color {
         settingsManager.loadColorScheme().1
     }
-    
-    static var text_on_accent: Color {
-        settingsManager.loadColorScheme().0
-    }
-        
-    static var accent: Color {
-        settingsManager.loadColorScheme().1
-    }
 }
 
 struct StaticAppColor {
@@ -34,4 +26,5 @@ struct StaticAppColor {
     static let green: Color = Color(.sRGB, red: 0/255, green: 255/255, blue: 0/255, opacity: 1)
     static let red: Color = Color(.sRGB, red: 255/255, green: 0/255, blue: 0/255, opacity: 1)
     static let blue: Color = Color(.sRGB, red: 0/255, green: 0/255, blue: 255/255, opacity: 1)
+    static let grey: Color = Color(.sRGB, red: 150/255, green: 150/255, blue: 150/255, opacity: 1)
 }

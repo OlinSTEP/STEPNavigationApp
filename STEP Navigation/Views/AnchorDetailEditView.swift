@@ -15,10 +15,9 @@ struct AnchorDetailEditView<Destination: View>: View {
     @State var showCorrespondingExitMenu: Bool = false
 
     
-    @ObservedObject var dataModelManager = DataModelManager.shared
     @State var editing: Bool = false
     @FocusState var editingOrg: Bool
-    @State var allOrganizations: [String] = []
+    @State var allOrganizations: [String] = DataModelManager.shared.getAllNearbyOrganizations().sorted(by: { $0 < $1 })
     
     @State var allCategories: [String] = AnchorType.allCases.map { $0.rawValue}
     @State var allCorrespondingExits: [String] = DataModelManager.shared.getLocationsByType(anchorType: .externalDoor)
@@ -46,7 +45,6 @@ struct AnchorDetailEditView<Destination: View>: View {
         newNotes = metadata.notes
         self.buttonLabel = buttonLabel
         self.buttonDestination = buttonDestination
-        self.allOrganizations = dataModelManager.getAllNearbyOrganizations()
     }
     
     var body: some View {
@@ -65,6 +63,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 VStack {
                                     LeftLabel(text: "Organization", textSize: .title2)
                                     ComboBox(allOptions: allOrganizations, editing: $editing, inputText: $newOrganization)
+                                        .focused($editingOrg)
                                 }
                                 
                                 VStack {

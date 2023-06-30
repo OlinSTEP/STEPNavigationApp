@@ -85,10 +85,12 @@ struct ChecklistItem: View {
                         .padding(4)
                         .foregroundColor(textColor)
                         .multilineTextAlignment(.leading)
+                        .bold(toggle)
                     Spacer()
                     if toggle {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 26))
+                            .font(.title2)
+                            .bold()
                             .foregroundColor(textColor)
                     }
                 }

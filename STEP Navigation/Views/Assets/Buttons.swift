@@ -196,3 +196,40 @@ struct SmallButton: View {
         .padding(.horizontal)
     }
 }
+
+struct SmallButton_Settings: View {
+    let action: () -> Void
+    let label: String
+    let selected: Bool
+    let color1: Color
+    let color2: Color
+    
+    init(action: @escaping () -> Void, label: String, selected: Bool, color1: Color, color2: Color) {
+        self.action = action
+        self.label = label
+        self.selected = selected
+        self.color1 = color1
+        self.color2 = color2
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Text(label)
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(selected ? color2 : AppColor.foreground)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(minHeight: 54)
+        .background(selected ? color1 : AppColor.background)
+        .cornerRadius(54)
+        .overlay(
+            RoundedRectangle(cornerRadius: 54)
+                .stroke(selected ? (color1 == AppColor.background ? StaticAppColor.grey : color1) : AppColor.foreground, lineWidth: selected ? (color1 == AppColor.background ? 10 : 3) : 3)
+        )
+        .padding(.horizontal)
+    }
+}

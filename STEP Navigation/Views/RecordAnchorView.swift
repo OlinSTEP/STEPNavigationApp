@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 import ARCoreGeospatial
 import ARCoreCloudAnchors
 
@@ -15,21 +16,30 @@ struct RecordAnchorView: View {
     @State var anchorID: String = ""
     @State var showInstructions = true
     
-    @State private var timeRemaining = 0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
+    @StateObject private var timerManager = TimerManager()
     
     var body: some View {
         ZStack {
             ARViewContainer()
-            
             if !showNextButton && !showInstructions {
-                InformationPopupComponent(popupType: .countdown(countdown: timeRemaining))
-                    .onReceive(timer) { time in
-                        if timeRemaining > 0 {
-                            timeRemaining -= 1
-                        }
+                VStack {
+                    if timerManager.timeRemaining > 0 {
+                        Text(String(timerManager.timeRemaining))
+                            .foregroundColor(AppColor.background)
+                            .font(.title2)
+                            .multilineTextAlignment(.center)
+                            .bold()
+                    } else {
+                        Text("Trying to Host Anchor")
+                            .foregroundColor(AppColor.background)
+                            .font(.title2)
+                            .multilineTextAlignment(.center)
+                            .bold()
                     }
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(AppColor.foreground)
             }
             
             VStack {
@@ -38,7 +48,7 @@ struct RecordAnchorView: View {
                         RecordAnchorInstructionsView()
                         Spacer()
                         
-                        Button {
+                        SmallButton(action: {
                             PositioningModel.shared.createCloudAnchor(afterDelay: 30.0, withName: "New Anchor") { anchorID in
                                 guard let anchorID = anchorID else {
                                     print("something went wrong with creating the cloud anchor")
@@ -48,70 +58,72 @@ struct RecordAnchorView: View {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                     showNextButton = true
                                     self.anchorID = anchorID
-                                    print("anchor created successfully")
                                 }
                             }
                             showInstructions = false
-                            timeRemaining = 30
-                        } label: {
-                            Text("Start Recording")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.text_on_accent)
-                        }
-                        .tint(AppColor.accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .padding(.horizontal)
+                            timerManager.startTimer(duration: 30)
+                        }, label: "Start Recording")
                     }
                     .background(AppColor.background)
                 }
                 
                 if showNextButton == true {
-                    VStack {
-                        NavigationLink {
-                            AnchorDetailEditView(anchorID: anchorID, buttonLabel: "Save Anchor") {
-                                HomeView()
-                            }
-                        } label: {
-                            Text("Next")
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(AppColor.accent)
-                        }
-                        .tint(AppColor.text_on_accent)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .padding(.horizontal)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(AppColor.accent)
-                    .accessibilityAddTraits(.isModal)
+                    ARViewTextOverlay(text: "Cloud Anchor Created ", navLabel: "Next", navDestination: AnchorDetailEditView(anchorID: anchorID, buttonLabel: "Save Anchor") {HomeView()})
                 }
             }
-            .onAppear() {
-                PositioningModel.shared.startPositioning()
-            }
-            .onReceive(PositioningModel.shared.$currentQuality) { newValue in
-                currentQuality = newValue
-            }
-            .navigationBarBackButtonHidden()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(destination: HomeView(), label: {
-                        Text("Cancel")
-                            .bold()
-                            .font(.title2)
-                    })
-                }
+            
+            VStack {
+                ScreenHeader()
+                Spacer()
             }
         }
-        .background(AppColor.accent)
+        .onAppear() {
+            PositioningModel.shared.startPositioning()
+        }
+        .onDisappear() {
+            PositioningModel.shared.stopPositioning()
+            timerManager.stopTimer()
+        }
+        .onReceive(PositioningModel.shared.$currentQuality) { newValue in
+            currentQuality = newValue
+        }
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationLink(destination: HomeView(), label: {
+                    Text("Cancel")
+                        .bold()
+                        .font(.title2)
+                })
+            }
+        }
+        .background(AppColor.foreground)
     }
 }
 
+class TimerManager: ObservableObject {
+    @Published var timeRemaining = 0
+    private var timer: Timer?
+    
+    init() {}
+    
+    func startTimer(duration: Int) {
+        guard timer == nil else { return }
+        
+        timeRemaining = duration
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            
+            if self.timeRemaining > 0 {
+                self.timeRemaining -= 1
+            } else {
+                self.stopTimer()
+            }
+        }
+    }
+    
+    func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+}

@@ -25,13 +25,13 @@ struct DestinationTypesView: View {
                 ScreenHeader(title: "Destinations", subtitle: "Within \(nearbyDistanceString) meters")
                 
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 24) {
                         ForEach(anchorTypes, id: \.self) {
                             anchorType in
                             LargeNavigationLink(destination: DestinationAnchorListView(anchorType: anchorType, nearbyDistance: nearbyDistance), label: "\(anchorType.rawValue)s")
                         }
                     }
-                    .padding(.top, 10)
+                    .padding(.top, 12)
                     Spacer()
                     if nearbyDistance < 1000 {
                         NearbyDistanceThreshold(nearbyDistance: $nearbyDistance, focusOnNearbyDistanceValue: $focusOnNearbyDistanceValue)

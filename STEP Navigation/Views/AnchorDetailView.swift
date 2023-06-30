@@ -24,6 +24,9 @@ struct AnchorDetailView<Destination: View>: View {
                 Spacer()
                 SmallNavigationLink(destination: buttonDestination, label: buttonLabel)
             }
+            .navigationTitle("")
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(AppColor.foreground, for: .navigationBar)
         }
     }
 }

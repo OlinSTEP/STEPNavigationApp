@@ -42,7 +42,7 @@ struct ScreenHeader: View {
     let subtitle: String
     let backButtonHidden: Bool
                     
-    init(title: String, subtitle: String = "", backButtonHidden: Bool = false) {
+    init(title: String = "", subtitle: String = "", backButtonHidden: Bool = false) {
         self.title = title
         self.subtitle = subtitle
         self.backButtonHidden = backButtonHidden
@@ -50,16 +50,18 @@ struct ScreenHeader: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text(title)
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.horizontal)
-                Spacer()
+            if !title.isEmpty {
+                HStack {
+                    Text(title)
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.horizontal)
+                    Spacer()
+                }
+                .padding(.bottom, subtitle != "" ? 0.5 : 20)
             }
-            .padding(.bottom, subtitle != "" ? 0.5 : 20)
             
-            if subtitle != "" {
+            if !subtitle.isEmpty {
                 HStack {
                     Text(subtitle)
                         .font(.title2)
@@ -67,6 +69,16 @@ struct ScreenHeader: View {
                     Spacer()
                 }
                 .padding(.bottom, 20)
+            }
+            
+            if title.isEmpty && subtitle.isEmpty {
+                HStack {
+                    Spacer()
+                    Rectangle()
+                        .frame(height: 0)
+                        .background(AppColor.foreground)
+                    Spacer()
+                }
             }
         }
         .padding(.top, backButtonHidden ? 40 : 0)
