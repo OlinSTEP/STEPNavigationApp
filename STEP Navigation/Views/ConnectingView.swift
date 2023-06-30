@@ -131,7 +131,7 @@ struct ConnectingView: View {
                 PositioningModel.shared.startPositioning()
             }
             .onDisappear() {
-                PositioningModel.shared.stopPositioning()
+                PositioningModel.shared.stopPositioning() //TODO: double check is correctly stopping the positioning, any announcements, etc
             }
         }
         .padding(.bottom, 48)
