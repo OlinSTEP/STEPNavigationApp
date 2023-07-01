@@ -24,7 +24,7 @@
 		6569873A2A4F15E800F5C584 /* RecordFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */; };
 		6569873B2A4F15F200F5C584 /* OverlaysAndPopups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F94E2A4D275D00006DBC /* OverlaysAndPopups.swift */; };
 		6569873C2A4F15FD00F5C584 /* StartupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9442A462E2400006DBC /* StartupViews.swift */; };
-		6569873D2A4F161B00F5C584 /* RecordAnchorInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */; };
+		6569873D2A4F161B00F5C584 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		6569873E2A4F162500F5C584 /* SelectConnectingAnchorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */; };
 		821C89752A336837006FD745 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
 		821C89762A336842006FD745 /* RadarMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView.swift */; };
@@ -144,7 +144,6 @@
 		A83CBC682A38C83200E8E3CF /* SettingsDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */; };
 		A867F9452A462E2400006DBC /* StartupViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9442A462E2400006DBC /* StartupViews.swift */; };
 		A867F9472A4CEEF300006DBC /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9462A4CEEF300006DBC /* Buttons.swift */; };
-		A867F9492A4CF1BB00006DBC /* ComponentTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9482A4CF1BB00006DBC /* ComponentTesting.swift */; };
 		A867F94B2A4CFF1B00006DBC /* MenusAndTextFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F94A2A4CFF1B00006DBC /* MenusAndTextFields.swift */; };
 		A867F94D2A4D150C00006DBC /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F94C2A4D150C00006DBC /* Header.swift */; };
 		A867F94F2A4D275D00006DBC /* OverlaysAndPopups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F94E2A4D275D00006DBC /* OverlaysAndPopups.swift */; };
@@ -246,7 +245,6 @@
 		A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailViews.swift; sourceTree = "<group>"; };
 		A867F9442A462E2400006DBC /* StartupViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupViews.swift; sourceTree = "<group>"; };
 		A867F9462A4CEEF300006DBC /* Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
-		A867F9482A4CF1BB00006DBC /* ComponentTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentTesting.swift; sourceTree = "<group>"; };
 		A867F94A2A4CFF1B00006DBC /* MenusAndTextFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenusAndTextFields.swift; sourceTree = "<group>"; };
 		A867F94C2A4D150C00006DBC /* Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
 		A867F94E2A4D275D00006DBC /* OverlaysAndPopups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaysAndPopups.swift; sourceTree = "<group>"; };
@@ -386,7 +384,6 @@
 				A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */,
 				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
 				A867F9442A462E2400006DBC /* StartupViews.swift */,
-				A867F9482A4CF1BB00006DBC /* ComponentTesting.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -726,7 +723,6 @@
 				A80CDCC22A33A838007FA7CE /* ManageAnchorsListView.swift in Sources */,
 				130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */,
 				A80CDCC62A33BB7F007FA7CE /* AnchorDetailView_Manage.swift in Sources */,
-				A867F9492A4CF1BB00006DBC /* ComponentTesting.swift in Sources */,
 				825F1F5529E9CF490043BD98 /* PathLogger.swift in Sources */,
 				825F1F4F29E9CB350043BD98 /* NavigationManager.swift in Sources */,
 				829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */,
@@ -782,7 +778,7 @@
 				82A0168C2A00178000EAA526 /* LocationDataModelParser.swift in Sources */,
 				825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */,
 				82A0168B2A00177000EAA526 /* DataModelManager.swift in Sources */,
-				6569873D2A4F161B00F5C584 /* RecordAnchorInstructionsView.swift in Sources */,
+				6569873D2A4F161B00F5C584 /* (null) in Sources */,
 				6569873C2A4F15FD00F5C584 /* StartupViews.swift in Sources */,
 				82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */,
 				82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */,
