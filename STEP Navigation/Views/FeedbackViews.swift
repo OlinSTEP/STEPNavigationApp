@@ -179,10 +179,12 @@ struct RecordingFeedbackView: View {
             VStack {
                 ScreenHeader()
                 ScrollView {
-                    Spacer().frame(height: 80)
-                    LeftLabel(text: "What was the issue?")
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        Spacer().frame(height: 30)
+                    Text("What was the issue?")
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(AppColor.foreground)
+                        .padding(.vertical, 30)
+                    
                     
                     ChecklistItem(toggle: $isHoldAnchorSelected, label: "Phone could not host anchor")
                     ChecklistItem(toggle: $isInstructionSelected, label: "Incorrect or unclear instructions")
@@ -192,9 +194,9 @@ struct RecordingFeedbackView: View {
                     
                     VStack {
                         LeftLabel(text: "Optional: Problem Description", textSize: .title3)
-                            .padding(.top, 20)
                         CustomTextField(entry: $response, textBoxSize: .large)
                     }
+                    .padding(.top, 20)
                 }
                 .padding(.horizontal)
 
