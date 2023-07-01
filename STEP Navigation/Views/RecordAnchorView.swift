@@ -127,3 +127,44 @@ class TimerManager: ObservableObject {
         timer = nil
     }
 }
+
+
+struct RecordAnchorInstructionsView: View {
+    var body: some View {
+        let instructionListItems = [
+            "Hold your phone vertically at chest height, such that the camera is facing straight out in front of you.",
+            "Move your phone left to right in a wide arc.",
+            "Turn around 180 degrees and move your phone left to right in a wide arc.",
+            "Tilt your phone very slightly upwards.",
+            "Repeat steps 2 and 3.",
+            "Tilt your phone very slightly downwards.",
+            "Repeat steps 2 and 3.",
+            "Take a few steps back and repeat steps 1 through 7.",
+            "If there is still time remaining, continue to move your phone around to capture the anchor from as many angles as possible."
+        ]
+        
+        let tipListItems = [
+            "Anchors take 30 seconds to record.",
+            "A countdown timer is present on the recording screen and a chime will sound when the anchor has been successfully created.",
+            "Try to stand facing a fixed landmark, such as a particular door, sign, table, etc."
+        ]
+        
+        VStack {
+            ScrollView {
+                VStack {
+                    LeftLabel(text: "Quick Reminders", textSize: .title2)
+                    OrderedList(listItems: tipListItems)
+                    
+                    LeftLabel(text: "Instructions", textSize: .title2)
+                    Text("Stand in the anchor destination with the rear camera pointing away from you. Move your phone slowly and steadily as you complete the following motions.")
+                    OrderedList(listItems: instructionListItems)
+                }
+                .foregroundColor(AppColor.foreground)
+                .padding()
+            }
+            Spacer()
+        }
+        .frame(width: .infinity, height: .infinity)
+        .background(AppColor.background)
+    }
+}

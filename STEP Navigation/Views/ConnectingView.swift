@@ -81,11 +81,7 @@ struct ConnectingView: View {
                 
                 if showInstructions {
                     VStack {
-                        HStack {
-                            Text("Instructions here. Go to your first anchor. Etc etc.")
-                                .foregroundColor(AppColor.foreground)
-                            Spacer()
-                        }
+                        ConnectingInstructions()
                         .padding()
                         
                         Spacer()
@@ -187,3 +183,19 @@ struct EdgeBorder: Shape {
     }
 }
 
+struct ConnectingInstructions: View {
+    var body: some View {
+        let instructionsListItems = [
+            "Stand in the location of the first anchor and begin the connecting process by pressing 'Find First Anchor.' button at the bottom of this page.",
+            "Move your phone around until you resolve the first anchor.",
+            "Hold your phone steady at chest level with the camera pointed parallel to the ground and walk to the second anchor. You do not need to wave the phone around as you walk, just hold it steady facing out in front of you.",
+            "The second anchor may resolve as you approach it. If it doesn't, stand in the location of the second anchor and move your phone around until it resolves.",
+            "Your anchors are connected!"
+        ]
+        
+        LeftLabel(text: "Connecting Two Anchors")
+        OrderedList(listItems: instructionsListItems)
+        Text("Note: After connecting two anchors, you may be prompted to improve the accuracy of the connection by walking back from the second anchor to the first. This is not a required step, but doing so will improve the quality of the navigation.")
+        
+    }
+}

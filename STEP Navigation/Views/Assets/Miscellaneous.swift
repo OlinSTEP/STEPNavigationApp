@@ -217,3 +217,28 @@ struct LeftLabel: View {
         }
     }
 }
+
+struct OrderedList: View {
+    var listItems: [String]
+    var listItemSpacing: CGFloat? = nil
+    var toNumber: ((Int) -> String) = { "\($0 + 1)." }
+    var bulletWidth: CGFloat? = nil
+    var bulletAlignment: Alignment = .leading
+    
+    var body: some View {
+        VStack(alignment: .leading,
+               spacing: listItemSpacing) {
+            ForEach(listItems.indices, id: \.self) { idx in
+                HStack(alignment: .top) {
+                    Text(toNumber(idx))
+                        .frame(width: bulletWidth,
+                               alignment: bulletAlignment)
+                    Text(listItems[idx])
+                        .frame(maxWidth: .infinity,
+                               alignment: .leading)
+                }
+            }
+        }
+       .padding(2)
+    }
+}
