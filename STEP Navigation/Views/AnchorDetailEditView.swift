@@ -6,6 +6,35 @@
 //
 
 import SwiftUI
+import GooglePlaces
+
+struct TextFieldClearButton: ViewModifier {
+    @Binding var fieldText: String
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                if !fieldText.isEmpty {
+                    HStack {
+                        Spacer()
+                        Button {
+                            fieldText = ""
+                        } label: {
+                            Image(systemName: "multiply.circle.fill")
+                        }
+                        .foregroundColor(.secondary)
+                        .padding(.trailing, 4)
+                    }
+                }
+            }
+    }
+}
+
+extension View {
+    func showClearButton(_ text: Binding<String>) -> some View {
+        self.modifier(TextFieldClearButton(fieldText: text))
+    }
+}
 
 struct AnchorDetailEditView<Destination: View>: View {
     let buttonLabel: String
@@ -65,6 +94,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                                     TextField("", text: $newOrganization, onEditingChanged: {edit in
                                         self.editing = edit
                                     })
+                                    .showClearButton($newOrganization)
                                     .padding(.horizontal, 10)
                                     .focused($editingOrg)
                                 }
@@ -281,9 +311,17 @@ struct CustomSegmentedControl: View {
     }
 }
 
+struct PlaceIDNamePair {
+    let placeID: String
+    let name: String
+}
+
 struct OrganizationComboBox: View {
     @ObservedObject var dataModelManager = DataModelManager.shared
-    @State var allOrganizations: [String] = []
+    @State var allOrganizations: [PlaceIDNamePair] = []
+    @ObservedObject var positioningModel = PositioningModel.shared
+    @State var geoCoder = GMSPlacesClient()
+    @State var sessionToken = GMSAutocompleteSessionToken()
 
     @Binding var editing: Bool
     @Binding var inputText: String
@@ -295,100 +333,107 @@ struct OrganizationComboBox: View {
         self._inputText = text
         self.verticalOffset = verticalOffset
         self.horizontalOffset = horizontalOffset
-        self._allOrganizations = State(initialValue: dataModelManager.getAllNearbyOrganizations())
-    }
-
-    private var filteredTexts: Binding<[String]> {
-        Binding(
-            get: {
-                let lowercasedInputText = inputText.lowercased()
-                return allOrganizations.filter { $0.lowercased().localizedCaseInsensitiveContains(lowercasedInputText) }
-            },
-            set: { _ in }
-        )
+        //self._allOrganizations = State(initialValue: dataModelManager.getAllNearbyOrganizations())
     }
     
+    /// A utility to function to get the Earth's radius at a particular latitude
+    /// See:  http://en.wikipedia.org/wiki/Earth_radius
+    ///
+    /// - Parameter lat: the latitude
+    /// - Returns: the radius at that latitude
+    private static func WGS84EarthRadius(lat: Double)->Double {
+        let WGS84_a = 6378137.0  // Major semiaxis [m]
+        let WGS84_b = 6356752.3  // Minor semiaxis [m]
+        let An = WGS84_a*WGS84_a * cos(lat)
+        let Bn = WGS84_b*WGS84_b * sin(lat)
+        let Ad = WGS84_a * cos(lat)
+        let Bd = WGS84_b * sin(lat)
+        return sqrt( (An*An + Bn*Bn)/(Ad*Ad + Bd*Bd) )
+    }
+    
+    /// This is a utility method to compute a bounding box around a specific latitude / longitude point
+    /// - Parameters:
+    ///   - center: the center of the bounding box
+    ///   - sideLength: the side length of the bounding box in meters
+    /// - Returns: the location bias, which contains the Northeast and Southwest corners
+    private static func getLocationBias(from center: CLLocationCoordinate2D, withSideLength sideLength: Double)->GMSPlaceLocationBias {
+        let halfSide = sideLength/2.0
+
+        let radius = WGS84EarthRadius(lat: center.latitude * .pi / 180.0)
+        let pradius = radius*cos(center.latitude * .pi / 180.0)
+        print("radius \(radius) pradius \(pradius)")
+        let latMin = center.latitude - halfSide/radius
+        let latMax = center.latitude + halfSide/radius
+        let lonMin = center.longitude - halfSide/pradius * 180.0 / .pi
+        let lonMax = center.longitude + halfSide/pradius * 180.0 / .pi
+        let northeast = CLLocationCoordinate2D(latitude: latMax, longitude: lonMax)
+        let southwest = CLLocationCoordinate2D(latitude: latMin, longitude: lonMin)
+        return GMSPlaceRectangularLocationOption(northeast, southwest)
+    }
+    
+    /// Use the data entered into the text box so far to suggest possible places
+    private func checkForNearbyPlaces() {
+        if let currentLatLon = positioningModel.currentLatLon {
+            let filter = GMSAutocompleteFilter()
+            let locationBias = Self.getLocationBias(from: currentLatLon, withSideLength: 10000.0)
+            filter.locationBias = locationBias
+            geoCoder.findAutocompletePredictions(fromQuery: inputText, filter: filter, sessionToken: sessionToken) { predictions, error in
+                guard let predictions = predictions else {
+                    print("error \(error!.localizedDescription)")
+                    return
+                }
+                allOrganizations = predictions.map({
+                    PlaceIDNamePair(placeID: $0.placeID, name: $0.attributedFullText.string)
+                })
+                print("allOrgs: \(allOrganizations)")
+            }
+        }
+    }
+
     public var body: some View {
-        if inputText == "" {
-            VStack {
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(0..<allOrganizations.count, id: \.self) { idx in
-                            Text(allOrganizations[idx])
-                                .foregroundColor(AppColor.background)
-                                .padding(.horizontal, 25)
-                                .padding(.vertical, 25)
-                                .frame(minWidth: 0,
-                                       maxWidth: .infinity,
-                                       minHeight: 0,
-                                       maxHeight: 50,
-                                       alignment: .leading)
-                                .contentShape(Rectangle())
-                                .onTapGesture(perform: {
-                                    inputText = allOrganizations[idx]
-                                    editing = false
-                                    self.endTextEditing()
-                                })
-                            Divider()
-                                .overlay(AppColor.background)
-                                .padding(.horizontal, 10)
-                        }
+        VStack {
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(allOrganizations, id: \.placeID) { textSearched in
+                        Text(textSearched.name)
+                            .foregroundColor(AppColor.background)
+                            .padding(.horizontal, 25)
+                            .padding(.vertical, 25)
+                            .frame(minWidth: 0,
+                                   maxWidth: .infinity,
+                                   minHeight: 0,
+                                   maxHeight: 50,
+                                   alignment: .leading)
+                            .contentShape(Rectangle())
+                            .onTapGesture(perform: {
+                                // TODO: this should probably be storing place ID instead of the name (or maybe both)
+                                inputText = textSearched.name
+                                editing = false
+                                self.endTextEditing()
+                            })
+                        Divider()
+                            .overlay(AppColor.background)
+                            .padding(.horizontal, 10)
                     }
                 }
-                .background(AppColor.foreground)
-                .cornerRadius(15)
-                .foregroundColor(AppColor.background)
-                .ignoresSafeArea()
-                .frame(maxWidth: .infinity,
-                       minHeight: 0,
-                       maxHeight: 50 * CGFloat((allOrganizations.count > 3 ? 3: allOrganizations.count))
-                )
-                .offset(x: horizontalOffset, y: verticalOffset)
-                .isHidden(!editing, remove: !editing)
-                
-                Spacer()
             }
-            .frame(height: (editing == false ? 0 : (50 * CGFloat((allOrganizations.count > 3 ? 3 : allOrganizations.count)) + (editing == true ? verticalOffset : 0))))
-        } else {
-            VStack {
-                ScrollView {
-                    LazyVStack(spacing: 0) {
-                        ForEach(filteredTexts.wrappedValue, id: \.self) { textSearched in
-                            Text(textSearched)
-                                .foregroundColor(AppColor.background)
-                                .padding(.horizontal, 25)
-                                .padding(.vertical, 25)
-                                .frame(minWidth: 0,
-                                       maxWidth: .infinity,
-                                       minHeight: 0,
-                                       maxHeight: 50,
-                                       alignment: .leading)
-                                .contentShape(Rectangle())
-                                .onTapGesture(perform: {
-                                    inputText = textSearched
-                                    editing = false
-                                    self.endTextEditing()
-                                })
-                            Divider()
-                                .overlay(AppColor.background)
-                                .padding(.horizontal, 10)
-                        }
-                    }
-                }
-                .background(AppColor.foreground)
-                .cornerRadius(15)
-                .foregroundColor(AppColor.background)
-                .ignoresSafeArea()
-                .frame(maxWidth: .infinity,
-                       minHeight: 0,
-                       maxHeight: 50 * CGFloat((filteredTexts.wrappedValue.count > 3 ? 3: filteredTexts.wrappedValue.count))
-                )
-                .offset(x: horizontalOffset, y: verticalOffset)
-                .isHidden(!editing, remove: !editing)
-                
-                Spacer()
-            }
-            .frame(height: (50 * CGFloat((filteredTexts.wrappedValue.count > 3 ? 3 : filteredTexts.wrappedValue.count)) + (editing == true ? verticalOffset : 0)))
+            .background(AppColor.foreground)
+            .cornerRadius(15)
+            .foregroundColor(AppColor.background)
+            .ignoresSafeArea()
+            .frame(maxWidth: .infinity,
+                   minHeight: 0,
+                   maxHeight: 50 * CGFloat((allOrganizations.count > 3 ? 3: allOrganizations.count))
+            )
+            .offset(x: horizontalOffset, y: verticalOffset)
+            .isHidden(!editing, remove: !editing)
+            
+            Spacer()
+        }
+        .frame(height: (50 * CGFloat((allOrganizations.count > 3 ? 3 : allOrganizations.count)) + (editing == true ? verticalOffset : 0)))
+        .onChange(of: inputText) { newValue in
+            print("new", inputText)
+            checkForNearbyPlaces()
         }
     }
 }

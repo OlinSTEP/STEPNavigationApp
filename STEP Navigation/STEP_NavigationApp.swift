@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Firebase
+import GoogleMaps
+import GooglePlaces
 
 @main
 
@@ -14,6 +16,8 @@ struct STEP_NavigationApp: App {
     
     init() {
         FirebaseApp.configure()
+        GMSServices.provideAPIKey(googleMapsAPIKey)
+        GMSPlacesClient.provideAPIKey(googleMapsAPIKey)
     }
     
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
