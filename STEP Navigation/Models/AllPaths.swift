@@ -42,7 +42,8 @@ class PathPlanner {
     /// - Parameter end: the indoor location to navigate to
     func startNavigatingFromOutdoors(to end: LocationDataModel) {
         guard let cloudAnchorID = end.getCloudAnchorID() else {
-            NavigationManager.shared.computePathToOutdoorMarker(end) {
+            NavigationManager.shared.computePathToOutdoorMarker(end) { outdoorKeypoints in
+                RouteNavigator.shared.setRouteKeypoints(kps: outdoorKeypoints)
                 PathLogger.shared.startLoggingData()
                 NavigationManager.shared.startNavigating()
             }
@@ -59,7 +60,7 @@ class PathPlanner {
             if model.getCloudAnchorID() == firstCloudAnchor,
                let outdoorFeature = model.getAssociatedOutdoorFeature(),
                let outdoorDataModel = DataModelManager.shared.getLocationDataModel(byID: outdoorFeature) {
-                NavigationManager.shared.computeMultisegmentPath(cloudAnchors, outsideStart: outdoorDataModel.getLocationCoordinate()) { wasSuccessful in
+                NavigationManager.shared.computeMultisegmentPath(cloudAnchors, outsideStart: outdoorDataModel) { wasSuccessful in
                     guard wasSuccessful else {
                         return
                     }

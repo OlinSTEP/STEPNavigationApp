@@ -8,50 +8,6 @@
 import Foundation
 import SwiftGraph
 import ARKit
-import GoogleMaps
-import Polyline
-
-struct GoogleMapsDirections: Decodable {
-    struct GoogleMapsRoute: Decodable {
-        struct GoogleMapsLeg: Decodable {
-            struct GoogleMapsStep: Decodable {
-                struct GoogleMapsPolyline: Decodable {
-                    let points: String
-                }
-                struct GoogleMapsLatLon: Decodable {
-                    let lat: Double
-                    let lng: Double
-                }
-                let start_location : GoogleMapsLatLon
-                let polyline: GoogleMapsPolyline
-            }
-            let steps: [GoogleMapsStep]
-        }
-        let legs: [GoogleMapsLeg]
-    }
-    let routes: [GoogleMapsRoute]
-    
-    func toLatLonWaypoints()->[CLLocationCoordinate2D]? {
-        // for now, choose the first route
-        guard let route = routes.first else {
-            return nil
-        }
-        // the route should always have exactly one leg
-        guard let leg = route.legs.first else {
-            return nil
-        }
-        var latLons: [CLLocationCoordinate2D] = []
-        for step in leg.steps {
-            latLons.append(CLLocationCoordinate2D(latitude: step.start_location.lat, longitude: step.start_location.lng))
-            let polyline = Polyline(encodedPolyline: step.polyline.points)
-            if let decodedCoordinates = polyline.coordinates {
-                // the polyline gives a better definition to the route legs, but it is not accurate enough to follow exactly.  We're probably better off just omitting the polyline points and instead giving directions that reference the specific step (e.g., head south on Olin Way)
-                //latLons += decodedCoordinates
-            }
-        }
-        return latLons
-    }
-}
 
 /// This class manages the process of navigating a multisegment or single segment route
 class NavigationManager: ObservableObject {
@@ -216,7 +172,7 @@ class NavigationManager: ObservableObject {
         return nil
     }
     
-    private func createTerrainAnchorsAndStartRoute(latLons: [CLLocationCoordinate2D], completionHandler: @escaping ()->()) {
+    private func fetchOutdoorKeypoints(latLons: [CLLocationCoordinate2D], completionHandler: @escaping ([KeypointInfo])->()) {
         let syncGroup = DispatchGroup()
         var keypoints: [KeypointInfo?] = Array.init(repeating: nil, count: latLons.count)
         for (idx, routeWaypoint) in latLons.enumerated() {
@@ -229,22 +185,18 @@ class NavigationManager: ObservableObject {
                 let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
                 keypoints[idx] = newKeypoint
                 syncGroup.leave()
-                print("new keypoint")
 
             }
         }
         syncGroup.notify(queue: .main) {
-            print("expected \(keypoints.count)")
             let keypoints = keypoints.compactMap({$0})
-            print("actual \(keypoints.count)")
-            RouteNavigator.shared.setRouteKeypoints(kps: keypoints)
-            completionHandler()
+            completionHandler(keypoints)
         }
     }
     
     /// Compute the keypoints to arrive at the specified location model from outdoors
     /// - Parameter end: the outdoor location to arrive
-    func computePathToOutdoorMarker(_ end : LocationDataModel, completionHandler: @escaping ()->()) {
+    func computePathToOutdoorMarker(_ end : LocationDataModel, completionHandler: @escaping ([KeypointInfo])->()) {
         guard let currentLatLon = PositioningModel.shared.currentLatLon else {
             return
         }
@@ -270,7 +222,7 @@ class NavigationManager: ObservableObject {
                 print("URL", string)
                 RouteNavigator.shared.routeNameForLogging = "outside_\(end.getName())_\(UUID().uuidString)"
                 let routeWaypoints = (self.decodeRoutes(data: data) ?? []) + [end.getLocationCoordinate()]
-                self.createTerrainAnchorsAndStartRoute(latLons: routeWaypoints, completionHandler: completionHandler)
+                self.fetchOutdoorKeypoints(latLons: routeWaypoints, completionHandler: completionHandler)
             }
         }
 
@@ -292,7 +244,7 @@ class NavigationManager: ObservableObject {
     ///   - completionHandler: a completion handler to call when the operation is complete
     ///           the input argument to the handler is true if the operations was successful and
     ///           false otherwise.
-    func computeMultisegmentPath(_ cloudAnchors: [String], outsideStart: CLLocationCoordinate2D?, completionHandler: @escaping (Bool)->()) {
+    func computeMultisegmentPath(_ cloudAnchors: [String], outsideStart: LocationDataModel?, completionHandler: @escaping (Bool)->()) {
         guard !cloudAnchors.isEmpty else {
             fatalError("the path unexpectedly has no cloud anchors")
         }
@@ -340,13 +292,8 @@ class NavigationManager: ObservableObject {
             }
             let routeKeypoints = MultiSegmentPathBuilder(crumbs: poses, manualKeypointIndices: []).keypoints
             if let outsideStart = outsideStart {
-                PositioningModel.shared.addTerrainAnchor(at: outsideStart) { garAnchor, state in
-                    guard state == .success, let garAnchor = garAnchor else {
-                        return completionHandler(false)
-                    }
-                    
-                    let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
-                    RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint] + routeKeypoints)
+                NavigationManager.shared.computePathToOutdoorMarker(outsideStart) { outdoorKeypoints in
+                    RouteNavigator.shared.setRouteKeypoints(kps: outdoorKeypoints + routeKeypoints)
                     RouteNavigator.shared.routeNameForLogging = "outside_\(FirebaseManager.shared.getCloudAnchorName(byID: finalCloudAnchors.last!)!)_\(UUID().uuidString)"
                     PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
                     return completionHandler(true)
