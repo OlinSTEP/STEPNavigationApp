@@ -21,6 +21,14 @@
 		656987352A4A08DC00F5C584 /* RecordFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */; };
 		820222752A53077400AF5F36 /* GoogleMapsDirections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820222742A53077400AF5F36 /* GoogleMapsDirections.swift */; };
 		820222772A531C9600AF5F36 /* PositionRelativeToOutdoors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820222762A531C9600AF5F36 /* PositionRelativeToOutdoors.swift */; };
+		820222792A53404B00AF5F36 /* GooglePlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 820222782A53404B00AF5F36 /* GooglePlaces */; };
+		8202227A2A53405800AF5F36 /* RecordFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */; };
+		8202227B2A53406200AF5F36 /* PositionRelativeToOutdoors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820222762A531C9600AF5F36 /* PositionRelativeToOutdoors.swift */; };
+		8202227C2A53407100AF5F36 /* GoogleMapsAPICredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B089442A505EB50094AE37 /* GoogleMapsAPICredentials.swift */; };
+		8202227D2A53407A00AF5F36 /* SelectConnectingAnchorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */; };
+		8202227E2A53408500AF5F36 /* GoogleMapsDirections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820222742A53077400AF5F36 /* GoogleMapsDirections.swift */; };
+		8202227F2A53408D00AF5F36 /* RecordAnchorInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */; };
+		820222812A5340E700AF5F36 /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 820222802A5340E700AF5F36 /* Polyline */; };
 		821C89752A336837006FD745 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
 		821C89762A336842006FD745 /* RadarMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView.swift */; };
 		821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
@@ -296,10 +304,12 @@
 				82A0166F2A00151C00EAA526 /* FirebaseDatabase in Frameworks */,
 				8242B02F2A0AB75B0042953F /* GeoFire in Frameworks */,
 				8242B0312A0AB75B0042953F /* GeoFireUtils in Frameworks */,
+				820222812A5340E700AF5F36 /* Polyline in Frameworks */,
 				82A016712A00152300EAA526 /* FirebaseStorage in Frameworks */,
 				82A016772A00153D00EAA526 /* ARCoreGeospatial in Frameworks */,
 				82811EEA2A0C332400D1BE96 /* FirebaseAuth in Frameworks */,
 				82829AD02A0A8D48005A1BC6 /* FirebaseFirestore in Frameworks */,
+				820222792A53404B00AF5F36 /* GooglePlaces in Frameworks */,
 				82A016732A00152F00EAA526 /* SwiftGraph in Frameworks */,
 				82A016752A00153400EAA526 /* ARCoreCloudAnchors in Frameworks */,
 			);
@@ -584,6 +594,8 @@
 				8242B02E2A0AB75B0042953F /* GeoFire */,
 				8242B0302A0AB75B0042953F /* GeoFireUtils */,
 				82811EE92A0C332400D1BE96 /* FirebaseAuth */,
+				820222782A53404B00AF5F36 /* GooglePlaces */,
+				820222802A5340E700AF5F36 /* Polyline */,
 			);
 			productName = "STEP Mapping";
 			productReference = 825F1F3029E9B7910043BD98 /* STEP Mapping.app */;
@@ -758,6 +770,8 @@
 			files = (
 				A80CDCAE2A30F58D007FA7CE /* NavigatingView.swift in Sources */,
 				82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */,
+				8202227A2A53405800AF5F36 /* RecordFeedbackDataModel.swift in Sources */,
+				8202227F2A53408D00AF5F36 /* RecordAnchorInstructionsView.swift in Sources */,
 				A83CBC682A38C83200E8E3CF /* SettingsDetailViews.swift in Sources */,
 				A83CBC622A3768DC00E8E3CF /* ConnectingView.swift in Sources */,
 				82A0167C2A00158D00EAA526 /* PositioningModel.swift in Sources */,
@@ -767,6 +781,7 @@
 				821C89752A336837006FD745 /* HomeView.swift in Sources */,
 				82A0168D2A00178B00EAA526 /* CloudAnchorAligner.swift in Sources */,
 				A80CDCB62A30F5B4007FA7CE /* StartAnchorListView.swift in Sources */,
+				8202227B2A53406200AF5F36 /* PositionRelativeToOutdoors.swift in Sources */,
 				82A016822A00160400EAA526 /* AnnouncementManager.swift in Sources */,
 				A83CBC5D2A3768CB00E8E3CF /* AnchorDetailView_Manage.swift in Sources */,
 				A80CDCAF2A30F59F007FA7CE /* Components.swift in Sources */,
@@ -775,11 +790,14 @@
 				A83CBC5F2A3768D400E8E3CF /* SettingsView.swift in Sources */,
 				A80CDCAD2A30F578007FA7CE /* Colors.swift in Sources */,
 				82811EE62A0C32B900D1BE96 /* AuthHandler.swift in Sources */,
+				8202227E2A53408500AF5F36 /* GoogleMapsDirections.swift in Sources */,
+				8202227C2A53407100AF5F36 /* GoogleMapsAPICredentials.swift in Sources */,
 				A83CBC612A3768DA00E8E3CF /* AnchorDetailEditView.swift in Sources */,
 				82A016882A0016B400EAA526 /* simd_extensions.swift in Sources */,
 				A83CBC632A3768DF00E8E3CF /* RecordAnchorView.swift in Sources */,
 				82A016892A00173400EAA526 /* AllPaths.swift in Sources */,
 				82A016842A00161E00EAA526 /* MultiSegmentPathBuilder.swift in Sources */,
+				8202227D2A53407A00AF5F36 /* SelectConnectingAnchorsView.swift in Sources */,
 				821C89762A336842006FD745 /* RadarMapView.swift in Sources */,
 				A80CDCB42A30F5AE007FA7CE /* DestinationAnchorListView.swift in Sources */,
 				82A016902A0017A700EAA526 /* SoundEffectManager.swift in Sources */,
@@ -1217,6 +1235,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		820222782A53404B00AF5F36 /* GooglePlaces */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82B089462A50609C0094AE37 /* XCRemoteSwiftPackageReference "GoogleMaps-SP" */;
+			productName = GooglePlaces;
+		};
+		820222802A5340E700AF5F36 /* Polyline */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82B0894B2A51C6D50094AE37 /* XCRemoteSwiftPackageReference "Polyline" */;
+			productName = Polyline;
+		};
 		8242B02A2A0AB70C0042953F /* GeoFire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8242B0292A0AB70C0042953F /* XCRemoteSwiftPackageReference "geofire-objc" */;
