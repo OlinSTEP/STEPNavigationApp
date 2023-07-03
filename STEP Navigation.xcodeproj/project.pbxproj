@@ -110,6 +110,7 @@
 		82B089452A505EB50094AE37 /* GoogleMapsAPICredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82B089442A505EB50094AE37 /* GoogleMapsAPICredentials.swift */; };
 		82B089482A50609C0094AE37 /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 82B089472A50609C0094AE37 /* GoogleMaps */; };
 		82B0894A2A50609C0094AE37 /* GooglePlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 82B089492A50609C0094AE37 /* GooglePlaces */; };
+		82B0894D2A51C6D50094AE37 /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 82B0894C2A51C6D50094AE37 /* Polyline */; };
 		82E1482A2A166636008E8642 /* PathRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A016862A00164900EAA526 /* PathRecorder.swift */; };
 		82F2E43229FC5FD200781E75 /* StartAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F2E43129FC5FD200781E75 /* StartAnchorListView.swift */; };
 		A80CDCAC2A2FA43E007FA7CE /* ButtonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCAB2A2FA43E007FA7CE /* ButtonComponents.swift */; };
@@ -273,6 +274,7 @@
 				82659CB029DF5FFC007546A1 /* ARCoreGARSession in Frameworks */,
 				82659CAB29DF5FC8007546A1 /* FirebaseStorage in Frameworks */,
 				82811EE82A0C332000D1BE96 /* FirebaseAuth in Frameworks */,
+				82B0894D2A51C6D50094AE37 /* Polyline in Frameworks */,
 				82B089482A50609C0094AE37 /* GoogleMaps in Frameworks */,
 				82B0894A2A50609C0094AE37 /* GooglePlaces in Frameworks */,
 				82829AD22A0A8D54005A1BC6 /* FirebaseFirestore in Frameworks */,
@@ -545,6 +547,7 @@
 				82811EE72A0C332000D1BE96 /* FirebaseAuth */,
 				82B089472A50609C0094AE37 /* GoogleMaps */,
 				82B089492A50609C0094AE37 /* GooglePlaces */,
+				82B0894C2A51C6D50094AE37 /* Polyline */,
 			);
 			productName = "STEP Navigation";
 			productReference = 8241734D29DE0C6F001599B1 /* STEP Navigation.app */;
@@ -617,6 +620,7 @@
 				82659CB329DF60B5007546A1 /* XCRemoteSwiftPackageReference "SwiftGraph" */,
 				8242B0292A0AB70C0042953F /* XCRemoteSwiftPackageReference "geofire-objc" */,
 				82B089462A50609C0094AE37 /* XCRemoteSwiftPackageReference "GoogleMaps-SP" */,
+				82B0894B2A51C6D50094AE37 /* XCRemoteSwiftPackageReference "Polyline" */,
 			);
 			productRefGroup = 8241734E29DE0C6F001599B1 /* Products */;
 			projectDirPath = "";
@@ -1194,6 +1198,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		82B0894B2A51C6D50094AE37 /* XCRemoteSwiftPackageReference "Polyline" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/raphaelmor/Polyline";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1316,6 +1328,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 82B089462A50609C0094AE37 /* XCRemoteSwiftPackageReference "GoogleMaps-SP" */;
 			productName = GooglePlaces;
+		};
+		82B0894C2A51C6D50094AE37 /* Polyline */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 82B0894B2A51C6D50094AE37 /* XCRemoteSwiftPackageReference "Polyline" */;
+			productName = Polyline;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

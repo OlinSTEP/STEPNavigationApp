@@ -341,7 +341,7 @@ class PositioningModel: NSObject, ObservableObject {
     ///   - location: the location for the cloud anchor (the altitude is set automatically by the ARCore machinery)
     ///   - name: the name to use for the terrain anchor
     /// - Returns: the initial GARAnchor that tracks the terrain anchor
-    func addTerrainAnchor(at location: CLLocationCoordinate2D, withName name: String, completionHandler: @escaping (GARAnchor?, GARTerrainAnchorState)->()) {
+    func addTerrainAnchor(at location: CLLocationCoordinate2D, completionHandler: @escaping (GARAnchor?, GARTerrainAnchorState)->()) {
         arCoreDispatchQueue.async {
             self.waitOnSession()
             guard let garSession = self.garSession else {

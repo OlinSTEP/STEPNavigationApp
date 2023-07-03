@@ -8,6 +8,50 @@
 import Foundation
 import SwiftGraph
 import ARKit
+import GoogleMaps
+import Polyline
+
+struct GoogleMapsDirections: Decodable {
+    struct GoogleMapsRoute: Decodable {
+        struct GoogleMapsLeg: Decodable {
+            struct GoogleMapsStep: Decodable {
+                struct GoogleMapsPolyline: Decodable {
+                    let points: String
+                }
+                struct GoogleMapsLatLon: Decodable {
+                    let lat: Double
+                    let lng: Double
+                }
+                let start_location : GoogleMapsLatLon
+                let polyline: GoogleMapsPolyline
+            }
+            let steps: [GoogleMapsStep]
+        }
+        let legs: [GoogleMapsLeg]
+    }
+    let routes: [GoogleMapsRoute]
+    
+    func toLatLonWaypoints()->[CLLocationCoordinate2D]? {
+        // for now, choose the first route
+        guard let route = routes.first else {
+            return nil
+        }
+        // the route should always have exactly one leg
+        guard let leg = route.legs.first else {
+            return nil
+        }
+        var latLons: [CLLocationCoordinate2D] = []
+        for step in leg.steps {
+            latLons.append(CLLocationCoordinate2D(latitude: step.start_location.lat, longitude: step.start_location.lng))
+            let polyline = Polyline(encodedPolyline: step.polyline.points)
+            if let decodedCoordinates = polyline.coordinates {
+                // the polyline gives a better definition to the route legs, but it is not accurate enough to follow exactly.  We're probably better off just omitting the polyline points and instead giving directions that reference the specific step (e.g., head south on Olin Way)
+                //latLons += decodedCoordinates
+            }
+        }
+        return latLons
+    }
+}
 
 /// This class manages the process of navigating a multisegment or single segment route
 class NavigationManager: ObservableObject {
@@ -162,18 +206,75 @@ class NavigationManager: ObservableObject {
         return stops
     }
     
+    func decodeRoutes(data: Data)->[CLLocationCoordinate2D]? {
+        do {
+            let directions = try JSONDecoder().decode(GoogleMapsDirections.self, from: data)
+            return directions.toLatLonWaypoints()
+        } catch {
+            print("unable to decode \(error)")
+        }
+        return nil
+    }
+    
+    private func createTerrainAnchorsAndStartRoute(latLons: [CLLocationCoordinate2D], completionHandler: @escaping ()->()) {
+        let syncGroup = DispatchGroup()
+        var keypoints: [KeypointInfo?] = Array.init(repeating: nil, count: latLons.count)
+        for (idx, routeWaypoint) in latLons.enumerated() {
+            syncGroup.enter()
+            PositioningModel.shared.addTerrainAnchor(at: routeWaypoint) { garAnchor, anchorState in
+                guard anchorState == .success, let garAnchor = garAnchor else {
+                    syncGroup.leave()
+                    return
+                }
+                let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
+                keypoints[idx] = newKeypoint
+                syncGroup.leave()
+                print("new keypoint")
+
+            }
+        }
+        syncGroup.notify(queue: .main) {
+            print("expected \(keypoints.count)")
+            let keypoints = keypoints.compactMap({$0})
+            print("actual \(keypoints.count)")
+            RouteNavigator.shared.setRouteKeypoints(kps: keypoints)
+            completionHandler()
+        }
+    }
+    
     /// Compute the keypoints to arrive at the specified location model from outdoors
     /// - Parameter end: the outdoor location to arrive
     func computePathToOutdoorMarker(_ end : LocationDataModel, completionHandler: @escaping ()->()) {
-        RouteNavigator.shared.routeNameForLogging = "outside_\(end.getName())_\(UUID().uuidString)"
-        PositioningModel.shared.addTerrainAnchor(at: end.getLocationCoordinate(), withName: "crossover") { garAnchor, anchorState in
-            guard anchorState == .success, let garAnchor = garAnchor else {
-                return
-            }
-            let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
-            RouteNavigator.shared.setRouteKeypoints(kps: [newKeypoint])
-            completionHandler()
+        guard let currentLatLon = PositioningModel.shared.currentLatLon else {
+            return
         }
+        // just to see, building up the URL
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "maps.googleapis.com"
+        components.path = "/maps/api/directions/json"
+        components.queryItems = [
+            URLQueryItem(name: "origin", value: "\(currentLatLon.latitude),\(currentLatLon.longitude)"),
+            URLQueryItem(name: "mode", value: "walking"),
+            URLQueryItem(name: "destination", value: "\(end.getLocationCoordinate().latitude),\(end.getLocationCoordinate().longitude)"),
+            URLQueryItem(name: "key", value: googleMapsAPIKey)
+        ]
+        guard let url = components.url else {
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) {
+            data, response, error in
+            
+            if let data = data, let string = String(data: data, encoding: .utf8) {
+                print("URL", string)
+                RouteNavigator.shared.routeNameForLogging = "outside_\(end.getName())_\(UUID().uuidString)"
+                let routeWaypoints = (self.decodeRoutes(data: data) ?? []) + [end.getLocationCoordinate()]
+                self.createTerrainAnchorsAndStartRoute(latLons: routeWaypoints, completionHandler: completionHandler)
+            }
+        }
+
+        task.resume()
     }
     
     /// Given a list of cloud anchors to serve as waypoints along the route, generate a multisegment
@@ -239,7 +340,7 @@ class NavigationManager: ObservableObject {
             }
             let routeKeypoints = MultiSegmentPathBuilder(crumbs: poses, manualKeypointIndices: []).keypoints
             if let outsideStart = outsideStart {
-                PositioningModel.shared.addTerrainAnchor(at: outsideStart, withName: "crossover") { garAnchor, state in
+                PositioningModel.shared.addTerrainAnchor(at: outsideStart) { garAnchor, state in
                     guard state == .success, let garAnchor = garAnchor else {
                         return completionHandler(false)
                     }
