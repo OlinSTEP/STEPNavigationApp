@@ -204,6 +204,24 @@ class PositioningModel: NSObject, ObservableObject {
         resetAlignment()
     }
     
+    /// Compute the necessary information to position the cloud anchor relative to the outdoors.
+    /// - Parameter cloudAnchorID: the cloud anchor ID
+    /// - Returns: a triplet consisting of the cloud anchor pose, the camera pose, and the camera geo spatial transform or nil if one of these cannot be determined
+    func collectPositionRelativeToOutdoors(of cloudAnchorID: String)->(simd_float4x4, simd_float4x4, GARGeospatialTransform)? {
+        guard let currentFramePair = garSession?.currentFramePair else {
+            return nil
+        }
+        guard let cameraGeoSpatial = currentFramePair.garFrame.earth?.cameraGeospatialTransform else {
+            return nil
+        }
+        guard let cloudAnchor = currentFramePair.garFrame.anchors.first(where: {
+            identifierToCloudIdentifier[$0.identifier] == cloudAnchorID
+        }) else {
+            return nil
+        }
+        return (cloudAnchor.transform, currentFramePair.arFrame.camera.transform, cameraGeoSpatial)
+    }
+    
     /// Remove any rendered content
     func removeRenderedContent() {
         rendererHelper.removeRenderedContent()

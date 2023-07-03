@@ -179,6 +179,7 @@ class NavigationManager: ObservableObject {
             syncGroup.enter()
             PositioningModel.shared.addTerrainAnchor(at: routeWaypoint) { garAnchor, anchorState in
                 guard anchorState == .success, let garAnchor = garAnchor else {
+                    // TODO: after 100 anchors, this starts failing.  I (Paul) haven't investigated why this is happening.  We might need to handle this case (especially if we use the polyline)
                     syncGroup.leave()
                     return
                 }

@@ -20,6 +20,7 @@
 		656987302A38DD2400F5C584 /* NavigateFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6569872E2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift */; };
 		656987352A4A08DC00F5C584 /* RecordFeedbackDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */; };
 		820222752A53077400AF5F36 /* GoogleMapsDirections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820222742A53077400AF5F36 /* GoogleMapsDirections.swift */; };
+		820222772A531C9600AF5F36 /* PositionRelativeToOutdoors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 820222762A531C9600AF5F36 /* PositionRelativeToOutdoors.swift */; };
 		821C89752A336837006FD745 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
 		821C89762A336842006FD745 /* RadarMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView.swift */; };
 		821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
@@ -190,6 +191,7 @@
 		6569872E2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigateFeedbackDataModel.swift; sourceTree = "<group>"; };
 		656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordFeedbackDataModel.swift; path = "STEP Navigation/Views/RecordFeedbackDataModel.swift"; sourceTree = SOURCE_ROOT; };
 		820222742A53077400AF5F36 /* GoogleMapsDirections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsDirections.swift; sourceTree = "<group>"; };
+		820222762A531C9600AF5F36 /* PositionRelativeToOutdoors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionRelativeToOutdoors.swift; sourceTree = "<group>"; };
 		8241734D29DE0C6F001599B1 /* STEP Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Navigation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_NavigationApp.swift; sourceTree = "<group>"; };
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -392,6 +394,7 @@
 				A83CBC692A38E28900E8E3CF /* RecordAnchorInstructionsView.swift */,
 				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
 				A867F9442A462E2400006DBC /* StartupViews.swift */,
+				820222762A531C9600AF5F36 /* PositionRelativeToOutdoors.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -730,6 +733,7 @@
 				821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */,
 				825F1F4029E9C65F0043BD98 /* simd_extensions.swift in Sources */,
 				A80CDCCB2A33C646007FA7CE /* MapComponents.swift in Sources */,
+				820222772A531C9600AF5F36 /* PositionRelativeToOutdoors.swift in Sources */,
 				A80CDCC82A33BC7D007FA7CE /* ConnectingView.swift in Sources */,
 				130E7C4129E23494004B1E81 /* LocationDataModel.swift in Sources */,
 				826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */,

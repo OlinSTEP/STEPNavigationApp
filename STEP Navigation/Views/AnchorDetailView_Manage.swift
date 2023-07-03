@@ -34,6 +34,9 @@ struct AnchorDetailView_Manage: View {
                         SelectConnectingAnchorsView(anchorID1: anchorDetails.id)
                     }, label: "Connect")
                     
+                    SmallButtonComponent_NavigationLink(destination: {
+                        PositionRelativeToOutdoors(anchorID: anchorDetails.id)
+                    }, label: "Position Relative to Outdoors")
                     Button(action: {
                         showingConfirmation = true
                     }) {

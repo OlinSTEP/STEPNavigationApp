@@ -12,6 +12,23 @@ import FirebaseDatabase
 import FirebaseStorage
 import FirebaseFirestore
 import GeoFireUtils
+import ARCoreGeospatial
+
+extension GARGeospatialTransform {
+    func asDict()->[String: Any] {
+        return [ "latitude": coordinate.latitude,
+                 "longitude": coordinate.longitude,
+                 "altitude": altitude,
+                 "eastUpSouthQTarget":
+                    ["axis_x": eastUpSouthQTarget.axis.x,
+                     "axis_y": eastUpSouthQTarget.axis.y,
+                     "axis_z": eastUpSouthQTarget.axis.z,
+                     "angle": eastUpSouthQTarget.angle],
+                 "verticalAccuracy": verticalAccuracy,
+                 "horizontalAccuracy": horizontalAccuracy,
+                 "orientationYawAccuracy": orientationYawAccuracy]
+    }
+}
 
 /// The mode of operation for the database manager.  This is used to set the scope of some of the database listeners (e.g., how much data to prefetch).
 enum FirebaseMode {
@@ -230,6 +247,27 @@ class FirebaseManager: ObservableObject {
                   "pathID": id,
                   "version": getConnectionVersion(from: anchorID1, to: anchorID2)] as [String : Any]])
         ])
+    }
+    
+    /// Store information regarding the relative position of the specific cloud anchor to the outdoors.  This function will overwrite any existing information regarding this positioning for the cloud anchor
+    /// - Parameters:
+    ///   - cloudAnchorID: the cloud anchor's identifier
+    ///   - anchorPose: the pose of the anchor in the current ARSession
+    ///   - cameraPose: the pose of the camera in the current ARSession
+    ///   - cameraEarthTransform: the camera pose in geospatial cooridinates
+    func addPositionRelativeToOutdoors(of cloudAnchorID: String, anchorPose: simd_float4x4, cameraPose: simd_float4x4, cameraEarthTransform: GARGeospatialTransform) {
+        // TODO: this doesn't give us the ability to do accurate path planning for the outdoor portion of the route.  We might need to some actual WGS 84 math :(
+        cloudAnchorCollection.document(cloudAnchorID).updateData([
+            "outdoorPositioning": ["anchorPose": anchorPose.toColumnMajor(),
+                                   "cameraPose": cameraPose.toColumnMajor(),
+                                   "cameraGeospatialTransform": cameraEarthTransform.asDict()] as [String : Any]
+        ]) { error in
+            if let error = error {
+                AnnouncementManager.shared.announce(announcement: "error occurred")
+            } else {
+                AnnouncementManager.shared.announce(announcement: "Successfully sent to DB")
+            }
+        }
     }
     
     /// Get the next version for the connection to use between the two anchors
