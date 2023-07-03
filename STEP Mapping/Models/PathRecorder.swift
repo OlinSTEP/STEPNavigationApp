@@ -64,7 +64,7 @@ class PathRecorder {
             }
             // NOTE: the geospatial transform is not buffered in the same way as the pose
             let _ = PositioningModel.shared.createCloudAnchorFromBufferedPose(
-                withMetadata: CloudAnchorMetadata(name: "", type: .path, associatedOutdoorFeature: "", geospatialTransform: GeospatialData(arCoreGeospatial: geospatialTransform), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true, organization: "", notes: "")
+                withMetadata: CloudAnchorMetadata(name: "", type: .path, associatedOutdoorFeature: "", geospatialTransform: GeospatialData(arCoreGeospatial: geospatialTransform), creatorUID: AuthHandler.shared.currentUID ?? "", isReadable: true, organization: "", notes: "", outdoorPositioning: nil)
             ) { wasSuccessful in
                 // TODO: handle this somehow
             }

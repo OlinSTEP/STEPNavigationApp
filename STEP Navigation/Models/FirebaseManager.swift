@@ -14,22 +14,6 @@ import FirebaseFirestore
 import GeoFireUtils
 import ARCoreGeospatial
 
-extension GARGeospatialTransform {
-    func asDict()->[String: Any] {
-        return [ "latitude": coordinate.latitude,
-                 "longitude": coordinate.longitude,
-                 "altitude": altitude,
-                 "eastUpSouthQTarget":
-                    ["axis_x": eastUpSouthQTarget.axis.x,
-                     "axis_y": eastUpSouthQTarget.axis.y,
-                     "axis_z": eastUpSouthQTarget.axis.z,
-                     "angle": eastUpSouthQTarget.angle],
-                 "verticalAccuracy": verticalAccuracy,
-                 "horizontalAccuracy": horizontalAccuracy,
-                 "orientationYawAccuracy": orientationYawAccuracy]
-    }
-}
-
 /// The mode of operation for the database manager.  This is used to set the scope of some of the database listeners (e.g., how much data to prefetch).
 enum FirebaseMode {
     /// mapping mode (load all data so it can be edited if needed).  TODO: make this more efficient at some point.
@@ -257,10 +241,9 @@ class FirebaseManager: ObservableObject {
     ///   - cameraEarthTransform: the camera pose in geospatial cooridinates
     func addPositionRelativeToOutdoors(of cloudAnchorID: String, anchorPose: simd_float4x4, cameraPose: simd_float4x4, cameraEarthTransform: GARGeospatialTransform) {
         // TODO: this doesn't give us the ability to do accurate path planning for the outdoor portion of the route.  We might need to some actual WGS 84 math :(
+        // Note: there is the appropriate API for ARCore Android, but not in the iOS version :( :( :(
         cloudAnchorCollection.document(cloudAnchorID).updateData([
-            "outdoorPositioning": ["anchorPose": anchorPose.toColumnMajor(),
-                                   "cameraPose": cameraPose.toColumnMajor(),
-                                   "cameraGeospatialTransform": cameraEarthTransform.asDict()] as [String : Any]
+            "outdoorPositioning": OutdoorPositioningInfo(anchorPose: anchorPose, cameraPose: cameraPose, cameraGeospatial: GeospatialData(arCoreGeospatial: cameraEarthTransform)).asDict()
         ]) { error in
             if let error = error {
                 AnnouncementManager.shared.announce(announcement: "error occurred")
@@ -317,6 +300,21 @@ class FirebaseManager: ObservableObject {
             currentVersionMap[NodePair(from: id, to: toID)] = max(version, currentVersionMap[NodePair(from: id, to: toID)] ?? 0)
             simpleConnections[toID] = SimpleEdge(pathID: pathID, cost: Float(weight), wasReversed: false, version: version)
         }
+        let outdoorPositioning: OutdoorPositioningInfo?
+        if let outdoorPositioningDict = data["outdoorPositioning"] as? [String: Any],
+           let anchorPoseArray = outdoorPositioningDict["anchorPose"] as? [Double],
+           let anchorPose = simd_float4x4(fromColumnMajorArray: anchorPoseArray),
+           let cameraPoseArray = outdoorPositioningDict["cameraPose"] as? [Double],
+           let cameraPose = simd_float4x4(fromColumnMajorArray: cameraPoseArray),
+           let geospatialDict = outdoorPositioningDict["cameraGeospatialTransform"] as? [String: Any],
+           let cameraGeospatial = GeospatialData(fromDict: geospatialDict) {
+            outdoorPositioning = OutdoorPositioningInfo(
+                anchorPose: anchorPose,
+                cameraPose: cameraPose,
+                cameraGeospatial: cameraGeospatial)
+        } else {
+            outdoorPositioning = nil
+        }
         return (
             CloudAnchorMetadata(name: anchorName,
                                 type: anchorType,
@@ -324,7 +322,8 @@ class FirebaseManager: ObservableObject {
                                 geospatialTransform: geospatialData, creatorUID: creatorUID,
                                 isReadable: isReadable,
                                 organization: organization,
-                                notes: notes
+                                notes: notes,
+                                outdoorPositioning: outdoorPositioning
             ),
             LocationDataModel(anchorType: anchorType,
                               associatedOutdoorFeature: associatedOutdoorFeature,

@@ -34,6 +34,18 @@ enum GeoLocationAccuracy: Int {
     }
 }
 
+struct OutdoorPositioningInfo {
+    let anchorPose: simd_float4x4
+    let cameraPose: simd_float4x4
+    let cameraGeospatial: GeospatialData
+    
+    func asDict()->[String:Any] {
+        ["anchorPose": anchorPose.toColumnMajor(),
+         "cameraPose": cameraPose.toColumnMajor(),
+         "cameraGeospatialTransform": cameraGeospatial.asDict()] as [String : Any]
+    }
+}
+
 /// This stores the metadata about the cloud anchor.  Note: that the cloudIdentifier is not stored here, but rather maintained as the key in various data structures that store ``CloudAnchorMetadata``
 struct CloudAnchorMetadata {
     /// The name of the cloud anchor (this is user-facing, can be changed, and is not guaranteed to be unique)
@@ -52,6 +64,8 @@ struct CloudAnchorMetadata {
     let organization: String
     /// The notes for the cloud anchor
     let notes: String
+    /// The outdoor positioning info for enhanced accuracy
+    let outdoorPositioning: OutdoorPositioningInfo?
     
     /// Convert the cloud anchor data to a dictionary that is suitable for serialization or storage in a database
     /// - Returns: the dictionary as key-value pairs
@@ -67,7 +81,8 @@ struct CloudAnchorMetadata {
                 "notes": notes,
                 "associatedOutdoorFeature": associatedOutdoorFeature,
                 "geospatialTransform": geospatialTransform.asDict(),
-                "geohash": hash]
+                "geohash": hash,
+                "outdoorPositioning": outdoorPositioning?.asDict() ?? [:]]
     }
 }
 
@@ -435,7 +450,7 @@ class PositioningModel: NSObject, ObservableObject {
                         geospatialTransform: GeospatialData(arCoreGeospatial: geoSpatialTransfrom), creatorUID: AuthHandler.shared.currentUID ?? "",
                         isReadable: true,
                         organization: "",
-                        notes: ""),
+                        notes: "", outdoorPositioning: nil),
                     completionHandler: completionHandler
                 )
             }

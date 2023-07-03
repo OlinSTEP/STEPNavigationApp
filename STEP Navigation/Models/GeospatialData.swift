@@ -21,7 +21,7 @@ struct GeospatialData {
     let verticalAccuracy: Double
     /// The accuracy in the ground plane
     let horizontalAccuracy: Double
-    /// The accuracy in the yaw directino
+    /// The accuracy in the yaw direction
     let yawAccuracy: Double
     /// The orientation relative to the East-Up-South coordinate system
     let eastUpSouthQTarget: simd_quatf

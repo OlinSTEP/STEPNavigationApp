@@ -242,7 +242,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 geospatialTransform: metadata.geospatialTransform, creatorUID: metadata.creatorUID,
                             isReadable: newIsReadable,
                             organization: newOrganization,
-                            notes: newNotes)
+                            notes: newNotes, outdoorPositioning: metadata.outdoorPositioning)
         FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
     }
 }
