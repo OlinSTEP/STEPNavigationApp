@@ -21,7 +21,7 @@ enum RecordFeedbackStatus: String {
     case notDefined
 }
 
-class RecordFeedback: ObservableObject{
+class RecordingFeedback: ObservableObject{
     var recordFeedbackStatus: RecordFeedbackStatus = .notDefined
     var recordResponse: String = ""
     var isHoldAnchorSelected: Bool = false
@@ -39,8 +39,8 @@ class RecordFeedback: ObservableObject{
     }
 }
 
-struct RecordThumbsView: View {
-    @StateObject var recordfeedback: RecordFeedback
+struct RecordingFeedback: View {
+    @StateObject var recordfeedback: RecordingFeedback
     @ObservedObject var settingsManager = SettingsManager.shared
     
     @State var colorschemedefault: Bool = false
@@ -98,8 +98,7 @@ struct RecordThumbsView: View {
                 .padding()
                 Spacer()
                     .frame(height: 200)
-                SmallButtonComponent_NavigationLink(destination: { HomeView() }, label: "Home")
-                    .padding(.bottom, 40)
+                SmallNavigationLink(destination: HomeView(), label: "Home")
             }
             .background(AppColor.background)
             .edgesIgnoringSafeArea([.bottom])
@@ -112,8 +111,8 @@ struct RecordThumbsView: View {
 }
 
 
-struct RecordMultipleChoice: View {
-    @StateObject var recordfeedback: RecordFeedback
+struct RecordingFeedback: View {
+    @StateObject var recordfeedback: RecordingFeedback
 
     var body: some View { ScrollView{
         VStack {

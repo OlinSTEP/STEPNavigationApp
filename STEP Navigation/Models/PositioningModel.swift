@@ -589,6 +589,9 @@ class RendererHelper {
     var renderedStreetscapes: [UUID: SCNNode] = [:]
       
     
+    var settingsManager = SettingsManager.shared
+    
+    
     init(arView: ARSCNView) {
         self.arView = arView
     }
@@ -654,7 +657,6 @@ extension PositioningModel: CLLocationManagerDelegate {
         guard let mostRecentLocation = locations.last, garSession == nil else {
             return
         }
-        print("Updating with coarse localization")
         currentLatLon = mostRecentLocation.coordinate
         FirebaseManager.shared.queryNearbyAnchors(to: mostRecentLocation.coordinate, withRadius: 1000.0)
         geoLocalizationAccuracy = .coarse

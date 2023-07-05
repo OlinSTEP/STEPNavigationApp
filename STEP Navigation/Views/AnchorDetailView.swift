@@ -11,22 +11,22 @@ import CoreLocation
 struct AnchorDetailView<Destination: View>: View {
     let anchorDetails: LocationDataModel
     let buttonLabel: String
-    let buttonDestination: () -> Destination
+    let buttonDestination: Destination
     
     var body: some View {
-        VStack {
-            if let currentLocation = PositioningModel.shared.currentLatLon {
-                let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                let formattedDistance = String(format: "%.0f", distance)
-                AnchorDetailsComponent(title: anchorDetails.getName(), distanceAway: formattedDistance)
-                    .padding(.top)
+        ScreenBackground {
+            VStack {
+                if let currentLocation = PositioningModel.shared.currentLatLon {
+                    let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
+                    AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)
+                        .padding(.top)
+                }
+                Spacer()
+                SmallNavigationLink(destination: buttonDestination, label: buttonLabel)
             }
-            Spacer()
-            SmallButtonComponent_NavigationLink(destination: buttonDestination, label: buttonLabel)
-                .padding(.bottom, 40)
+            .navigationTitle("")
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(AppColor.foreground, for: .navigationBar)
         }
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

@@ -14,92 +14,58 @@ struct SettingsDetailView_CrumbColor: View {
     @State var customCrumbPopup: Bool = false
     @State var isCustomColorSelected: Bool = false
     
-    
     let crumbColorOptions = [
         CrumbColors(label: "Black", color: StaticAppColor.black),
-        CrumbColors(label: "White", color: StaticAppColor.white),
         CrumbColors(label: "Yellow", color: StaticAppColor.yellow),
         CrumbColors(label: "Blue", color: StaticAppColor.blue)
     ]
     
     var body: some View {
-        ZStack {
-            VStack {
-                ScreenTitleComponent(titleText: "Crumb Color", subtitleText: "Set the color of the box-shaped crumb for navigating.")
-                
-                VStack(spacing: 10) {
-                    ForEach(crumbColorOptions) { color in
-                        Button(action: {
-                            settingsManager.saveCrumbColor(color: color.color)
-                            isCustomColorSelected = false
-                            selectedCrumbColor = color.color
-                        }) {
-                            Text(color.label)
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(selectedCrumbColor == color.color ? StaticAppColor.black : AppColor.foreground)
-                        }
-                        .tint(selectedCrumbColor == color.color ? color.color : AppColor.background)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 30)
-                                .stroke(selectedCrumbColor == color.color ? AppColor.background : AppColor.foreground, lineWidth: 2)
-                        )
-                        .padding(.horizontal)
-                    }
+        ScreenBackground {
+            ZStack {
+                VStack {
+                    ScreenHeader(title: "Crumb Color", subtitle: "Set the color of the box-shaped crumb for navigating.")
                     
-                    Button(action: {
-                        customCrumbPopup = true
-                        isCustomColorSelected = true
-                    }) {
-                        Text("Custom")
-                            .font(.title2)
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .foregroundColor(isCustomColorSelected ? StaticAppColor.black : AppColor.foreground)
+                    VStack(spacing: 20) {
+                        ForEach(crumbColorOptions) { color in
+                            SmallButton_Settings(action: {
+                                selectedCrumbColor = color.color
+                                settingsManager.saveCrumbColor(color: color.color)
+                                isCustomColorSelected = false
+                            }, label: color.label, selected: color.color == selectedCrumbColor, color1: SettingsManager.shared.loadCrumbColor(), color2: selectedCrumbColor == StaticAppColor.black ? StaticAppColor.white : StaticAppColor.black)
+                        }
+                        
+                        SmallButton_Settings(action: {
+                            customCrumbPopup = true
+                            isCustomColorSelected = true
+                        }, label: "Custom", selected: isCustomColorSelected, color1: SettingsManager.shared.loadCrumbColor(), color2: StaticAppColor.black)
                     }
-                    .tint(isCustomColorSelected ? settingsManager.loadCrumbColor() : AppColor.background)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 30)
-                            .stroke(isCustomColorSelected ? AppColor.background : AppColor.foreground, lineWidth: 2)
-                    )
                     .padding(.horizontal)
+                    .padding(.top, 20)
+                    Spacer()
                 }
-            .padding(.top, 20)
-            Spacer()
-        }
+                
+                if customCrumbPopup == true {
+                    CustomCrumbColor(customCrumbPopup: $customCrumbPopup, selectedCrumbColor: $selectedCrumbColor)
+                        .onDisappear() {
+                            selectedCrumbColor = settingsManager.loadCrumbColor()
+                            if crumbColorOptions.contains(where: {$0.color == selectedCrumbColor}) {
+                                isCustomColorSelected = false
+                            } else {
+                                isCustomColorSelected = true
+                            }
+                        }
+                }
+            }
             .onAppear() {
                 selectedCrumbColor = settingsManager.loadCrumbColor()
-                print(selectedCrumbColor)
-                
                 if crumbColorOptions.contains(where: {$0.color == selectedCrumbColor}) {
                     isCustomColorSelected = false
                 } else {
                     isCustomColorSelected = true
                 }
             }
-            
-        if customCrumbPopup == true {
-            CustomCrumbColor(customCrumbPopup: $customCrumbPopup, selectedCrumbColor: $selectedCrumbColor)
-                .onDisappear() {
-                    selectedCrumbColor = settingsManager.loadCrumbColor()
-                    if crumbColorOptions.contains(where: {$0.color == selectedCrumbColor}) {
-                        isCustomColorSelected = false
-                    } else {
-                        isCustomColorSelected = true
-                    }
-                }
         }
-        }
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -123,128 +89,84 @@ struct SettingsDetailView_ColorScheme: View {
             ColorSchemes(label: "Yellow and Black", background: StaticAppColor.black, foreground: StaticAppColor.yellow),
             ColorSchemes(label: "Yellow and Blue", background: StaticAppColor.blue, foreground: StaticAppColor.yellow)
         ]
-        
-        ZStack {
-            VStack {
-                if selectedColorScheme != settingsManager.loadColorScheme() {
-                    ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
-                        .padding(.top, 20)
-                        .background(AppColor.accent)
-                } else {
-                    ScreenTitleComponent(titleText: "Color Scheme", subtitleText: "Set the color scheme of the app.")
-                }
-                
-                VStack(spacing: 10) {
-                    ForEach(colorSchemeOptions) { scheme in
-                        let selectedScheme: Bool = (scheme.background, scheme.foreground) == selectedColorScheme
-                        
-                        Button(action: {
-                            selectedColorScheme = (scheme.background, scheme.foreground)
-                            isCustomSchemeSelected = false
-                        }) {
-                            Text(scheme.label)
-                                .font(.title2)
-                                .bold()
-                                .frame(maxWidth: .infinity)
-                                .foregroundColor(selectedScheme ? scheme.background : AppColor.foreground)
-                        }
-                        .tint(selectedScheme ? scheme.foreground : AppColor.background)
-                        .buttonStyle(.borderedProminent)
-                        .buttonBorderShape(.capsule)
-                        .controlSize(.large)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 30)
-                                .stroke(selectedScheme ? AppColor.background : AppColor.foreground, lineWidth: 2)
-                        )
-                        .padding(.horizontal)
-                    }
-                }
-                .padding(.top, 20)
-                
-                Button(action: {
-                    customSchemePopup = true
-                    isCustomSchemeSelected = true
-                }) {
-                    Text("Custom")
-                        .font(.title2)
-                        .bold()
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(isCustomSchemeSelected ? selectedColorScheme.0 : AppColor.foreground)
-                }
-                .tint(isCustomSchemeSelected ? selectedColorScheme.1 : AppColor.background)
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .controlSize(.large)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 30)
-                        .stroke(isCustomSchemeSelected ? AppColor.background : AppColor.foreground, lineWidth: 2)
-                )
-                .padding(.horizontal)
-                
-                Spacer()
-                
-                if selectedColorScheme != settingsManager.loadColorScheme() {
-                    Button(action: {
-                        let (color1, color2) = selectedColorScheme
-                        settingsManager.saveColorScheme(color1: color1, color2: color2)
-                        showPopup.toggle()
-                    }) {
-                        Text("Apply")
-                            .font(.title2)
-                            .bold()
-                            .frame(maxWidth: .infinity)
-                            .foregroundColor(AppColor.text_on_accent)
-                    }
-                    .tint(AppColor.accent)
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                    .controlSize(.large)
-                    .padding(.horizontal)
-                    .padding(.bottom, 40)
-                }
-            }
-            .navigationBarBackButtonHidden(selectedColorScheme != settingsManager.loadColorScheme())
-
-            if customSchemePopup == true {
-                CustomColorScheme(customSchemePopup: $customSchemePopup, selectedColorScheme: $selectedColorScheme)
-            }
-            
-            if showPopup {
+        ScreenBackground {
+            ZStack {
                 VStack {
-                    Spacer()
-                    HStack {
-                        Text("Color scheme set. Please restart the app to apply the new color scheme.")
-                            .foregroundColor(StaticAppColor.black)
-                            .bold()
-                            .font(.title)
+                    ScreenHeader(title: "Color Scheme", subtitle: "Set the color scheme of the app.", backButtonHidden: selectedColorScheme != settingsManager.loadColorScheme())
+                    VStack {
+                        VStack(spacing: 20) {
+                            ForEach(colorSchemeOptions) { scheme in
+                                SmallButton_Settings(action: {
+                                    selectedColorScheme = (scheme.background, scheme.foreground)
+                                    isCustomSchemeSelected = false
+                                }, label: scheme.label, selected: (scheme.background, scheme.foreground) == selectedColorScheme, color1: selectedColorScheme.0, color2: selectedColorScheme.1)
+                            }
+                        }
+                        .padding(.top, 10)
+                        
+                        SmallButton_Settings(action: {
+                            customSchemePopup = true
+                            isCustomSchemeSelected = true
+                        }, label: "Custom", selected: isCustomSchemeSelected, color1: selectedColorScheme.0, color2: selectedColorScheme.1)
+                        .padding(.vertical, 10)
+    
+                        Spacer()
+                        
+                        if selectedColorScheme != settingsManager.loadColorScheme() {
+                            SmallButton(action: {
+                                let (color1, color2) = selectedColorScheme
+                                settingsManager.saveColorScheme(color1: color1, color2: color2)
+                                showPopup.toggle()
+                            }, label: "Apply")
+                        }
                     }
-                    .padding()
-                    Spacer()
+                    .padding(.horizontal)
                 }
-                .navigationBarBackButtonHidden()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .edgesIgnoringSafeArea(.all)
-                .background(StaticAppColor.white)
-                .accessibilityAddTraits(.isModal)
+                
+                if customSchemePopup == true {
+                    CustomColorScheme(customSchemePopup: $customSchemePopup, selectedColorScheme: $selectedColorScheme)
+                        .onDisappear() {
+                            if !colorSchemeOptions.contains(where: { $0.background == selectedColorScheme.0 && $0.foreground == selectedColorScheme.1 }) {
+                                isCustomSchemeSelected = true
+                            } else {
+                                isCustomSchemeSelected = false
+                            }
+                        }
+                }
+                
+                if showPopup {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text("Color scheme set. Please restart the app to apply the new color scheme.")
+                                .foregroundColor(StaticAppColor.black)
+                                .bold()
+                                .font(.title)
+                        }
+                        .padding()
+                        Spacer()
+                    }
+                    .navigationBarBackButtonHidden()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .edgesIgnoringSafeArea(.all)
+                    .background(StaticAppColor.white)
+                    .accessibilityAddTraits(.isModal)
+                }
+            }
+            .onAppear() {
+                updateColorScheme()
+                if !colorSchemeOptions.contains(where: { $0.background == selectedColorScheme.0 && $0.foreground == selectedColorScheme.1 }) {
+                    isCustomSchemeSelected = true
+                } else {
+                    isCustomSchemeSelected = false
+                }
             }
         }
-        .onAppear() {
-            updateColorScheme()
-            print(selectedColorScheme)
-            if !colorSchemeOptions.contains(where: { $0.background == selectedColorScheme.0 && $0.foreground == selectedColorScheme.1 }) {
-                           isCustomSchemeSelected = true
-                       }
-        }
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-
     private func updateColorScheme() {
             let (color1, color2) = settingsManager.loadColorScheme()
             selectedColorScheme = (color1, color2)
         }
-
 }
 
 struct ColorSchemes: Identifiable {
@@ -255,160 +177,97 @@ struct ColorSchemes: Identifiable {
 }
 
 struct SettingsDetailView_Units: View {
-    @ObservedObject var settingsManager = SettingsManager.shared
+    @State private var selected: Bool = SettingsManager.shared.units
     
     var body: some View {
-        VStack {
-            ScreenTitleComponent(titleText: "Units", subtitleText: "Which units would you like Clew to use?")
-            
-            Button {
-                UserDefaults.standard.setValue(false, forKey: "units")
-            } label: {
-                Text("Imperial")
-                    .font(.title2)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(settingsManager.units == true ? AppColor.foreground : AppColor.text_on_accent)
+        ScreenBackground {
+            VStack {
+                ScreenHeader(title: "Units", subtitle: "Which units would you like Clew to use?")
+                
+                VStack(spacing: 20) {
+                    SmallButton_Settings(action: {
+                        UserDefaults.standard.setValue(false, forKey: "units")
+                        selected = false
+                    }, label: "Imperial", selected: selected == false, color1: AppColor.foreground, color2: AppColor.background)
+                    SmallButton_Settings(action: {
+                        UserDefaults.standard.setValue(true, forKey: "units")
+                        selected = true
+                    }, label: "Metric", selected: selected == true, color1: AppColor.foreground, color2: AppColor.background)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 10)
             }
-            .tint(settingsManager.units == true ? AppColor.background : AppColor.accent)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.large)
-            .overlay(
-                RoundedRectangle(cornerRadius: 30)
-                    .stroke(settingsManager.units == true ? AppColor.foreground : AppColor.background, lineWidth: 2)
-            )
-            .padding(.horizontal)
-            .padding(.top, 20)
-            .padding(.bottom, 5)
-
-            Button {
-                UserDefaults.standard.setValue(true, forKey: "units")
-            } label: {
-                Text("Metric")
-                    .font(.title2)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(settingsManager.units == true ? AppColor.text_on_accent : AppColor.foreground)
-            }
-            .tint(settingsManager.units == true ? AppColor.accent : AppColor.background)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.large)
-            .overlay(
-                RoundedRectangle(cornerRadius: 30)
-                    .stroke(settingsManager.units == true ? AppColor.background : AppColor.foreground, lineWidth: 2)
-            )
-            .padding(.horizontal)
-            
-            Spacer()
         }
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
 struct SettingsDetailView_PhoneBodyOffset: View {
-    @ObservedObject var settingsManager = SettingsManager.shared
+    @State private var selected: Bool = SettingsManager.shared.adjustPhoneBodyOffset
     
     var body: some View {
-        VStack {
-            ScreenTitleComponent(titleText: "Phone Body Offset", subtitleText: "Enable phone body offset correction for the most accurate navigation.")
-            
-            Button {
-                UserDefaults.standard.setValue(false, forKey: "adjustPhoneBodyOffset")
-            } label: {
-                Text("Off")
-                    .font(.title2)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(settingsManager.adjustPhoneBodyOffset == true ? AppColor.foreground : AppColor.text_on_accent)
+        ScreenBackground {
+            VStack {
+                ScreenHeader(title: "Phone Body Offset", subtitle: "Enable phone body offset correction for the most accurate navigation.")
+                VStack(spacing: 20) {
+                    SmallButton_Settings(action: {
+                        UserDefaults.standard.setValue(false, forKey: "adjustPhoneBodyOffset")
+                        selected = false
+                    }, label: "Off", selected: selected == false, color1: AppColor.foreground, color2: AppColor.background)
+                    SmallButton_Settings(action: {
+                        UserDefaults.standard.setValue(true, forKey: "adjustPhoneBodyOffset")
+                        selected = true
+                    }, label: "On", selected: selected == true, color1: AppColor.foreground, color2: AppColor.background)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 10)
             }
-            .tint(settingsManager.adjustPhoneBodyOffset == true ? AppColor.background : AppColor.accent)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.large)
-            .overlay(
-                RoundedRectangle(cornerRadius: 30)
-                    .stroke(settingsManager.adjustPhoneBodyOffset == true ? AppColor.foreground : AppColor.background, lineWidth: 2)
-            )
-            .padding(.horizontal)
-            .padding(.top, 20)
-            .padding(.bottom, 5)
-
-            Button {
-                UserDefaults.standard.setValue(true, forKey: "adjustPhoneBodyOffset")
-            } label: {
-                Text("On")
-                    .font(.title2)
-                    .bold()
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(settingsManager.adjustPhoneBodyOffset == true ? AppColor.text_on_accent : AppColor.foreground)
-            }
-            .tint(settingsManager.adjustPhoneBodyOffset == true ? AppColor.accent : AppColor.background)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.large)
-            .overlay(
-                RoundedRectangle(cornerRadius: 30)
-                    .stroke(settingsManager.adjustPhoneBodyOffset == true ? AppColor.background : AppColor.foreground, lineWidth: 2)
-            )
-            .padding(.horizontal)
-            
-            Spacer()
         }
-        .background(AppColor.background)
-        .edgesIgnoringSafeArea([.bottom])
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
+
 struct CustomCrumbColor: View {
     var settingsManager = SettingsManager.shared
     @Binding var customCrumbPopup: Bool
     @Binding var selectedCrumbColor: Color
     
     var body: some View {
-        VStack {
-            ScreenTitleComponent(titleText: "Custom Crumb Color", subtitleText: "Choose your own crumb color for use during navigation.")
-                .padding(.top, 20)
-                .background(AppColor.accent)
-            
+        ScreenBackground {
             VStack {
-                ColorPicker("Crumb Color", selection: $selectedCrumbColor)
-                    .foregroundColor(AppColor.foreground)
-                    .bold()
-                    .font(.title)
+                ScreenHeader(title: "Custom Crumb Color", subtitle: "Choose your own crumb color for use during navigation.", backButtonHidden: true)
                 
-                Rectangle()
-                    .frame(height: 100)
-                    .foregroundColor(selectedCrumbColor)
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(
-                                AppColor.foreground,
-                                lineWidth: 4
-                            )
-                    )
+                VStack {
+                    ColorPicker("Crumb Color", selection: $selectedCrumbColor)
+                        .foregroundColor(AppColor.foreground)
+                        .bold()
+                        .font(.title)
+                    
+                    Rectangle()
+                        .frame(height: 100)
+                        .foregroundColor(selectedCrumbColor)
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .strokeBorder(
+                                    AppColor.foreground,
+                                    lineWidth: 4
+                                )
+                        )
+                }
+                .padding()
+                
+                Spacer()
+                
+                SmallButton(action: {
+                    settingsManager.saveCrumbColor(color: selectedCrumbColor)
+                    customCrumbPopup = false
+                }, label: "Apply")
             }
-            .padding()
-            
-            Spacer()
-            
-            SmallButtonComponent_Button(label: "Apply") {
-                settingsManager.saveCrumbColor(color: selectedCrumbColor)
-                customCrumbPopup = false
+            .onAppear() {
+                selectedCrumbColor = settingsManager.loadCrumbColor()
             }
-            .padding(.bottom, 40)
         }
-        .onAppear() {
-            selectedCrumbColor = settingsManager.loadCrumbColor()
-        }
-        .navigationBarBackButtonHidden()
-        .background(AppColor.background)
-        .frame(maxWidth: .infinity)
-        .frame(maxHeight: .infinity)
     }
 }
 
@@ -455,55 +314,52 @@ struct CustomColorScheme: View {
     }
     
     var body: some View {
-        VStack {
-            ScreenTitleComponent(titleText: "Custom Color Scheme", subtitleText: "Choose your own foreground and background colors for the app.")
-                .padding(.top, 20)
-                .background(AppColor.accent)
-            
-            let (color1, color2) = selectedColorScheme
-            
+        ScreenBackground {
             VStack {
-                ColorPicker("Foreground Color", selection: $selectedColorScheme.1)
-                    .foregroundColor(AppColor.foreground)
-                    .bold()
-                    .font(.title)
+                ScreenHeader(title: "Custom Color Scheme", subtitle : "Choose your own foreground and background colors for the app.", backButtonHidden: true)
                 
-                Rectangle()
-                    .frame(height: 100)
-                    .foregroundColor(color2)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(AppColor.foreground,
-                                          lineWidth: 4
-                                         )
-                    )
-                    .cornerRadius(20)
-            }
-            .padding()
-            
-            VStack {
-                ColorPicker("Background Color", selection: $selectedColorScheme.0)
-                    .foregroundColor(AppColor.foreground)
-                    .bold()
-                    .font(.title)
+                let (color1, color2) = selectedColorScheme
                 
-                Rectangle()
-                    .frame(height: 100)
-                    .foregroundColor(color1)
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .strokeBorder(
-                                AppColor.foreground,
-                                lineWidth: 4
-                            )
-                    )
-            }
-            .padding()
-            
-            Spacer()
-            
-            ZStack {
+                VStack {
+                    ColorPicker("Foreground Color", selection: $selectedColorScheme.1)
+                        .foregroundColor(AppColor.foreground)
+                        .bold()
+                        .font(.title)
+                    
+                    Rectangle()
+                        .frame(height: 100)
+                        .foregroundColor(color2)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .strokeBorder(AppColor.foreground,
+                                              lineWidth: 4
+                                             )
+                        )
+                        .cornerRadius(20)
+                }
+                .padding()
+                
+                VStack {
+                    ColorPicker("Background Color", selection: $selectedColorScheme.0)
+                        .foregroundColor(AppColor.foreground)
+                        .bold()
+                        .font(.title)
+                    
+                    Rectangle()
+                        .frame(height: 100)
+                        .foregroundColor(color1)
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .strokeBorder(
+                                    AppColor.foreground,
+                                    lineWidth: 4
+                                )
+                        )
+                }
+                .padding()
+                                
+                ZStack {
                     Rectangle()
                         .frame(height: 160)
                         .foregroundColor(color1)
@@ -511,35 +367,30 @@ struct CustomColorScheme: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 20)
                                 .strokeBorder(AppColor.foreground,
-                                              lineWidth: 4
-                                             )
+                                              lineWidth: 4)
                         )
-                VStack {
-                    Text("Contrast Ratio")
-                        .foregroundColor(color2)
-                        .bold()
-                        .font(.title)
-                    Text("\(contrastRatio == 0 ? String(format: "%.0f", contrastRatio) : String(format: "%.1f", contrastRatio)):1")
-                        .foregroundColor(color2)
-                        .font(.title)
+                    VStack {
+                        Text("Contrast Ratio")
+                            .foregroundColor(color2)
+                            .bold()
+                            .font(.title)
+                        Text("\(contrastRatio == 0 ? String(format: "%.0f", contrastRatio) : String(format: "%.1f", contrastRatio)):1")
+                            .foregroundColor(color2)
+                            .font(.title)
+                    }
                 }
+                .padding()
+                
+                Spacer()
+                
+                SmallButton(action: {
+                    customSchemePopup = false
+                }, label: "Save")
             }
-            .padding()
-            
-            Spacer()
-            
-            SmallButtonComponent_Button(label: "Save") {
-                customSchemePopup = false
+            .onAppear() {
+                updateColorScheme()
             }
-            .padding(.bottom, 40)
         }
-        .onAppear() {
-            updateColorScheme()
-        }
-        .navigationBarBackButtonHidden()
-        .background(AppColor.background)
-        .frame(maxWidth: .infinity)
-        .frame(maxHeight: .infinity)
     }
     
     private func updateColorScheme() {

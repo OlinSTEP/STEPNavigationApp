@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 import SwiftUI
 
 /// This class manages the settings of the app

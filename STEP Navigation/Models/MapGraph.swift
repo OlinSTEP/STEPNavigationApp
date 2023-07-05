@@ -84,7 +84,6 @@ enum ConnectionStatus: CaseIterable {
             return .blue
         }
     }
-  
     var connectionText: String {
         switch self {
         case .connectedDirectly:
