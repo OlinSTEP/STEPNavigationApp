@@ -43,9 +43,11 @@ class PathPlanner {
     func startNavigatingFromOutdoors(to end: LocationDataModel) {
         guard let cloudAnchorID = end.getCloudAnchorID() else {
             NavigationManager.shared.computePathToOutdoorMarker(end) { outdoorKeypoints in
-                RouteNavigator.shared.setRouteKeypoints(kps: outdoorKeypoints)
-                PathLogger.shared.startLoggingData()
-                NavigationManager.shared.startNavigating()
+                DispatchQueue.main.async {
+                    RouteNavigator.shared.setRouteKeypoints(kps: outdoorKeypoints)
+                    PathLogger.shared.startLoggingData()
+                    NavigationManager.shared.startNavigating()
+                }
             }
             return
         }

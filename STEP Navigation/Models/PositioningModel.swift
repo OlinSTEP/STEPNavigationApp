@@ -364,9 +364,41 @@ class PositioningModel: NSObject, ObservableObject {
     /// Render the keypoint in the session
     /// - Parameter keypoint: the keypoint description
     func renderKeypoint(_ keypoint: KeypointInfo) {
-        // if we are using a lat / lon based keypoint, we don't want to use manualAlignment
-        let initialAlignment = keypoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
+        let initialAlignment: simd_float4x4?
+        if keypoint.mode == .latLonBased {
+            if let cameraTransform = cameraTransform {
+                // adjust keypoint to be at current height (this corrects for altitude)
+                initialAlignment = simd_float4x4(translation: simd_float3(0.0,
+                                                                          cameraTransform.translation.y - keypoint.location.translation.y,
+                                                                          0.0),
+                                                 rotation: simd_quatf())
+            } else {
+                // just use identity (we don't want to use manual alignment if we are doing a lat / lon based keypoint
+                initialAlignment = matrix_identity_float4x4
+            }
+        } else {
+            initialAlignment = manualAlignment
+        }
         rendererHelper.renderKeypoint(at: keypoint.location, withInitialAlignment: initialAlignment)
+    }
+    
+    /// Add multiple terrain anchors at the specified locations
+    /// - Parameters:
+    ///   - locations: the locations to add the terrain anchorst at
+    ///   - completionHandler: a completion handler that will receive a list of the create anchors and the terrain anchor staters
+    func addGeoAnchors(at locations: [CLLocationCoordinate2D], completionHandler: @escaping ([GARAnchor?])->()) {
+        // base cases (no anchors left to create)
+        guard let firstCoordinate = locations.first else {
+            return completionHandler([])
+        }
+        // add the first anchor and when it is done, add the rest recursively
+        // TODO: we can probably do this using the DispatchGroup pattern that we used before
+        self.addGeoAnchor(at: firstCoordinate) {
+            garAnchor in
+            self.addGeoAnchors(at: Array(locations[1...])) { anchors in
+                return completionHandler([garAnchor] + anchors)
+            }
+        }
     }
     
     /// Add a new terrain anchor at the specified location
@@ -374,19 +406,20 @@ class PositioningModel: NSObject, ObservableObject {
     ///   - location: the location for the cloud anchor (the altitude is set automatically by the ARCore machinery)
     ///   - name: the name to use for the terrain anchor
     /// - Returns: the initial GARAnchor that tracks the terrain anchor
-    func addTerrainAnchor(at location: CLLocationCoordinate2D, completionHandler: @escaping (GARAnchor?, GARTerrainAnchorState)->()) {
+    func addGeoAnchor(at location: CLLocationCoordinate2D, completionHandler: @escaping (GARAnchor?)->()) {
         arCoreDispatchQueue.async {
             self.waitOnSession()
             guard let garSession = self.garSession else {
-                completionHandler(nil, .errorInternal)
+                completionHandler(nil)
                 return
             }
             do {
-                try garSession.createAnchorOnTerrain(coordinate: location, altitudeAboveTerrain: 1.0, eastUpSouthQAnchor: simd_quatf()) { garAnchor, anchorState in
-                    completionHandler(garAnchor, anchorState)
-                }
+                print("creating anchor at \(location)")
+                let newAnchor = try garSession.createAnchor(coordinate: location, altitude: 0.0, eastUpSouthQAnchor: simd_quatf())
+                completionHandler(newAnchor)
             } catch {
-                completionHandler(nil, .errorInternal)
+                print("exception \(error.localizedDescription)")
+                completionHandler(nil)
             }
         }
     }
@@ -569,6 +602,9 @@ extension PositioningModel: ARSessionDelegate {
                     for anchor in latestGARAnchors ?? [] {
                         if anchor.identifier == nextKeypoint.id {
                             rendererHelper.keypointNode?.simdTransform = anchor.transform
+                            if let cameraTransform = cameraTransform {
+                                rendererHelper.keypointNode?.position.y = cameraTransform.translation.y
+                            }
                         }
                     }
                 }
@@ -580,7 +616,6 @@ extension PositioningModel: ARSessionDelegate {
                             rendererHelper.renderStreetscapeMesh(geometries: geometry, color: .black)
                         }
                     }
-                    //serializeStreetscape(garFrame)
                 }
                 var shouldDoCloudAnchorAlignment = false
                 for anchor in garFrame.updatedAnchors {

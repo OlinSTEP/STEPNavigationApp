@@ -173,24 +173,9 @@ class NavigationManager: ObservableObject {
     }
     
     private func fetchOutdoorKeypoints(latLons: [CLLocationCoordinate2D], completionHandler: @escaping ([KeypointInfo])->()) {
-        let syncGroup = DispatchGroup()
-        var keypoints: [KeypointInfo?] = Array.init(repeating: nil, count: latLons.count)
-        for (idx, routeWaypoint) in latLons.enumerated() {
-            syncGroup.enter()
-            PositioningModel.shared.addTerrainAnchor(at: routeWaypoint) { garAnchor, anchorState in
-                guard anchorState == .success, let garAnchor = garAnchor else {
-                    // TODO: after 100 anchors, this starts failing.  I (Paul) haven't investigated why this is happening.  We might need to handle this case (especially if we use the polyline)
-                    syncGroup.leave()
-                    return
-                }
-                let newKeypoint = KeypointInfo(id: garAnchor.identifier, mode: .latLonBased, location: garAnchor.transform)
-                keypoints[idx] = newKeypoint
-                syncGroup.leave()
-
-            }
-        }
-        syncGroup.notify(queue: .main) {
-            let keypoints = keypoints.compactMap({$0})
+        PositioningModel.shared.addGeoAnchors(at: latLons) { garAnchors in
+            let successfulGARAnchors = garAnchors.compactMap({$0})
+            let keypoints = successfulGARAnchors.map({KeypointInfo(id: $0.identifier, mode: .latLonBased, location: $0.transform)})
             completionHandler(keypoints)
         }
     }
