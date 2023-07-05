@@ -15,13 +15,6 @@ struct SettingsView: View {
                 ScrollView {
                     VStack(spacing: 28) {
                         VStack(spacing: 14) {
-//                            HStack {
-//                                Text("Color")
-//                                    .bold()
-//                                    .font(.title)
-//                                    .foregroundColor(AppColor.foreground)
-//                                Spacer()
-//                            }
                             LeftLabel(text: "Color")
                             SmallNavigationLink(destination: SettingsDetailView_ColorScheme(), label: "Color Scheme")
                             SmallNavigationLink(destination: SettingsDetailView_CrumbColor(), label: "Crumb Color")

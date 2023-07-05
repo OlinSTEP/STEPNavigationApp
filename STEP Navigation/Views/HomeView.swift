@@ -12,7 +12,7 @@ import CoreLocation
 struct HomeView: View {
     @ObservedObject var authHandler = AuthHandler.shared
     @ObservedObject var positionModel = PositioningModel.shared
-    let minimumGeoLocationAccuracy: GeoLocationAccuracy = .coarse //TODO: investigate: if I set this to anything other than coarse it doesn't work
+    let minimumGeoLocationAccuracy: GeoLocationAccuracy = .coarse
     
     var body: some View {
         if authHandler.currentUID == nil {

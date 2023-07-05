@@ -11,8 +11,6 @@ import CoreLocation
 struct StartAnchorListView: View {
     @State var destinationAnchorDetails: LocationDataModel?
     @State var nearbyDistance: Double = 300.0
-//    @State var chosenStart: LocationDataModel?
-//    @State var outdoorsSelectedAsStart = false
     @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
         
