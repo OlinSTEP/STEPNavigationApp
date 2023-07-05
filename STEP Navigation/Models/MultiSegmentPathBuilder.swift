@@ -29,9 +29,9 @@ public struct AnchorPointInfo: Identifiable {
     /// the location of the keypoint
     public var location: simd_float4x4
     ///
-    var currentTransform: simd_float4x4? {
-        return PositioningModel.shared.currentLocation(ofCloudAnchor: CloudAnchorID)
-    }
+//    var currentTransform: simd_float4x4? {
+//        return PositioningModel.shared.currentLocation(ofCloudAnchor: CloudAnchorID)
+//    }
 }
 
 

@@ -84,9 +84,6 @@ struct CloudAnchorResolutionInfomation {
     /// The pose of the cloud anchor in the current `ARSession`
     let pose: simd_float4x4
     /// location for the cloud anchor in current AR session
-//    let location: simd_float4x4
-//    ///
-//    let mode : AnchorPointType
 }
 
 /// This class handles three basic functions.  First, it maintains the positioning information for the current session (in both AR space and in geolocation space).  Second, it handles the alignment of map space to the current AR space.  Third, it manages the rendering of content in the AR scene.
@@ -360,8 +357,12 @@ class PositioningModel: NSObject, ObservableObject {
     
                 PositioningModel.shared.renderer(self.anchorpoints.last!)
 
-                
-                
+                let mapFileName = "TestProcessed/DA7F44EC-033C-445A-8E4A-5E68FA2E4DF0_processed.json"
+
+                FirebaseManager.createMap(from: mapFileName) { map in
+                    // Perform actions with the created Map object
+                    print("Map created: \(map)")
+                }
             }
         } catch {
             print("error \(error.localizedDescription)")

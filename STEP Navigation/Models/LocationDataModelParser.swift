@@ -32,7 +32,7 @@ struct LocationDataModelParser {
         
         switch (anchorType) {
         case .busStop:
-            print("Decode bus stop file.")
+//            print("Decode bus stop file.")
             var stopsRaw: [BusStop] = []
             stopsRaw = try decoder.decode([BusStop].self, from: data)
             
@@ -43,7 +43,7 @@ struct LocationDataModelParser {
                 locationModels.insert(LocationDataModel(anchorType: anchorType, associatedOutdoorFeature: nil, coordinates: coordinates, name: stop.Stop_name, id: UUID().uuidString))
             }
         case .externalDoor:
-            print("Decode external door file.")
+//            print("Decode external door file.")
             var doorsRaw: [Feature] = []
             doorsRaw = try decoder.decode(DoorRaw.self, from: data).features
             

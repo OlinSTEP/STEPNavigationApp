@@ -12,6 +12,9 @@ import FirebaseDatabase
 import FirebaseStorage
 import FirebaseFirestore
 import GeoFireUtils
+import _MapKit_SwiftUI
+import SwiftGraph
+
 
 /// The mode of operation for the database manager.  This is used to set the scope of some of the database listeners (e.g., how much data to prefetch).
 enum FirebaseMode {
@@ -48,6 +51,26 @@ class FirebaseManager: ObservableObject {
             return db.collection("\(SettingsManager.shared.mappingSubFolder)_cloud_anchors")
         }
     }
+    
+    static var storageRef: StorageReference = Storage.storage().reference()
+    
+    /// Downloads the selected map from firebase
+    static func createMap(from mapFileName: String, completionHandler: @escaping (Map)->()) {
+        let mapRef = storageRef.child(mapFileName)
+        var map: Map?
+        mapRef.getData(maxSize: 10 * 1024 * 1024) { mapData, error in
+            if let error = error {
+                print(error.localizedDescription)
+                // Error occurred
+            } else {
+                if let mapData = mapData {
+                    map = Map(from: mapData)!
+                    completionHandler(map!)
+                }
+            }
+        }
+    }
+    
     
     /// a handle to the connection collection.  This handle is affected by the the mapping sub folder setting.
     private var connectionCollection: CollectionReference {
@@ -385,7 +408,7 @@ class FirebaseManager: ObservableObject {
             let columnMajor = anchorInfo.1
             dict[cloudIdentifier] = simd_float4x4(fromColumnMajorArray: columnMajor)
         }
-        print("adding edge \(startID) \(endID)")
+//        print("adding edge \(startID) \(endID)")
         let newEdge = ComplexEdge(startAnchorTransform: fromPose,
                                   endAnchorTransform: endPose,
                                   path: pathPoses,
@@ -406,4 +429,267 @@ class FirebaseManager: ObservableObject {
     func getCloudAnchorMetadata(byID id: String)->CloudAnchorMetadata? {
         return mapAnchors[id]
     }
+    
+    
+    class Map: Decodable {
+        var rawData: RawMap
+        var anchorDictionary = [Int:RawMap.CloudVertex]()
+        var waypointDictionary = [Int:RawMap.WaypointVertex]()
+        var waypointKeyDictionary = [String:Int]()
+//        let distanceToWaypoint: Float = 1.5
+//        var pathPlanningGraph: WeightedGraph<String, Float>?
+        // odometryDict stores a list of nodes by poseID to their xyz data
+        var odometryDict: Dictionary<Int, RawMap.OdomVertex>?
+        
+        init?(from data: Data) {
+            do {
+                self.rawData = try JSONDecoder().decode(RawMap.self, from: data)
+                storeAnchorsInDictionary()
+                print(waypointDictionary)
+            } catch let error {
+                print(error)
+                return nil
+            }
+        }
+        
+        func storeAnchorsInDictionary() {
+            for (cloudIdentifier, cloudVertex) in rawData.cloudVertices.enumerated() {
+                let anchor = RawMap.CloudVertex(translation: cloudVertex.translation,
+                                                rotation: cloudVertex.rotation,
+                                                cloudidentifier: cloudVertex.cloudidentifier)
+                anchorDictionary[cloudIdentifier] = anchor
+            }
+            print(anchorDictionary)
+        }
+        
+        struct RawMap: Decodable {
+            var tagVertices: [Vertex]
+            var cloudVertices: [CloudVertex]
+            let odometryVertices: [OdomVertex]
+            let waypointsVertices: [WaypointVertex]
+            
+            enum CodingKeys: String, CodingKey {
+                case tagVertices = "tag_vertices"
+                case cloudVertices = "cloud_vertices"
+                case odometryVertices = "odometry_vertices"
+                case waypointsVertices = "waypoints_vertices"
+            }
+            
+            struct Vertex: Decodable {
+                //            let cloudidentifier: String
+//                let id: Int
+//                let translation: vector3
+//                var rotation: quaternion
+                
+//                enum CodingKeys: String, CodingKey {
+//                    case id
+//                    case translation = "translation"
+//                    case rotation = "rotation"
+//                }
+                
+//                struct vector3: Decodable {
+//                    let x: Float
+//                    let y: Float
+//                    let z: Float
+//
+//                    enum CodingKeys: String, CodingKey {
+//                        case x = "x"
+//                        case y = "y"
+//                        case z = "z"
+//                    }
+//                }
+                
+//                struct quaternion:Decodable {
+//                    var x: Float
+//                    var y: Float
+//                    var z: Float
+//                    var w: Float
+//
+//                    enum CodingKeys: String, CodingKey {
+//                        case x = "x"
+//                        case y = "y"
+//                        case z = "z"
+//                        case w = "w"
+//                    }
+//                }
+            }
+            
+            struct CloudVertex: Decodable {
+                let translation: vector3
+                var rotation: quaternion
+                let cloudidentifier: String
+                
+                enum CodingKeys: String, CodingKey {
+                    case translation = "translation"
+                    case rotation = "rotation"
+                    case cloudidentifier = "cloud_id"
+                }
+                
+                struct vector3: Decodable {
+                    let x: Float
+                    let y: Float
+                    let z: Float
+                    
+                    enum CodingKeys: String, CodingKey {
+                        case x = "x"
+                        case y = "y"
+                        case z = "z"
+                    }
+                }
+                
+                struct quaternion:Decodable {
+                    var x: Float
+                    var y: Float
+                    var z: Float
+                    var w: Float
+                    
+                    enum CodingKeys: String, CodingKey {
+                        case x = "x"
+                        case y = "y"
+                        case z = "z"
+                        case w = "w"
+                    }
+                }
+            }
+            
+            struct OdomVertex: Decodable {
+                let translation: vector3
+                var rotation: quaternion
+                let poseId: Int
+                //let adjChi2: Float
+                // let cloudChi2: Float
+                // let vizTags: Float
+                // let vizCloud: Float
+                var neighbors: [Int] = []
+                
+                enum CodingKeys: String, CodingKey {
+                    case translation = "translation"
+                    case rotation = "rotation"
+                    case poseId = "poseId"
+                    //case adjChi2 = "adjChi2"
+                    //case cloudChi2 = "cloudChi2"
+                    //case vizTags = "vizTags"
+                    //case vizCloud = "vizCloud"
+                    case neighbors = "neighbors"
+                }
+                
+                struct vector3: Decodable {
+                    let x: Float
+                    let y: Float
+                    let z: Float
+                    
+                    enum CodingKeys: String, CodingKey {
+                        case x = "x"
+                        case y = "y"
+                        case z = "z"
+                    }
+                }
+                
+                struct quaternion:Decodable {
+                    var x: Float
+                    var y: Float
+                    var z: Float
+                    var w: Float
+                    
+                    enum CodingKeys: String, CodingKey {
+                        case x = "x"
+                        case y = "y"
+                        case z = "z"
+                        case w = "w"
+                    }
+                }
+            }
+            
+            struct WaypointVertex: Decodable {
+//                let id: String
+//                let translation: vector3
+//                let rotation: quaternion
+//
+//                enum CodingKeys: String, CodingKey {
+//                    case id
+//                    case translation = "translation"
+//                    case rotation = "rotation"
+//                }
+//
+//                struct vector3: Decodable {
+//                    let x: Float
+//                    let y: Float
+//                    let z: Float
+//
+//                    enum CodingKeys: String, CodingKey {
+//                        case x = "x"
+//                        case y = "y"
+//                        case z = "z"
+//                    }
+//                }
+//
+//                struct quaternion:Decodable {
+//                    let x: Float
+//                    let y: Float
+//                    let z: Float
+//                    let w: Float
+//
+//
+//                    enum CodingKeys: String, CodingKey {
+//                        case x = "x"
+//                        case y = "y"
+//                        case z = "z"
+//                        case w = "w"
+//                    }
+//                }
+            }
+        }
+        
+    }
+    
+    //    func downloadandparse() {
+    //        let firebaseURL = "https://stepnavigation-default-rtdb.firebaseio.com/maps/testing/DA7F44EC-033C-445A-8E4A-5E68FA2E4DF0"
+    //
+    //        guard let url = URL(string: firebaseURL) else {
+    //            print("Invalid URL")
+    //            return
+    //        }
+    //        URLSession.shared.dataTask(with: url) { (data, response, error) in
+    //            if let error = error {
+    //                print("Error: \(error)")
+    //                return
+    //            }
+    //            guard let data = data else {
+    //                print("No data received")
+    //                return
+    //            }
+    //            do {
+    //                // Parse JSON
+    //                let jsonArray = try JSONSerialization.jsonObject(with: data, options: []) as! [[String: Any]]
+    //                var cloudanchors = [CloudAnchor]()
+    //                for json in jsonArray {
+    //                    guard let poseId = json["poseId"] as? Int,
+    //                          let cloudIdentifier = json["cloudIdentifier"] as? String,
+    //                          let timestamp = json["timestamp"] as? Double,
+    //                          let pose = json["pose"] as? [Double] else {
+    //                        continue
+    //                    }
+    //                    let cloudanchor = CloudAnchor(poseId: poseId, cloudIdentifier: cloudIdentifier, timestamp: timestamp, pose: pose)
+    //                    cloudanchors.append(cloudanchor)
+    //                }
+    //                // Process the parsed poses
+    //                for cloudanchor in cloudanchors {
+    //                    print("Pose ID: \(cloudanchor.poseId)")
+    //                    print("Cloud Identifier: \(cloudanchor.cloudIdentifier)")
+    //                    print("Timestamp: \(cloudanchor.timestamp)")
+    //                    print("Pose: \(cloudanchor.pose)")
+    //                    print("---")
+    //                }
+    //            } catch {
+    //                print("Error parsing JSON: \(error)")
+    //            }
+    //        }.resume()
+    //    }
+    //
+    //    // Call the function to download and parse JSON from Firebase
+    //
+    //
+    //
+    //}
+    //
 }
