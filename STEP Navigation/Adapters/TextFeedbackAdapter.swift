@@ -349,10 +349,10 @@ class Navigation {
         let yDistance = abs(nextKeypoint.location.translation.y - NavigationManager.shared.prevKeypointPosition.translation.y)
         var dir = ""
         
-        if yDistance > 1 && slope > 0.3 { // Go upstairs
+        if nextKeypoint.mode != .latLonBased && yDistance > 1 && slope > 0.3 { // Go upstairs
             dir += "\(Directions[direction.clockDirection]!)" + NSLocalizedString(" and proceed upstairs", comment: "Additional directions given to user telling them to climb stairs")
             return updateDirectionText(dir, distance: 0, displayDistance: false)
-        } else if yDistance > 1 && slope < -0.3 { // Go downstairs
+        } else if nextKeypoint.mode != .latLonBased && yDistance > 1 && slope < -0.3 { // Go downstairs
             dir += "\(Directions[direction.clockDirection]!)\(NSLocalizedString("descendStairsDirection" , comment: "This is a direction which instructs the user to descend stairs"))"
             return updateDirectionText(dir, distance: direction.distance, displayDistance: false)
         } else { // normal directions

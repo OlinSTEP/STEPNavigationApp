@@ -45,7 +45,7 @@ struct GoogleMapsDirections: Decodable {
             let polyline = Polyline(encodedPolyline: step.polyline.points)
             if let decodedCoordinates = polyline.coordinates {
                 // the polyline gives a better definition to the route legs, but it is not accurate enough to follow exactly.  We're probably better off just omitting the polyline points and instead giving directions that reference the specific step (e.g., head south on Olin Way)
-                //latLons += decodedCoordinates
+                latLons += decodedCoordinates
             }
         }
         return latLons

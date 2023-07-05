@@ -603,7 +603,7 @@ extension PositioningModel: ARSessionDelegate {
                         if anchor.identifier == nextKeypoint.id {
                             rendererHelper.keypointNode?.simdTransform = anchor.transform
                             if let cameraTransform = cameraTransform {
-                                rendererHelper.keypointNode?.position.y = cameraTransform.translation.y
+                                rendererHelper.anchorNode?.position.y = cameraTransform.translation.y - anchor.transform.translation.y
                             }
                         }
                     }
