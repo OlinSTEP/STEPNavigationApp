@@ -30,20 +30,10 @@ struct RecordAnchorInstructionsView: View {
         VStack {
             ScrollView {
                 VStack {
-                    HStack {
-                        Text("Quick Reminders")
-                            .font(.title2)
-                            .bold()
-                        Spacer()
-                    }
+                    LeftLabel(text: "Quick Reminders", textSize: .title2)
                     OrderedList(listItems: tipListItems)
                     
-                    HStack {
-                        Text("Instructions")
-                            .font(.title2)
-                            .bold()
-                        Spacer()
-                    }
+                    LeftLabel(text: "Instructions", textSize: .title2)
                     Text("Stand in the anchor destination with the rear camera pointing away from you. Move your phone slowly and steadily as you complete the following motions.")
                     OrderedList(listItems: instructionListItems)
                 }

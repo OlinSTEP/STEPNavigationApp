@@ -22,114 +22,117 @@ struct NavigatingView: View {
     
     @State var showingConfirmation = false
     @State var showingHelp = false
-    @AccessibilityFocusState var focusOnPopup
-    
-    var body: some View {
-        ZStack {
-            ARViewContainer()
-            VStack {
-                Spacer()
-                VStack {
-                    if !didLocalize {
-                        InformationPopupComponent(popupType: .waitingToLocalize)
-                    } else {
-                        if RouteNavigator.shared.keypoints?.isEmpty == true {
-                            InformationPopupComponent(popupType: .arrived(destinationAnchorDetails: destinationAnchorDetails))
-                        } else if !navigationDirection.isEmpty {
-                            InformationPopupComponent(popupType: .direction(directionText: navigationDirection))
-                        }
-                    }
-                    Spacer()
-                    if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
-                        HStack(spacing: 100) {
-                            ActionBarButtonComponent(action: {
-                                print("pressed pause")
-                            }, iconSystemName: "pause.circle.fill", accessibilityLabel: "Pause Navigation")
-                            
-                            ActionBarButtonComponent(action: {
-                                navigationManager.updateDirections()
-                            }, iconSystemName: "repeat", accessibilityLabel: "Repeat Directions")
-                        }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 140)
-                        .background(AppColor.accent)
-                    }
-                }
-                .padding(.vertical, 100)
-            }.onAppear() {
-                // start up the positioning
-                didLocalize = false
-                didPrepareToNavigate = false
-                PositioningModel.shared.startPositioning()
-                if !didLocalize {
-                    AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
-                }
-            }.onDisappear() {
-                PositioningModel.shared.stopPositioning()
-                NavigationManager.shared.stopNavigating()
-            }
-            
-            if showingHelp {
-                HelpPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showingHelp)
-                    .accessibilityFocused($focusOnPopup)
-                    .accessibilityAddTraits(.isModal)
-            }
-            
-            if showingConfirmation {
-                ConfirmationPopup(showingConfirmation: $showingConfirmation,
-                                  titleText: "Are you sure you want to exit?",
-                                  subtitleText: "This will end the navigation session.",
-                                  confirmButtonLabel: "Exit")
-                {
-                   MultipleChoice(feedback: Feedback())
-                }
-                    .accessibilityFocused($focusOnPopup)
-                    .accessibilityAddTraits(.isModal)
-            }
+    @AccessibilityFocusState var focusOnAnchorInfo
+    @AccessibilityFocusState var focusOnExit
 
-        }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
-            checkLocalization(cloudAnchorsToCheck: newValue)
-        }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
-            guard !didPrepareToNavigate else {
-                return
-            }
-            // plan path
-            
-            if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
-                            didPrepareToNavigate = true
-                            PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
-                                guard wasSuccesful else {
-                                    return
-                                }
-                                checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
-                            }
-                        } else if newValue.isAtLeastAsGoodAs(other: .high) {
-                            didLocalize = true
-                            if !didPrepareToNavigate {
-                                didPrepareToNavigate = true
-                                PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
+    var body: some View {
+        Group {
+            ZStack {
+                ARViewContainer()
+                VStack {
+                    Spacer()
+                    VStack {
+                        if !didLocalize {
+                            ARViewTextOverlay(text: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
+                        } else {
+                            if RouteNavigator.shared.keypoints?.isEmpty == true {
+                                ARViewTextOverlay(text: "Arrived. You should be withing a cane's length of your destination.", navLabel: "Go to Destination Details", navDestination: AnchorDetailView_NavigationArrived(anchorDetails: destinationAnchorDetails))
+                            } else if !navigationDirection.isEmpty {
+                                ARViewTextOverlay(text: navigationDirection)
                             }
                         }
-        }.onReceive(navigationManager.$navigationDirection) {
-            newValue in
-            hideNavTimer?.invalidate()
-            navigationDirection = newValue ?? ""
-            hideNavTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { timer in
-                navigationDirection = ""
+                        Spacer()
+                        if didLocalize && RouteNavigator.shared.keypoints?.isEmpty == false {
+                            HStack {
+                                Spacer()
+                                Button(action: {
+                                    navigationManager.updateDirections()
+                                }, label: {
+                                    Image(systemName: "repeat")
+                                        .resizable()
+                                        .frame(width: 80, height: 80)
+                                        .foregroundColor(AppColor.background)
+                                })
+                                .accessibilityLabel("Repeat Directions")
+                                
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 140)
+                            .background(AppColor.foreground)
+                            Spacer()
+                        }
+                    }
+                    .padding(.vertical, 100)
+                }.onAppear() {
+                    // start up the positioning
+                    didLocalize = false
+                    didPrepareToNavigate = false
+                    PositioningModel.shared.startPositioning()
+                    if !didLocalize {
+                        AnnouncementManager.shared.announce(announcement: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
+                    }
+                }.onDisappear() {
+                    PositioningModel.shared.stopPositioning()
+                    NavigationManager.shared.stopNavigating()
+                }
+                
+                if showingHelp {
+                    AnchorInfoPopup(anchorDetailsStart: startAnchorDetails, anchorDetailsEnd: destinationAnchorDetails, showHelp: $showingHelp)
+                        .accessibilityFocused($focusOnAnchorInfo)
+                }
+                
+                if showingConfirmation {
+                    ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to exit?", subtitleText: "This will end the navigation session.", confirmButtonLabel: "Exit", confirmButtonDestination: NavigationFeedbackView())
+                        .accessibilityFocused($focusOnExit)
+                }
+                
+            }.onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newValue in
+                checkLocalization(cloudAnchorsToCheck: newValue)
+            }.onReceive(PositioningModel.shared.$geoLocalizationAccuracy) { newValue in
+                guard !didPrepareToNavigate else {
+                    return
+                }
+                // plan path
+                
+                if let startAnchorDetails = startAnchorDetails, newValue.isAtLeastAsGoodAs(other: .low) {
+                    didPrepareToNavigate = true
+                    PathPlanner.shared.prepareToNavigate(from: startAnchorDetails, to: destinationAnchorDetails) { wasSuccesful in
+                        guard wasSuccesful else {
+                            return
+                        }
+                        checkLocalization(cloudAnchorsToCheck: PositioningModel.shared.resolvedCloudAnchors)
+                    }
+                } else if newValue.isAtLeastAsGoodAs(other: .high) {
+                    didLocalize = true
+                    if !didPrepareToNavigate {
+                        didPrepareToNavigate = true
+                        PathPlanner.shared.startNavigatingFromOutdoors(to: destinationAnchorDetails)
+                    }
+                }
+            }.onReceive(navigationManager.$navigationDirection) {
+                newValue in
+                hideNavTimer?.invalidate()
+                navigationDirection = newValue ?? ""
+                hideNavTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { timer in
+                    navigationDirection = ""
+                }
+            }
+            .background(AppColor.foreground)
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                HeaderButton(label: "Exit", placement: .navigationBarLeading) {
+                    showingConfirmation = true
+
+                }
+                HeaderButton(label: "Anchor Info", placement: .navigationBarTrailing) {
+                    showingHelp.toggle()
+                }
             }
         }
-        .background(AppColor.accent)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            CustomHeaderButtonComponent(label: "Exit", placement: .navigationBarLeading) {
-                showingConfirmation = true
-                focusOnPopup = true
-            }
-            CustomHeaderButtonComponent(label: "Help", placement: .navigationBarTrailing) {
-                showingHelp = true
-                focusOnPopup = true
-            }
-        }
+        .padding(.bottom, 48)
+        .background(AppColor.foreground)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private func checkLocalization(cloudAnchorsToCheck: Set<String>) {

@@ -14,69 +14,45 @@ struct HomeView: View {
     @ObservedObject var positionModel = PositioningModel.shared
     let minimumGeoLocationAccuracy: GeoLocationAccuracy = .coarse
     
-    @AccessibilityFocusState var focusOnPopup
-    
-    init() {
-        let appearance = UINavigationBarAppearance()
-        appearance.shadowColor = .clear
-        appearance.backgroundColor = UIColor(AppColor.accent)
-        UINavigationBar.appearance().standardAppearance = appearance
-        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
-    
     var body: some View {
         if authHandler.currentUID == nil {
             SignInWithApple()
                 .frame(width: 280, height: 60)
-                .onTapGesture(perform: authHandler.startSignInWithAppleFlow)
+                .onTapGesture(perform: authHandler.startSignInWithAppleFlow) //TODO: make sure this works properly with screen readers
         } else {
             NavigationStack {
-                VStack {
-                ScreenTitleComponent(titleText: "Clew Maps 2", subtitleText: "Precise Short Distance Navigation for the Blind and Visually Impaired")
-                    .navigationBarBackButtonHidden()
-                    .padding(.top, 60)
-                    .background(AppColor.accent)
-                
-                    ScrollView {
-                        if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
-                            if positionModel.currentLatLon == nil {
-                                GPSLocalizationPopup()
-                            } else {
-                                VStack(spacing: 20) {
-                                    LargeButtonComponent_NavigationLink(destination: {
-                                        DestinationTypesView()
-                                    }, label: "Navigate")
-                                    //removed explore feature until it is complete
-//                                    LargeButtonComponent_NavigationLink(destination: {
-//                                        RadarMapView()
-//                                    }, label: "Explore")
-                                    LargeButtonComponent_NavigationLink(destination: {
-                                        ManageAnchorsListView()
-                                    }, label: "Manage")
-                                    
-                                    Spacer()
-                                    
-                                    SmallButtonComponent_NavigationLink(destination: {
-                                        SettingsView()
-                                    }, label: "Settings")
-                                    .padding(.bottom, 32)
-                                    .padding(.top, 190)
+                ScreenBackground {
+                    VStack {
+                        ScreenHeader(title: "Clew Maps 2", subtitle: "Precise Short Distance Navigation for the Blind and Visually Impaired", backButtonHidden: true)
+                        
+                        ScrollView {
+                            if positionModel.geoLocalizationAccuracy.isAtLeastAsGoodAs(other: minimumGeoLocationAccuracy) {
+                                if positionModel.currentLatLon == nil {
+                                    LoadingPopup(text: "Finding Destinations Near You")
+                                } else {
+                                    VStack {
+                                        LargeNavigationLink(destination: DestinationTypesView(), label: "Navigate", alignment: .center)
+                                            .padding(.vertical, 12)
+                                        LargeNavigationLink(destination: ManageAnchorsListView(), label: "Manage", alignment: .center)
+                                            .padding(.vertical, 12)
+                                    }
+                                    .padding(.top, 6)
                                 }
-                                .padding(.top, 20)
+                            } else {
+                                LoadingPopup(text: "Trying to Geo Localize")
                             }
                         }
+                        Spacer()
+                        SmallNavigationLink(destination: SettingsView(), label: "Settings")
+                    }
+                    .onAppear() {
+                        positionModel.startCoarsePositioning()
+                        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+                        AppDelegate.orientationLock = .portrait
                     }
                 }
-                .background(AppColor.background)
-                .edgesIgnoringSafeArea([.bottom])
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .onAppear() {
-                    positionModel.startCoarsePositioning()
-                    UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation") // Forcing the rotation back to portrait
-                    AppDelegate.orientationLock = .portrait // And making sure it stays that way
-                }
             }
-            .accentColor(AppColor.text_on_accent)
+            .accentColor(AppColor.background)
         }
     }
 }
