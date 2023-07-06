@@ -28,6 +28,7 @@ struct STEP_NavigationApp: App {
             }
             .environmentObject(SettingsManager.shared)
             .onAppear {
+                UIApplication.shared.isIdleTimerDisabled = true
                 FirebaseManager.shared.setMode(mode: .navigation)
             }
         }
