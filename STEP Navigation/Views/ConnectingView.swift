@@ -11,7 +11,6 @@ import ARCoreCloudAnchors
 
 struct ConnectingView: View {
     @ObservedObject var positioningModel = PositioningModel.shared
-    @StateObject var recordFeedback = RecordFeedback()
     @State var anchorID1: String
     @State var anchorID2: String
     @ObservedObject var firebaseManager = FirebaseManager.shared
@@ -112,14 +111,7 @@ struct ConnectingView: View {
             }
             .navigationBarBackButtonHidden(true)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(destination: RecordingFeedbackView(), label: {
-                        Text("Cancel")
-                            .bold()
-                            .font(.title2)
-                            .foregroundColor(AppColor.background)
-                    })
-                }
+                HeaderNavigationLink(label: "Cancel", placement: .navigationBarLeading, destination: RecordingFeedbackView())
             }
             .onReceive(PositioningModel.shared.$currentQuality) { newQuality in
                 currentQuality = newQuality

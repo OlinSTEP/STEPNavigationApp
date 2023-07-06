@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AnchorDetailEditView<Destination: View>: View {
+    let anchorDetails: LocationDataModel
     let buttonLabel: String
     let buttonDestination: () -> Destination
     
@@ -25,7 +26,6 @@ struct AnchorDetailEditView<Destination: View>: View {
         .map { $0.getName() }
     @State var inputText: String = ""
     
-    let anchorID: String
     @State var newAnchorName: String
     @State var newOrganization: String
     @State var newCategory: String
@@ -34,15 +34,15 @@ struct AnchorDetailEditView<Destination: View>: View {
     @State var newIsReadable: Bool
     let metadata: CloudAnchorMetadata
     
-    init(anchorID: String, buttonLabel: String, buttonDestination: @escaping () -> Destination) {
-        self.anchorID = anchorID
-        metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: anchorID)!
+    init(anchorDetails: LocationDataModel, buttonLabel: String, buttonDestination: @escaping () -> Destination) {
+        metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: anchorDetails.getCloudAnchorID()!)! //TODO: lots of force unwrapping happening here; can we get rid of this?
         newAnchorName = metadata.name
         newAssociatedOutdoorFeature = metadata.associatedOutdoorFeature
         newCategory = metadata.type.rawValue
         newIsReadable = metadata.isReadable
         newOrganization = metadata.organization
         newNotes = metadata.notes
+        self.anchorDetails = anchorDetails
         self.buttonLabel = buttonLabel
         self.buttonDestination = buttonDestination
     }
@@ -51,7 +51,7 @@ struct AnchorDetailEditView<Destination: View>: View {
         ZStack {
             ScreenBackground {
                 VStack {
-                    ScreenHeader(title: "Edit Anchor", backButtonHidden: true)
+                    ScreenHeader(title: "Edit Anchor")
                     VStack {
                         ScrollView {
                             VStack(spacing: 12) {
@@ -70,14 +70,6 @@ struct AnchorDetailEditView<Destination: View>: View {
                                     LeftLabel(text: "Type", textSize: .title2)
                                     PickerButton(selection: $newCategory, showPage: $showAnchorTypeMenu)
                                 }
-                                .foregroundColor(AppColor.foreground)
-                                .frame(height: 48)
-                                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(AppColor.foreground, lineWidth: 2)
-                                )
                                 
                                 if newCategory == "Exit" {
                                     VStack {
@@ -110,13 +102,13 @@ struct AnchorDetailEditView<Destination: View>: View {
                 .ignoresSafeArea(.keyboard, edges: .bottom)
             }
             
-            if showAnchorTypeMenu == true {
+            if showAnchorTypeMenu {
                 PickerPage(allOptions: allCategories, selection: $newCategory, showPage: $showAnchorTypeMenu)
                     .onAppear() {
                         editingOrg = false
                     }
             }
-            if showCorrespondingExitMenu == true {
+            if showCorrespondingExitMenu {
                 PickerPage(allOptions: allCorrespondingExits, selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
                     .onAppear() {
                         editingOrg = false
@@ -135,6 +127,6 @@ struct AnchorDetailEditView<Destination: View>: View {
                             isReadable: newIsReadable,
                             organization: newOrganization,
                             notes: newNotes)
-        FirebaseManager.shared.updateCloudAnchor(identifier: anchorID, metadata: newMetadata)
+        FirebaseManager.shared.updateCloudAnchor(identifier: anchorDetails.getCloudAnchorID()!, metadata: newMetadata) //TODO: additional forced unwrapping to get rid of
     }
 }

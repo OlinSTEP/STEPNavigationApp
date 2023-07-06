@@ -25,7 +25,7 @@ struct AnchorDetailView_Manage: View {
                     }
                     Spacer()
                     VStack(spacing: 18) {
-                        SmallNavigationLink(destination: AnchorDetailEditView(anchorID: anchorDetails.id, buttonLabel: "Save", buttonDestination: {
+                        SmallNavigationLink(destination: AnchorDetailEditView(anchorDetails: anchorDetails, buttonLabel: "Save", buttonDestination: {
                             HomeView()
                         }), label: "Edit")
                         SmallNavigationLink(destination: SelectConnectingAnchorsView(anchorID1: anchorDetails.id), label: "Connect")
@@ -41,6 +41,10 @@ struct AnchorDetailView_Manage: View {
                     }
                 }
             }
+        }
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            CustomBackButton(destination: ManageAnchorsListView())
         }
     }
 }

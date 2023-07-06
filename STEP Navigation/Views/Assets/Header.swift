@@ -23,16 +23,63 @@ struct HeaderButton: ToolbarContent {
     @ViewBuilder
     var body: some ToolbarContent {
         ToolbarItem(placement: placement) {
-            Text(label)
-                .bold()
-                .font(.title2)
-                .foregroundColor(color)
-                .onTapGesture {
-                    action()
+            Button {
+                action()
+            } label: {
+                Text(label)
+                    .bold()
+                    .font(.title2)
+                    .foregroundColor(color)
+            }
+        }
+    }
+}
+
+struct HeaderNavigationLink<Destination: View>: ToolbarContent {
+    let label: String
+    let placement: ToolbarItemPlacement
+    let color: Color
+    let destination: Destination
+    
+    init(label: String, placement: ToolbarItemPlacement, color: Color = AppColor.background, destination: Destination) {
+        self.label = label
+        self.placement = placement
+        self.color = color
+        self.destination = destination
+    }
+    
+    @ViewBuilder
+    var body: some ToolbarContent {
+        ToolbarItem(placement: placement) {
+            NavigationLink(destination: destination, label: {
+                Text(label)
+                    .bold()
+                    .font(.title2)
+                    .foregroundColor(color)
+            })
+        }
+    }
+}
+
+struct CustomBackButton<Destination: View>: ToolbarContent {
+    let destination: Destination
+    
+    init(destination: Destination) {
+        self.destination = destination
+    }
+    
+    @ViewBuilder
+    var body: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            NavigationLink(destination: destination, label: {
+                HStack {
+                    Image(systemName: "chevron.backward")
+                        .bold()
+                        .accessibilityHidden(true)
+                    Text("Back")
+                        .foregroundColor(AppColor.background)
                 }
-                .accessibilityAction {
-                    action()
-                }
+            })
         }
     }
 }

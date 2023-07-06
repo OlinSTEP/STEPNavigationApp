@@ -36,7 +36,7 @@ struct NavigatingView: View {
                             ARViewTextOverlay(text: "Trying to align to your route. Scan your phone around to recognize your surroundings.")
                         } else {
                             if RouteNavigator.shared.keypoints?.isEmpty == true {
-                                ARViewTextOverlay(text: "Arrived. You should be withing a cane's length of your destination.", navLabel: "Go to Destination Details", navDestination: AnchorDetailView_NavigationArrived(anchorDetails: destinationAnchorDetails))
+                                ARViewTextOverlay(text: "Arrived. You should be within a cane's length of your destination.", navLabel: "Go to Destination Details", navDestination: AnchorDetailView_NavigationArrived(anchorDetails: destinationAnchorDetails))
                             } else if !navigationDirection.isEmpty {
                                 ARViewTextOverlay(text: navigationDirection)
                             }

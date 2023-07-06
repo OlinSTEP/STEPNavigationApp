@@ -44,15 +44,15 @@ struct LargeNavigationLink<Destination: View>: View {
                         Spacer()
                     }
                 }
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 130)
+                .background(invert ? backgroundColor : foregroundColor)
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(foregroundColor, lineWidth: 5)
+                )
             })
-        .frame(maxWidth: .infinity)
-        .frame(minHeight: 130)
-        .background(invert ? backgroundColor : foregroundColor)
-        .cornerRadius(20)
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(foregroundColor, lineWidth: 5)
-        )
         .padding(.horizontal)
         .onChange(of: pressed) {
             newValue in
@@ -93,15 +93,15 @@ struct LargeButton: View {
                     Spacer()
                 }
             }
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 130)
+            .background(invert ? backgroundColor : foregroundColor)
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(foregroundColor, lineWidth: 5)
+            )
         }
-        .frame(maxWidth: .infinity)
-        .frame(minHeight: 130)
-        .background(invert ? backgroundColor : foregroundColor)
-        .cornerRadius(20)
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(foregroundColor, lineWidth: 5)
-        )
         .padding(.horizontal)
     }
 }
@@ -141,15 +141,15 @@ struct SmallNavigationLink<Destination: View>: View {
                         .foregroundColor(invert ? foregroundColor : backgroundColor)
                         .multilineTextAlignment(.center)
                 }
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 54)
+                .background(invert ? backgroundColor : foregroundColor)
+                .cornerRadius(54)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 54)
+                        .stroke(foregroundColor, lineWidth: 3)
+                )
             })
-        .frame(maxWidth: .infinity)
-        .frame(minHeight: 54)
-        .background(invert ? backgroundColor : foregroundColor)
-        .cornerRadius(54)
-        .overlay(
-            RoundedRectangle(cornerRadius: 54)
-                .stroke(foregroundColor, lineWidth: 3)
-        )
         .padding(.horizontal)
         .onChange(of: pressed) {
             newValue in
@@ -184,15 +184,15 @@ struct SmallButton: View {
                     .foregroundColor(invert ? foregroundColor : backgroundColor)
                     .multilineTextAlignment(.center)
             }
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 54)
+            .background(invert ? backgroundColor : foregroundColor)
+            .cornerRadius(54)
+            .overlay(
+                RoundedRectangle(cornerRadius: 54)
+                    .stroke(foregroundColor, lineWidth: 3)
+            )
         }
-        .frame(maxWidth: .infinity)
-        .frame(minHeight: 54)
-        .background(invert ? backgroundColor : foregroundColor)
-        .cornerRadius(54)
-        .overlay(
-            RoundedRectangle(cornerRadius: 54)
-                .stroke(foregroundColor, lineWidth: 3)
-        )
         .padding(.horizontal)
     }
 }
@@ -221,15 +221,15 @@ struct SmallButton_Settings: View {
                     .foregroundColor(selected ? color2 : AppColor.foreground)
                     .multilineTextAlignment(.center)
             }
+            .frame(maxWidth: .infinity)
+            .frame(minHeight: 54)
+            .background(selected ? color1 : AppColor.background)
+            .cornerRadius(54)
+            .overlay(
+                RoundedRectangle(cornerRadius: 54)
+                    .stroke(selected ? (color1 == AppColor.background ? StaticAppColor.grey : color1) : AppColor.foreground, lineWidth: selected ? (color1 == AppColor.background ? 10 : 3) : 3)
+            )
         }
-        .frame(maxWidth: .infinity)
-        .frame(minHeight: 54)
-        .background(selected ? color1 : AppColor.background)
-        .cornerRadius(54)
-        .overlay(
-            RoundedRectangle(cornerRadius: 54)
-                .stroke(selected ? (color1 == AppColor.background ? StaticAppColor.grey : color1) : AppColor.foreground, lineWidth: selected ? (color1 == AppColor.background ? 10 : 3) : 3)
-        )
         .padding(.horizontal)
     }
 }

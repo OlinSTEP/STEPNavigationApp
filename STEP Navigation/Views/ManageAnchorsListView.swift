@@ -73,6 +73,10 @@ struct ManageAnchorsListView: View {
                 updateNearbyAnchors(latLon: latLon)
             }
         }
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            CustomBackButton(destination: HomeView())
+        }
     }
     
     private func updateNearbyAnchors(latLon: CLLocationCoordinate2D) {
