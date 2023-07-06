@@ -177,7 +177,7 @@ struct ColorSchemes: Identifiable {
 }
 
 struct SettingsDetailView_Units: View {
-    @State private var selected: Bool = SettingsManager.shared.units
+    @State private var selected: Bool = SettingsManager.shared.useMetricDistanceUnits
     
     var body: some View {
         ScreenBackground {

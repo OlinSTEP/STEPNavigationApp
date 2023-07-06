@@ -10,7 +10,7 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Units</string>
+			<string>Use Metric Distance Units</string>
 			<key>Key</key>
 			<string>units</string>
 			<key>DefaultValue</key>

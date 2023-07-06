@@ -31,7 +31,7 @@ struct AnchorDetailsText: View {
             }
             
             HStack {
-                    Text("\(String(format: "%.0f", distanceAway)) meters away") //TODO: make this dynamic so it can be imperial or metric
+                Text("\(distanceAway.metersAsUnitString) away")
                         .font(.title)
                         .padding(.horizontal)
                 Spacer()

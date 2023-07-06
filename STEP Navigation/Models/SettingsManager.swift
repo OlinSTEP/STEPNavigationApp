@@ -25,7 +25,7 @@ class SettingsManager: ObservableObject {
     @Published var adjustPhoneBodyOffset = false
     
     /// boolean to toggle the units between imperial and metric. false for imperial units, true for metric units
-    @Published var units = false
+    @Published var useMetricDistanceUnits = false
     
     /// true if we should provide the user with guidance when they appear to be lost
     @Published var automaticDirectionsWhenUserIsLost = false
@@ -57,7 +57,7 @@ class SettingsManager: ObservableObject {
         adjustPhoneBodyOffset = defaults.bool(forKey: "adjustPhoneBodyOffset")
         automaticDirectionsWhenUserIsLost = defaults.bool(forKey: "automaticDirectionsWhenUserIsLost")
         visualizeStreetscapeData = defaults.bool(forKey: "visualizeStreetscapeData")
-        units = defaults.bool(forKey: "units")
+        useMetricDistanceUnits = defaults.bool(forKey: "units")
 
     }
     
@@ -68,7 +68,7 @@ class SettingsManager: ObservableObject {
             "adjustPhoneBodyOffset": false,
             "automaticDirectionsWhenUserIsLost": false,
             "visualizeStreetscapeData": false,
-            "units": false
+            "units": Locale.current.measurementSystem == .metric
         ]
         UserDefaults.standard.register(defaults: appDefaults)
     }

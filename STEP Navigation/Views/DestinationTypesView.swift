@@ -21,8 +21,7 @@ struct DestinationTypesView: View {
             let anchorTypes = PositioningModel.shared.currentLatLon != nil ? DataModelManager.shared.getNearbyDestinationCategories(location: PositioningModel.shared.currentLatLon!, maxDistance: nearbyDistance) : []
             
             VStack {
-                let nearbyDistanceString = String(format: "%.0f", $nearbyDistance.wrappedValue)
-                ScreenHeader(title: "Destinations", subtitle: "Within \(nearbyDistanceString) meters")
+                ScreenHeader(title: "Destinations", subtitle: "Within \(nearbyDistance.metersAsUnitString)")
                 
                 ScrollView {
                     VStack(spacing: 24) {
