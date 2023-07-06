@@ -29,6 +29,7 @@
 		821C89752A336837006FD745 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
 		821C89762A336842006FD745 /* RadarMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView.swift */; };
 		821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
+		822D82DA2A5751D8001DDC82 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822D82D92A5751D8001DDC82 /* VideoView.swift */; };
 		8241735529DE0C70001599B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735429DE0C70001599B1 /* Assets.xcassets */; };
 		8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735729DE0C70001599B1 /* Preview Assets.xcassets */; };
 		8241736229DE1398001599B1 /* DestinationAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736129DE1398001599B1 /* DestinationAnchorListView.swift */; };
@@ -188,6 +189,7 @@
 		130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Olin_College_Doors.geojson; sourceTree = "<group>"; };
 		6569872E2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigateFeedbackDataModel.swift; sourceTree = "<group>"; };
 		656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordFeedbackDataModel.swift; path = "STEP Navigation/Views/RecordFeedbackDataModel.swift"; sourceTree = SOURCE_ROOT; };
+		822D82D92A5751D8001DDC82 /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		8241734D29DE0C6F001599B1 /* STEP Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Navigation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_NavigationApp.swift; sourceTree = "<group>"; };
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -384,6 +386,7 @@
 				A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */,
 				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
 				A867F9442A462E2400006DBC /* StartupViews.swift */,
+				822D82D92A5751D8001DDC82 /* VideoView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -728,6 +731,7 @@
 				829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */,
 				A867F94B2A4CFF1B00006DBC /* MenusAndTextFields.swift in Sources */,
 				A867F9472A4CEEF300006DBC /* Buttons.swift in Sources */,
+				822D82DA2A5751D8001DDC82 /* VideoView.swift in Sources */,
 				82811EE52A0C32B900D1BE96 /* AuthHandler.swift in Sources */,
 				8241736229DE1398001599B1 /* DestinationAnchorListView.swift in Sources */,
 				8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */,
