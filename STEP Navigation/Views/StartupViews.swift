@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+import AV Kit
 struct StartupPage0: View {
     var settingsManager = SettingsManager.shared
     @State var showTutorials: Bool = true
@@ -174,6 +174,7 @@ struct StartupPage7:  View {
             VStack {
                 ScreenHeader(title: "See it in Action")
                 StartupText("In this video we will demonstraate how Clew works.")
+                VideoPlayer(player: AVP(url: URL(string: )))
                 Spacer()
                 SmallNavigationLink(destination: StartupPage8(), label: "Next")
             }
