@@ -17,6 +17,8 @@ class SoundEffectManager {
     private var successSound: AVAudioPlayer?
     /// a player for the meh sound
     private var mehSound: AVAudioPlayer?
+    /// a player for the on track sound
+    private var onTrackSound: AVAudioPlayer?
     /// a player for the error sound
     private var errorSound: AVAudioPlayer?
 
@@ -53,6 +55,15 @@ class SoundEffectManager {
                 let url = URL(fileURLWithPath: mehPath)
                 mehSound = try AVAudioPlayer(contentsOf: url)
                 mehSound?.prepareToPlay()
+            } catch {
+                print("error \(error)")
+            }
+        }
+        if let onTrackPath = Bundle.main.path(forResource: "caf_MultiwayJoin", ofType:"wav") {
+            do {
+                let url = URL(fileURLWithPath: onTrackPath)
+                onTrackSound = try AVAudioPlayer(contentsOf: url)
+                onTrackSound?.prepareToPlay()
             } catch {
                 print("error \(error)")
             }
@@ -96,6 +107,12 @@ class SoundEffectManager {
     func meh() {
         overrideSilentMode()
         mehSound?.play()
+    }
+    
+    /// Plays a chime that indicates incremental progress
+    func onTrack() {
+        overrideSilentMode()
+        onTrackSound?.play()
     }
     
     /// Play the specified system sound.  If the system sound has been preloaded as an audio player, then play using the AVAudioSession.  If there is no corresponding player, use the `AudioServicesPlaySystemSound` function.
