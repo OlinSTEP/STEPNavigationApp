@@ -79,9 +79,12 @@ struct RecordAnchorView: View {
         }
         .onAppear() {
             PositioningModel.shared.startPositioning()
+            PathLogger.shared.startLoggingData()
         }
         .onDisappear() {
             PositioningModel.shared.stopPositioning() //TODO: double check this is properly stopping the positioning and any announcements, etc
+            PathLogger.shared.stopLoggingData()
+            PathLogger.shared.uploadLog(logFilePath: "anchor_creation/\(anchorID)")
             timerManager.stopTimer()
         }
         .onReceive(PositioningModel.shared.$currentQuality) { newValue in
