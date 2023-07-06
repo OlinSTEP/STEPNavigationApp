@@ -368,14 +368,25 @@ class Navigation {
     ///   - distance: the distance (expressed in meters)
     ///   - displayDistance: a Boolean that indicates whether to display the distance (true means display distance)
     func updateDirectionText(_ description: String, distance: Float, displayDistance: Bool)->String {
-        let distanceToDisplay = roundToTenths(distance * Float(100.0/2.54/12.0))
         var altText = description
         if (displayDistance) {
                 // don't use fractional feet or for higher numbers of meters (round instead)
                 // Related to higher number of meters, there is a somewhat strange behavior in VoiceOver where numbers greater than 10 will be read as, for instance, 11 dot 4 meters (instead of 11 point 4 meters).
-            altText += " " + NSLocalizedString("and walk", comment: "this text is presented when getting directions.  It is placed between a direction of how to turn and a distance to travel") + " \(Int(distanceToDisplay)) feet"
+            altText += " " + NSLocalizedString("and walk ", comment: "this text is presented when getting directions.  It is placed between a direction of how to turn and a distance to travel") + distanceToUnitString(distanceInMeters: distance)
         }
         return altText
+    }
+    
+    /// Convert distance in meters to a string suitable for displaying to the user.  This function handles unit conversions for distance depending on the user's selections in the settings
+    /// - Parameter distanceInMeters: the distance in meters
+    /// - Returns: a string containing information about how far the distance is along with its units
+    private func distanceToUnitString(distanceInMeters: Float)->String {
+        if SettingsManager.shared.units { // metric
+            return  "\(roundToTenths(distanceInMeters)) meters"
+        } else {
+            let feet = Int(distanceInMeters * Float(100.0/2.54/12.0))
+            return  "\(Int(feet)) feet"
+        }
     }
         
 }
