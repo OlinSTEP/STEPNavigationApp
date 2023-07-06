@@ -30,12 +30,14 @@ struct AnchorDetailView_NavigationArrived: View {
                     AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)
                         .padding(.vertical)
                 }
+                Spacer(minLength: 160)
                 Text("How was your experience with this navigation session?")
                     .bold()
                     .font(.title)
                     .multilineTextAlignment(.center)
                     .padding()
                     .foregroundColor(AppColor.foreground)
+                    .fixedSize(horizontal: false, vertical: true)
                 
                 ThumbsUpDown(thumbsUpAction: {
                     FeedbackModel().saveFeedback(
@@ -47,7 +49,7 @@ struct AnchorDetailView_NavigationArrived: View {
                         isLongerSelected: false,
                         isOtherSelected: false
                     )}, thumbsDownDestination: NavigationFeedbackView())
-                Spacer()
+                Spacer(minLength: 120)
                 SmallNavigationLink(destination: HomeView(), label: "Home")
             }
         }
