@@ -372,19 +372,30 @@ class Navigation {
         if (displayDistance) {
                 // don't use fractional feet or for higher numbers of meters (round instead)
                 // Related to higher number of meters, there is a somewhat strange behavior in VoiceOver where numbers greater than 10 will be read as, for instance, 11 dot 4 meters (instead of 11 point 4 meters).
-            altText += " " + NSLocalizedString("and walk ", comment: "this text is presented when getting directions.  It is placed between a direction of how to turn and a distance to travel") + distanceToUnitString(distanceInMeters: distance)
+            altText += " " + NSLocalizedString("and walk ", comment: "this text is presented when getting directions.  It is placed between a direction of how to turn and a distance to travel") + distance.metersAsUnitString
         }
         return altText
     }
-    
+}
+
+extension Float {
     /// Convert distance in meters to a string suitable for displaying to the user.  This function handles unit conversions for distance depending on the user's selections in the settings
     /// - Parameter distanceInMeters: the distance in meters
     /// - Returns: a string containing information about how far the distance is along with its units
-    private func distanceToUnitString(distanceInMeters: Float)->String {
-        if SettingsManager.shared.units { // metric
-            return  "\(roundToTenths(distanceInMeters)) meters"
+    var metersAsUnitString:String {
+        return Double(self).metersAsUnitString
+    }
+}
+
+extension Double {
+    /// Convert distance in meters to a string suitable for displaying to the user.  This function handles unit conversions for distance depending on the user's selections in the settings
+    /// - Parameter distanceInMeters: the distance in meters
+    /// - Returns: a string containing information about how far the distance is along with its units
+    var metersAsUnitString:String {
+        if SettingsManager.shared.useMetricDistanceUnits { // metric
+            return  "\(roundToTenths(self)) meters"
         } else {
-            let feet = Int(distanceInMeters * Float(100.0/2.54/12.0))
+            let feet = Int(self * Double(100.0/2.54/12.0))
             return  "\(Int(feet)) feet"
         }
     }
@@ -396,3 +407,7 @@ func roundToTenths(_ n: Float) -> Float {
     return roundf(10 * n)/10
 }
 
+/// - Returns: the number rounded to the nearest tenth
+func roundToTenths(_ n: Double) -> Double {
+    return round(10 * n)/10
+}
