@@ -10,7 +10,6 @@ import SwiftUI
 struct SettingsDetailView_CrumbColor: View {
     var settingsManager = SettingsManager.shared
     @State var selectedCrumbColor: Color = StaticAppColor.black
-    
     @State var customCrumbPopup: Bool = false
     @State var isCustomColorSelected: Bool = false
     

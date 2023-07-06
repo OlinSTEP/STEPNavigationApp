@@ -122,10 +122,11 @@ struct NavigatingView: View {
             .toolbar {
                 HeaderButton(label: "Exit", placement: .navigationBarLeading) {
                     showingConfirmation = true
-
+                    focusOnExit = true
                 }
                 HeaderButton(label: "Anchor Info", placement: .navigationBarTrailing) {
-                    showingHelp.toggle()
+                    showingHelp = true
+                    focusOnAnchorInfo = true
                 }
             }
         }
