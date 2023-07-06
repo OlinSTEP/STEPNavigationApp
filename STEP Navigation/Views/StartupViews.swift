@@ -236,14 +236,7 @@ struct StartupParagraph: View {
 
 struct ExitTutorial: ToolbarContent {
     var body: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            NavigationLink(destination: HomeView()) {
-                Text("Exit Tutorial")
-                    .foregroundColor(AppColor.background)
-                    .bold()
-                    .font(.title2)
-            }
-        }
+        HeaderNavigationLink(label: "Exit Tutorial", placement: .navigationBarLeading, destination: HomeView())
     }
 }
 

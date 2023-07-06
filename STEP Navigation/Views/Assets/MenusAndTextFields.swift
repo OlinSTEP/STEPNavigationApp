@@ -79,6 +79,10 @@ struct SegmentedToggle: View {
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(foregroundColor, lineWidth: 2)
+                .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure overlay occupies full button area
+                .padding(1) // Adjust padding to control the position of the overlay
+                .alignmentGuide(.top) { d in d[.top] } // Adjust alignment to position the overlay within the button
+                .alignmentGuide(.leading) { d in d[.leading] } // Adjust alignment to position the overlay within the button
         )
     }
 }

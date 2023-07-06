@@ -15,7 +15,6 @@ struct RecordAnchorView: View {
     @State var showNextButton: Bool = false
     @State var anchorID: String = ""
     @State var showInstructions = true
-    
     @StateObject private var timerManager = TimerManager()
     
     var body: some View {
@@ -68,7 +67,8 @@ struct RecordAnchorView: View {
                 }
                 
                 if showNextButton == true {
-                    ARViewTextOverlay(text: "Cloud Anchor Created ", navLabel: "Next", navDestination: AnchorDetailEditView(anchorID: anchorID, buttonLabel: "Save Anchor") {HomeView()})
+                    let anchorDetails = DataModelManager.shared.getLocationDataModel(byID: anchorID)
+                    ARViewTextOverlay(text: "Cloud Anchor Created ", navLabel: "Next", navDestination: AnchorDetailEditView(anchorDetails: anchorDetails!, buttonLabel: "Save Anchor") {HomeView()}) //TODO: remove force unwrap here
                 }
             }
             
@@ -92,13 +92,7 @@ struct RecordAnchorView: View {
         }
         .navigationBarBackButtonHidden()
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                NavigationLink(destination: HomeView(), label: {
-                    Text("Cancel")
-                        .bold()
-                        .font(.title2)
-                })
-            }
+            HeaderNavigationLink(label: "Cancel", placement: .navigationBarLeading, destination: HomeView())
         }
         .background(AppColor.foreground)
     }
