@@ -125,9 +125,13 @@ struct ConnectingView: View {
             }
             .onAppear() {
                 PositioningModel.shared.startPositioning()
+                PathLogger.shared.startLoggingData()
             }
             .onDisappear() {
-                PositioningModel.shared.stopPositioning() //TODO: double check is correctly stopping the positioning, any announcements, etc
+                PositioningModel.shared.stopPositioning()
+                //TODO: double check is correctly stopping the positioning, any announcements, etc
+                PathLogger.shared.stopLoggingData()
+                PathLogger.shared.uploadLog(logFilePath: "anchor_connection/\(anchorID1)_\(anchorID2)_\(UUID().uuidString)")
             }
         }
         .padding(.bottom, 48)

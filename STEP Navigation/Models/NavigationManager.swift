@@ -282,7 +282,9 @@ class NavigationManager: ObservableObject {
         followingCrumbs?.invalidate()
         // NOTE: we may have already called these functions if we finished navigating the route
         PathLogger.shared.stopLoggingData()
-        PathLogger.shared.uploadLog()
+        if let logFile = RouteNavigator.shared.routeNameForLogging {
+            PathLogger.shared.uploadLog(logFilePath: logFile)
+        }
     }
     
     /// Calculate the offset between the phone's heading (either its z-axis or y-axis projected into the floor plane) and the user's direction of travel.  This offset allows us to give directions based on the user's movement rather than the direction of the phone.
@@ -460,7 +462,9 @@ class NavigationManager: ObservableObject {
                 RouteNavigator.shared.checkOffKeypoint()
                 AnnouncementManager.shared.announce(announcement: "You've arrived")
                 PathLogger.shared.stopLoggingData()
-                PathLogger.shared.uploadLog()
+                if let logFile = RouteNavigator.shared.routeNameForLogging {
+                    PathLogger.shared.uploadLog(logFilePath: logFile)
+                }
             }
         }
     }
