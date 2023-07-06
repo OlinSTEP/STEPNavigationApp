@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVKit
 
 struct StartupPage0: View {
     var settingsManager = SettingsManager.shared
@@ -173,7 +174,8 @@ struct StartupPage7:  View {
         ScreenBackground {
             VStack {
                 ScreenHeader(title: "See it in Action")
-                StartupText("In this video...")
+                StartupText("In this video we will demonstraate how Clew works.")
+                VideoView(videoID: "G5BonVtsfmY")
                 Spacer()
                 SmallNavigationLink(destination: StartupPage8(), label: "Next")
             }
@@ -191,6 +193,9 @@ struct StartupPage8:  View {
             VStack {
                 ScreenHeader(title: "Anchors", backButtonHidden: true)
                 StartupParagraph(["Setting anchor points is a crucial skill for saving routes or pausing navigation. It helps Clew remember where you are and which way you're facing in the route's surroundings. Anchor points are like markers that make sure you stay on the right path when you want to follow a saved route later on. They play a vital role in making Clew navigate accurately.", "Anchor points are created at the beginning and at the end of a route. We recommend setting the anchor point at a location that is easy to remember and find at a later time. A good anchor point could be set at a wall, a doorframe, or a piece of furniture like a table."])
+                Text("Indoor Vs. Outdoor Navigation")
+                Text("As you walk outside,, Clew runs in a straight line regardless of obsticles in your path. It is up to you to navigate around the obsticles. While indoors, itis more connected.")
+
                 Spacer()
                 SmallNavigationLink(destination: HomeView(), label: "Finish Tutorial")
             }

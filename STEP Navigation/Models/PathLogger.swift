@@ -57,7 +57,8 @@ class PathLogger {
     }
     
     /// Upload the logged data to Firebase.  This function completes asynchronously and currently doesn't provide a completion handler.
-    func uploadLog() {
+    /// - Parameter logFilePath: the path to store the log data
+    func uploadLog(logFilePath: String) {
         guard !hasUploadedData else {
             return
         }
@@ -65,10 +66,11 @@ class PathLogger {
                     ["poses": poseLog.map({ $0.toColumnMajor() }),
                      "poseTimestamp": poseTimestamps,
                      "cloudAnchorResolutions": cloudAnchorResolutions.map({$0.asDict()}),
-                     "cloudAnchorLandmarks": Array((cloudAnchorLandmarks ?? [:]).keys)
+                     "cloudAnchorLandmarks": Array((cloudAnchorLandmarks ?? [:]).keys),
+                     "userID": AuthHandler.shared.currentUID ?? ""
                     ] as [String : Any]
                    )
-        FirebaseManager.shared.uploadLog(data: data)
+        FirebaseManager.shared.uploadLog(logFilePath: logFilePath, data: data)
         hasUploadedData = true
         reset()
     }

@@ -173,11 +173,11 @@ class FirebaseManager: ObservableObject {
     }
     
     /// Upload the log data to the storage bucket
+    /// - Parameter logFilePath: the path to store the log file data
     /// - Parameter data: the data to upload
-    func uploadLog(data: Data) {
-        let uniqueId = RouteNavigator.shared.routeNameForLogging ?? UUID().uuidString
-        print("UPLOADING LOG \(RouteNavigator.shared.routeNameForLogging ?? "nil")")
-        Storage.storage().reference().child("take2logs").child("\(uniqueId).log").putData(data) { (metadata, error) in
+    func uploadLog(logFilePath: String, data: Data) {
+        print("UPLOADING LOG \(logFilePath)")
+        Storage.storage().reference().child("take2logs").child("\(logFilePath).log").putData(data) { (metadata, error) in
             self.lastLogPath = metadata?.path
             print("error: \(error?.localizedDescription ?? "none")")
         }

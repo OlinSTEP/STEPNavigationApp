@@ -227,7 +227,7 @@ struct SmallButton_Settings: View {
             .cornerRadius(54)
             .overlay(
                 RoundedRectangle(cornerRadius: 54)
-                    .stroke(selected ? (color1 == AppColor.background ? StaticAppColor.grey : color1) : AppColor.foreground, lineWidth: selected ? (color1 == AppColor.background ? 10 : 3) : 3)
+                    .strokeBorder(selected ? (color1 == AppColor.background ? AppColor.foreground : color1) : AppColor.foreground, style: StrokeStyle(lineWidth: 3, dash: [selected ? (color1 == AppColor.background ? 8 : .infinity) : .infinity]))
             )
         }
         .padding(.horizontal)
