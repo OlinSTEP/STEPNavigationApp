@@ -20,8 +20,6 @@ public enum PositionState {
     case notAtTarget
     /// user is at target
     case atTarget
-    /// user is close to the target
-    case closeToTarget
 }
 
 /// Struct for storing relative position of keypoint to user
@@ -213,25 +211,19 @@ class Navigation {
         
         switch nextKeypoint.mode {
         case .cloudAnchorBased:
-                
             //  Determine whether the phone is inside the bounding box of the keypoint
             if (xDiff <= keypointTargetDepth && yDiff <= keypointTargetHeight && zDiff <= keypointTargetWidth) {
                 direction.targetState = .atTarget
-            } else if (sqrtf(powf(Float(xDiff), 2) + powf(Float(zDiff), 2)) <= 4) {
-                direction.targetState = .closeToTarget
             } else {
                 direction.targetState = .notAtTarget
             }
-            
             return direction
         case .latLonBased:
             //  Determine whether the phone is inside the bounding box of the keypoint.  We ignore the y value since the elevation can be erroneously estimated by ARCore's addTerrainAnchor API
-            if (abs(xDiff) <= keypointTargetDepth && abs(zDiff) <= keypointTargetWidth) {
-                direction.targetState = .atTarget
-            } else if (sqrtf(powf(Float(xDiff), 2) + powf(Float(zDiff), 2)) <= 4) {
-                direction.targetState = .closeToTarget
+            if RouteNavigator.shared.onFirstKeypoint {
+                direction.targetState = abs(xDiff) <= keypointTargetDepth && abs(zDiff) <= keypointTargetWidth ? .atTarget : .notAtTarget
             } else {
-                direction.targetState = .notAtTarget
+                direction.targetState = xDiff <= keypointTargetDepth && zDiff <= keypointTargetWidth ? .atTarget : .notAtTarget
             }
             
             return direction
