@@ -78,53 +78,52 @@ struct NavigationFeedbackView: View {
     
     var body: some View {
         ScrollView {
-            ScreenBackground {
+            VStack {
+                ScreenHeader()
                 VStack {
-                    ScreenHeader()
-//                                    ScrollView {
-                    VStack {Spacer().frame(height: 30)
-                        LeftLabel(text: "What was the issue?")
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        Spacer().frame(height: 30)
-                    }
-                    
-                    ChecklistItem(toggle: $isInstructionsSelected, label: "Incorrect or unclear instructions")
-                    ChecklistItem(toggle: $isObstacleSelected, label: "Directed me into a wall")
-                    ChecklistItem(toggle: $isLostSelected, label: "Got lost along the route")
-                    ChecklistItem(toggle: $isLongerSelected, label: "Navigation took longer than expected")
-                    ChecklistItem(toggle: $isOtherSelected, label: "Other")
-                    
-                    VStack {
-                        LeftLabel(text: "Optional: Problem Description", textSize: .title2)
-                            .padding(.top, 20)
-                        CustomTextField(entry: $response, textBoxSize: .large)
-                    }
-                    //                }
-                    .padding(.horizontal)
-                    
-                    
-                    SmallNavigationLink(destination: HomeView(), label: "Done") {
-                        FeedbackModel().saveFeedback(
-                            feedbackStatus: feedbackStatus.rawValue,
-                            response: response,
-                            isInstructionsSelected: isInstructionsSelected,
-                            isObstacleSelected: isObstacleSelected,
-                            isLostSelected: isLostSelected,
-                            isLongerSelected: isLongerSelected,
-                            isOtherSelected: isOtherSelected
-                        )
-                        reset()
-                    }
+                    Text("What was the issue?")
+                        .font(.largeTitle)
+                        .bold()
+                        .foregroundColor(AppColor.foreground)
+                        .padding(.vertical, 30)
                 }
                 
+                ChecklistItem(toggle: $isInstructionsSelected, label: "Incorrect or unclear instructions")
+                ChecklistItem(toggle: $isObstacleSelected, label: "Directed me into a wall")
+                ChecklistItem(toggle: $isLostSelected, label: "Got lost along the route")
+                ChecklistItem(toggle: $isLongerSelected, label: "Navigation took longer than expected")
+                ChecklistItem(toggle: $isOtherSelected, label: "Other")
+                
+                VStack {
+                    LeftLabel(text: "Optional: Problem Description", textSize: .title2)
+                        .padding(.top, 20)
+                    CustomTextField(entry: $response, textBoxSize: .large)
+                }
+                                    
+                SmallNavigationLink(destination: HomeView(), label: "Done") {
+                    FeedbackModel().saveFeedback(
+                        feedbackStatus: feedbackStatus.rawValue,
+                        response: response,
+                        isInstructionsSelected: isInstructionsSelected,
+                        isObstacleSelected: isObstacleSelected,
+                        isLostSelected: isLostSelected,
+                        isLongerSelected: isLongerSelected,
+                        isOtherSelected: isOtherSelected
+                    )
+                    reset()
+                }
+                .padding(.bottom, 48)
+                .padding(.top)
             }
-            .navigationBarBackButtonHidden()
+            .padding(.horizontal)
         }
+        .navigationBarBackButtonHidden()
+        .background(AppColor.background)
     }
 }
 
 
-struct AnchorDetailView_RecordingArrived: View {
+struct AnchorDetailView_ConnectingArrived: View {
     @ObservedObject var settingsManager = SettingsManager.shared
         
     let anchorDetails: LocationDataModel
@@ -153,7 +152,7 @@ struct AnchorDetailView_RecordingArrived: View {
                         isRecordingInstructionSelected: false,
                         isRecordLongerSelected: false,
                         isRecordOtherSelected: false
-                    )}, thumbsDownDestination: RecordingFeedbackView())
+                    )}, thumbsDownDestination: ConnectingFeedbackView())
                 Spacer()
                 SmallNavigationLink(destination: HomeView(), label: "Home")
             }
@@ -163,7 +162,7 @@ struct AnchorDetailView_RecordingArrived: View {
 }
 
 
-struct RecordingFeedbackView: View {
+struct ConnectingFeedbackView: View {
     @State var feedbackStatus: FeedbackStatus = .bad
     @State var response: String = ""
     @State var isHoldAnchorSelected: Bool = false
@@ -180,13 +179,11 @@ struct RecordingFeedbackView: View {
         self.isOtherSelected = false
     }
     var body: some View {
-                ScrollView {
-        ScreenBackground {
+        ScrollView {
             VStack {
                 ScreenHeader()
-                //                ScrollView {
                 Text("What was the issue?")
-                    .font(.title)
+                    .font(.largeTitle)
                     .bold()
                     .foregroundColor(AppColor.foreground)
                     .padding(.vertical, 30)
@@ -199,12 +196,10 @@ struct RecordingFeedbackView: View {
                 
                 
                 VStack {
-                    LeftLabel(text: "Optional: Problem Description", textSize: .title3)
+                    LeftLabel(text: "Optional: Problem Description", textSize: .title2)
                     CustomTextField(entry: $response, textBoxSize: .large)
                 }
                 .padding(.top, 20)
-                //                }
-                .padding(.horizontal)
                 
                 SmallNavigationLink(destination: HomeView(), label: "Done") {
                     RecordFeedbackDataModel().saveRecordFeedback(
@@ -217,10 +212,13 @@ struct RecordingFeedbackView: View {
                     )
                     reset()
                 }
+                .padding(.bottom, 48)
+                .padding(.top)
             }
+            .padding(.horizontal)
         }
-    }
         .navigationBarBackButtonHidden()
+        .background(AppColor.background)
     }
 }
 

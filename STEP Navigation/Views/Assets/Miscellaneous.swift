@@ -236,9 +236,42 @@ struct OrderedList: View {
                     Text(listItems[idx])
                         .frame(maxWidth: .infinity,
                                alignment: .leading)
+                        .font(.title3)
+                        .bold()
                 }
+                .foregroundColor(AppColor.foreground)
             }
         }
-       .padding(2)
+       .padding()
     }
 }
+
+struct UnorderedList: View {
+    var listItems: [String]
+    var listItemSpacing: CGFloat? = nil
+    var bulletWidth: CGFloat? = 14
+    var bulletAlignment: Alignment = .leading
+    
+    var body: some View {
+        VStack(alignment: .leading,
+               spacing: listItemSpacing) {
+            ForEach(listItems, id: \.self) { item in
+                HStack(alignment: .top) {
+                    Circle()
+                        .frame(width: bulletWidth, height: bulletWidth, alignment: bulletAlignment)
+                        .padding(.trailing, 4)
+                        .padding(.top, 10)
+                        .accessibilityHidden(true)
+                    Text(item)
+                        .frame(maxWidth: .infinity,
+                               alignment: .leading)
+                        .font(.title)
+                        .bold()
+                }
+                .foregroundColor(AppColor.foreground)
+            }
+        }
+               .padding()
+    }
+}
+

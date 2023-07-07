@@ -128,7 +128,7 @@ struct ConnectingView: View {
             }
             .navigationBarBackButtonHidden(true)
             .toolbar {
-                HeaderNavigationLink(label: "Cancel", placement: .navigationBarLeading, destination: RecordingFeedbackView())
+                HeaderNavigationLink(label: "Cancel", placement: .navigationBarLeading, destination: ConnectingFeedbackView())
             }
             .onReceive(PositioningModel.shared.$currentQuality) { newQuality in
                 currentQuality = newQuality
