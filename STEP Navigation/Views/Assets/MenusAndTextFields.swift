@@ -416,3 +416,89 @@ struct PickerButton: View {
         }
     }
 }
+
+struct OrganizationPicker: View {
+    @ObservedObject var dataModelManager = DataModelManager.shared
+    @Binding var selectedOrganization: String
+    
+    var body: some View {
+        Menu {
+            Button(action: {
+                selectedOrganization = ""
+            }) {
+                Text("Blank Organization")
+            }
+            
+            ForEach(dataModelManager.getAllNearbyOrganizations(), id: \.self) { organization in
+                Button(action: {
+                    selectedOrganization = organization
+                }) {
+                    Text(organization)
+                }
+            }
+        } label: {
+            HStack {
+                Text((selectedOrganization.isEmpty ? "Select Organization" : selectedOrganization))
+                    .font(.title2)
+                Image(systemName: "chevron.down")
+            }
+        }
+    }
+}
+
+struct AnchorTypeFilter: View {
+    var settingsManager = SettingsManager.shared
+    var allAnchorTypes: [AnchorType]
+    @Binding var selectedAnchorTypes: [AnchorType]
+    @Binding var showPage: Bool
+    
+    var body: some View {
+        VStack {
+            ScreenHeader()
+            ScrollView {
+                Divider()
+                    .overlay(AppColor.foreground)
+                ForEach(allAnchorTypes, id: \.self) { option in
+                    Button(action: {
+                        if selectedAnchorTypes.contains(option) {
+                            selectedAnchorTypes.removeAll(where: { $0 == option })
+                        } else {
+                            selectedAnchorTypes.append(option)
+                        }
+                    }, label: {
+                        HStack {
+                            Text(option.rawValue)
+                                .font(.title2)
+                                .multilineTextAlignment(.leading)
+                            Spacer()
+                            if selectedAnchorTypes.contains(option) {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    })
+                    .foregroundColor(AppColor.foreground)
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+                    Divider()
+                        .overlay(AppColor.foreground)
+                }
+            }
+            Spacer()
+            SmallButton(action: {
+                showPage = false
+                settingsManager.savefilteredTypes(filteredTypes: selectedAnchorTypes)
+            }, label: "Apply Filters")
+            SmallButton(action: {
+                showPage = false
+                settingsManager.resetfilteredTypes()
+            }, label: "Reset Filters", invert: true)
+        }
+        .onAppear() {
+            selectedAnchorTypes = settingsManager.loadfilteredTypes()
+        }
+        .accessibilityAddTraits(.isModal)
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}

@@ -225,14 +225,14 @@ struct ListOfAnchors: View {
                     switch anchorSelectionType {
                     case .indoorStartingPoint(let destinationAnchor):
                         if isReachable[anchors.firstIndex(of: anchor)!] {
-                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchor, buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: anchor, destinationAnchorDetails: destinationAnchor)), label: "\(anchor.getName())", subLabel: "Type: \(anchor.getAnchorType().rawValue)")
+                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchor, buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: anchor, destinationAnchorDetails: destinationAnchor)), label: "\(anchor.getName())", subLabel: "\(anchor.getAnchorType().rawValue)")
                         }
                     case .indoorEndingPoint:
                         if isReachable[anchors.firstIndex(of: anchor)!] {
-                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchor, buttonLabel: "Choose Start Anchor", buttonDestination: StartAnchorListView(destinationAnchorDetails: anchor)), label: "\(anchor.getName())", subLabel: "Type: \(anchor.getAnchorType().rawValue)")
+                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchor, buttonLabel: "Choose Start Anchor", buttonDestination: StartAnchorListView(destinationAnchorDetails: anchor)), label: "\(anchor.getName())", subLabel: "\(anchor.getAnchorType().rawValue)")
                         }
                     case .outdoorEndingPoint:
-                        LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchor, buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchor)), label: "\(anchor.getName())", subLabel: "Type: \(anchor.getAnchorType().rawValue)")
+                        LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchor, buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchor)), label: "\(anchor.getName())", subLabel: "\(anchor.getAnchorType().rawValue)")
                     }
                 }
             }
@@ -308,5 +308,127 @@ class LocationHelper {
         case .high:
             return 10.0
         }
+    }
+}
+
+struct AnchorListViewWithFiltering: View {
+    @Binding var nearbyDistance: Double
+    @Binding var showFilterPopup: Bool
+    @Binding var selectedOrganization: String
+    
+    var settingsManager = SettingsManager.shared
+    @ObservedObject var positionModel = PositioningModel.shared
+    
+    @State var allAnchors: [LocationDataModel] = []
+    @State var filteredAnchors: [LocationDataModel] = []
+    @State var allAnchorTypes: [AnchorType] = []
+    @State var selectedAnchorTypes: [AnchorType] = []
+    
+    @State var lastQueryLocation: CLLocationCoordinate2D?
+    
+    let bufferDistance: CLLocationDistance
+    
+    init(nearbyDistance: Binding<Double> = .constant(0.0), showFilterPopup: Binding<Bool>, selectedOrganization: Binding<String> = .constant(""), lastQueryLocation: CLLocationCoordinate2D? = nil) {
+        self._nearbyDistance = nearbyDistance
+        self._showFilterPopup = showFilterPopup
+        self._selectedOrganization = selectedOrganization
+        self.lastQueryLocation = lastQueryLocation
+        self.bufferDistance = LocationHelper.getBufferDistance(PositioningModel.shared.geoLocalizationAccuracy)
+    }
+    
+    var body: some View {
+        Group {
+            ZStack {
+                VStack {
+                    ScrollView {
+                        if nearbyDistance != 0.0 {
+                            ListOfAnchors(anchors: filteredAnchors, anchorSelectionType: .indoorEndingPoint)
+                            Spacer()
+                            if nearbyDistance < 1000 {
+                                ExpandSearch(action: {
+                                    nearbyDistance = 1000
+                                    selectedAnchorTypes = allAnchorTypes
+                                })
+                                    .padding(.bottom, 10)
+                            }
+                        } else {
+                            SmallNavigationLink(destination: RecordAnchorView(), label: "Create New Anchor")
+                                .padding(.top, 32)
+                            VStack(spacing: 32) {
+                                ForEach(0..<filteredAnchors.count, id: \.self) { idx in
+                                    if filteredAnchors[idx].cloudAnchorMetadata?.organization == selectedOrganization {
+                                        LargeNavigationLink(destination: AnchorDetailView_Manage(anchorDetails: filteredAnchors[idx]), label: "\(filteredAnchors[idx].getName())", subLabel: "\(filteredAnchors[idx].getAnchorType().rawValue)")
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 32)
+                        }
+                    }
+                }
+                .onReceive(DataModelManager.shared.objectWillChange) {
+                    allAnchors = []
+                    if let latLon = lastQueryLocation {
+                        updateNearbyAnchors(latLon: latLon)
+                    }
+                }
+                .onReceive(positionModel.$currentLatLon) { latLon in
+                    guard let latLon = latLon else {
+                        return
+                    }
+                    guard lastQueryLocation == nil || lastQueryLocation!.distance(from: latLon) > 5.0 else {
+                        return
+                    }
+                    lastQueryLocation = latLon
+                    if nearbyDistance == 0.0 {
+                        updateNearbyAnchors(latLon: latLon)
+                    } else {
+                        allAnchors = Array(
+                            DataModelManager.shared.getNearbyIndoorLocations(
+                                location: latLon,
+                                maxDistance: CLLocationDistance(nearbyDistance),
+                                withBuffer: bufferDistance
+                            )
+                        )
+                        .sorted(by: {
+                            $0.getName() < $1.getName() // TODO: can we sort by nearby distance instead of A to Z
+                        })
+                    }
+                }
+                if showFilterPopup {
+                    AnchorTypeFilter(allAnchorTypes: allAnchorTypes, selectedAnchorTypes: $selectedAnchorTypes, showPage: $showFilterPopup)
+                        .onDisappear() {
+                            selectedAnchorTypes = settingsManager.loadfilteredTypes()
+                        }
+                }
+            }
+        }
+        .onAppear() {
+            allAnchorTypes = Array(DataModelManager.shared.getAnchorTypes()).sorted(by: {
+                $0.rawValue < $1.rawValue
+            })
+            selectedAnchorTypes = settingsManager.loadfilteredTypes()
+            filteredAnchors = allAnchors.filter {
+                anchor in
+                selectedAnchorTypes.contains(anchor.getAnchorType())
+            }
+        }
+        .onChange(of: selectedAnchorTypes) { newAnchorTypes in
+            filteredAnchors = allAnchors.filter { anchor in
+                newAnchorTypes.contains(anchor.getAnchorType())
+            }
+        }
+    }
+    
+    private func updateNearbyAnchors(latLon: CLLocationCoordinate2D) {
+        allAnchors = Array(
+            DataModelManager.shared.getNearbyIndoorLocations(
+                location: latLon,
+                maxDistance: CLLocationDistance(Double.infinity),
+                withBuffer: 0.0
+            )
+        )
+        .sorted(by: {
+            $0.getName() < $1.getName()
+        })
     }
 }
