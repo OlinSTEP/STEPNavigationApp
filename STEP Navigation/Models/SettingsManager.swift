@@ -16,6 +16,7 @@ class SettingsManager: ObservableObject {
     private var crumbColorKey = "crumbColor"
     private var colorSchemeKey = "colorScheme"
     private var showTutorialsKey = "showTutorials"
+    private var filteredTypesKey = "filteredTypes"
     private let userDefaults = UserDefaults.standard
     
     /// if non-empty, put all mapping content in a subfolder
@@ -95,6 +96,17 @@ class SettingsManager: ObservableObject {
         userDefaults.set(show, forKey: showTutorialsKey)
     }
     
+    func resetfilteredTypes() {
+        let allAnchorTypes = Array(DataModelManager.shared.getAnchorTypes()).sorted(by: {
+            $0.rawValue < $1.rawValue
+        })
+        userDefaults.set(allAnchorTypes, forKey: filteredTypesKey)
+    }
+    
+    func savefilteredTypes(filteredTypes: [AnchorType]) {
+        userDefaults.set(filteredTypes, forKey: filteredTypesKey)
+    }
+    
     func loadCrumbColor() -> Color {
         guard let array = UserDefaults.standard.object(forKey: crumbColorKey) as? [CGFloat] else { return StaticAppColor.black}
         
@@ -111,6 +123,14 @@ class SettingsManager: ObservableObject {
         return show
     }
     
+    func loadfilteredTypes() -> [AnchorType] {
+        guard let filteredTypes = UserDefaults.standard.object(forKey: filteredTypesKey) as? [AnchorType] else {
+            return Array(DataModelManager.shared.getAnchorTypes()).sorted(by: {
+                $0.rawValue < $1.rawValue
+            })
+        }
+        return filteredTypes
+    }
     
     func loadColorScheme() -> (Color, Color) {
             guard let colorsArray = UserDefaults.standard.object(forKey: colorSchemeKey) as? [[CGFloat]],

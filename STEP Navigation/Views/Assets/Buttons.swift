@@ -10,6 +10,7 @@ import SwiftUI
 struct LargeNavigationLink<Destination: View>: View {
     let destination: Destination
     let label: String
+    let subLabel: String
     let foregroundColor: Color
     let backgroundColor: Color
     let invert: Bool
@@ -18,9 +19,10 @@ struct LargeNavigationLink<Destination: View>: View {
     @State private var pressed: Bool = false
 
     
-    init(destination: Destination, label: String, foregroundColor: Color = AppColor.foreground, backgroundColor: Color = AppColor.background, invert: Bool = false, alignment: LargeTextAlignment = .left, secondaryAction: @escaping () -> Void = {}) {
+    init(destination: Destination, label: String, subLabel: String = "", foregroundColor: Color = AppColor.foreground, backgroundColor: Color = AppColor.background, invert: Bool = false, alignment: LargeTextAlignment = .left, secondaryAction: @escaping () -> Void = {}) {
         self.destination = destination
         self.label = label
+        self.subLabel = subLabel
         self.foregroundColor = foregroundColor
         self.backgroundColor = backgroundColor
         self.invert = invert
@@ -33,26 +35,37 @@ struct LargeNavigationLink<Destination: View>: View {
             destination: destination,
             isActive: $pressed,
             label: {
-                HStack {
-                    Text(label)
-                        .font(alignment == .left ? .title : .largeTitle)
-                        .bold()
-                        .padding(30)
-                        .foregroundColor(invert ? foregroundColor : backgroundColor)
-                        .multilineTextAlignment(alignment == .left ? .leading : .center)
-                    if alignment == .left {
-                        Spacer()
+                VStack {
+                        HStack {
+                            Text(label)
+                                .font(alignment == .left ? .title : .largeTitle)
+                                .bold()
+                            if alignment == .left {
+                                Spacer()
+                            }
+                        }
+                        HStack {
+                            if !subLabel.isEmpty {
+                                Text(subLabel)
+                                    .font(alignment == .left ? .title2 : .title)
+                            }
+                            if alignment == .left {
+                                Spacer()
+                            }
+                        }
                     }
-                }
-                .frame(maxWidth: .infinity)
-                .frame(minHeight: 130)
-                .background(invert ? backgroundColor : foregroundColor)
-                .cornerRadius(20)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(foregroundColor, lineWidth: 5)
-                )
-            })
+                    .foregroundColor(invert ? foregroundColor : backgroundColor)
+                    .multilineTextAlignment(alignment == .left ? .leading : .center)
+                    .padding(30)
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 130)
+                    .background(invert ? backgroundColor : foregroundColor)
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(foregroundColor, lineWidth: 5)
+                    )
+                })
         .padding(.horizontal)
         .onChange(of: pressed) {
             newValue in

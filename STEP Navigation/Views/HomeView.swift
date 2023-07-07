@@ -31,7 +31,7 @@ struct HomeView: View {
                                     LoadingPopup(text: "Finding Destinations Near You")
                                 } else {
                                     VStack {
-                                        LargeNavigationLink(destination: DestinationTypesView(), label: "Navigate", alignment: .center)
+                                        LargeNavigationLink(destination: DestinationAnchorListView(), label: "Navigate", alignment: .center)
                                             .padding(.vertical, 12)
                                         LargeNavigationLink(destination: ManageAnchorsListView(), label: "Manage", alignment: .center)
                                             .padding(.vertical, 12)
@@ -49,6 +49,7 @@ struct HomeView: View {
                         positionModel.startCoarsePositioning()
                         UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
                         AppDelegate.orientationLock = .portrait
+                        SettingsManager.shared.resetfilteredTypes()
                     }
                 }
             }
