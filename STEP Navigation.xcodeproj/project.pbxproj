@@ -29,7 +29,8 @@
 		821C89752A336837006FD745 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB92A311E92007FA7CE /* HomeView.swift */; };
 		821C89762A336842006FD745 /* RadarMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80CDCB72A311E58007FA7CE /* RadarMapView.swift */; };
 		821C89782A33686D006FD745 /* STEP_NavigationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */; };
-		822D82DA2A5751D8001DDC82 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822D82D92A5751D8001DDC82 /* VideoView.swift */; };
+		822D82D52A571B19001DDC82 /* caf_MultiwayJoin.wav in Resources */ = {isa = PBXBuildFile; fileRef = 822D82D42A571B19001DDC82 /* caf_MultiwayJoin.wav */; };
+		822D82D62A571B19001DDC82 /* caf_MultiwayJoin.wav in Resources */ = {isa = PBXBuildFile; fileRef = 822D82D42A571B19001DDC82 /* caf_MultiwayJoin.wav */; };
 		8241735529DE0C70001599B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735429DE0C70001599B1 /* Assets.xcassets */; };
 		8241735829DE0C70001599B1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8241735729DE0C70001599B1 /* Preview Assets.xcassets */; };
 		8241736229DE1398001599B1 /* DestinationAnchorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8241736129DE1398001599B1 /* DestinationAnchorListView.swift */; };
@@ -189,7 +190,7 @@
 		130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Olin_College_Doors.geojson; sourceTree = "<group>"; };
 		6569872E2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigateFeedbackDataModel.swift; sourceTree = "<group>"; };
 		656987342A4A08DC00F5C584 /* RecordFeedbackDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordFeedbackDataModel.swift; path = "STEP Navigation/Views/RecordFeedbackDataModel.swift"; sourceTree = SOURCE_ROOT; };
-		822D82D92A5751D8001DDC82 /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
+		822D82D42A571B19001DDC82 /* caf_MultiwayJoin.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = caf_MultiwayJoin.wav; sourceTree = "<group>"; };
 		8241734D29DE0C6F001599B1 /* STEP Navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Navigation.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8241735029DE0C6F001599B1 /* STEP_NavigationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STEP_NavigationApp.swift; sourceTree = "<group>"; };
 		8241735429DE0C70001599B1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -464,6 +465,7 @@
 				825F1F4229E9C8380043BD98 /* ClewTutorialFeedback.wav */,
 				825F1F4429E9C8380043BD98 /* StartRecording.aiff */,
 				825F1F4529E9C8380043BD98 /* StopRecording.aiff */,
+				822D82D42A571B19001DDC82 /* caf_MultiwayJoin.wav */,
 			);
 			path = "Sound Effects";
 			sourceTree = "<group>";
@@ -651,6 +653,7 @@
 				825F1F4829E9C8380043BD98 /* ClewSuccessSound.wav in Resources */,
 				82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */,
 				829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */,
+				822D82D52A571B19001DDC82 /* caf_MultiwayJoin.wav in Resources */,
 				130862C029E4874400CADE79 /* testDoors.geojson in Resources */,
 				825F1F4A29E9C8380043BD98 /* StopRecording.aiff in Resources */,
 				130862C229E488B800CADE79 /* testBusStops.json in Resources */,
@@ -662,6 +665,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82A016942A00377300EAA526 /* mbtaBusStops.json in Resources */,
+				822D82D62A571B19001DDC82 /* caf_MultiwayJoin.wav in Resources */,
 				82811EEC2A0C3C5A00D1BE96 /* GoogleService-Info.plist in Resources */,
 				82A0169C2A017C0E00EAA526 /* PerkinsOutdoors.geojson in Resources */,
 				825F1F3A29E9B7920043BD98 /* Preview Assets.xcassets in Resources */,

@@ -14,10 +14,10 @@ struct ARViewTextOverlay<Destination: View>: View {
     let announce: String
     
     let buttonLabel: String
-    let buttonAction: () -> Void
-    let onAppear: () -> Void
+    let buttonAction: (() -> ())?
+    let onAppear: (() -> ())?
     
-    init(text: String = "", navLabel: String = "", navDestination: Destination = HomeView(), announce: String = "", buttonLabel: String = "", buttonAction: @escaping () -> Void = {}, onAppear: @escaping () -> Void = {}) {
+    init(text: String = "", navLabel: String = "", navDestination: Destination = HomeView(), announce: String = "", buttonLabel: String = "", buttonAction: (() -> ())? = nil, onAppear: (() -> ())? = nil) {
         self.text = text
         self.navLabel = navLabel
         self.navDestination = navDestination
@@ -36,7 +36,7 @@ struct ARViewTextOverlay<Destination: View>: View {
                     .multilineTextAlignment(.center)
                     .bold()
             }
-            if !buttonLabel.isEmpty && buttonAction() != {}() {
+            if !buttonLabel.isEmpty, let buttonAction = buttonAction {
                 SmallButton(action: {
                     buttonAction()
                 }, label: buttonLabel, foregroundColor: AppColor.background, backgroundColor: AppColor.foreground, invert: true)
@@ -52,7 +52,7 @@ struct ARViewTextOverlay<Destination: View>: View {
             if !announce.isEmpty {
                 AnnouncementManager.shared.announce(announcement: announce)
             }
-            if onAppear() != {}() {
+            if let onAppear = onAppear {
                 onAppear()
             }
         }
