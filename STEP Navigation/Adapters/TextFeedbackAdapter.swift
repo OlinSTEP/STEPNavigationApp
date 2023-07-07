@@ -224,7 +224,7 @@ class Navigation {
             if RouteNavigator.shared.onFirstKeypoint {
                 direction.targetState = abs(xDiff) <= keypointTargetDepth && abs(zDiff) <= keypointTargetWidth ? .atTarget : .notAtTarget
             } else {
-                direction.targetState = xDiff <= keypointTargetDepth && zDiff <= keypointTargetWidth ? .atTarget : .notAtTarget
+                direction.targetState = xDiff <= keypointTargetDepth ? .atTarget : .notAtTarget
             }
             
             return direction
