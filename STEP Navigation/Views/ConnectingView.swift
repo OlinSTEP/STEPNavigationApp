@@ -18,9 +18,12 @@ struct ConnectingInstructions: View {
             "The second anchor may resolve as you approach it. If it doesn't, stand in the location of the second anchor and move your phone around until it resolves.",
             "Your anchors are connected!"
         ]
-        LeftLabel(text: "Connecting Two Anchors")
-        OrderedList(listItems: instructionsListItems)
-        Text("Note: After connecting two anchors, you may be prompted to improve the accuracy of the connection by walking back from the second anchor to the first. This is not a required step, but doing so will improve the quality of the navigation.")
+        VStack {
+            LeftLabel(text: "Connecting Two Anchors")
+            OrderedList(listItems: instructionsListItems)
+            Text("Note: After connecting two anchors, you may be prompted to improve the accuracy of the connection by walking back from the second anchor to the first. This is not a required step, but doing so will improve the quality of the navigation.")
+        }
+        .foregroundColor(AppColor.foreground)
         
     }
 }

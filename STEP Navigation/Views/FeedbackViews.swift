@@ -23,8 +23,8 @@ struct AnchorDetailView_NavigationArrived: View {
         
     var body: some View {
         ScreenBackground {
-            ScreenHeader()
             VStack {
+                ScreenHeader()
                 if let currentLocation = PositioningModel.shared.currentLatLon {
                     let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
                     AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)

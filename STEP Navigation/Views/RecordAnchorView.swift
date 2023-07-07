@@ -68,7 +68,7 @@ struct RecordAnchorView: View {
                 
                 if showNextButton == true {
                     let anchorDetails = DataModelManager.shared.getLocationDataModel(byID: anchorID)
-                    ARViewTextOverlay(text: "Cloud Anchor Created ", navLabel: "Next", navDestination: AnchorDetailEditView(anchorDetails: anchorDetails!, buttonLabel: "Save Anchor") {HomeView()}) //TODO: remove force unwrap here
+                    ARViewTextOverlay(text: "Cloud Anchor Created ", navLabel: "Next", navDestination: AnchorDetailEditView(anchorDetails: anchorDetails!, buttonLabel: "Save Anchor", hideBackButton: true) {HomeView()}) //TODO: remove force unwrap here
                 }
             }
             
@@ -82,7 +82,7 @@ struct RecordAnchorView: View {
             PathLogger.shared.startLoggingData()
         }
         .onDisappear() {
-            PositioningModel.shared.stopPositioning() //TODO: double check this is properly stopping the positioning and any announcements, etc
+            PositioningModel.shared.stopPositioning() //TODO: this doesn't seem to be properly stopping the anchor creation
             PathLogger.shared.stopLoggingData()
             PathLogger.shared.uploadLog(logFilePath: "anchor_creation/\(anchorID)")
             timerManager.stopTimer()

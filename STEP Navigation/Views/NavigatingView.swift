@@ -54,7 +54,7 @@ struct NavigatingView: View {
                                         .foregroundColor(AppColor.background)
                                 })
                                 .accessibilityLabel("Repeat Directions")
-                                
+                                Spacer()
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 140)
