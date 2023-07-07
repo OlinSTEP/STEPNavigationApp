@@ -245,7 +245,7 @@ struct OrderedList: View {
     }
 }
 
-class LocationHelper {
+class BufferDistance {
     static func getBufferDistance(_ accuracy: GeoLocationAccuracy) -> CLLocationDistance {
         switch accuracy {
         case .none:
@@ -282,7 +282,7 @@ struct AnchorListViewWithFiltering: View {
         self._showFilterPopup = showFilterPopup
         self._selectedOrganization = selectedOrganization
         self.lastQueryLocation = lastQueryLocation
-        self.bufferDistance = LocationHelper.getBufferDistance(PositioningModel.shared.geoLocalizationAccuracy)
+        self.bufferDistance = BufferDistance.getBufferDistance(PositioningModel.shared.geoLocalizationAccuracy)
     }
     
     var body: some View {
@@ -297,6 +297,7 @@ struct AnchorListViewWithFiltering: View {
                                 ExpandSearch(action: {
                                     nearbyDistance = 1000
                                     selectedAnchorTypes = allAnchorTypes
+                                    settingsManager.resetfilteredTypes()
                                 })
                                     .padding(.bottom, 10)
                             }

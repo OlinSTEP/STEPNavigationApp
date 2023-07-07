@@ -14,7 +14,7 @@ struct StartAnchorListView: View {
     @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
     
-    let bufferDistance = LocationHelper.getBufferDistance(PositioningModel.shared.geoLocalizationAccuracy)
+    let bufferDistance = BufferDistance.getBufferDistance(PositioningModel.shared.geoLocalizationAccuracy)
         
     var body: some View {
         ScreenBackground {
