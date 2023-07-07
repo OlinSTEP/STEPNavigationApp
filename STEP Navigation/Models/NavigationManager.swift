@@ -414,7 +414,7 @@ class NavigationManager: ObservableObject {
         let facingTarget = directionToNextKeypoint.lateralDistanceRatioWhenCrossingTarget < lateralDisplacementToleranceRatio || abs(directionToNextKeypoint.angleDiff) < coneWidth
         let triggerSoundFeedback = facingTarget && -soundTimer.timeIntervalSinceNow > Self.FEEDBACKDELAY*max(0.2, Double(min(2.0, directionToNextKeypoint.distance)))
         if triggerSoundFeedback {
-            SoundEffectManager.shared.playSystemSound(id: 1103)
+            SoundEffectManager.shared.onTrack()
             soundTimer = Date()
         }
     }
