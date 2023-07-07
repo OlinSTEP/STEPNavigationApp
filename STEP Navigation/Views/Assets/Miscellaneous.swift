@@ -146,57 +146,6 @@ struct ExpandSearch: View {
     }
 }
 
-//struct ListOfAnchors: View {
-//    var anchors: [LocationDataModel]
-//    let anchorSelectionType: AnchorSelectionType
-//    @State var filteredTypes: [String]?
-//
-//    func getReachabilityMask(candidateAnchors: [LocationDataModel])->[Bool] {
-//        switch anchorSelectionType {
-//        case .indoorStartingPoint(let selectedDestination):
-//            return NavigationManager.shared.getReachability(from: selectedDestination, outOf: candidateAnchors)
-//        case .indoorEndingPoint:
-//            return Array(repeating: true, count: anchors.count)
-//        case .outdoorEndingPoint:
-//            return Array(repeating: true, count: anchors.count)
-//        }
-//    }
-//
-//    var body: some View {
-//        let isReachable = getReachabilityMask(candidateAnchors: anchors)
-//        ScrollView {
-//            VStack(spacing: 24) {
-////                if case .indoorStartingPoint(let destinationAnchor) = anchorSelectionType {
-////                   if NavigationManager.shared.getReachabilityFromOutdoors(outOf: [destinationAnchor]).first == true {
-////                       LargeNavigationLink(destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: destinationAnchor), label: "Start Outside", subLabel: "Type: \(destinationAnchor.getAnchorType().rawValue)", invert: true)
-////                   }
-////                }
-//                ForEach(0..<anchors.count, id: \.self) { idx in
-//                    if let filteredTypes = filteredTypes, filteredTypes.contains(anchors[idx].getAnchorType().rawValue) {                        switch anchorSelectionType {
-//                        case .indoorStartingPoint(let destinationAnchor):
-//                            if isReachable[idx] {
-//                                LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor)), label: "\(anchors[idx].getName())", subLabel: "Type: \(anchors[idx].getAnchorType().rawValue)")
-//                            }
-//                        case .indoorEndingPoint:
-//                            if isReachable[idx] {
-//                                LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Choose Start Anchor", buttonDestination: StartAnchorListView(destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())", subLabel: "Type: \(anchors[idx].getAnchorType().rawValue)")
-//                            }
-//                        case .outdoorEndingPoint:
-//                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())", subLabel: "Type: \(anchors[idx].getAnchorType().rawValue)")
-//                        }
-//                    }
-//                }
-//            }
-//            .padding(.vertical, 12)
-//        }
-//        .onAppear() {
-//            if filteredTypes == nil {
-//                filteredTypes = DataModelManager.shared.getAnchorTypes().map { $0.rawValue }
-//            }
-//        }
-//    }
-//}
-
 struct ListOfAnchors: View {
     let anchors: [LocationDataModel]
     let anchorSelectionType: AnchorSelectionType

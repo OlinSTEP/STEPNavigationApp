@@ -18,7 +18,7 @@ struct DestinationAnchorListView: View {
         ScreenBackground {
             VStack {
                 if showFilterPopup == false {
-                    ScreenHeader(title: "Anchors", subtitle: "Within \(String(describing: nearbyDistance.metersAsUnitString))")
+                    ScreenHeader(title: "Anchors", subtitle: "Within \(nearbyDistance.metersAsUnitString)")
                 }
                 AnchorListViewWithFiltering(nearbyDistance: $nearbyDistance, showFilterPopup: $showFilterPopup)
             }
