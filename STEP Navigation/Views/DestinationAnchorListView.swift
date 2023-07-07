@@ -62,11 +62,14 @@ struct DestinationAnchorListView: View {
                     print("anchors at list view: \(allAnchors)")
                 }
                 if showFilterPopup {
-                    AnchorTypeFilter(allAnchorTypes: allAnchorTypes, showPage: $showFilterPopup)
+                    AnchorTypeFilter(allAnchorTypes: allAnchorTypes, selectedAnchorTypes: $selectedAnchorTypes, showPage: $showFilterPopup)
                         .onDisappear() {
+                            print("filteredAnchors before \(filteredAnchors.count)")
+                            print("selectedAnchorTypes \(selectedAnchorTypes)")
                             filteredAnchors = allAnchors.filter { anchor in
                                 selectedAnchorTypes.contains(anchor.getAnchorType())
                             }
+                            print("filteredAnchors after \(filteredAnchors.count)")
                         }
                 }
             }
@@ -76,6 +79,7 @@ struct DestinationAnchorListView: View {
                 $0.rawValue < $1.rawValue
             })
             selectedAnchorTypes = settingsManager.loadfilteredTypes()
+            print("settingsManager.loadfilteredTypes() \(selectedAnchorTypes)")
             filteredAnchors = allAnchors
         }
         .toolbar {
@@ -108,7 +112,7 @@ struct DestinationAnchorListView: View {
 struct AnchorTypeFilter: View {
     var settingsManager = SettingsManager.shared
     var allAnchorTypes: [AnchorType]
-    @State var selectedAnchorTypes: [AnchorType] = []
+    @Binding var selectedAnchorTypes: [AnchorType]
     @Binding var showPage: Bool
     
     var body: some View {

@@ -44,6 +44,7 @@
 		8242B02D2A0AB70C0042953F /* GeoFireUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B02C2A0AB70C0042953F /* GeoFireUtils */; };
 		8242B02F2A0AB75B0042953F /* GeoFire in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B02E2A0AB75B0042953F /* GeoFire */; };
 		8242B0312A0AB75B0042953F /* GeoFireUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B0302A0AB75B0042953F /* GeoFireUtils */; };
+		82547BA82A58480D005181C2 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82547BA72A58480D005181C2 /* VideoView.swift */; };
 		825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */; };
 		825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */; };
 		825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F3229E9B7910043BD98 /* STEP_MappingApp.swift */; };
@@ -200,6 +201,7 @@
 		8241736F29DE1415001599B1 /* TextFeedbackAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFeedbackAdapter.swift; sourceTree = "<group>"; };
 		8241737329DE1440001599B1 /* AllPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPaths.swift; sourceTree = "<group>"; };
 		8241737829DE1478001599B1 /* PositioningModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningModel.swift; sourceTree = "<group>"; };
+		82547BA72A58480D005181C2 /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSegmentPathBuilder.swift; sourceTree = "<group>"; };
 		825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectManager.swift; sourceTree = "<group>"; };
 		825F1F3029E9B7910043BD98 /* STEP Mapping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Mapping.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -383,7 +385,7 @@
 				A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */,
 				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
 				A867F9442A462E2400006DBC /* StartupViews.swift */,
-				822D82D92A5751D8001DDC82 /* VideoView.swift */,
+				82547BA72A58480D005181C2 /* VideoView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -721,6 +723,7 @@
 				A80CDCCB2A33C646007FA7CE /* MapComponents.swift in Sources */,
 				A80CDCC82A33BC7D007FA7CE /* ConnectingView.swift in Sources */,
 				130E7C4129E23494004B1E81 /* LocationDataModel.swift in Sources */,
+				82547BA82A58480D005181C2 /* VideoView.swift in Sources */,
 				826C994929E87EA10070290B /* ARCoreCredentials.swift in Sources */,
 				A80CDCC22A33A838007FA7CE /* ManageAnchorsListView.swift in Sources */,
 				130E7C4629E36C97004B1E81 /* LocationDataModelParser.swift in Sources */,
@@ -730,7 +733,6 @@
 				829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */,
 				A867F94B2A4CFF1B00006DBC /* MenusAndTextFields.swift in Sources */,
 				A867F9472A4CEEF300006DBC /* Buttons.swift in Sources */,
-				822D82DA2A5751D8001DDC82 /* VideoView.swift in Sources */,
 				82811EE52A0C32B900D1BE96 /* AuthHandler.swift in Sources */,
 				8241736229DE1398001599B1 /* DestinationAnchorListView.swift in Sources */,
 				8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */,

@@ -97,14 +97,13 @@ class SettingsManager: ObservableObject {
     }
     
     func resetfilteredTypes() {
-        let allAnchorTypes = Array(DataModelManager.shared.getAnchorTypes()).sorted(by: {
-            $0.rawValue < $1.rawValue
-        })
+        let allAnchorTypes = Array(DataModelManager.shared.getAnchorTypes().map({$0.rawValue}).sorted())
         userDefaults.set(allAnchorTypes, forKey: filteredTypesKey)
     }
     
     func savefilteredTypes(filteredTypes: [AnchorType]) {
-        userDefaults.set(filteredTypes, forKey: filteredTypesKey)
+        userDefaults.set(filteredTypes.map({$0.rawValue}), forKey: filteredTypesKey)
+        print("saving \(filteredTypes.map({$0.rawValue}))")
     }
     
     func loadCrumbColor() -> Color {
@@ -124,12 +123,12 @@ class SettingsManager: ObservableObject {
     }
     
     func loadfilteredTypes() -> [AnchorType] {
-        guard let filteredTypes = UserDefaults.standard.object(forKey: filteredTypesKey) as? [AnchorType] else {
+        guard let filteredTypes = UserDefaults.standard.object(forKey: filteredTypesKey) as? [String] else {
             return Array(DataModelManager.shared.getAnchorTypes()).sorted(by: {
                 $0.rawValue < $1.rawValue
             })
         }
-        return filteredTypes
+        return filteredTypes.compactMap({AnchorType(rawValue: $0)})
     }
     
     func loadColorScheme() -> (Color, Color) {
