@@ -165,13 +165,14 @@ struct StartupPage7:  View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "Anchors", backButtonHidden: true)
+                ScreenHeader(title: "Anchors")
                 ScrollView {
                     UnorderedList(listItems: ["Anchor points are markers that make sure you stay on the right path as you navigate a route.", "They are crucial for saving routes or pausing navigation because they allow Clew to remember where you are and which way you’re facing.", "You will create anchors at the beginning and end of a route. Clew will automatically add anchors along long routes.", "Try to set the anchor point at an easy-to-remember location (ex. doorframe, furniture)."])
                 }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage8(), label: "Next")
             }
+            .navigationBarBackButtonHidden()
             .toolbar {
                 ExitTutorial()
             }
@@ -183,13 +184,12 @@ struct StartupPage8:  View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "See it in Action")
+                ScreenHeader(title: "See it in Action", backButtonHidden: true)
                 StartupText("In this video we will demonstraate how Clew works.")
-//                VideoView(videoID: "G5BonVtsfmY")
+                VideoView(videoID: "G5BonVtsfmY")
                 Spacer()
                 SmallNavigationLink(destination: HomeView(), label: "Finish Tutorial")
             }
-            .navigationBarBackButtonHidden()
         }
     }
 }
