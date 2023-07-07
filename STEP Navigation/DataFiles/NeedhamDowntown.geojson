@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "Needham Downtowns",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "id": "C05397E4-1252-4AA3-8CD1-65271FC367AA","properties": { "Name": "Harvey's Hardware" }, "geometry": { "type": "Point", "coordinates": [ -71.236762270639005, 42.2801573209466 ] } },
+{ "type": "Feature", "id": "362D9121-047C-436F-ACE6-FD338149ABFE", "properties": { "Name": "Masala Art" }, "geometry": { "type": "Point", "coordinates": [ -71.236476017017296, 42.280145938804701 ] } },
+{ "type": "Feature", "id": "660CFAEF-C589-47DF-99C9-19D32F78DBEC", "properties": { "Name": "Farmhouse" }, "geometry": { "type": "Point", "coordinates": [ -71.236025850351993, 42.280121693869198 ] } }
+]
+}

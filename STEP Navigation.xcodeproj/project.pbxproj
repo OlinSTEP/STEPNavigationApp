@@ -45,6 +45,8 @@
 		8242B02D2A0AB70C0042953F /* GeoFireUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B02C2A0AB70C0042953F /* GeoFireUtils */; };
 		8242B02F2A0AB75B0042953F /* GeoFire in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B02E2A0AB75B0042953F /* GeoFire */; };
 		8242B0312A0AB75B0042953F /* GeoFireUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 8242B0302A0AB75B0042953F /* GeoFireUtils */; };
+		82547BAA2A58727F005181C2 /* NeedhamDowntown.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 82547BA92A58727F005181C2 /* NeedhamDowntown.geojson */; };
+		82547BAB2A58727F005181C2 /* NeedhamDowntown.geojson in Resources */ = {isa = PBXBuildFile; fileRef = 82547BA92A58727F005181C2 /* NeedhamDowntown.geojson */; };
 		825F1F2729E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */; };
 		825F1F2B29E8D5F20043BD98 /* SoundEffectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */; };
 		825F1F3329E9B7910043BD98 /* STEP_MappingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F3229E9B7910043BD98 /* STEP_MappingApp.swift */; };
@@ -211,6 +213,7 @@
 		8241736F29DE1415001599B1 /* TextFeedbackAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFeedbackAdapter.swift; sourceTree = "<group>"; };
 		8241737329DE1440001599B1 /* AllPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPaths.swift; sourceTree = "<group>"; };
 		8241737829DE1478001599B1 /* PositioningModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningModel.swift; sourceTree = "<group>"; };
+		82547BA92A58727F005181C2 /* NeedhamDowntown.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NeedhamDowntown.geojson; sourceTree = "<group>"; };
 		825F1F2629E8D5CE0043BD98 /* MultiSegmentPathBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSegmentPathBuilder.swift; sourceTree = "<group>"; };
 		825F1F2A29E8D5F20043BD98 /* SoundEffectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffectManager.swift; sourceTree = "<group>"; };
 		825F1F3029E9B7910043BD98 /* STEP Mapping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "STEP Mapping.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -321,6 +324,7 @@
 		130E7C4729E36CFF004B1E81 /* DataFiles */ = {
 			isa = PBXGroup;
 			children = (
+				82547BA92A58727F005181C2 /* NeedhamDowntown.geojson */,
 				130862C129E488B800CADE79 /* testBusStops.json */,
 				82A0169A2A017C0800EAA526 /* PerkinsOutdoors.geojson */,
 				130E7C4A29E36E41004B1E81 /* Olin_College_Doors.geojson */,
@@ -675,6 +679,7 @@
 				825F1F4829E9C8380043BD98 /* ClewSuccessSound.wav in Resources */,
 				82659CA429DF5CB3007546A1 /* GoogleService-Info.plist in Resources */,
 				829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */,
+				82547BAA2A58727F005181C2 /* NeedhamDowntown.geojson in Resources */,
 				130862C029E4874400CADE79 /* testDoors.geojson in Resources */,
 				825F1F4A29E9C8380043BD98 /* StopRecording.aiff in Resources */,
 				130862C229E488B800CADE79 /* testBusStops.json in Resources */,
@@ -689,6 +694,7 @@
 				82811EEC2A0C3C5A00D1BE96 /* GoogleService-Info.plist in Resources */,
 				82A0169C2A017C0E00EAA526 /* PerkinsOutdoors.geojson in Resources */,
 				825F1F3A29E9B7920043BD98 /* Preview Assets.xcassets in Resources */,
+				82547BAB2A58727F005181C2 /* NeedhamDowntown.geojson in Resources */,
 				825F1F3729E9B7920043BD98 /* Assets.xcassets in Resources */,
 				82A016932A00376600EAA526 /* Olin_College_Doors.geojson in Resources */,
 				82A0169E2A02D28500EAA526 /* Settings.bundle in Resources */,

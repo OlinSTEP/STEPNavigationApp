@@ -23,7 +23,7 @@ struct LocationDataModelParser {
      */
     static func parse(from filename: String, fileType: String, anchorType: AnchorType) throws -> Set<LocationDataModel> {
         guard let url = Bundle.main.url(forResource: filename, withExtension: fileType) else {
-            throw NSError(domain: "LocatinoDataModelParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "JSON file not found"])
+            throw NSError(domain: "LocationDataModelParser", code: 1, userInfo: [NSLocalizedDescriptionKey: "JSON file not found"])
         }
         
         var locationModels = Set<LocationDataModel>()
