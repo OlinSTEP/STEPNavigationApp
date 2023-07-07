@@ -8,11 +8,40 @@ import SwiftUI
 import CoreLocation
 
 struct DestinationAnchorListView: View {
-    var settingsManager = SettingsManager.shared
-
     @State var nearbyDistance: Double = 100
-    @ObservedObject var positionModel = PositioningModel.shared
+    @State var chosenStart: LocationDataModel?
+    @State var chosenEnd: LocationDataModel?
+    @State var outdoorsSelectedAsStart = false
+    
     @State var showFilterPopup: Bool = false
+
+    var body: some View {
+        ScreenBackground {
+            VStack {
+                if showFilterPopup == false {
+                    ScreenHeader(title: "Anchors", subtitle: "Within \(nearbyDistance.metersAsUnitString)")
+                }
+                AnchorListViewWithFiltering(nearbyDistance: $nearbyDistance, showFilterPopup: $showFilterPopup)
+            }
+        }
+        .toolbar {
+            if showFilterPopup == false {
+                HeaderButton(label: "Filter", placement: .navigationBarTrailing) {
+                    showFilterPopup = true
+                }
+            }
+        }
+        .navigationBarBackButtonHidden(showFilterPopup)
+    }
+}
+
+
+struct AnchorListViewWithFiltering: View {
+    @Binding var nearbyDistance: Double
+    @Binding var showFilterPopup: Bool
+    
+    var settingsManager = SettingsManager.shared
+    @ObservedObject var positionModel = PositioningModel.shared
     
     @State var allAnchors: [LocationDataModel] = []
     @State var filteredAnchors: [LocationDataModel] = []
@@ -20,15 +49,14 @@ struct DestinationAnchorListView: View {
     @State var selectedAnchorTypes: [AnchorType] = []
     
     @State var lastQueryLocation: CLLocationCoordinate2D?
-    @State var chosenStart: LocationDataModel?
-    @State var chosenEnd: LocationDataModel?
-    @State var outdoorsSelectedAsStart = false
+    
+    let bufferDistance = LocationHelper.getBufferDistance(PositioningModel.shared.geoLocalizationAccuracy)
     
     var body: some View {
-        ScreenBackground {
+        Group {
             ZStack {
                 VStack {
-                    ScreenHeader(title: "Anchors", subtitle: "Within \(nearbyDistance.metersAsUnitString)")
+//                    ScreenHeader(title: "Anchors", subtitle: "Within \(nearbyDistance.metersAsUnitString)")
                     ScrollView {
                         ListOfAnchors(anchors: filteredAnchors, anchorSelectionType: .indoorEndingPoint)
                         Spacer()
@@ -53,16 +81,18 @@ struct DestinationAnchorListView: View {
                         DataModelManager.shared.getNearbyIndoorLocations(
                             location: latLon,
                             maxDistance: CLLocationDistance(nearbyDistance),
-                            withBuffer: Self.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                            withBuffer: bufferDistance
                         )
                     )
                     .sorted(by: {
                         $0.getName() < $1.getName() // TODO: can we sort by nearby distance instead of A to Z
                     })
-                    print("anchors at list view: \(allAnchors)")
                 }
                 if showFilterPopup {
                     AnchorTypeFilter(allAnchorTypes: allAnchorTypes, selectedAnchorTypes: $selectedAnchorTypes, showPage: $showFilterPopup)
+                        .onDisappear() {
+                            selectedAnchorTypes = settingsManager.loadfilteredTypes()
+                        }
                 }
             }
         }
@@ -71,37 +101,24 @@ struct DestinationAnchorListView: View {
                 $0.rawValue < $1.rawValue
             })
             selectedAnchorTypes = settingsManager.loadfilteredTypes()
-            filteredAnchors = allAnchors
+            filteredAnchors = allAnchors.filter {
+                anchor in
+                selectedAnchorTypes.contains(anchor.getAnchorType())
+            }
         }
         .onChange(of: selectedAnchorTypes) { newAnchorTypes in
             filteredAnchors = allAnchors.filter { anchor in
                 newAnchorTypes.contains(anchor.getAnchorType())
             }
         }
-        .toolbar {
-            if showFilterPopup == false {
-                HeaderButton(label: "Filter", placement: .navigationBarTrailing) {
-                    showFilterPopup = true
-                }
-            }
-        }
-        .navigationBarBackButtonHidden(showFilterPopup)
-    }
-    
-    /// Compute the notion of "close enough" to display to the user.  This is a buffer distance added on top of the distance the user has already selected from the UI
-    /// - Parameter accuracy: the current localization accuracy
-    /// - Returns: the buffer distance to use
-    static func getBufferDistance(_ accuracy: GeoLocationAccuracy) -> CLLocationDistance {
-        switch accuracy {
-        case .none:
-            return 100.0
-        case .coarse, .low:
-            return 200.0
-        case .medium:
-            return 50.0
-        case .high:
-            return 10.0
-        }
+//        .toolbar {
+//            if showFilterPopup == false {
+//                HeaderButton(label: "Filter", placement: .navigationBarTrailing) {
+//                    showFilterPopup = true
+//                }
+//            }
+//        }
+//        .navigationBarBackButtonHidden(showFilterPopup)
     }
 }
 

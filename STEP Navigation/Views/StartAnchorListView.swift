@@ -13,6 +13,8 @@ struct StartAnchorListView: View {
     @State var nearbyDistance: Double = 300.0
     @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
+    
+    let bufferDistance = LocationHelper.getBufferDistance(PositioningModel.shared.geoLocalizationAccuracy)
         
     var body: some View {
         ScreenBackground {
@@ -30,7 +32,7 @@ struct StartAnchorListView: View {
                         DataModelManager.shared.getNearbyIndoorLocations(
                             location: latLon,
                             maxDistance: CLLocationDistance(nearbyDistance),
-                            withBuffer: DestinationAnchorListView.getBufferDistance(positionModel.geoLocalizationAccuracy)
+                            withBuffer: bufferDistance
                         )
                     )
                     .sorted(by: {

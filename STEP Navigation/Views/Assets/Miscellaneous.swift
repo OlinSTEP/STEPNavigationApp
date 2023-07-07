@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct AnchorDetailsText: View {
     let title: String
@@ -292,5 +293,20 @@ struct OrderedList: View {
             }
         }
        .padding(2)
+    }
+}
+
+class LocationHelper {
+    static func getBufferDistance(_ accuracy: GeoLocationAccuracy) -> CLLocationDistance {
+        switch accuracy {
+        case .none:
+            return 100.0
+        case .coarse, .low:
+            return 200.0
+        case .medium:
+            return 50.0
+        case .high:
+            return 10.0
+        }
     }
 }
