@@ -77,10 +77,11 @@ struct NavigationFeedbackView: View {
     }
     
     var body: some View {
-        ScreenBackground {
-            VStack {
-                ScreenHeader()
-                ScrollView {
+        ScrollView {
+            ScreenBackground {
+                VStack {
+                    ScreenHeader()
+//                                    ScrollView {
                     VStack {Spacer().frame(height: 30)
                         LeftLabel(text: "What was the issue?")
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -94,29 +95,31 @@ struct NavigationFeedbackView: View {
                     ChecklistItem(toggle: $isOtherSelected, label: "Other")
                     
                     VStack {
-                        LeftLabel(text: "Optional: Problem Description", textSize: .title3)
+                        LeftLabel(text: "Optional: Problem Description", textSize: .title2)
                             .padding(.top, 20)
                         CustomTextField(entry: $response, textBoxSize: .large)
                     }
+                    //                }
+                    .padding(.horizontal)
+                    
+                    
+                    SmallNavigationLink(destination: HomeView(), label: "Done") {
+                        FeedbackModel().saveFeedback(
+                            feedbackStatus: feedbackStatus.rawValue,
+                            response: response,
+                            isInstructionsSelected: isInstructionsSelected,
+                            isObstacleSelected: isObstacleSelected,
+                            isLostSelected: isLostSelected,
+                            isLongerSelected: isLongerSelected,
+                            isOtherSelected: isOtherSelected
+                        )
+                        reset()
+                    }
                 }
-                .padding(.horizontal)
-
                 
-                SmallNavigationLink(destination: HomeView(), label: "Done") {
-                    FeedbackModel().saveFeedback(
-                        feedbackStatus: feedbackStatus.rawValue,
-                        response: response,
-                        isInstructionsSelected: isInstructionsSelected,
-                        isObstacleSelected: isObstacleSelected,
-                        isLostSelected: isLostSelected,
-                        isLongerSelected: isLongerSelected,
-                        isOtherSelected: isOtherSelected
-                    )
-                    reset()
-                }
             }
+            .navigationBarBackButtonHidden()
         }
-        .navigationBarBackButtonHidden()
     }
 }
 
@@ -177,31 +180,32 @@ struct RecordingFeedbackView: View {
         self.isOtherSelected = false
     }
     var body: some View {
+                ScrollView {
         ScreenBackground {
             VStack {
                 ScreenHeader()
-                ScrollView {
-                    Text("What was the issue?")
-                        .font(.title)
-                        .bold()
-                        .foregroundColor(AppColor.foreground)
-                        .padding(.vertical, 30)
-                    
-                    
-                    ChecklistItem(toggle: $isHoldAnchorSelected, label: "Phone could not host anchor")
-                    ChecklistItem(toggle: $isInstructionSelected, label: "Incorrect or unclear instructions")
-                    ChecklistItem(toggle: $isLongerSelected, label: "Recording took longer than expected")
-                    ChecklistItem(toggle: $isOtherSelected, label: "Other")
-                    
-                    
-                    VStack {
-                        LeftLabel(text: "Optional: Problem Description", textSize: .title3)
-                        CustomTextField(entry: $response, textBoxSize: .large)
-                    }
-                    .padding(.top, 20)
+                //                ScrollView {
+                Text("What was the issue?")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(AppColor.foreground)
+                    .padding(.vertical, 30)
+                
+                
+                ChecklistItem(toggle: $isHoldAnchorSelected, label: "Phone could not host anchor")
+                ChecklistItem(toggle: $isInstructionSelected, label: "Incorrect or unclear instructions")
+                ChecklistItem(toggle: $isLongerSelected, label: "Recording took longer than expected")
+                ChecklistItem(toggle: $isOtherSelected, label: "Other")
+                
+                
+                VStack {
+                    LeftLabel(text: "Optional: Problem Description", textSize: .title3)
+                    CustomTextField(entry: $response, textBoxSize: .large)
                 }
+                .padding(.top, 20)
+                //                }
                 .padding(.horizontal)
-
+                
                 SmallNavigationLink(destination: HomeView(), label: "Done") {
                     RecordFeedbackDataModel().saveRecordFeedback(
                         recordFeedbackStatus: feedbackStatus.rawValue,
@@ -215,6 +219,7 @@ struct RecordingFeedbackView: View {
                 }
             }
         }
+    }
         .navigationBarBackButtonHidden()
     }
 }
