@@ -20,7 +20,6 @@ struct STEP_NavigationApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-//                StartupPage0()
                 if SettingsManager.shared.loadShowTutorials() {
                     StartupPage0()
                 } else {
