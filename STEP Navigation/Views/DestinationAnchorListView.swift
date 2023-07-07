@@ -63,14 +63,6 @@ struct DestinationAnchorListView: View {
                 }
                 if showFilterPopup {
                     AnchorTypeFilter(allAnchorTypes: allAnchorTypes, selectedAnchorTypes: $selectedAnchorTypes, showPage: $showFilterPopup)
-                        .onDisappear() {
-                            print("filteredAnchors before \(filteredAnchors.count)")
-                            print("selectedAnchorTypes \(selectedAnchorTypes)")
-                            filteredAnchors = allAnchors.filter { anchor in
-                                selectedAnchorTypes.contains(anchor.getAnchorType())
-                            }
-                            print("filteredAnchors after \(filteredAnchors.count)")
-                        }
                 }
             }
         }
@@ -79,8 +71,12 @@ struct DestinationAnchorListView: View {
                 $0.rawValue < $1.rawValue
             })
             selectedAnchorTypes = settingsManager.loadfilteredTypes()
-            print("settingsManager.loadfilteredTypes() \(selectedAnchorTypes)")
             filteredAnchors = allAnchors
+        }
+        .onChange(of: selectedAnchorTypes) { newAnchorTypes in
+            filteredAnchors = allAnchors.filter { anchor in
+                newAnchorTypes.contains(anchor.getAnchorType())
+            }
         }
         .toolbar {
             if showFilterPopup == false {

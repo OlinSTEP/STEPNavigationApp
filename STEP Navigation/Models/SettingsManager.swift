@@ -97,7 +97,7 @@ class SettingsManager: ObservableObject {
     }
     
     func resetfilteredTypes() {
-        let allAnchorTypes = Array(DataModelManager.shared.getAnchorTypes().map({$0.rawValue}).sorted())
+        let allAnchorTypes = AnchorType.allCases.map({$0.rawValue}).sorted()
         userDefaults.set(allAnchorTypes, forKey: filteredTypesKey)
     }
     
