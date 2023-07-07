@@ -37,7 +37,6 @@ struct ConnectingView: View {
     @State var forwardAndBackwardConnected: Bool = false
     
     @State var saved: Bool = false
-    @AccessibilityFocusState var focusOnImprovePopup
     
     @State var startAnchor: String = ""
     @State var stopAnchor: String = ""
@@ -87,7 +86,6 @@ struct ConnectingView: View {
                                 }, onAppear: {
                                     PathRecorder.shared.stopRecordingPath()
                                     PathRecorder.shared.toFirebase()
-                                    focusOnImprovePopup = true
                                 })
                             }
                         }

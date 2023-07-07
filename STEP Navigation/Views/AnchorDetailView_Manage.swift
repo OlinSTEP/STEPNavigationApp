@@ -31,6 +31,7 @@ struct AnchorDetailView_Manage: View {
                         SmallNavigationLink(destination: SelectConnectingAnchorsView(anchorID1: anchorDetails.id), label: "Connect")
                         SmallButton(action: {
                             showingConfirmation = true
+                            focusOnPopup = true
                         }, label: "Delete", invert: true)
                     }
                 }
@@ -39,6 +40,7 @@ struct AnchorDetailView_Manage: View {
                     ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to delete this anchor?", subtitleText: "This action cannot be undone.", confirmButtonLabel: "Delete", confirmButtonDestination: HomeView()) {
                         FirebaseManager.shared.deleteCloudAnchor(id: anchorDetails.id)
                     }
+                    .accessibilityFocused($focusOnPopup)
                 }
             }
         }
