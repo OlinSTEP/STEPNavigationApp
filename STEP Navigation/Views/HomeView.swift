@@ -52,7 +52,6 @@ struct HomeView: View {
                     }
                 }
             }
-            .accentColor(AppColor.background)
         }
     }
 }

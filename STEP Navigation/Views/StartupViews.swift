@@ -45,13 +45,13 @@ struct StartupPage1:  View {
         ZStack {
             ScreenBackground {
                 VStack {
-                    ScreenHeader(title: "Welcome to Clew Maps 2", subtitle: "Precise short distance navigation for the blind and visually impaired", backButtonHidden: true)
+                    ScreenHeader(title: "Welcome to Clew Maps 2", subtitle: "Precise Short Distance Navigation for the Blind and Visually Impaired", backButtonHidden: true)
                     ScrollView {
                         StartupText("Before getting started please note the following: This is not a cane replacement. Please use your own judgment while traveling. Please be aware of your surroundings while using the app. It is your responsibility to maintain your personal safety at all times while using Clew Maps 2.")
                     }
                         Spacer()
                         
-                        VStack(spacing: 20) {
+                    VStack(spacing: 28) {
                             SmallButton(action: {
                                 showFullTerms = true
                             }, label: "View Full Terms and Conditions", invert: true)
@@ -97,8 +97,10 @@ struct StartupPage2:  View {
                     StartupText("Clew Maps 2 is designed to help blind and visually impaired users navigate short indoor distances. Pinpoint your exact location using visual anchors and follow the precise guidance to within a cane's length of your destination.")
                 }
                 Spacer()
-                SmallNavigationLink(destination: StartupPage3(), label: "Launch Tutorial")
-                SmallNavigationLink(destination: HomeView(), label: "Skip Tutorial", invert: true)
+                VStack(spacing: 28) {
+                    SmallNavigationLink(destination: StartupPage3(), label: "Launch Tutorial")
+                    SmallNavigationLink(destination: HomeView(), label: "Skip Tutorial", invert: true)
+                }
             }
         }
     }
@@ -185,8 +187,8 @@ struct StartupPage8:  View {
         ScreenBackground {
             VStack {
                 ScreenHeader(title: "See it in Action", backButtonHidden: true)
-                StartupText("In this video we will demonstraate how Clew works.")
-                VideoView(videoID: "G5BonVtsfmY")
+                StartupText("In this video we will demonstrate how Clew works.")
+//                VideoView(videoID: "G5BonVtsfmY")
                 Spacer()
                 SmallNavigationLink(destination: HomeView(), label: "Finish Tutorial")
             }

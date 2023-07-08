@@ -200,10 +200,12 @@ struct SettingsDetailView_Units: View {
                         UserDefaults.standard.setValue(false, forKey: "units")
                         selected = false
                     }, label: "Imperial", selected: selected == false, color1: AppColor.foreground, color2: AppColor.background)
+                    .accessibilityLabel(selected ? "Imperial" : "Imperial Selected ")
                     SmallButton_Settings(action: {
                         UserDefaults.standard.setValue(true, forKey: "units")
                         selected = true
                     }, label: "Metric", selected: selected == true, color1: AppColor.foreground, color2: AppColor.background)
+                    .accessibilityLabel(selected ? "Metric Selected" : "Metric")
                     Spacer()
                 }
                 .padding(.horizontal)
@@ -225,10 +227,12 @@ struct SettingsDetailView_PhoneBodyOffset: View {
                         UserDefaults.standard.setValue(false, forKey: "adjustPhoneBodyOffset")
                         selected = false
                     }, label: "Off", selected: selected == false, color1: AppColor.foreground, color2: AppColor.background)
+                    .accessibilityLabel(selected ? "Off" : "Off Selected ")
                     SmallButton_Settings(action: {
                         UserDefaults.standard.setValue(true, forKey: "adjustPhoneBodyOffset")
                         selected = true
                     }, label: "On", selected: selected == true, color1: AppColor.foreground, color2: AppColor.background)
+                    .accessibilityLabel(selected ? "On Selected " : "On")
                     Spacer()
                 }
                 .padding(.horizontal)
@@ -279,6 +283,7 @@ struct CustomCrumbColor: View {
                 selectedCrumbColor = settingsManager.loadCrumbColor()
             }
         }
+        .accessibilityAddTraits(.isModal)
     }
 }
 
@@ -373,6 +378,7 @@ struct CustomColorScheme: View {
         .background(AppColor.background)
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityAddTraits(.isModal)
     }
     
     private func updateColorScheme() {

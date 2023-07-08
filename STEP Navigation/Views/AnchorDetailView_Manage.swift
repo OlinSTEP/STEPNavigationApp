@@ -20,14 +20,12 @@ struct AnchorDetailView_Manage: View {
                     ScreenHeader(title: "Manage Anchor")
                     if let currentLocation = PositioningModel.shared.currentLatLon {
                         let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                        AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)
+                        AnchorDetailsText(anchorDetails: anchorDetails)
                             .padding(.top)
                     }
                     Spacer()
                     VStack(spacing: 18) {
-                        SmallNavigationLink(destination: AnchorDetailEditView(anchorDetails: anchorDetails, buttonLabel: "Save", buttonDestination: {
-                            HomeView()
-                        }), label: "Edit")
+                        SmallNavigationLink(destination: AnchorDetailEditView(anchorDetails: anchorDetails, buttonLabel: "Save", buttonDestination: {AnchorDetailView_Manage(anchorDetails: anchorDetails)}), label: "Edit")
                         SmallNavigationLink(destination: SelectConnectingAnchorsView(anchorID1: anchorDetails.id), label: "Connect")
                         SmallButton(action: {
                             showingConfirmation = true

@@ -16,17 +16,15 @@ struct AnchorDetailView<Destination: View>: View {
     var body: some View {
         ScreenBackground {
             VStack {
+                ScreenHeader()
                 if let currentLocation = PositioningModel.shared.currentLatLon {
                     let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                    AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)
+                    AnchorDetailsText(anchorDetails: anchorDetails)
                         .padding(.top)
                 }
                 Spacer()
                 SmallNavigationLink(destination: buttonDestination, label: buttonLabel)
             }
-            .navigationTitle("")
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(AppColor.foreground, for: .navigationBar)
         }
     }
 }

@@ -177,7 +177,7 @@ struct AnchorInfoPopup: View {
             if let anchorDetailsStart = anchorDetailsStart {
                 if let currentLocation = PositioningModel.shared.currentLatLon {
                     let distance = currentLocation.distance(from: anchorDetailsStart.getLocationCoordinate())
-                    AnchorDetailsText(title: anchorDetailsStart.getName(), distanceAway: distance)
+                    AnchorDetailsText(anchorDetails: anchorDetailsStart)
                 }
             } else {
                 HStack {
@@ -201,7 +201,7 @@ struct AnchorInfoPopup: View {
             }
             if let currentLocation = positioningModel.currentLatLon {
                 let distance = currentLocation.distance(from: anchorDetailsEnd.getLocationCoordinate())
-                AnchorDetailsText(title: anchorDetailsEnd.getName(), distanceAway: distance)
+                AnchorDetailsText(anchorDetails: anchorDetailsEnd)
             }
             Spacer()
             SmallButton(action: {

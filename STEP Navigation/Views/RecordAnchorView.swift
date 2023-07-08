@@ -68,7 +68,7 @@ struct RecordAnchorView: View {
                 
                 if showNextButton == true {
                     let anchorDetails = DataModelManager.shared.getLocationDataModel(byID: anchorID)
-                    ARViewTextOverlay(text: "Cloud Anchor Created ", navLabel: "Next", navDestination: AnchorDetailEditView(anchorDetails: anchorDetails!, buttonLabel: "Save Anchor", hideBackButton: true) {HomeView()}) //TODO: remove force unwrap here
+                    ARViewTextOverlay(text: "Cloud Anchor Created ", navLabel: "Next", navDestination: AnchorDetailEditView(anchorDetails: anchorDetails!, buttonLabel: "Save Anchor", buttonDestination: {HomeView()}, hideBackButton: true)) //TODO: remove force unwrap here
                 }
             }
             

@@ -77,8 +77,8 @@ struct CustomBackButton<Destination: View>: ToolbarContent {
                         .bold()
                         .accessibilityHidden(true)
                     Text("Back")
-                        .foregroundColor(AppColor.background)
                 }
+                .foregroundColor(AppColor.background)
             })
         }
     }

@@ -17,7 +17,6 @@ struct AnchorDetailEditView<Destination: View>: View {
     @State var showAnchorTypeMenu: Bool = false
     @State var showCorrespondingExitMenu: Bool = false
     
-    
     @State var editing: Bool = false
     @FocusState var editingOrg: Bool
     @State var allOrganizations: [String] = DataModelManager.shared.getAllNearbyOrganizations().sorted(by: { $0 < $1 })
@@ -54,13 +53,14 @@ struct AnchorDetailEditView<Destination: View>: View {
         ZStack {
             ScreenBackground {
                 VStack {
-                    ScreenHeader(title: "Edit Anchor")
+                    ScreenHeader(title: "Edit Anchor", backButtonHidden: hideBackButton)
                     VStack {
                         ScrollView {
                             VStack(spacing: 12) {
                                 VStack {
                                     LeftLabel(text: "Name", textSize: .title2)
                                     CustomTextField(entry: $newAnchorName)
+                                        .accessibilityLabel("Name")
                                 }
                                 //Commenting out organization for the co-designers (until the new address based organization system is ready)
 //                                VStack {
@@ -84,6 +84,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                                 VStack {
                                     LeftLabel(text: "Location Notes", textSize: .title2)
                                     CustomTextField(entry: $newNotes, textBoxSize: .large)
+                                        .accessibilityLabel("Location Notes")
                                 }
                                 //Commenting out visibility for co-designers until properly implemented
 //                                VStack {

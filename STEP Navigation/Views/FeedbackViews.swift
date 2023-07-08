@@ -18,7 +18,6 @@ enum FeedbackStatus: String {
 
 struct AnchorDetailView_NavigationArrived: View {
     @ObservedObject var settingsManager = SettingsManager.shared
-    
     let anchorDetails: LocationDataModel
         
     var body: some View {
@@ -27,7 +26,7 @@ struct AnchorDetailView_NavigationArrived: View {
                 ScreenHeader()
                 if let currentLocation = PositioningModel.shared.currentLatLon {
                     let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                    AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)
+                    AnchorDetailsText(anchorDetails: anchorDetails)
                         .padding(.vertical)
                 }
                 Spacer(minLength: 160)
@@ -125,7 +124,6 @@ struct NavigationFeedbackView: View {
 
 struct AnchorDetailView_ConnectingArrived: View {
     @ObservedObject var settingsManager = SettingsManager.shared
-        
     let anchorDetails: LocationDataModel
         
     var body: some View {
@@ -134,7 +132,7 @@ struct AnchorDetailView_ConnectingArrived: View {
             VStack {
                 if let currentLocation = PositioningModel.shared.currentLatLon {
                     let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                    AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)
+                    AnchorDetailsText(anchorDetails: anchorDetails)
                         .padding(.vertical)
                 }
                 Text("How was your experience with this recording session?")
@@ -238,6 +236,7 @@ struct ThumbsUpDown<Destination: View>: View {
                     .foregroundColor(AppColor.background)
                     .background(AppColor.foreground)
                     .cornerRadius(10)
+                    .accessibilityLabel("Thumbs Up")
             }
             NavigationLink(destination: thumbsDownDestination) {
                 Image(systemName: "hand.thumbsdown")
@@ -246,6 +245,7 @@ struct ThumbsUpDown<Destination: View>: View {
                     .foregroundColor(AppColor.foreground)
                     .background(AppColor.background)
                     .cornerRadius(10)
+                    .accessibilityLabel("Thumbs Down")
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(AppColor.foreground, lineWidth: 2))

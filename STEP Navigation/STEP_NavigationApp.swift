@@ -27,6 +27,7 @@ struct STEP_NavigationApp: App {
 //                    HomeView()
 //                }
             }
+            .accentColor(AppColor.background)
             .environmentObject(SettingsManager.shared)
             .onAppear {
                 UIApplication.shared.isIdleTimerDisabled = true

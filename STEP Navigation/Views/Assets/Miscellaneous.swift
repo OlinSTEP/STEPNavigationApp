@@ -8,28 +8,42 @@
 import SwiftUI
 
 struct AnchorDetailsText: View {
-    let title: String
-    let distanceAway: Double
-    let locationNotes: String
+    let anchorDetails: LocationDataModel
     let textColor: Color
     
-    init(title: String, distanceAway: Double, locationNotes: String = "", textColor: Color = AppColor.foreground) {
-        self.title = title
-        self.distanceAway = distanceAway
-        self.locationNotes = locationNotes
+    @State var distanceAway: Double = 0.0
+    
+    @State var locationNotes: String
+    @State var anchorName: String
+    @State var anchorCategory: String
+
+    let metadata: CloudAnchorMetadata
+
+    init(anchorDetails: LocationDataModel, textColor: Color = AppColor.foreground, distanceAway: Double = 0.0) {
+        metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: anchorDetails.getCloudAnchorID()!)! //TODO: lots of force unwrapping happening here; can we get rid of this?
+        anchorName = metadata.name
+        anchorCategory = metadata.type.rawValue
+        locationNotes = metadata.notes
+        self.anchorDetails = anchorDetails
         self.textColor = textColor
+        self.distanceAway = distanceAway
     }
     
     var body: some View {
         VStack {
             HStack {
-                Text(title)
+                Text(anchorDetails.getName())
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
                 Spacer()
             }
-            
+//            HStack {
+//                Text("Type: \(anchorCategory)")
+//                    .font(.title)
+//                    .padding(.horizontal)
+//                Spacer()
+//            }
             HStack {
                 Text("\(distanceAway.metersAsUnitString) away")
                         .font(.title)
@@ -58,6 +72,11 @@ struct AnchorDetailsText: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 2)
+        }
+        .onAppear() {
+            if let currentLocation = PositioningModel.shared.currentLatLon {
+                distanceAway = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
+            }
         }
         .foregroundColor(AppColor.foreground)
     }
