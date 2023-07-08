@@ -18,7 +18,7 @@ enum FeedbackStatus: String {
 
 struct AnchorDetailView_NavigationArrived: View {
     @ObservedObject var settingsManager = SettingsManager.shared
-    let anchorDetails: LocationDataModel
+    @State var anchorDetails: LocationDataModel
         
     var body: some View {
         ScreenBackground {
@@ -26,7 +26,17 @@ struct AnchorDetailView_NavigationArrived: View {
                 ScreenHeader()
                 if let currentLocation = PositioningModel.shared.currentLatLon {
                     let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                    AnchorDetailsText(anchorDetails: anchorDetails)
+                    HStack {
+                        Text("TO")
+                            .font(.title2)
+                            .padding(.horizontal)
+                            .padding(.top)
+                            .padding(.bottom, 1)
+                            .foregroundColor(AppColor.foreground)
+                        
+                        Spacer()
+                    }
+                    AnchorDetailsText(anchorDetails: $anchorDetails)
                         .padding(.vertical)
                 }
                 Spacer(minLength: 160)
@@ -121,45 +131,6 @@ struct NavigationFeedbackView: View {
     }
 }
 
-
-struct AnchorDetailView_ConnectingArrived: View {
-    @ObservedObject var settingsManager = SettingsManager.shared
-    let anchorDetails: LocationDataModel
-        
-    var body: some View {
-        ScreenBackground {
-            ScreenHeader()
-            VStack {
-                if let currentLocation = PositioningModel.shared.currentLatLon {
-                    let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                    AnchorDetailsText(anchorDetails: anchorDetails)
-                        .padding(.vertical)
-                }
-                Text("How was your experience with this recording session?")
-                    .bold()
-                    .font(.title)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .foregroundColor(AppColor.foreground)
-
-                ThumbsUpDown(thumbsUpAction: {
-                    RecordFeedbackDataModel().saveRecordFeedback(
-                        recordFeedbackStatus: "good",
-                        recordResponse: "",
-                        isHoldAnchorSelected: false,
-                        isRecordingInstructionSelected: false,
-                        isRecordLongerSelected: false,
-                        isRecordOtherSelected: false
-                    )}, thumbsDownDestination: ConnectingFeedbackView())
-                Spacer()
-                SmallNavigationLink(destination: HomeView(), label: "Home")
-            }
-        }
-        .navigationBarBackButtonHidden()
-    }
-}
-
-
 struct ConnectingFeedbackView: View {
     @State var feedbackStatus: FeedbackStatus = .bad
     @State var response: String = ""
@@ -200,7 +171,7 @@ struct ConnectingFeedbackView: View {
                 .padding(.top, 20)
                 
                 SmallNavigationLink(destination: HomeView(), label: "Done") {
-                    RecordFeedbackDataModel().saveRecordFeedback(
+                    ConnectingFeedbackDataModel().saveRecordFeedback(
                         recordFeedbackStatus: feedbackStatus.rawValue,
                         recordResponse: response,
                         isHoldAnchorSelected: isHoldAnchorSelected,

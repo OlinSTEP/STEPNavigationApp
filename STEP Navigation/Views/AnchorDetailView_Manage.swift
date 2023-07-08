@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 
 struct AnchorDetailView_Manage: View {
-    let anchorDetails: LocationDataModel
+    @State var anchorDetails: LocationDataModel
     @State var showingConfirmation = false
     @AccessibilityFocusState var focusOnPopup
     
@@ -20,7 +20,7 @@ struct AnchorDetailView_Manage: View {
                     ScreenHeader(title: "Manage Anchor")
                     if let currentLocation = PositioningModel.shared.currentLatLon {
                         let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                        AnchorDetailsText(anchorDetails: anchorDetails)
+                        AnchorDetailsText(anchorDetails: $anchorDetails)
                             .padding(.top)
                     }
                     Spacer()

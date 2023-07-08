@@ -8,7 +8,7 @@
 import Foundation
 
 /// A class to handle creating route recording feedback and uploading it to Firebase
-class RecordFeedbackDataModel {
+class ConnectingFeedbackDataModel {
 /// Saves route recording feedback information given by the user. The feedback is serialized to JSON format and then uploaded.
     /// - Parameters:
     ///   - recordFeedbackStatus: A string representing the user's choice, either 'thumbs up' or 'thumbs down'.

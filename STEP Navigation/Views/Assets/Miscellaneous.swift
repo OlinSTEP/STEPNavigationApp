@@ -8,23 +8,22 @@
 import SwiftUI
 
 struct AnchorDetailsText: View {
-    let anchorDetails: LocationDataModel
+    @Binding var anchorDetails: LocationDataModel
     let textColor: Color
     
     @State var distanceAway: Double = 0.0
-    
     @State var locationNotes: String
     @State var anchorName: String
     @State var anchorCategory: String
 
     let metadata: CloudAnchorMetadata
 
-    init(anchorDetails: LocationDataModel, textColor: Color = AppColor.foreground, distanceAway: Double = 0.0) {
-        metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: anchorDetails.getCloudAnchorID()!)! //TODO: lots of force unwrapping happening here; can we get rid of this?
+    init(anchorDetails: Binding<LocationDataModel>, textColor: Color = AppColor.foreground, distanceAway: Double = 0.0) {
+        metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: anchorDetails.wrappedValue.getCloudAnchorID()!)! //TODO: lots of force unwrapping happening here; can we get rid of this?
         anchorName = metadata.name
         anchorCategory = metadata.type.rawValue
         locationNotes = metadata.notes
-        self.anchorDetails = anchorDetails
+        self._anchorDetails = anchorDetails
         self.textColor = textColor
         self.distanceAway = distanceAway
     }
@@ -32,24 +31,22 @@ struct AnchorDetailsText: View {
     var body: some View {
         VStack {
             HStack {
-                Text(anchorDetails.getName())
+                Text(anchorName)
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
                 Spacer()
             }
-//            HStack {
-//                Text("Type: \(anchorCategory)")
-//                    .font(.title)
-//                    .padding(.horizontal)
-//                Spacer()
-//            }
             HStack {
+                Text("\(anchorCategory)")
+                    .accessibilityLabel("Anchor Type \(anchorCategory)")
+                Text("|")
+                    .accessibilityHidden(true)
                 Text("\(distanceAway.metersAsUnitString) away")
-                        .font(.title)
-                        .padding(.horizontal)
                 Spacer()
             }
+            .font(.title)
+            .padding(.horizontal)
             VStack {
                 HStack {
                     Text("Location Notes")
@@ -186,21 +183,23 @@ struct ListOfAnchors: View {
                 if case .indoorStartingPoint(let destinationAnchor) = anchorSelectionType {
                    if NavigationManager.shared.getReachabilityFromOutdoors(outOf: [destinationAnchor]).first == true {
                        LargeNavigationLink(destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: destinationAnchor), label: "Start Outside", invert: true)
-                       
                    }
                 }
                 ForEach(0..<anchors.count, id: \.self) { idx in
                     switch anchorSelectionType {
                     case .indoorStartingPoint(let destinationAnchor):
                         if isReachable[idx] {
-                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor)), label: "\(anchors[idx].getName())")
+//                            LargeNavigationLink(destination: NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor), label: "\(anchors[idx].getName())")
+                            LargeNavigationLink(destination: AnchorDetailView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor, buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor)), label: "\(anchors[idx].getName())")
                         }
                     case .indoorEndingPoint:
                         if isReachable[idx] {
-                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Choose Start Anchor", buttonDestination: StartAnchorListView(destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())")
+                            LargeNavigationLink(destination: StartAnchorListView(destinationAnchorDetails: anchors[idx]), label: "\(anchors[idx].getName())")
+//                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Choose Start Anchor", buttonDestination: StartAnchorListView(destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())")
                         }
                     case .outdoorEndingPoint:
-                        LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())")
+                        LargeNavigationLink(destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx]), label: "\(anchors[idx].getName())")
+//                        LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())")
                     }
                 }
             }

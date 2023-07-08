@@ -156,8 +156,8 @@ struct LoadingPopup: View {
 
 ///  This struct manages a help popup that displays the details of the user's start locations, end locations and their distances.
 struct AnchorInfoPopup: View {
-    let anchorDetailsStart: LocationDataModel?
-    let anchorDetailsEnd: LocationDataModel
+    @State var anchorDetailsStart: LocationDataModel?
+    @State var anchorDetailsEnd: LocationDataModel
     @ObservedObject var positioningModel = PositioningModel.shared
     
     @Binding var showHelp: Bool
@@ -165,44 +165,7 @@ struct AnchorInfoPopup: View {
     var body: some View {
         VStack {
             ScreenHeader()
-            HStack {
-                Text("FROM")
-                    .font(.title2)
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .padding(.bottom, 1)
-                    .foregroundColor(AppColor.foreground)
-                Spacer()
-            }
-            if let anchorDetailsStart = anchorDetailsStart {
-                if let currentLocation = PositioningModel.shared.currentLatLon {
-                    let distance = currentLocation.distance(from: anchorDetailsStart.getLocationCoordinate())
-                    AnchorDetailsText(anchorDetails: anchorDetailsStart)
-                }
-            } else {
-                HStack {
-                    Text("Started Outside")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.horizontal)
-                        .foregroundColor(AppColor.foreground)
-                    Spacer()
-                }
-            }
-            HStack {
-                Text("TO")
-                    .font(.title2)
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .padding(.bottom, 1)
-                    .foregroundColor(AppColor.foreground)
-
-                Spacer()
-            }
-            if let currentLocation = positioningModel.currentLatLon {
-                let distance = currentLocation.distance(from: anchorDetailsEnd.getLocationCoordinate())
-                AnchorDetailsText(anchorDetails: anchorDetailsEnd)
-            }
+            FromToAnchorDetails(startAnchorDetails: $anchorDetailsStart, destinationAnchorDetails: $anchorDetailsEnd)
             Spacer()
             SmallButton(action: {
                 showHelp.toggle()
