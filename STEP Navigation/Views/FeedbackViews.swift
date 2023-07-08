@@ -36,7 +36,7 @@ struct AnchorDetailView_NavigationArrived: View {
                         
                         Spacer()
                     }
-                    AnchorDetailsText(anchorDetails: $anchorDetails)
+                    AnchorDetailsText(anchorDetails: $anchorDetails, distanceAway: distance)
                         .padding(.vertical)
                 }
                 Spacer(minLength: 160)

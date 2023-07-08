@@ -20,7 +20,7 @@ struct ManageAnchorsListView: View {
         ScreenBackground {
             VStack {
                 ScreenHeader(title: "All Anchors")
-//                //Custom Header Component for Select Organization Picker integration
+// Custom Header Component for Select Organization Picker integration - commented out until organization picker comes back
 //                VStack {
 //                    HStack {
 //                        Text("Anchors")

@@ -21,6 +21,7 @@ struct AnchorDetailView<Destination: View>: View {
                 FromToAnchorDetails(startAnchorDetails: $startAnchorDetails, destinationAnchorDetails: $destinationAnchorDetails)
                 Spacer()
                 VStack(spacing: 28) {
+                    //Attempt to implement Switch Anchors Button; commented out because of unresolved bugs; will continue working on implementation
 //                    SmallButton(action: {
 //                        if startAnchorDetails != nil {
 //                            self.startAnchorDetails! = self.destinationAnchorDetails
@@ -29,56 +30,6 @@ struct AnchorDetailView<Destination: View>: View {
 //                    }, label: "Switch Anchors", invert: true)
                     SmallNavigationLink(destination: buttonDestination, label: buttonLabel)
                 }
-            }
-        }
-    }
-}
-
-struct FromToAnchorDetails: View {
-    @Binding var startAnchorDetails: LocationDataModel?
-    @Binding var destinationAnchorDetails: LocationDataModel
-    
-    var body: some View {
-        ScrollView {
-            HStack {
-                Text("FROM")
-                    .font(.title2)
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .padding(.bottom, 1)
-                    .foregroundColor(AppColor.foreground)
-                Spacer()
-            }
-            if let startDetails = startAnchorDetails {
-                if let currentLocation = PositioningModel.shared.currentLatLon {
-                    let distance = currentLocation.distance(from: startDetails.getLocationCoordinate())
-                    AnchorDetailsText(anchorDetails: .init(get: { startDetails }, set: { newValue in
-                                    startAnchorDetails = newValue
-                    }), distanceAway: distance)
-                }
-            } else {
-                HStack {
-                    Text("Start Outside")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.horizontal)
-                        .foregroundColor(AppColor.foreground)
-                    Spacer()
-                }
-            }
-            HStack {
-                Text("TO")
-                    .font(.title2)
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .padding(.bottom, 1)
-                    .foregroundColor(AppColor.foreground)
-                
-                Spacer()
-            }
-            if let currentLocation = PositioningModel.shared.currentLatLon {
-                let distance = currentLocation.distance(from: destinationAnchorDetails.getLocationCoordinate())
-                AnchorDetailsText(anchorDetails: $destinationAnchorDetails, distanceAway: distance)
             }
         }
     }

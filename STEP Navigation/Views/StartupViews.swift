@@ -188,7 +188,7 @@ struct StartupPage8:  View {
             VStack {
                 ScreenHeader(title: "See it in Action", backButtonHidden: true)
                 StartupText("In this video we will demonstrate how Clew works.")
-//                VideoView(videoID: "G5BonVtsfmY")
+                VideoView(videoID: "G5BonVtsfmY")
                 Spacer()
                 SmallNavigationLink(destination: HomeView(), label: "Finish Tutorial")
             }

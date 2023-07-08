@@ -79,6 +79,57 @@ struct AnchorDetailsText: View {
     }
 }
 
+struct FromToAnchorDetails: View {
+    @Binding var startAnchorDetails: LocationDataModel?
+    @Binding var destinationAnchorDetails: LocationDataModel
+    
+    var body: some View {
+        ScrollView {
+            HStack {
+                Text("FROM")
+                    .font(.title2)
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 1)
+                    .foregroundColor(AppColor.foreground)
+                Spacer()
+            }
+            if let startDetails = startAnchorDetails {
+                if let currentLocation = PositioningModel.shared.currentLatLon {
+                    let distance = currentLocation.distance(from: startDetails.getLocationCoordinate())
+                    AnchorDetailsText(anchorDetails: .init(get: { startDetails }, set: { newValue in
+                                    startAnchorDetails = newValue
+                    }), distanceAway: distance)
+                }
+            } else {
+                HStack {
+                    Text("Start Outside")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.horizontal)
+                        .foregroundColor(AppColor.foreground)
+                    Spacer()
+                }
+            }
+            HStack {
+                Text("TO")
+                    .font(.title2)
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 1)
+                    .foregroundColor(AppColor.foreground)
+                
+                Spacer()
+            }
+            if let currentLocation = PositioningModel.shared.currentLatLon {
+                let distance = currentLocation.distance(from: destinationAnchorDetails.getLocationCoordinate())
+                AnchorDetailsText(anchorDetails: $destinationAnchorDetails, distanceAway: distance)
+            }
+        }
+    }
+}
+
+
 struct ChecklistItem: View {
     @Binding var toggle: Bool
     let label: String
@@ -189,17 +240,14 @@ struct ListOfAnchors: View {
                     switch anchorSelectionType {
                     case .indoorStartingPoint(let destinationAnchor):
                         if isReachable[idx] {
-//                            LargeNavigationLink(destination: NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor), label: "\(anchors[idx].getName())")
                             LargeNavigationLink(destination: AnchorDetailView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor, buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor)), label: "\(anchors[idx].getName())")
                         }
                     case .indoorEndingPoint:
                         if isReachable[idx] {
                             LargeNavigationLink(destination: StartAnchorListView(destinationAnchorDetails: anchors[idx]), label: "\(anchors[idx].getName())")
-//                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Choose Start Anchor", buttonDestination: StartAnchorListView(destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())")
                         }
                     case .outdoorEndingPoint:
                         LargeNavigationLink(destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx]), label: "\(anchors[idx].getName())")
-//                        LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())")
                     }
                 }
             }
