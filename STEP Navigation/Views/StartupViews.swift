@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVKit
 
 struct StartupPage0: View {
     var settingsManager = SettingsManager.shared
@@ -22,7 +23,7 @@ struct StartupPage0: View {
                         .padding()
                         .foregroundColor(AppColor.foreground)
                     Text("Designed by a research group at Olin College of Engineering")
-                        .font(.title2)
+                        .font(.title)
                         .padding()
                         .foregroundColor(AppColor.foreground)
                         .multilineTextAlignment(.center)
@@ -44,11 +45,13 @@ struct StartupPage1:  View {
         ZStack {
             ScreenBackground {
                 VStack {
-                    ScreenHeader(title: "Welcome to Clew Maps 2", subtitle: "Precise short distance navigation for the blind and visually impaired", backButtonHidden: true)
+                    ScreenHeader(title: "Welcome to Clew Maps 2", subtitle: "Precise Short Distance Navigation for the Blind and Visually Impaired", backButtonHidden: true)
+                    ScrollView {
                         StartupText("Before getting started please note the following: This is not a cane replacement. Please use your own judgment while traveling. Please be aware of your surroundings while using the app. It is your responsibility to maintain your personal safety at all times while using Clew Maps 2.")
+                    }
                         Spacer()
                         
-                        VStack(spacing: 20) {
+                    VStack(spacing: 28) {
                             SmallButton(action: {
                                 showFullTerms = true
                             }, label: "View Full Terms and Conditions", invert: true)
@@ -61,11 +64,11 @@ struct StartupPage1:  View {
                     ScreenHeader(title: "Terms and Conditions", backButtonHidden: true)
                     ScrollView {
                         LeftLabel(text: "Privacy")
-                        Text("Clew Maps 2 will log the 3D path that your phone travels when using the app. We use this 3D path information to understand the app's shortcomings and to improve its accuracy. We do not tie this 3D path information to the location where the path was traveled (e.g., it is not linked to GPS position). We will not share these data logs with any third party; however, we may make aggregate analysis of this data public (e.g., in an academic paper). Any changes to this privacy policy will be detailed in the app store release notes of future versions of Clew Maps 2.")
+                        StartupText("Clew Maps 2 will log the 3D path that your phone travels when using the app. We use this 3D path information to understand the app's shortcomings and to improve its accuracy. We do not tie this 3D path information to the location where the path was traveled (e.g., it is not linked to GPS position). We will not share these data logs with any third party; however, we may make aggregate analysis of this data public (e.g., in an academic paper). Any changes to this privacy policy will be detailed in the app store release notes of future versions of Clew Maps 2.")
                             .padding(.bottom, 4)
                         
                         LeftLabel(text: "Contact")
-                        Text("Want to get involved with Clew Maps 2? Have some feedback for us about the app? Reach out to the team at example@example.com.")
+                        StartupText("Want to get involved with Clew Maps 2? Have some feedback for us about the app? Reach out to the team leader at pruvolo@olin.edu.")
                     }
                     .padding(.horizontal)
                     Spacer()
@@ -90,10 +93,14 @@ struct StartupPage2:  View {
         ScreenBackground {
             VStack {
                 ScreenHeader(title: "What is Clew Maps 2?", backButtonHidden: true)
-                StartupText("Clew Maps 2 is designed to help blind and visually impaired users navigate short indoor distances. Pinpoint your exact location using visual anchors and follow the precise guidance to within a cane's length of your destination.")
+                ScrollView {
+                    StartupText("Clew Maps 2 is designed to help blind and visually impaired users navigate short indoor distances. Pinpoint your exact location using visual anchors and follow the precise guidance to within a cane's length of your destination.")
+                }
                 Spacer()
-                SmallNavigationLink(destination: StartupPage3(), label: "Launch Tutorial")
-                SmallNavigationLink(destination: HomeView(), label: "Skip Tutorial", invert: true)
+                VStack(spacing: 28) {
+                    SmallNavigationLink(destination: StartupPage3(), label: "Launch Tutorial")
+                    SmallNavigationLink(destination: HomeView(), label: "Skip Tutorial", invert: true)
+                }
             }
         }
     }
@@ -104,8 +111,9 @@ struct StartupPage3:  View {
         ScreenBackground {
             VStack {
                 ScreenHeader(title: "Using Clew")
-                
-                StartupParagraph(["Clew helps you find your way indoors by recording your route when you go from point A to point B. By recording your route Clew helps you get back to where you started.", "Clew is best used indoors over short distances. Because the app does not use GPS for navigation it is limited outdoors and over long distances."])
+                ScrollView {
+                    UnorderedList(listItems: ["Clew helps you find your way indoors by recording and connecting anchors.", "The app is best used over short distances."])
+                }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage4(), label: "Next")
             }
@@ -122,7 +130,9 @@ struct StartupPage4:  View {
         ScreenBackground {
             VStack {
                 ScreenHeader(title: "Holding Your Phone")
-                StartupParagraph(["Clew uses your phone's camera and inertial sensors to track your position as you move around while navigating a route.", "For the app to function properly. Make sure to hold your phone vertically, with the back camera facing forward at chest level."])
+                ScrollView {
+                    UnorderedList(listItems: ["Clew uses your phone’s camera and sensors to track your position as you navigate a route.", "Hold your phone vertically, with the back camera facing forward at chest level."])
+                }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage5(), label: "Next")
             }
@@ -139,24 +149,9 @@ struct StartupPage5:  View {
         ScreenBackground {
             VStack {
                 ScreenHeader(title: "Following a route")
-                StartupParagraph(["Clew will make sounds, vibrate, and give you audio cues to help you follow a route.", "These sounds and cues will tell you if you're going the right way, if you've slightly gone off track, or if you're completely off the route. They are there to guide you and make sure you stay on the right path."])
-                Spacer()
-                SmallNavigationLink(destination: StartupPage6(), label: "Next")
-            }
-            .navigationBarBackButtonHidden()
-            .toolbar {
-                ExitTutorial()
-            }
-        }
-    }
-}
-
-struct StartupPage6:  View {
-    var body: some View {
-        ScreenBackground {
-            VStack {
-                ScreenHeader(title: "Getting Back on Track")
-                StartupParagraph(["You will hear a different sound when you're not following the right path. This can also happen if your phone is not pointed in the direction of the path. If you realize you're off track, you should stop and turn around until you hear ticking sounds, which means you're facing the right direction.", "Press the 'Get Directions' button to receive audio directions on how to get back on the route."])
+                ScrollView {
+                    UnorderedList(listItems: ["Clew will vibrate and give you audio clues as you follow a route. If you veer off the path the clues will stop.", "If you stop hearing the audio clues, stop and turn the phone from side to side until the sounds resume.", "If needed, press the 'Get Directions' button for audio directions to get back on the route."])
+                }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage7(), label: "Next")
             }
@@ -172,8 +167,10 @@ struct StartupPage7:  View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "See it in Action")
-                StartupText("In this video...")
+                ScreenHeader(title: "Anchors")
+                ScrollView {
+                    UnorderedList(listItems: ["Anchor points are markers that make sure you stay on the right path as you navigate a route.", "They are crucial for saving routes or pausing navigation because they allow Clew to remember where you are and which way you’re facing.", "You will create anchors at the beginning and end of a route. Clew will automatically add anchors along long routes.", "Try to set the anchor point at an easy-to-remember location (ex. doorframe, furniture)."])
+                }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage8(), label: "Next")
             }
@@ -189,12 +186,12 @@ struct StartupPage8:  View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "Anchors", backButtonHidden: true)
-                StartupParagraph(["Setting anchor points is a crucial skill for saving routes or pausing navigation. It helps Clew remember where you are and which way you're facing in the route's surroundings. Anchor points are like markers that make sure you stay on the right path when you want to follow a saved route later on. They play a vital role in making Clew navigate accurately.", "Anchor points are created at the beginning and at the end of a route. We recommend setting the anchor point at a location that is easy to remember and find at a later time. A good anchor point could be set at a wall, a doorframe, or a piece of furniture like a table."])
+                ScreenHeader(title: "See it in Action", backButtonHidden: true)
+                StartupText("In this video we will demonstrate how Clew works.")
+                VideoView(videoID: "G5BonVtsfmY")
                 Spacer()
                 SmallNavigationLink(destination: HomeView(), label: "Finish Tutorial")
             }
-            .navigationBarBackButtonHidden()
         }
     }
 }
@@ -211,6 +208,7 @@ struct StartupText: View {
             Text(text)
                 .bold()
                 .foregroundColor(AppColor.foreground)
+                .font(.title2)
             Spacer()
         }
         .padding(.horizontal)
@@ -236,7 +234,7 @@ struct StartupParagraph: View {
 
 struct ExitTutorial: ToolbarContent {
     var body: some ToolbarContent {
-        HeaderNavigationLink(label: "Exit Tutorial", placement: .navigationBarLeading, destination: HomeView())
+        HeaderNavigationLink(label: "Exit Tutorial", placement: .navigationBarTrailing, destination: HomeView())
     }
 }
 

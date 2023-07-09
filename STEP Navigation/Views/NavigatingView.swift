@@ -54,7 +54,7 @@ struct NavigatingView: View {
                                         .foregroundColor(AppColor.background)
                                 })
                                 .accessibilityLabel("Repeat Directions")
-                                
+                                Spacer()
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 140)
@@ -122,10 +122,11 @@ struct NavigatingView: View {
             .toolbar {
                 HeaderButton(label: "Exit", placement: .navigationBarLeading) {
                     showingConfirmation = true
-
+                    focusOnExit = true
                 }
                 HeaderButton(label: "Anchor Info", placement: .navigationBarTrailing) {
-                    showingHelp.toggle()
+                    showingHelp = true
+                    focusOnAnchorInfo = true
                 }
             }
         }

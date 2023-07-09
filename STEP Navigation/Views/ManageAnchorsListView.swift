@@ -19,27 +19,28 @@ struct ManageAnchorsListView: View {
     var body: some View {
         ScreenBackground {
             VStack {
-                //Custom Header Component for Select Organization Picker integration
-                VStack {
-                    HStack {
-                        Text("Anchors")
-                            .font(.largeTitle)
-                            .bold()
-                            .padding(.horizontal)
-                            .foregroundColor(AppColor.background)
-                        Spacer()
-                    }
-                    .padding(.bottom, 0.5)
-                    HStack {
-                        Text("At")
-                            .font(.title2)
-                            .padding(.leading)
-                            .foregroundColor(AppColor.background)
-                        OrganizationPicker(selectedOrganization: $selectedOrganization)
-                        Spacer()
-                    }
-                    .padding(.bottom, 20)
-                }
+                ScreenHeader(title: "All Anchors")
+// Custom Header Component for Select Organization Picker integration - commented out until organization picker comes back
+//                VStack {
+//                    HStack {
+//                        Text("Anchors")
+//                            .font(.largeTitle)
+//                            .bold()
+//                            .padding(.horizontal)
+//                            .foregroundColor(AppColor.background)
+//                        Spacer()
+//                    }
+//                    .padding(.bottom, 0.5)
+//                    HStack {
+//                        Text("At")
+//                            .font(.title2)
+//                            .padding(.leading)
+//                            .foregroundColor(AppColor.background)
+//                        OrganizationPicker(selectedOrganization: $selectedOrganization)
+//                        Spacer()
+//                    }
+//                    .padding(.bottom, 20)
+//                }
                 .background(AppColor.foreground)
                 
                 ScrollView {
@@ -49,7 +50,7 @@ struct ManageAnchorsListView: View {
                     VStack(spacing: 32) {
                         ForEach(0..<anchors.count, id: \.self) { idx in
                             if anchors[idx].cloudAnchorMetadata?.organization == selectedOrganization {
-                                LargeNavigationLink(destination: AnchorDetailView_Manage(anchorDetails: anchors[idx]), label: "\(anchors[idx].getName())")
+                                LargeNavigationLink(destination: AnchorDetailView_Manage(anchorDetails: anchors[idx]), label: "\(anchors[idx].getName())", subLabel: "\(anchors[idx].getAnchorType().rawValue)")
                             }
                         }
                     }
@@ -116,6 +117,8 @@ struct OrganizationPicker: View {
             HStack {
                 Text(selectedOrganization.isEmpty ? "Select Organization" : selectedOrganization)
                     .font(.title2)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                 Image(systemName: "chevron.down")
             }
         }

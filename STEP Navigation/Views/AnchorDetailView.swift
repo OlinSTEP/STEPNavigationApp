@@ -9,24 +9,28 @@ import SwiftUI
 import CoreLocation
 
 struct AnchorDetailView<Destination: View>: View {
-    let anchorDetails: LocationDataModel
+    @State var startAnchorDetails: LocationDataModel?
+    @State var destinationAnchorDetails: LocationDataModel
     let buttonLabel: String
     let buttonDestination: Destination
     
     var body: some View {
         ScreenBackground {
             VStack {
-                if let currentLocation = PositioningModel.shared.currentLatLon {
-                    let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                    AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)
-                        .padding(.top)
-                }
+                ScreenHeader(title: "Anchor Details")
+                FromToAnchorDetails(startAnchorDetails: $startAnchorDetails, destinationAnchorDetails: $destinationAnchorDetails)
                 Spacer()
-                SmallNavigationLink(destination: buttonDestination, label: buttonLabel)
+                VStack(spacing: 28) {
+                    //Attempt to implement Switch Anchors Button; commented out because of unresolved bugs; will continue working on implementation
+//                    SmallButton(action: {
+//                        if startAnchorDetails != nil {
+//                            self.startAnchorDetails! = self.destinationAnchorDetails
+//                            self.destinationAnchorDetails = self.startAnchorDetails!
+//                        }
+//                    }, label: "Switch Anchors", invert: true)
+                    SmallNavigationLink(destination: buttonDestination, label: buttonLabel)
+                }
             }
-            .navigationTitle("")
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(AppColor.foreground, for: .navigationBar)
         }
     }
 }
