@@ -59,10 +59,13 @@ class AnnouncementManager: NSObject {
             }
             return
         }
-        if let currentAnnouncement = currentAnnouncement, !currentAnnouncement.1 {
-            // don't interrupt current announcement, but if there is something new to say put it on the queue to say next.  Note that adding it to the queue in this fashion could result in the next queued announcement being preempted
+        if let currentAnnouncement = currentAnnouncement {
             if currentAnnouncement.0 != announcement {
                 nextAnnouncement = (announcement, isPreemptable)
+                if currentAnnouncement.1 && !UIAccessibility.isVoiceOverRunning {
+                    // preempt the current announcement (VoiceOver does this automatically)
+                    synth.stopSpeaking(at: .immediate)
+                }
             }
             return
         }
