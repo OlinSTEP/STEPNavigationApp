@@ -428,7 +428,7 @@ class NavigationManager: ObservableObject {
         if let directionToNextKeypoint = nav.getDirectionToNextKeypoint(currentLocation: curLocation),
            let newDirection = nav.setDirectionText(currentLocation: curLocation, direction: directionToNextKeypoint, displayDistance: true) {
             NavigationManager.shared.navigationDirection = newDirection
-            AnnouncementManager.shared.announce(announcement: newDirection)
+            AnnouncementManager.shared.announce(announcement: newDirection, isPreemptable: true)
         }
     }
     

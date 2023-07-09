@@ -20,11 +20,11 @@ class AnnouncementManager: NSObject {
     /// When VoiceOver is not active, we use AVSpeechSynthesizer for speech feedback
     let synth = AVSpeechSynthesizer()
     
-    /// The announcement that is currently being read.  If this is nil, that implies nothing is being read
-    private var currentAnnouncement: String?
+    /// The announcement that is currently being read alogn with whether or not it is preemptable.  If this is nil, that implies nothing is being read
+    private var currentAnnouncement: (String, Bool)?
     
     /// The announcement that should be read immediately after this one finishes
-    private var nextAnnouncement: String?
+    private var nextAnnouncement: (String, Bool)?
     
     /// The private initializer (this should not be called directly)
     private override init() {
@@ -39,7 +39,7 @@ class AnnouncementManager: NSObject {
             self.currentAnnouncement = nil
             if let nextAnnouncement = self.nextAnnouncement {
                 self.nextAnnouncement = nil
-                self.announce(announcement: nextAnnouncement)
+                self.announce(announcement: nextAnnouncement.0, isPreemptable: nextAnnouncement.1)
             }
         }
         
@@ -51,7 +51,8 @@ class AnnouncementManager: NSObject {
     /// Communicates a message to the user via speech.  If VoiceOver is active, then VoiceOver is used to communicate the announcement, otherwise we use the AVSpeechEngine
     ///
     /// - Parameter announcement: the text to read to the user
-    func announce(announcement: String) {
+    /// - Parameter isPreemptable: true if we should allow the announcement to be preempted while being spoken
+    func announce(announcement: String, isPreemptable: Bool = false) {
         if !Thread.isMainThread {
             DispatchQueue.main.async {
                 self.announce(announcement: announcement)
@@ -59,16 +60,19 @@ class AnnouncementManager: NSObject {
             return
         }
         if let currentAnnouncement = currentAnnouncement {
-            // don't interrupt current announcement, but if there is something new to say put it on the queue to say next.  Note that adding it to the queue in this fashion could result in the next queued announcement being preempted
-            if currentAnnouncement != announcement {
-                nextAnnouncement = announcement
+            if currentAnnouncement.0 != announcement {
+                nextAnnouncement = (announcement, isPreemptable)
+                if currentAnnouncement.1 && !UIAccessibility.isVoiceOverRunning {
+                    // preempt the current announcement (VoiceOver does this automatically)
+                    synth.stopSpeaking(at: .immediate)
+                }
             }
             return
         }
         
         if UIAccessibility.isVoiceOverRunning {
             // use the VoiceOver API instead of text to speech
-            currentAnnouncement = announcement
+            currentAnnouncement = (announcement, isPreemptable)
             // insert delay to make sure the announcement is properly read.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: announcement)
@@ -80,7 +84,7 @@ class AnnouncementManager: NSObject {
                 try audioSession.setActive(true)
                 let utterance = AVSpeechUtterance(string: announcement)
                 utterance.rate = 0.5
-                currentAnnouncement = announcement
+                currentAnnouncement = (announcement, isPreemptable)
                 synth.speak(utterance)
             } catch {
                 print("Unexpeced error announcing something using AVSpeechEngine!")
@@ -101,7 +105,7 @@ extension AnnouncementManager: AVSpeechSynthesizerDelegate {
         currentAnnouncement = nil
         if let nextAnnouncement = self.nextAnnouncement {
             self.nextAnnouncement = nil
-            announce(announcement: nextAnnouncement)
+            announce(announcement: nextAnnouncement.0, isPreemptable: nextAnnouncement.1)
         }
     }
     /// Called when an utterance is canceled.  We implement this function so that we can keep track of
@@ -115,7 +119,7 @@ extension AnnouncementManager: AVSpeechSynthesizerDelegate {
         currentAnnouncement = nil
         if let nextAnnouncement = self.nextAnnouncement {
             self.nextAnnouncement = nil
-            announce(announcement: nextAnnouncement)
+            announce(announcement: nextAnnouncement.0, isPreemptable: nextAnnouncement.1)
         }
     }
 }

@@ -38,8 +38,10 @@ struct ConnectingView: View {
     
     @State var showInstructions: Bool = true
     @State var forwardAndBackwardConnected: Bool = false
+    @State var startedRecording = false
     
     @State var saved: Bool = false
+    @AccessibilityFocusState var focusOnImprovePopup
     
     @State var startAnchor: String = ""
     @State var stopAnchor: String = ""
@@ -68,11 +70,7 @@ struct ConnectingView: View {
                     
                     if positioningModel.resolvedCloudAnchors.contains(startAnchor) && positioningModel.resolvedCloudAnchors.contains(stopAnchor) && !saved {
                         let text = "\(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) anchor successfully resolved. Connection created."
-                        ARViewTextOverlay(text: text, announce: text, onAppear: {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                saved = true
-                            }
-                        })
+                        ARViewTextOverlay(text: text, announce: text)
                     }
                     
                     if saved {
@@ -82,14 +80,16 @@ struct ConnectingView: View {
                             VStack {
                                 ARViewTextOverlay(text: "The connection will automatically work in both directions, but you can improve the path by recording from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!).", navLabel: "Home", navDestination: HomeView(), buttonLabel: "Improve Connection", buttonAction: {
                                     PositioningModel.shared.startPositioning()
+                                    startedRecording = false
+                                    saved = false
                                     PositioningModel.shared.resolveCloudAnchor(byID: anchorID1)
                                     PositioningModel.shared.resolveCloudAnchor(byID: anchorID2)
                                     PathRecorder.shared.startAnchorID = anchorID2
                                     startAnchor = anchorID2
                                     PathRecorder.shared.stopAnchorID = anchorID1
                                     stopAnchor = anchorID1
-                                    saved = false
                                 }, onAppear: {
+                                    focusOnImprovePopup = true
                                     PathRecorder.shared.stopRecordingPath()
                                     PathRecorder.shared.toFirebase()
                                 })
@@ -135,6 +135,23 @@ struct ConnectingView: View {
             }
             .onReceive(PositioningModel.shared.$currentQuality) { newQuality in
                 currentQuality = newQuality
+            }
+            .onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newAnchors in
+                if newAnchors.contains(startAnchor) && !startedRecording {
+                    startedRecording = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        print("START RECORDING!")
+                      
+                        PathRecorder.shared.startRecording()
+                    }
+                }
+                if newAnchors.contains(stopAnchor) && !saved {
+                    saved = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        PathRecorder.shared.stopRecordingPath()
+                        PathRecorder.shared.toFirebase()
+                    }
+                }
             }
             .onAppear() {
                 PositioningModel.shared.startPositioning()

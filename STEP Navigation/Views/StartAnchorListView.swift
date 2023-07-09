@@ -13,6 +13,7 @@ struct StartAnchorListView: View {
     @State var nearbyDistance: Double = 300.0
     @ObservedObject var positionModel = PositioningModel.shared
     @State var anchors: [LocationDataModel] = []
+    @State var lastQueryLocation: CLLocationCoordinate2D?
         
     var body: some View {
         ScreenBackground {
@@ -26,6 +27,10 @@ struct StartAnchorListView: View {
                     guard let latLon = latLon else {
                         return
                     }
+                    guard lastQueryLocation == nil || lastQueryLocation!.distance(from: latLon) > 5.0 else {
+                        return
+                    }
+                    lastQueryLocation = latLon
                     anchors = Array(
                         DataModelManager.shared.getNearbyIndoorLocations(
                             location: latLon,
