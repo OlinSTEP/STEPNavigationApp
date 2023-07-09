@@ -64,7 +64,7 @@ struct StartupPage1:  View {
                     ScreenHeader(title: "Terms and Conditions", backButtonHidden: true)
                     ScrollView {
                         LeftLabel(text: "Privacy")
-                        StartupText("Clew Maps 2 will log the 3D path that your phone travels when using the app. We use this 3D path information to understand the app's shortcomings and to improve its accuracy. We do not tie this 3D path information to the location where the path was traveled (e.g., it is not linked to GPS position). We will not share these data logs with any third party; however, we may make aggregate analysis of this data public (e.g., in an academic paper). Any changes to this privacy policy will be detailed in the app store release notes of future versions of Clew Maps 2.")
+                        StartupText("Clew Maps 2 will log the 3D path that your phone travels when using the app. We use this 3D path information to understand the app's shortcomings and to improve its accuracy. We will not share these data logs with any third party; however, we may make aggregate analysis of this data public (e.g., in an academic paper). Any changes to this privacy policy will be detailed in the app store release notes of future versions of Clew Maps 2.")
                             .padding(.bottom, 4)
                         
                         LeftLabel(text: "Contact")
@@ -110,9 +110,9 @@ struct StartupPage3:  View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "Using Clew")
+                ScreenHeader(title: "Using Clew Maps 2")
                 ScrollView {
-                    UnorderedList(listItems: ["Clew helps you find your way indoors by recording and connecting anchors.", "The app is best used over short distances."])
+                    UnorderedList(listItems: ["Clew Maps 2 helps you find your way indoors by recording and connecting anchors.", "The app is best used over short distances."])
                 }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage4(), label: "Next")
@@ -131,7 +131,7 @@ struct StartupPage4:  View {
             VStack {
                 ScreenHeader(title: "Holding Your Phone")
                 ScrollView {
-                    UnorderedList(listItems: ["Clew uses your phone’s camera and sensors to track your position as you navigate a route.", "Hold your phone vertically, with the back camera facing forward at chest level."])
+                    UnorderedList(listItems: ["Clew Maps 2 uses your phone’s camera and sensors to track your position as you navigate a route.", "Hold your phone vertically, with the back camera facing forward at chest level."])
                 }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage5(), label: "Next")
@@ -150,7 +150,7 @@ struct StartupPage5:  View {
             VStack {
                 ScreenHeader(title: "Following a route")
                 ScrollView {
-                    UnorderedList(listItems: ["Clew will vibrate and give you audio clues as you follow a route. If you veer off the path the clues will stop.", "If you stop hearing the audio clues, stop and turn the phone from side to side until the sounds resume.", "If needed, press the 'Get Directions' button for audio directions to get back on the route."])
+                    UnorderedList(listItems: ["Clew Maps 2 will vibrate and give you audio clues as you follow a route. If you veer off the path the clues will stop.", "If you stop hearing the audio clues, stop and turn the phone from side to side until the sounds resume.", "If needed, press the 'Get Directions' button for audio directions to get back on the route."])
                 }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage7(), label: "Next")
@@ -169,7 +169,7 @@ struct StartupPage7:  View {
             VStack {
                 ScreenHeader(title: "Anchors")
                 ScrollView {
-                    UnorderedList(listItems: ["Anchor points are markers that make sure you stay on the right path as you navigate a route.", "They are crucial for saving routes or pausing navigation because they allow Clew to remember where you are and which way you’re facing.", "You will create anchors at the beginning and end of a route. Clew will automatically add anchors along long routes.", "Try to set the anchor point at an easy-to-remember location (ex. doorframe, furniture)."])
+                    UnorderedList(listItems: ["Anchor points are markers that make sure you stay on the right path as you navigate a route.", "They are crucial for saving routes or pausing navigation because they allow Clew Maps 2 to remember where you are and which way you’re facing.", "You will create anchors at the beginning and end of a route. Clew Maps 2 will automatically add anchors along long routes.", "Try to set the anchor point at an easy-to-remember location (ex. doorframe, furniture)."])
                 }
                 Spacer()
                 SmallNavigationLink(destination: StartupPage8(), label: "Next")
@@ -187,8 +187,8 @@ struct StartupPage8:  View {
         ScreenBackground {
             VStack {
                 ScreenHeader(title: "See it in Action", backButtonHidden: true)
-                StartupText("In this video we will demonstrate how Clew works.")
-                VideoView(videoID: "G5BonVtsfmY")
+                StartupText("In this video we will demonstrate how Clew Maps 2 works.")
+//                VideoView(videoID: "G5BonVtsfmY")
                 Spacer()
                 SmallNavigationLink(destination: HomeView(), label: "Finish Tutorial")
             }

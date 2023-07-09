@@ -193,7 +193,7 @@ struct SettingsDetailView_Units: View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "Units", subtitle: "Which units would you like Clew to use?")
+                ScreenHeader(title: "Units", subtitle: "Which units would you like Clew Maps 2 to use?")
                 
                 VStack(spacing: 20) {
                     SmallButton_Settings(action: {
