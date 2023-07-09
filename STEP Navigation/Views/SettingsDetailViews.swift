@@ -19,7 +19,7 @@ struct SettingsDetailView_CrumbColor: View {
         } else {
             return StaticAppColor.white
         }
-        }
+    }
     
     let crumbColorOptions = [
         CrumbColors(label: "Black", color: StaticAppColor.black),

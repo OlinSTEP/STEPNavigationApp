@@ -63,9 +63,6 @@ struct ConnectingView: View {
                     if positioningModel.resolvedCloudAnchors.contains(startAnchor) && !positioningModel.resolvedCloudAnchors.contains(stopAnchor) {
                         let text = "\(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!) anchor successfully resolved. You can now walk to \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!)."
                         ARViewTextOverlay(text: text, announce: text)
-                            .onAppear() {
-                                PathRecorder.shared.startRecording()
-                            }
                     }
                     
                     if positioningModel.resolvedCloudAnchors.contains(startAnchor) && positioningModel.resolvedCloudAnchors.contains(stopAnchor) && !saved {
@@ -141,7 +138,6 @@ struct ConnectingView: View {
                     startedRecording = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         print("START RECORDING!")
-                      
                         PathRecorder.shared.startRecording()
                     }
                 }

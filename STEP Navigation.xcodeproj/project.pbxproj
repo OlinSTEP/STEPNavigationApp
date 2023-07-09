@@ -151,6 +151,7 @@
 		A867F94F2A4D275D00006DBC /* OverlaysAndPopups.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F94E2A4D275D00006DBC /* OverlaysAndPopups.swift */; };
 		A867F9512A4D2A7F00006DBC /* Miscellaneous.swift in Sources */ = {isa = PBXBuildFile; fileRef = A867F9502A4D2A7F00006DBC /* Miscellaneous.swift */; };
 		A8CB6EBD29DFB22F00EABD80 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CB6EBC29DFB22F00EABD80 /* Colors.swift */; };
+		A8D8358E2A5B6516004419F5 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D8358D2A5B6516004419F5 /* VideoView.swift */; };
 		A8DA8BC12A3A0BDA0024510F /* SelectConnectingAnchorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */; };
 		A8FF1A1229E062DD002019E9 /* DestinationTypesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */; };
 /* End PBXBuildFile section */
@@ -253,6 +254,7 @@
 		A867F94E2A4D275D00006DBC /* OverlaysAndPopups.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlaysAndPopups.swift; sourceTree = "<group>"; };
 		A867F9502A4D2A7F00006DBC /* Miscellaneous.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Miscellaneous.swift; sourceTree = "<group>"; };
 		A8CB6EBC29DFB22F00EABD80 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		A8D8358D2A5B6516004419F5 /* VideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectConnectingAnchorsView.swift; sourceTree = "<group>"; };
 		A8FF1A1129E062DD002019E9 /* DestinationTypesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationTypesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -387,6 +389,7 @@
 				A83CBC662A38C6CB00E8E3CF /* SettingsDetailViews.swift */,
 				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
 				A867F9442A462E2400006DBC /* StartupViews.swift */,
+				A8D8358D2A5B6516004419F5 /* VideoView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -734,6 +737,7 @@
 				829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */,
 				A867F94B2A4CFF1B00006DBC /* MenusAndTextFields.swift in Sources */,
 				A867F9472A4CEEF300006DBC /* Buttons.swift in Sources */,
+				A8D8358E2A5B6516004419F5 /* VideoView.swift in Sources */,
 				82811EE52A0C32B900D1BE96 /* AuthHandler.swift in Sources */,
 				8241736229DE1398001599B1 /* DestinationAnchorListView.swift in Sources */,
 				8241736A29DE13BF001599B1 /* NavigatingView.swift in Sources */,
