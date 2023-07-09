@@ -21,10 +21,14 @@ struct AnchorDetailEditView<Destination: View>: View {
     @FocusState var editingOrg: Bool
     @State var allOrganizations: [String] = DataModelManager.shared.getAllNearbyOrganizations().sorted(by: { $0 < $1 })
     
-    @State var allCategories: [String] = AnchorType.allCases.map { $0.rawValue}
-    @State var allCorrespondingExits: [String] = DataModelManager.shared.getLocationsByType(anchorType: .externalDoor)
-        .sorted(by: { $0.getName() < $1.getName() })
-        .map { $0.getName() }
+//    @State var allCategories: [String] = AnchorType.allCases.map { $0.rawValue}
+    
+    @State var allCategories: [String] = AnchorType.allCases
+        .filter { ![.busStop, .externalDoor, .path].contains($0) }
+        .map { $0.rawValue }
+//    @State var allCorrespondingExits: [String] = DataModelManager.shared.getLocationsByType(anchorType: .externalDoor)
+//        .sorted(by: { $0.getName() < $1.getName() })
+//        .map { $0.getName() }
     @State var inputText: String = ""
     
     @State var newAnchorName: String

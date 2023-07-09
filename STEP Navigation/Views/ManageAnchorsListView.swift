@@ -50,7 +50,9 @@ struct ManageAnchorsListView: View {
                     VStack(spacing: 32) {
                         ForEach(0..<anchors.count, id: \.self) { idx in
                             if anchors[idx].cloudAnchorMetadata?.organization == selectedOrganization {
-                                LargeNavigationLink(destination: AnchorDetailView_Manage(anchorDetails: anchors[idx]), label: "\(anchors[idx].getName())", subLabel: "\(anchors[idx].getAnchorType().rawValue)")
+                                if ![.busStop, .externalDoor, .path].contains(anchors[idx].getAnchorType()) {
+                                    LargeNavigationLink(destination: AnchorDetailView_Manage(anchorDetails: anchors[idx]), label: "\(anchors[idx].getName())", subLabel: "\(anchors[idx].getAnchorType().rawValue)")
+                                }
                             }
                         }
                     }

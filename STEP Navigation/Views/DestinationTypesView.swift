@@ -27,7 +27,9 @@ struct DestinationTypesView: View {
                     VStack(spacing: 24) {
                         ForEach(anchorTypes, id: \.self) {
                             anchorType in
-                            LargeNavigationLink(destination: DestinationAnchorListView(anchorType: anchorType, nearbyDistance: nearbyDistance), label: "\(anchorType.rawValue)s")
+                            if ![.busStop, .externalDoor, .path].contains(anchorType) {
+                                LargeNavigationLink(destination: DestinationAnchorListView(anchorType: anchorType, nearbyDistance: nearbyDistance), label: "\(anchorType.rawValue)s")
+                            }
                         }
                     }
                     .padding(.top, 12)
