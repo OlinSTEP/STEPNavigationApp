@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 
 struct AnchorDetailView_Manage: View {
-    let anchorDetails: LocationDataModel
+    @State var anchorDetails: LocationDataModel
     @State var showingConfirmation = false
     @AccessibilityFocusState var focusOnPopup
     
@@ -20,17 +20,16 @@ struct AnchorDetailView_Manage: View {
                     ScreenHeader(title: "Manage Anchor")
                     if let currentLocation = PositioningModel.shared.currentLatLon {
                         let distance = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
-                        AnchorDetailsText(title: anchorDetails.getName(), distanceAway: distance)
+                        AnchorDetailsText(anchorDetails: $anchorDetails, distanceAway: distance)
                             .padding(.top)
                     }
                     Spacer()
                     VStack(spacing: 18) {
-                        SmallNavigationLink(destination: AnchorDetailEditView(anchorDetails: anchorDetails, buttonLabel: "Save", buttonDestination: {
-                            HomeView()
-                        }), label: "Edit")
+                        SmallNavigationLink(destination: AnchorDetailEditView(anchorDetails: anchorDetails, buttonLabel: "Save", buttonDestination: {AnchorDetailView_Manage(anchorDetails: anchorDetails)}), label: "Edit")
                         SmallNavigationLink(destination: SelectConnectingAnchorsView(anchorID1: anchorDetails.id), label: "Connect")
                         SmallButton(action: {
                             showingConfirmation = true
+                            focusOnPopup = true
                         }, label: "Delete", invert: true)
                     }
                 }
@@ -39,6 +38,7 @@ struct AnchorDetailView_Manage: View {
                     ConfirmationPopup(showingConfirmation: $showingConfirmation, titleText: "Are you sure you want to delete this anchor?", subtitleText: "This action cannot be undone.", confirmButtonLabel: "Delete", confirmButtonDestination: HomeView()) {
                         FirebaseManager.shared.deleteCloudAnchor(id: anchorDetails.id)
                     }
+                    .accessibilityFocused($focusOnPopup)
                 }
             }
         }

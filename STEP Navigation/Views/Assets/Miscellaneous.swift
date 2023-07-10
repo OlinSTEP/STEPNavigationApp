@@ -8,34 +8,45 @@
 import SwiftUI
 
 struct AnchorDetailsText: View {
-    let title: String
-    let distanceAway: Double
-    let locationNotes: String
+    @Binding var anchorDetails: LocationDataModel
     let textColor: Color
     
-    init(title: String, distanceAway: Double, locationNotes: String = "", textColor: Color = AppColor.foreground) {
-        self.title = title
-        self.distanceAway = distanceAway
-        self.locationNotes = locationNotes
+    @State var distanceAway: Double = 0.0
+    @State var locationNotes: String
+    @State var anchorName: String
+    @State var anchorCategory: String
+
+    let metadata: CloudAnchorMetadata
+
+    init(anchorDetails: Binding<LocationDataModel>, textColor: Color = AppColor.foreground, distanceAway: Double = 0.0) {
+        metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: anchorDetails.wrappedValue.getCloudAnchorID()!)! //TODO: lots of force unwrapping happening here; can we get rid of this?
+        anchorName = metadata.name
+        anchorCategory = metadata.type.rawValue
+        locationNotes = metadata.notes
+        self._anchorDetails = anchorDetails
         self.textColor = textColor
+        self.distanceAway = distanceAway
     }
     
     var body: some View {
         VStack {
             HStack {
-                Text(title)
+                Text(anchorName)
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
                 Spacer()
             }
-            
             HStack {
+                Text("\(anchorCategory)")
+                    .accessibilityLabel("Anchor Type \(anchorCategory)")
+                Text("|")
+                    .accessibilityHidden(true)
                 Text("\(distanceAway.metersAsUnitString) away")
-                        .font(.title)
-                        .padding(.horizontal)
                 Spacer()
             }
+            .font(.title)
+            .padding(.horizontal)
             VStack {
                 HStack {
                     Text("Location Notes")
@@ -59,9 +70,65 @@ struct AnchorDetailsText: View {
             .padding(.horizontal)
             .padding(.vertical, 2)
         }
+        .onAppear() {
+            if let currentLocation = PositioningModel.shared.currentLatLon {
+                distanceAway = currentLocation.distance(from: anchorDetails.getLocationCoordinate())
+            }
+        }
         .foregroundColor(AppColor.foreground)
     }
 }
+
+struct FromToAnchorDetails: View {
+    @Binding var startAnchorDetails: LocationDataModel?
+    @Binding var destinationAnchorDetails: LocationDataModel
+    
+    var body: some View {
+        ScrollView {
+            HStack {
+                Text("FROM")
+                    .font(.title2)
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 1)
+                    .foregroundColor(AppColor.foreground)
+                Spacer()
+            }
+            if let startDetails = startAnchorDetails {
+                if let currentLocation = PositioningModel.shared.currentLatLon {
+                    let distance = currentLocation.distance(from: startDetails.getLocationCoordinate())
+                    AnchorDetailsText(anchorDetails: .init(get: { startDetails }, set: { newValue in
+                                    startAnchorDetails = newValue
+                    }), distanceAway: distance)
+                }
+            } else {
+                HStack {
+                    Text("Start Outside")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.horizontal)
+                        .foregroundColor(AppColor.foreground)
+                    Spacer()
+                }
+            }
+            HStack {
+                Text("TO")
+                    .font(.title2)
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 1)
+                    .foregroundColor(AppColor.foreground)
+                
+                Spacer()
+            }
+            if let currentLocation = PositioningModel.shared.currentLatLon {
+                let distance = currentLocation.distance(from: destinationAnchorDetails.getLocationCoordinate())
+                AnchorDetailsText(anchorDetails: $destinationAnchorDetails, distanceAway: distance)
+            }
+        }
+    }
+}
+
 
 struct ChecklistItem: View {
     @Binding var toggle: Bool
@@ -167,21 +234,20 @@ struct ListOfAnchors: View {
                 if case .indoorStartingPoint(let destinationAnchor) = anchorSelectionType {
                    if NavigationManager.shared.getReachabilityFromOutdoors(outOf: [destinationAnchor]).first == true {
                        LargeNavigationLink(destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: destinationAnchor), label: "Start Outside", invert: true)
-                       
                    }
                 }
                 ForEach(0..<anchors.count, id: \.self) { idx in
                     switch anchorSelectionType {
                     case .indoorStartingPoint(let destinationAnchor):
                         if isReachable[idx] {
-                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor)), label: "\(anchors[idx].getName())")
+                            LargeNavigationLink(destination: AnchorDetailView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor, buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: anchors[idx], destinationAnchorDetails: destinationAnchor)), label: "\(anchors[idx].getName())")
                         }
                     case .indoorEndingPoint:
                         if isReachable[idx] {
-                            LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Choose Start Anchor", buttonDestination: StartAnchorListView(destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())")
+                            LargeNavigationLink(destination: StartAnchorListView(destinationAnchorDetails: anchors[idx]), label: "\(anchors[idx].getName())")
                         }
                     case .outdoorEndingPoint:
-                        LargeNavigationLink(destination: AnchorDetailView(anchorDetails: anchors[idx], buttonLabel: "Navigate", buttonDestination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx])), label: "\(anchors[idx].getName())")
+                        LargeNavigationLink(destination: NavigatingView(startAnchorDetails: nil, destinationAnchorDetails: anchors[idx]), label: "\(anchors[idx].getName())")
                     }
                 }
             }
@@ -236,9 +302,42 @@ struct OrderedList: View {
                     Text(listItems[idx])
                         .frame(maxWidth: .infinity,
                                alignment: .leading)
+                        .font(.title3)
+                        .bold()
                 }
+                .foregroundColor(AppColor.foreground)
             }
         }
-       .padding(2)
+       .padding()
     }
 }
+
+struct UnorderedList: View {
+    var listItems: [String]
+    var listItemSpacing: CGFloat? = nil
+    var bulletWidth: CGFloat? = 14
+    var bulletAlignment: Alignment = .leading
+    
+    var body: some View {
+        VStack(alignment: .leading,
+               spacing: listItemSpacing) {
+            ForEach(listItems, id: \.self) { item in
+                HStack(alignment: .top) {
+                    Circle()
+                        .frame(width: bulletWidth, height: bulletWidth, alignment: bulletAlignment)
+                        .padding(.trailing, 4)
+                        .padding(.top, 10)
+                        .accessibilityHidden(true)
+                    Text(item)
+                        .frame(maxWidth: .infinity,
+                               alignment: .leading)
+                        .font(.title)
+                        .bold()
+                }
+                .foregroundColor(AppColor.foreground)
+            }
+        }
+               .padding()
+    }
+}
+

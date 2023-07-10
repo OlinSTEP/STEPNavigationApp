@@ -22,7 +22,7 @@ struct DestinationAnchorListView: View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "\(anchorType.rawValue)s")
+                ScreenHeader(title: "Choose Destination Anchor", subtitle: "Anchor Type: \(anchorType.rawValue)s")
                 ListOfAnchors(anchors: anchors, anchorSelectionType: anchorType.isIndoors ? .indoorEndingPoint : .outdoorEndingPoint)
             }
             .onReceive(positionModel.$currentLatLon) { latLon in

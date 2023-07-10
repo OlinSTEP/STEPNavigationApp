@@ -9,6 +9,25 @@ import SwiftUI
 import ARCoreGeospatial
 import ARCoreCloudAnchors
 
+struct ConnectingInstructions: View {
+    var body: some View {
+        let instructionsListItems = [
+            "Stand in the location of the first anchor and begin the connecting process by pressing 'Find First Anchor.' button at the bottom of this page.",
+            "Move your phone around until you resolve the first anchor.",
+            "Hold your phone steady at chest level with the camera pointed parallel to the ground and walk to the second anchor. You do not need to wave the phone around as you walk, just hold it steady facing out in front of you.",
+            "The second anchor may resolve as you approach it. If it doesn't, stand in the location of the second anchor and move your phone around until it resolves.",
+            "Your anchors are connected!"
+        ]
+        VStack {
+            LeftLabel(text: "Connecting Two Anchors")
+            OrderedList(listItems: instructionsListItems)
+            Text("Note: After connecting two anchors, you may be prompted to improve the accuracy of the connection by walking back from the second anchor to the first. This is not a required step, but doing so will improve the quality of the navigation.")
+        }
+        .foregroundColor(AppColor.foreground)
+        
+    }
+}
+
 struct ConnectingView: View {
     @ObservedObject var positioningModel = PositioningModel.shared
     @State var anchorID1: String
@@ -19,6 +38,7 @@ struct ConnectingView: View {
     
     @State var showInstructions: Bool = true
     @State var forwardAndBackwardConnected: Bool = false
+    @State var startedRecording = false
     
     @State var saved: Bool = false
     @AccessibilityFocusState var focusOnImprovePopup
@@ -47,11 +67,7 @@ struct ConnectingView: View {
                     
                     if positioningModel.resolvedCloudAnchors.contains(startAnchor) && positioningModel.resolvedCloudAnchors.contains(stopAnchor) && !saved {
                         let text = "\(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) anchor successfully resolved. Connection created."
-                        ARViewTextOverlay(text: text, announce: text, onAppear: {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                saved = true
-                            }
-                        })
+                        ARViewTextOverlay(text: text, announce: text)
                     }
                     
                     if saved {
@@ -61,17 +77,18 @@ struct ConnectingView: View {
                             VStack {
                                 ARViewTextOverlay(text: "The connection will automatically work in both directions, but you can improve the path by recording from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!).", navLabel: "Home", navDestination: HomeView(), buttonLabel: "Improve Connection", buttonAction: {
                                     PositioningModel.shared.startPositioning()
+                                    startedRecording = false
+                                    saved = false
                                     PositioningModel.shared.resolveCloudAnchor(byID: anchorID1)
                                     PositioningModel.shared.resolveCloudAnchor(byID: anchorID2)
                                     PathRecorder.shared.startAnchorID = anchorID2
                                     startAnchor = anchorID2
                                     PathRecorder.shared.stopAnchorID = anchorID1
                                     stopAnchor = anchorID1
-                                    saved = false
                                 }, onAppear: {
+                                    focusOnImprovePopup = true
                                     PathRecorder.shared.stopRecordingPath()
                                     PathRecorder.shared.toFirebase()
-                                    focusOnImprovePopup = true
                                 })
                             }
                         }
@@ -111,10 +128,26 @@ struct ConnectingView: View {
             }
             .navigationBarBackButtonHidden(true)
             .toolbar {
-                HeaderNavigationLink(label: "Cancel", placement: .navigationBarLeading, destination: RecordingFeedbackView())
+                HeaderNavigationLink(label: "Cancel", placement: .navigationBarLeading, destination: ConnectingFeedbackView())
             }
             .onReceive(PositioningModel.shared.$currentQuality) { newQuality in
                 currentQuality = newQuality
+            }
+            .onReceive(PositioningModel.shared.$resolvedCloudAnchors) { newAnchors in
+                if newAnchors.contains(startAnchor) && !startedRecording {
+                    startedRecording = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        print("START RECORDING!")
+                        PathRecorder.shared.startRecording()
+                    }
+                }
+                if newAnchors.contains(stopAnchor) && !saved {
+                    saved = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        PathRecorder.shared.stopRecordingPath()
+                        PathRecorder.shared.toFirebase()
+                    }
+                }
             }
             .onAppear() {
                 PositioningModel.shared.startPositioning()
@@ -122,7 +155,6 @@ struct ConnectingView: View {
             }
             .onDisappear() {
                 PositioningModel.shared.stopPositioning()
-                //TODO: double check is correctly stopping the positioning, any announcements, etc
                 PathLogger.shared.stopLoggingData()
                 PathLogger.shared.uploadLog(logFilePath: "anchor_connection/\(anchorID1)_\(anchorID2)_\(UUID().uuidString)")
             }
@@ -177,22 +209,5 @@ struct EdgeBorder: Shape {
             path.addRect(CGRect(x: x, y: y, width: w, height: h))
         }
         return path
-    }
-}
-
-struct ConnectingInstructions: View {
-    var body: some View {
-        let instructionsListItems = [
-            "Stand in the location of the first anchor and begin the connecting process by pressing 'Find First Anchor.' button at the bottom of this page.",
-            "Move your phone around until you resolve the first anchor.",
-            "Hold your phone steady at chest level with the camera pointed parallel to the ground and walk to the second anchor. You do not need to wave the phone around as you walk, just hold it steady facing out in front of you.",
-            "The second anchor may resolve as you approach it. If it doesn't, stand in the location of the second anchor and move your phone around until it resolves.",
-            "Your anchors are connected!"
-        ]
-        
-        LeftLabel(text: "Connecting Two Anchors")
-        OrderedList(listItems: instructionsListItems)
-        Text("Note: After connecting two anchors, you may be prompted to improve the accuracy of the connection by walking back from the second anchor to the first. This is not a required step, but doing so will improve the quality of the navigation.")
-        
     }
 }

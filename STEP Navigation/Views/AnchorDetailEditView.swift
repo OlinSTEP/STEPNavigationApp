@@ -12,18 +12,23 @@ struct AnchorDetailEditView<Destination: View>: View {
     let buttonLabel: String
     let buttonDestination: () -> Destination
     
+    @State var hideBackButton: Bool
+
     @State var showAnchorTypeMenu: Bool = false
     @State var showCorrespondingExitMenu: Bool = false
-    
     
     @State var editing: Bool = false
     @FocusState var editingOrg: Bool
     @State var allOrganizations: [String] = DataModelManager.shared.getAllNearbyOrganizations().sorted(by: { $0 < $1 })
     
-    @State var allCategories: [String] = AnchorType.allCases.map { $0.rawValue}
-    @State var allCorrespondingExits: [String] = DataModelManager.shared.getLocationsByType(anchorType: .externalDoor)
-        .sorted(by: { $0.getName() < $1.getName() })
-        .map { $0.getName() }
+//    @State var allCategories: [String] = AnchorType.allCases.map { $0.rawValue}
+    
+    @State var allCategories: [String] = AnchorType.allCases
+        .filter { ![.busStop, .externalDoor, .path].contains($0) }
+        .map { $0.rawValue }
+//    @State var allCorrespondingExits: [String] = DataModelManager.shared.getLocationsByType(anchorType: .externalDoor)
+//        .sorted(by: { $0.getName() < $1.getName() })
+//        .map { $0.getName() }
     @State var inputText: String = ""
     
     @State var newAnchorName: String
@@ -34,7 +39,7 @@ struct AnchorDetailEditView<Destination: View>: View {
     @State var newIsReadable: Bool
     let metadata: CloudAnchorMetadata
     
-    init(anchorDetails: LocationDataModel, buttonLabel: String, buttonDestination: @escaping () -> Destination) {
+    init(anchorDetails: LocationDataModel, buttonLabel: String, buttonDestination: @escaping () -> Destination, hideBackButton: Bool = false) {
         metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: anchorDetails.getCloudAnchorID()!)! //TODO: lots of force unwrapping happening here; can we get rid of this?
         newAnchorName = metadata.name
         newAssociatedOutdoorFeature = metadata.associatedOutdoorFeature
@@ -45,48 +50,51 @@ struct AnchorDetailEditView<Destination: View>: View {
         self.anchorDetails = anchorDetails
         self.buttonLabel = buttonLabel
         self.buttonDestination = buttonDestination
+        self.hideBackButton = hideBackButton
     }
     
     var body: some View {
         ZStack {
             ScreenBackground {
                 VStack {
-                    ScreenHeader(title: "Edit Anchor")
+                    ScreenHeader(title: "Edit Anchor", backButtonHidden: hideBackButton)
                     VStack {
                         ScrollView {
                             VStack(spacing: 12) {
                                 VStack {
                                     LeftLabel(text: "Name", textSize: .title2)
                                     CustomTextField(entry: $newAnchorName)
+                                        .accessibilityLabel("Name")
                                 }
-                                
-                                VStack {
-                                    LeftLabel(text: "Organization", textSize: .title2)
-                                    ComboBox(allOptions: allOrganizations, editing: $editing, inputText: $newOrganization)
-                                        .focused($editingOrg)
-                                }
+                                //Commenting out organization for the co-designers (until the new address based organization system is ready)
+//                                VStack {
+//                                    LeftLabel(text: "Organization", textSize: .title2)
+//                                    ComboBox(allOptions: allOrganizations, editing: $editing, inputText: $newOrganization)
+//                                        .focused($editingOrg)
+//                                }
                                 
                                 VStack {
                                     LeftLabel(text: "Type", textSize: .title2)
                                     PickerButton(selection: $newCategory, showPage: $showAnchorTypeMenu)
                                 }
-                                
-                                if newCategory == "Exit" {
-                                    VStack {
-                                        LeftLabel(text: "Corresponding Exit", textSize: .title2)
-                                        PickerButton(selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
-                                    }
-                                }
+                                //Commenting out corresponding exit for co-designers (until the new indoor-outdoor feature is ready)
+//                                if newCategory == "Exit" {
+//                                    VStack {
+//                                        LeftLabel(text: "Corresponding Exit", textSize: .title2)
+//                                        PickerButton(selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
+//                                    }
+//                                }
                                 
                                 VStack {
                                     LeftLabel(text: "Location Notes", textSize: .title2)
                                     CustomTextField(entry: $newNotes, textBoxSize: .large)
+                                        .accessibilityLabel("Location Notes")
                                 }
-                                
-                                VStack {
-                                    LeftLabel(text: "Visibility", textSize: .title2)
-                                    SegmentedToggle(toggle: $newIsReadable, trueLabel: "Public", falseLabel: "Private")
-                                }
+                                //Commenting out visibility for co-designers until properly implemented
+//                                VStack {
+//                                    LeftLabel(text: "Visibility", textSize: .title2)
+//                                    SegmentedToggle(toggle: $newIsReadable, trueLabel: "Public", falseLabel: "Private")
+//                                }
                             }
                         }
                     }
@@ -101,6 +109,7 @@ struct AnchorDetailEditView<Destination: View>: View {
                 }
                 .ignoresSafeArea(.keyboard, edges: .bottom)
             }
+            .navigationBarBackButtonHidden(hideBackButton || showAnchorTypeMenu)
             
             if showAnchorTypeMenu {
                 PickerPage(allOptions: allCategories, selection: $newCategory, showPage: $showAnchorTypeMenu)
@@ -108,12 +117,12 @@ struct AnchorDetailEditView<Destination: View>: View {
                         editingOrg = false
                     }
             }
-            if showCorrespondingExitMenu {
-                PickerPage(allOptions: allCorrespondingExits, selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
-                    .onAppear() {
-                        editingOrg = false
-                    }
-            }
+//            if showCorrespondingExitMenu {
+//                PickerPage(allOptions: allCorrespondingExits, selection: $newAssociatedOutdoorFeature, showPage: $showCorrespondingExitMenu)
+//                    .onAppear() {
+//                        editingOrg = false
+//                    }
+//            }
         }
     }
 

@@ -77,8 +77,8 @@ struct CustomBackButton<Destination: View>: ToolbarContent {
                         .bold()
                         .accessibilityHidden(true)
                     Text("Back")
-                        .foregroundColor(AppColor.background)
                 }
+                .foregroundColor(AppColor.background)
             })
         }
     }
@@ -132,5 +132,6 @@ struct ScreenHeader: View {
         .navigationBarBackButtonHidden(backButtonHidden)
         .background(AppColor.foreground)
         .foregroundColor(AppColor.background)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }

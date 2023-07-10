@@ -10,9 +10,16 @@ import SwiftUI
 struct SettingsDetailView_CrumbColor: View {
     var settingsManager = SettingsManager.shared
     @State var selectedCrumbColor: Color = StaticAppColor.black
-    
     @State var customCrumbPopup: Bool = false
     @State var isCustomColorSelected: Bool = false
+    
+    var textColor: Color {
+        if ContrastRatioCalculator.calculate(color1: selectedCrumbColor, color2: StaticAppColor.black) > 5.0 {
+            return StaticAppColor.black
+        } else {
+            return StaticAppColor.white
+        }
+    }
     
     let crumbColorOptions = [
         CrumbColors(label: "Black", color: StaticAppColor.black),
@@ -32,13 +39,13 @@ struct SettingsDetailView_CrumbColor: View {
                                 selectedCrumbColor = color.color
                                 settingsManager.saveCrumbColor(color: color.color)
                                 isCustomColorSelected = false
-                            }, label: color.label, selected: color.color == selectedCrumbColor, color1: SettingsManager.shared.loadCrumbColor(), color2: selectedCrumbColor == StaticAppColor.black ? StaticAppColor.white : StaticAppColor.black)
+                            }, label: color.label, selected: color.color == selectedCrumbColor, color1: SettingsManager.shared.loadCrumbColor(), color2: textColor)
                         }
                         
                         SmallButton_Settings(action: {
                             customCrumbPopup = true
                             isCustomColorSelected = true
-                        }, label: "Custom", selected: isCustomColorSelected, color1: SettingsManager.shared.loadCrumbColor(), color2: StaticAppColor.black)
+                        }, label: "Custom", selected: isCustomColorSelected, color1: SettingsManager.shared.loadCrumbColor(), color2: textColor)
                     }
                     .padding(.horizontal)
                     .padding(.top, 20)
@@ -89,7 +96,7 @@ struct SettingsDetailView_ColorScheme: View {
             ColorSchemes(label: "Yellow and Black", background: StaticAppColor.black, foreground: StaticAppColor.yellow),
             ColorSchemes(label: "Yellow and Blue", background: StaticAppColor.blue, foreground: StaticAppColor.yellow)
         ]
-        ScreenBackground {
+        Group {
             ZStack {
                 VStack {
                     ScreenHeader(title: "Color Scheme", subtitle: "Set the color scheme of the app.", backButtonHidden: selectedColorScheme != settingsManager.loadColorScheme())
@@ -122,6 +129,7 @@ struct SettingsDetailView_ColorScheme: View {
                     }
                     .padding(.horizontal)
                 }
+                .padding(.bottom, 48)
                 
                 if customSchemePopup == true {
                     CustomColorScheme(customSchemePopup: $customSchemePopup, selectedColorScheme: $selectedColorScheme)
@@ -162,6 +170,9 @@ struct SettingsDetailView_ColorScheme: View {
                 }
             }
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     private func updateColorScheme() {
             let (color1, color2) = settingsManager.loadColorScheme()
@@ -182,17 +193,19 @@ struct SettingsDetailView_Units: View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "Units", subtitle: "Which units would you like Clew to use?")
+                ScreenHeader(title: "Units", subtitle: "Which units would you like Clew Maps 2 to use?")
                 
                 VStack(spacing: 20) {
                     SmallButton_Settings(action: {
                         UserDefaults.standard.setValue(false, forKey: "units")
                         selected = false
                     }, label: "Imperial", selected: selected == false, color1: AppColor.foreground, color2: AppColor.background)
+                    .accessibilityLabel(selected ? "Imperial" : "Imperial Selected ")
                     SmallButton_Settings(action: {
                         UserDefaults.standard.setValue(true, forKey: "units")
                         selected = true
                     }, label: "Metric", selected: selected == true, color1: AppColor.foreground, color2: AppColor.background)
+                    .accessibilityLabel(selected ? "Metric Selected" : "Metric")
                     Spacer()
                 }
                 .padding(.horizontal)
@@ -214,10 +227,12 @@ struct SettingsDetailView_PhoneBodyOffset: View {
                         UserDefaults.standard.setValue(false, forKey: "adjustPhoneBodyOffset")
                         selected = false
                     }, label: "Off", selected: selected == false, color1: AppColor.foreground, color2: AppColor.background)
+                    .accessibilityLabel(selected ? "Off" : "Off Selected ")
                     SmallButton_Settings(action: {
                         UserDefaults.standard.setValue(true, forKey: "adjustPhoneBodyOffset")
                         selected = true
                     }, label: "On", selected: selected == true, color1: AppColor.foreground, color2: AppColor.background)
+                    .accessibilityLabel(selected ? "On Selected " : "On")
                     Spacer()
                 }
                 .padding(.horizontal)
@@ -268,6 +283,7 @@ struct CustomCrumbColor: View {
                 selectedCrumbColor = settingsManager.loadCrumbColor()
             }
         }
+        .accessibilityAddTraits(.isModal)
     }
 }
 
@@ -277,44 +293,11 @@ struct CustomColorScheme: View {
     @Binding var selectedColorScheme: (Color, Color)
     
     var contrastRatio: Double {
-        guard let color1Components = UIColor(selectedColorScheme.0).cgColor.components,
-              let color2Components = UIColor(selectedColorScheme.1).cgColor.components else {
-            return 0.0
+            ContrastRatioCalculator.calculate(color1: selectedColorScheme.0, color2: selectedColorScheme.1)
         }
-        
-        guard let color1Luma = calculateRelativeLuminance(components: color1Components),
-              let color2Luma = calculateRelativeLuminance(components: color2Components) else {
-            return 0.0
-        }
-        
-        return calculateContrastRatio(color1Luma: color1Luma, color2Luma: color2Luma)
-    }
-    
-    private func calculateRelativeLuminance(components: [CGFloat]) -> CGFloat? {
-        guard components.count >= 3 else {
-            return nil
-        }
-        
-        let red = components[0]
-        let green = components[1]
-        let blue = components[2]
-        
-        let r = red <= 0.03928 ? red / 12.92 : pow((red + 0.055) / 1.055, 2.4)
-        let g = green <= 0.03928 ? green / 12.92 : pow((green + 0.055) / 1.055, 2.4)
-        let b = blue <= 0.03928 ? blue / 12.92 : pow((blue + 0.055) / 1.055, 2.4)
-        
-        return 0.2126 * r + 0.7152 * g + 0.0722 * b
-    }
-    
-    private func calculateContrastRatio(color1Luma: CGFloat, color2Luma: CGFloat) -> Double {
-        let luma1 = max(color1Luma, color2Luma)
-        let luma2 = min(color1Luma, color2Luma)
-        
-        return (luma1 + 0.05) / (luma2 + 0.05)
-    }
     
     var body: some View {
-        ScreenBackground {
+        Group {
             VStack {
                 ScreenHeader(title: "Custom Color Scheme", subtitle : "Choose your own foreground and background colors for the app.", backButtonHidden: true)
                 
@@ -387,14 +370,58 @@ struct CustomColorScheme: View {
                     customSchemePopup = false
                 }, label: "Save")
             }
+            .padding(.bottom, 48)
             .onAppear() {
                 updateColorScheme()
             }
         }
+        .background(AppColor.background)
+        .edgesIgnoringSafeArea([.bottom])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityAddTraits(.isModal)
     }
     
     private func updateColorScheme() {
             let (color1, color2) = settingsManager.loadColorScheme()
             selectedColorScheme = (color1, color2)
         }
+}
+
+struct ContrastRatioCalculator {
+    static func calculate(color1: Color, color2: Color) -> Double {
+        guard let color1Components = UIColor(color1).cgColor.components,
+              let color2Components = UIColor(color2).cgColor.components else {
+            return 0.0
+        }
+        
+        guard let color1Luma = calculateRelativeLuminance(components: color1Components),
+              let color2Luma = calculateRelativeLuminance(components: color2Components) else {
+            return 0.0
+        }
+        
+        return calculateContrastRatio(color1Luma: color1Luma, color2Luma: color2Luma)
+    }
+    
+    private static func calculateRelativeLuminance(components: [CGFloat]) -> CGFloat? {
+        guard components.count >= 3 else {
+            return nil
+        }
+        
+        let red = components[0]
+        let green = components[1]
+        let blue = components[2]
+        
+        let r = red <= 0.03928 ? red / 12.92 : pow((red + 0.055) / 1.055, 2.4)
+        let g = green <= 0.03928 ? green / 12.92 : pow((green + 0.055) / 1.055, 2.4)
+        let b = blue <= 0.03928 ? blue / 12.92 : pow((blue + 0.055) / 1.055, 2.4)
+        
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+    
+    private static func calculateContrastRatio(color1Luma: CGFloat, color2Luma: CGFloat) -> Double {
+        let luma1 = max(color1Luma, color2Luma)
+        let luma2 = min(color1Luma, color2Luma)
+        
+        return (luma1 + 0.05) / (luma2 + 0.05)
+    }
 }
