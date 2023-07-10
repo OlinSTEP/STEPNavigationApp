@@ -83,7 +83,8 @@ class PathRecorder {
             }
             self.breadCrumbs.append(PoseData(pose: currentPose, timestamp: PositioningModel.shared.arView.session.currentFrame?.timestamp ?? 0.0, id: self.breadCrumbs.count, mode: .cloudAnchorBased, ID: UUID()))
             
-            PositioningModel.shared.poserender(self.breadCrumbs.last!)
+//            PositioningModel.shared.poserender(self.breadCrumbs.last!)
+            // Remember
             
         }
     }

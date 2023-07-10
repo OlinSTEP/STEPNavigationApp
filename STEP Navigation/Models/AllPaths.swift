@@ -80,6 +80,9 @@ class RouteNavigator: ObservableObject {
     @Published var keypoints: [KeypointInfo]?
     /// anchor  points
     @Published var anchorpoints: [AnchorPointInfo]?
+    
+    @Published var cloudlandmarks: [CloudLandmarks]?
+    
     @Published var posepoints: [PoseData]?
     /// keep a list of the keypoints from the original route since the keypoints array is cleared as the user traverses the route (TODO: use an index instead of deleting)
     var originalKeypoints: [KeypointInfo]?

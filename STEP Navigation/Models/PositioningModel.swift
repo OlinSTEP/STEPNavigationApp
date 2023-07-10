@@ -90,7 +90,7 @@ struct CloudAnchorResolutionInfomation {
 class PositioningModel: NSObject, ObservableObject {
     /// The shared handle to the singleton instance of this class
     public static var shared = PositioningModel()
-
+    @Published var map: FirebaseManager.Map?
     // this would host and manage the ARSession
     let arView = ARSCNView(frame: .zero)
     /// the location manager (used for asking for localization permission and for coarse positioning)
@@ -110,6 +110,7 @@ class PositioningModel: NSObject, ObservableObject {
     /// cloud anchors
     var anchorpoints = [AnchorPointInfo]()
     var posepoints = [PoseData]()
+    var cloudlandmarks = [CloudLandmarks]()
     /// the name of the anchor that was most recently resolved
     @Published var lastAnchor : String = ""
     /// the current geo localization accuracy
@@ -351,18 +352,36 @@ class PositioningModel: NSObject, ObservableObject {
                 self.manualAlignment = self.cloudAnchorAligner.adjust(currentAlignment: self.manualAlignment)
                 
                 PathRecorder.shared.addCloudAnchor(identifier: cloudAnchorID, metadata: FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID)!, currentPose: garAnchor.transform, timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
-                PathRecorder.shared.resolvedAnchor()
+//                PathRecorder.shared.resolvedAnchor()
                 
                 PositioningModel.shared.anchorpoints.append(AnchorPointInfo(id: UUID(), CloudAnchorName : self.lastAnchor, CloudAnchorID: cloudAnchorID, mode: .cloudAnchorBased, location: garAnchor.transform))
-    
+                
                 PositioningModel.shared.renderer(self.anchorpoints.last!)
 
                 let mapFileName = "TestProcessed/DA7F44EC-033C-445A-8E4A-5E68FA2E4DF0_processed.json"
-
+                
                 FirebaseManager.createMap(from: mapFileName) { map in
-                    // Perform actions with the created Map object
-                    print("Map created: \(map)")
+                    //            print("Map created: \(map)")
+                    
+                    let anchordict = map.anchorDictionary
+                    var landmarks: [String: simd_float4x4] = [:]
+                    
+                    for (_, anchor) in anchordict {
+                        let anchorPose = simd_float4x4(translation: simd_float3(anchor.translation.x, anchor.translation.y, anchor.translation.z), rotation: simd_quatf(ix: anchor.rotation.x, iy: anchor.rotation.y, iz: anchor.rotation.z, r: anchor.rotation.w))
+                        landmarks[anchor.cloudidentifier] = anchorPose
+                        
+                        PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
+                        
+                        PositioningModel.shared.cloudlandmarks.append(CloudLandmarks(id: anchor.cloudidentifier, mode: .cloudAnchorBased, location: anchorPose))
+                       
+
+                    }
+                    
+//                    print("processed stuff yay :) \(PositioningModel.shared.cloudlandmarks.last!)")
+                    PositioningModel.shared.processedrender(PositioningModel.shared.cloudlandmarks.last!)
                 }
+         
+                
             }
         } catch {
             print("error \(error.localizedDescription)")
@@ -390,6 +409,17 @@ class PositioningModel: NSObject, ObservableObject {
         let initialAlignment = posepoint.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
         rendererHelper.renderCircle(at: posepoint.pose, withInitialAlignment: initialAlignment, id: posepoint.ID)
         rendererHelper.poseidlist.append(posepoint.ID)
+    }
+    
+//    func runtest(){
+//        rendererHelper.test()
+//    }
+    
+    func processedrender(_ processedanchor: CloudLandmarks){
+     
+        let initialAlignment = processedanchor.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
+        rendererHelper.createMapNode(at: processedanchor.location, withInitialAlignment: initialAlignment, id: processedanchor.id)
+
     }
     
     /// Render the keypoint in the session
@@ -628,6 +658,8 @@ class RendererHelper {
     var poseidlist: [UUID] = []
     var textNodelist : [SCNNode] = []
     var nodes: [UUID: SCNNode] = [:]
+    var cloudlandmarks : [CloudLandmarks] = []
+//    var processednodes : [String: SCNNode]
     var PoseNodes: [UUID: SCNNode] = [:]
     /// The streetscape meshes that have been rendered
     var renderedStreetscapes: [UUID: SCNNode] = [:]
@@ -662,7 +694,6 @@ class RendererHelper {
     }
     
     func createLabelNode(text: String) -> SCNNode {
-            
         
         let textGeometry = SCNText(string: text, extrusionDepth: 0.1)
         textGeometry.firstMaterial?.diffuse.contents = UIColor.white
@@ -670,7 +701,7 @@ class RendererHelper {
         let textNode = SCNNode(geometry: textGeometry)
         textNode.scale = SCNVector3(0.005, 0.005, 0.005)
         
-//        adjustlabels(nodelist: textNodelist)
+        adjustlabels(nodelist: textNodelist)
         
         textNodelist.append(textNode)
         
@@ -681,36 +712,106 @@ class RendererHelper {
     func adjustlabels(nodelist : [SCNNode]){
         
         guard let cameraTransform = arView.session.currentFrame?.camera.transform else {
-                fatalError("Camera transform not available")
-            }
-        
+            fatalError("Camera transform not available")
+        }
         let cameraRotation = SCNVector3(cameraTransform.columns.2.x, cameraTransform.columns.2.y, cameraTransform.columns.2.z)
         
         for textNode in nodelist {
             textNode.eulerAngles = SCNVector3(0, atan2(cameraRotation.x, cameraRotation.z), 0)
         }
-        
     }
     
+//    func test(){
+//
+////        let mesh = SCNBox(width: 0.3, height: 0.3, length: 0.3, chamferRadius: 0)
+////        mesh.firstMaterial?.diffuse.contents = UIColor.blue
+////        let mapNode : SCNNode? = SCNNode(geometry: mesh)
+//
+//        let mapFileName = "TestProcessed/DA7F44EC-033C-445A-8E4A-5E68FA2E4DF0_processed.json"
+//
+//        FirebaseManager.createMap(from: mapFileName) { map in
+//            //            print("Map created: \(map)")
+//
+//            let anchordict = map.anchorDictionary
+//            var landmarks: [String: simd_float4x4] = [:]
+//
+//            for (_, anchor) in anchordict {
+//                let anchorPose = simd_float4x4(translation: simd_float3(anchor.translation.x, anchor.translation.y, anchor.translation.z), rotation: simd_quatf(ix: anchor.rotation.x, iy: anchor.rotation.y, iz: anchor.rotation.z, r: anchor.rotation.w))
+//                landmarks[anchor.cloudidentifier] = anchorPose
+//
+//
+//                PositioningModel.shared.cloudlandmarks.append(CloudLandmarks(id: anchor.cloudidentifier, mode: .cloudAnchorBased, location: anchorPose))
+//
+//
+//            }
+//            print("processed stuff yay :) \(PositioningModel.shared.cloudlandmarks.last!)")
+//            PositioningModel.shared.processedrender(PositioningModel.shared.cloudlandmarks.last!)
+//        }
+//    }
+    
+    func createMapNode(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: String) {
+        
+        let mesh = SCNBox(width: 0.3, height: 0.3, length: 0.3, chamferRadius: 0)
+        mesh.firstMaterial?.diffuse.contents = UIColor.blue
+        let mapNode : SCNNode? = SCNNode(geometry: mesh)
+        mapNode?.simdPosition = location.translation
+        
+        let labelNode = createLabelNode(text: "Cloud Anchor \(FirebaseManager.shared.getCloudAnchorMetadata(byID: id))")
+        
+        mapNode?.addChildNode(labelNode)
+        mapNode?.removeFromParentNode()
+
+        
+        if anchorNode == nil {
+            anchorNode = SCNNode()
+            arView.scene.rootNode.addChildNode(anchorNode!)
+        }
+            let initialTransform = alignment ?? matrix_identity_float4x4
+            anchorNode?.simdTransform = initialTransform
+            anchorNode!.addChildNode(mapNode!)
+        
+        
+        
+//        let mesh = SCNBox(width: 0.3, height: 0.3, length: 0.3, chamferRadius: 0)
+//        mesh.firstMaterial?.diffuse.contents = UIColor.blue
+//        let mapNode : SCNNode? = SCNNode(geometry: mesh)
+//
+//        mapNode?.simdPosition = anchorPose.translation
+//
+//        mapNode?.removeFromParentNode()
+//
+//        // add a SCNNode as a child of anchorNode with anchorPose as simdTransform
+//
+//    PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
+//}
+//
+//
+//if anchorNode == nil {
+//    anchorNode = SCNNode()
+//    arView.scene.rootNode.addChildNode(anchorNode!)
+//}
+//let initialTransform = alignment ?? matrix_identity_float4x4
+//anchorNode?.simdTransform = initialTransform
+//anchorNode!.addChildNode(mapNode!)
+}
+        
+    
+    
+
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: UUID, name: String) {
         
         let mesh = SCNBox(width: 0.3, height: 0.3, length: 0.3, chamferRadius: 0)
-        
         mesh.firstMaterial?.diffuse.contents = UIColor(AppColor.accent)
-        
         let node : SCNNode? = SCNNode(geometry: mesh)
-        
         node?.simdPosition = location.translation
         
         let labelNode = createLabelNode(text: "Cloud Anchor \(name)")
         
         node?.addChildNode(labelNode)
-        
         node?.removeFromParentNode()
 
             nodes[id] = node
-        
         
         if anchorNode == nil {
             anchorNode = SCNNode()

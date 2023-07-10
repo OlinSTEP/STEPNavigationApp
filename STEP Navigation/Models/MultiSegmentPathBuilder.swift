@@ -28,12 +28,16 @@ public struct AnchorPointInfo: Identifiable {
     let mode: KeypointType
     /// the location of the keypoint
     public var location: simd_float4x4
-    ///
-//    var currentTransform: simd_float4x4? {
-//        return PositioningModel.shared.currentLocation(ofCloudAnchor: CloudAnchorID)
-//    }
 }
 
+public struct CloudLandmarks: Identifiable {
+    /// The unique identifier of the keypoint
+    public let id: String
+    ///
+    let mode: KeypointType
+    /// the location of the keypoint
+    public var location: simd_float4x4
+}
 
 /// Struct to store position and orientation of a keypoint
 public struct KeypointInfo: Identifiable {
