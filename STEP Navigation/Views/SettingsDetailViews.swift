@@ -299,7 +299,7 @@ struct CustomColorScheme: View {
     var body: some View {
         Group {
             VStack {
-                ScreenHeader(title: "Custom Color Scheme", subtitle : "Choose your own foreground and background colors for the app.", backButtonHidden: true)
+                ScreenHeader(title: "Custom Color Scheme", subtitle : "Choose your own foreground and background colors for the app.", backButtonHidden: true).fixedSize(horizontal: false, vertical: true)
                 
                 let (color1, color2) = selectedColorScheme
                 
