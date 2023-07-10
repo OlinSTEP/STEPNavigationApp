@@ -72,24 +72,31 @@ struct ConnectingView: View {
                     
                     if saved {
                         if FirebaseManager.shared.mapGraph.isDirectlyConnected(from: anchorID2, to: anchorID1) {
-                            ARViewTextOverlay(text: "Anchors Fully Connected.", navLabel: "Home", navDestination: HomeView())
+                            ARViewTextOverlay(text: "Anchors Fully Connected.", navLabel: "Home", navDestination: HomeView(), announce: "Anchors Fully Connected.")
                         } else {
                             VStack {
-                                ARViewTextOverlay(text: "The connection will automatically work in both directions, but you can improve the path by recording from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!).", navLabel: "Home", navDestination: HomeView(), buttonLabel: "Improve Connection", buttonAction: {
-                                    PositioningModel.shared.startPositioning()
-                                    startedRecording = false
-                                    saved = false
-                                    PositioningModel.shared.resolveCloudAnchor(byID: anchorID1)
-                                    PositioningModel.shared.resolveCloudAnchor(byID: anchorID2)
-                                    PathRecorder.shared.startAnchorID = anchorID2
-                                    startAnchor = anchorID2
-                                    PathRecorder.shared.stopAnchorID = anchorID1
-                                    stopAnchor = anchorID1
-                                }, onAppear: {
-                                    focusOnImprovePopup = true
-                                    PathRecorder.shared.stopRecordingPath()
-                                    PathRecorder.shared.toFirebase()
-                                })
+                                ARViewTextOverlay(
+                                    text: "The connection will automatically work in both directions, but you can improve the path by recording from \(FirebaseManager.shared.getCloudAnchorName(byID: stopAnchor)!) to \(FirebaseManager.shared.getCloudAnchorName(byID: startAnchor)!).",
+                                    navLabel: "Home",
+                                    navDestination: HomeView(),
+                                    announce: "Connection successful.",
+                                    buttonLabel: "Improve Connection", buttonAction: {
+                                        PositioningModel.shared.startPositioning()
+                                        startedRecording = false
+                                        saved = false
+                                        PositioningModel.shared.resolveCloudAnchor(byID: anchorID1)
+                                        PositioningModel.shared.resolveCloudAnchor(byID: anchorID2)
+                                        PathRecorder.shared.startAnchorID = anchorID2
+                                        startAnchor = anchorID2
+                                        PathRecorder.shared.stopAnchorID = anchorID1
+                                        stopAnchor = anchorID1
+                                    },
+                                    onAppear: {
+                                        focusOnImprovePopup = true
+                                        PathRecorder.shared.stopRecordingPath()
+                                        PathRecorder.shared.toFirebase()
+                                    }
+                                )
                             }
                         }
                     }

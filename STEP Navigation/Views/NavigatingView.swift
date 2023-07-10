@@ -24,6 +24,7 @@ struct NavigatingView: View {
     @State var showingHelp = false
     @AccessibilityFocusState var focusOnAnchorInfo
     @AccessibilityFocusState var focusOnExit
+    @State var lastFlatWarning: Date?
 
     var body: some View {
         Group {
@@ -129,6 +130,15 @@ struct NavigatingView: View {
                     focusOnAnchorInfo = true
                 }
             }
+            .onReceive(PositioningModel.shared.$phoneTilt) { newValue in
+                guard let newValue = newValue, lastFlatWarning == nil || -lastFlatWarning!.timeIntervalSinceNow > 8.0 else {
+                    return
+                }
+                if newValue.isAtLeastAsFlatAs(.halfway) {
+                    lastFlatWarning = Date()
+                    AnnouncementManager.shared.announce(announcement: "Hold your phone vertically for best performance")
+                }
+            }
         }
         .padding(.bottom, 48)
         .background(AppColor.foreground)
@@ -137,7 +147,7 @@ struct NavigatingView: View {
     }
     
     private func checkLocalization(cloudAnchorsToCheck: Set<String>) {
-        if let startAnchorDetails = startAnchorDetails, let startCloudID = startAnchorDetails.getCloudAnchorID(), cloudAnchorsToCheck.contains(startCloudID), !didLocalize {
+        if startAnchorDetails != nil && !didLocalize && PositioningModel.shared.didFindLandmark(cloudAnchorIDs: cloudAnchorsToCheck) {
             AnnouncementManager.shared.announce(announcement: "Alignment successful. Let's go.")
             didLocalize = true
             navigationManager.startNavigating()
