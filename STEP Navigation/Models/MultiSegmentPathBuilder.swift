@@ -39,6 +39,15 @@ public struct CloudLandmarks: Identifiable {
     public var location: simd_float4x4
 }
 
+public struct ProcessedPose: Identifiable {
+    /// The unique identifier of the keypoint
+    public let id: Int
+    ///
+    let mode: KeypointType
+    /// the location of the keypoint
+    public var location: simd_float4x4
+}
+
 /// Struct to store position and orientation of a keypoint
 public struct KeypointInfo: Identifiable {
     /// The unique identifier of the keypoint

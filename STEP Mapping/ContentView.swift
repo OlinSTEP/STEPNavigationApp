@@ -251,6 +251,7 @@ struct ResolvingCloudAnchorsView: View {
                 .onAppear() {
                     PositioningModel.shared.startPositioning()
                     PathRecorder.shared.startRecording()
+                   
                 }
             }
         }
@@ -300,7 +301,8 @@ struct VisualizingARMapView: View{
                 }
                 .onAppear() {
                     PositioningModel.shared.startPositioning()
-                    PathRecorder.shared.startRecording()
+//                    PathRecorder.shared.startRecording()
+                    FirebaseManager.shared.datadealer()
                     
                 }
             }

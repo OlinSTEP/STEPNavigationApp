@@ -71,6 +71,50 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    func datadealer() {
+        print("datadealer!")
+        
+        let mapFileName = "TestProcessed/DA7F44EC-033C-445A-8E4A-5E68FA2E4DF0_processed.json"
+        
+        FirebaseManager.createMap(from: mapFileName) { map in
+            print("Map created: \(map)")
+            
+            /// deals with the cloud anchors
+            let anchordict = map.anchorDictionary
+            var landmarks: [String: simd_float4x4] = [:]
+            
+            for (_, anchor) in anchordict {
+                let anchorPose = simd_float4x4(translation: simd_float3(anchor.translation.x, anchor.translation.y, anchor.translation.z), rotation: simd_quatf(ix: anchor.rotation.x, iy: anchor.rotation.y, iz: anchor.rotation.z, r: anchor.rotation.w))
+                landmarks[anchor.cloudidentifier] = anchorPose
+                PositioningModel.shared.cloudlandmarks.append(CloudLandmarks(id: anchor.cloudidentifier, mode: .cloudAnchorBased, location: anchorPose))
+            }
+            PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
+            print("landmarks are printed \(landmarks)")
+            
+            for anchor in PositioningModel.shared.cloudlandmarks {
+                PositioningModel.shared.processedrender(anchor)
+            }
+            
+            
+            /// deals with the odometry vertices
+            let odomdict = map.odometryDict
+            
+            var odommarks: [Int: simd_float4x4] = [:]
+            
+            for (_, odom) in odomdict {
+                let odomPose = simd_float4x4(translation: simd_float3(odom.translation.x, odom.translation.y, odom.translation.z), rotation: simd_quatf(ix: odom.rotation.x, iy: odom.rotation.y, iz: odom.rotation.z, r: odom.rotation.w))
+                odommarks[odom.poseId] = odomPose
+                
+                PositioningModel.shared.processedposes.append(ProcessedPose(id: odom.poseId, mode: .cloudAnchorBased, location: odomPose))
+                PositioningModel.shared.processedpose(PositioningModel.shared.processedposes.last!)
+
+                
+            }
+        
+        }
+    }
+    
+    
     
     /// a handle to the connection collection.  This handle is affected by the the mapping sub folder setting.
     private var connectionCollection: CollectionReference {
@@ -430,22 +474,22 @@ class FirebaseManager: ObservableObject {
         return mapAnchors[id]
     }
     
-    
     class Map: Decodable {
         var rawData: RawMap
-        var anchorDictionary = [Int:RawMap.CloudVertex]()
+        var anchorDictionary: [Int:RawMap.CloudVertex] = [:]
         var waypointDictionary = [Int:RawMap.WaypointVertex]()
-        var waypointKeyDictionary = [String:Int]()
+//        var waypointKeyDictionary = [String:Int]()
 //        let distanceToWaypoint: Float = 1.5
-//        var pathPlanningGraph: WeightedGraph<String, Float>?
+        var pathPlanningGraph: WeightedGraph<String, Float>?
         // odometryDict stores a list of nodes by poseID to their xyz data
-        var odometryDict: Dictionary<Int, RawMap.OdomVertex>?
+        var odometryDict: [Int: RawMap.OdomVertex] = [:]
         
         init?(from data: Data) {
             do {
                 self.rawData = try JSONDecoder().decode(RawMap.self, from: data)
                 storeAnchorsInDictionary()
-                print(waypointDictionary)
+                renderGraphPath()
+//                print ("odom stuff \(odometryDict)")
             } catch let error {
                 print(error)
                 return nil
@@ -459,7 +503,19 @@ class FirebaseManager: ObservableObject {
                                                 cloudidentifier: cloudVertex.cloudidentifier)
                 anchorDictionary[cloudIdentifier] = anchor
             }
-            print(anchorDictionary)
+//            print(anchorDictionary)
+        }
+        
+        func renderGraphPath(){
+            // Initializes dictionary and graph
+//            odometryDict = Dictionary<Int, RawMap.OdomVertex>(uniqueKeysWithValues: zip(rawData.odometryVertices.map({$0.poseId}), rawData.odometryVertices))
+            odometryDict = [:]
+            for (poseId, odomVertex) in rawData.odometryVertices.enumerated() {
+                let odomvertex = RawMap.OdomVertex(translation: odomVertex.translation,
+                                                rotation: odomVertex.rotation,
+                                                poseId: odomVertex.poseId)
+                odometryDict[poseId] = odomVertex
+            }
         }
         
         struct RawMap: Decodable {
