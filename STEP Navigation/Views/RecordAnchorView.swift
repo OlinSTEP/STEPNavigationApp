@@ -129,15 +129,11 @@ class TimerManager: ObservableObject {
 struct RecordAnchorInstructionsView: View {
     var body: some View {
         let instructionListItems = [
-            "Hold your phone vertically at chest height, such that the camera is facing straight out in front of you.",
-            "Move your phone left to right in a wide arc.",
-            "Turn around 180 degrees and move your phone left to right in a wide arc.",
-            "Tilt your phone very slightly upwards.",
-            "Repeat steps 2 and 3.",
-            "Tilt your phone very slightly downwards.",
-            "Repeat steps 2 and 3.",
-            "Take a few steps back and repeat steps 1 through 7.",
-            "If there is still time remaining, continue to move your phone around to capture the anchor from as many angles as possible."
+            "At chest level",
+            "Phone tilted slightly upwards",
+            "Phone tilted slightly downwards",
+            "A few steps back from your starting location",
+            "Raised above angled downwards and/or below your chest angled upwards"
         ]
         
         let tipListItems = [
@@ -153,7 +149,12 @@ struct RecordAnchorInstructionsView: View {
                     OrderedList(listItems: tipListItems)
                     
                     LeftLabel(text: "Instructions", textSize: .title2)
-                    Text("Stand in the anchor destination with the rear camera pointing away from you. Move your phone slowly and steadily as you complete the following motions.")
+                    Text("Stand in the anchor destination with the rear camera pointing away from you. Move your phone slowly and steadily as you conduct a scan. A scan consists of moving your phone in an arc from left to right.")
+                    HStack {
+                        Text("You will conduct 5 scans in the following positions:")
+                        Spacer()
+                        
+                    }
                     OrderedList(listItems: instructionListItems)
                 }
                 .foregroundColor(AppColor.foreground)
