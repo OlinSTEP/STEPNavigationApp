@@ -131,6 +131,9 @@ struct NavigatingView: View {
                 }
             }
             .onReceive(PositioningModel.shared.$phoneTilt) { newValue in
+                guard RouteNavigator.shared.keypoints?.isEmpty == false else {
+                    return
+                }
                 guard let newValue = newValue, lastFlatWarning == nil || -lastFlatWarning!.timeIntervalSinceNow > 8.0 else {
                     return
                 }
