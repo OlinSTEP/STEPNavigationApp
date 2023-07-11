@@ -30,35 +30,35 @@ struct AnchorDetailsText: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text(anchorName)
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.horizontal)
-                Spacer()
-            }
-            HStack {
-                Text("\(anchorCategory)")
-                    .accessibilityLabel("Anchor Type \(anchorCategory)")
-                Text("|")
-                    .accessibilityHidden(true)
-                Text("\(distanceAway.metersAsUnitString) away")
-                Spacer()
-            }
-            .lineLimit(1)
-            .truncationMode(.tail)
-            .font(.title)
-            .padding(.horizontal)
-            VStack {
+            ScrollView {
                 HStack {
-                    Text("Location Notes")
-                        .font(.title2)
+                    Text(anchorName)
+                        .font(.largeTitle)
                         .bold()
-                        .padding(.bottom, 1)
-                        .multilineTextAlignment(.leading)
+                        .padding(.horizontal)
                     Spacer()
                 }
-                ScrollView {
+                HStack {
+                    Text("\(anchorCategory)")
+                        .accessibilityLabel("Anchor Type \(anchorCategory)")
+                    Text("|")
+                        .accessibilityHidden(true)
+                    Text("\(distanceAway.metersAsUnitString) away")
+                    Spacer()
+                }
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .font(.title)
+                .padding(.horizontal)
+                VStack {
+                    HStack {
+                        Text("Location Notes")
+                            .font(.title2)
+                            .bold()
+                            .padding(.bottom, 1)
+                            .multilineTextAlignment(.leading)
+                        Spacer()
+                    }
                     HStack {
                         if locationNotes.isEmpty {
                             Text("No notes available for this location.")
@@ -68,9 +68,9 @@ struct AnchorDetailsText: View {
                         Spacer()
                     }
                 }
+                .padding(.horizontal)
+                .padding(.vertical, 2)
             }
-            .padding(.horizontal)
-            .padding(.vertical, 2)
         }
         .onAppear() {
             if let currentLocation = PositioningModel.shared.currentLatLon {
