@@ -371,7 +371,7 @@ class FirebaseManager: ObservableObject {
     }
     
     private func removeAllCloudAnchorObservers() {
-        cloudAnchorObservers.map({$0.remove()})
+        let _ = cloudAnchorObservers.map({$0.remove()})
         cloudAnchorObservers = []
     }
     

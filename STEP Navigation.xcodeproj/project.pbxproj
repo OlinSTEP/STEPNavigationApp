@@ -77,6 +77,8 @@
 		82811EEC2A0C3C5A00D1BE96 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 82811EEB2A0C3C5A00D1BE96 /* GoogleService-Info.plist */; };
 		82829AD02A0A8D48005A1BC6 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 82829ACF2A0A8D48005A1BC6 /* FirebaseFirestore */; };
 		82829AD22A0A8D54005A1BC6 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 82829AD12A0A8D54005A1BC6 /* FirebaseFirestore */; };
+		8291CF822A5DA38D00A31E9C /* TestAnchorLocalizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8291CF812A5DA38D00A31E9C /* TestAnchorLocalizationView.swift */; };
+		8291CF832A5DA38D00A31E9C /* TestAnchorLocalizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8291CF812A5DA38D00A31E9C /* TestAnchorLocalizationView.swift */; };
 		829F7B6729F2C03A00B59EE0 /* AnnouncementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */; };
 		829F7B6929F2C2AB00B59EE0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 829F7B6829F2C2AB00B59EE0 /* Localizable.strings */; };
 		82A0166C2A00150900EAA526 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825F1F5629E9CF7D0043BD98 /* FirebaseManager.swift */; };
@@ -227,6 +229,7 @@
 		82811EE32A0C321000D1BE96 /* STEP Mapping.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "STEP Mapping.entitlements"; sourceTree = "<group>"; };
 		82811EE42A0C32B900D1BE96 /* AuthHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthHandler.swift; sourceTree = "<group>"; };
 		82811EEB2A0C3C5A00D1BE96 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8291CF812A5DA38D00A31E9C /* TestAnchorLocalizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAnchorLocalizationView.swift; sourceTree = "<group>"; };
 		829F7B6629F2C03A00B59EE0 /* AnnouncementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementManager.swift; sourceTree = "<group>"; };
 		829F7B6829F2C2AB00B59EE0 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		82A016862A00164900EAA526 /* PathRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathRecorder.swift; sourceTree = "<group>"; };
@@ -390,6 +393,7 @@
 				A8DA8BC02A3A0BDA0024510F /* SelectConnectingAnchorsView.swift */,
 				A867F9442A462E2400006DBC /* StartupViews.swift */,
 				A8D8358D2A5B6516004419F5 /* VideoView.swift */,
+				8291CF812A5DA38D00A31E9C /* TestAnchorLocalizationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -703,6 +707,7 @@
 				8241737429DE1440001599B1 /* AllPaths.swift in Sources */,
 				A867F9512A4D2A7F00006DBC /* Miscellaneous.swift in Sources */,
 				A8FF1A1229E062DD002019E9 /* DestinationTypesView.swift in Sources */,
+				8291CF822A5DA38D00A31E9C /* TestAnchorLocalizationView.swift in Sources */,
 				A80CDCB82A311E58007FA7CE /* RadarMapView.swift in Sources */,
 				6569872F2A38DD2400F5C584 /* NavigateFeedbackDataModel.swift in Sources */,
 				82E1482A2A166636008E8642 /* PathRecorder.swift in Sources */,
@@ -792,6 +797,7 @@
 				6569873C2A4F15FD00F5C584 /* StartupViews.swift in Sources */,
 				82A0168A2A00175400EAA526 /* LocationDataModel.swift in Sources */,
 				82A016912A00189500EAA526 /* ARCoreCredentials.swift in Sources */,
+				8291CF832A5DA38D00A31E9C /* TestAnchorLocalizationView.swift in Sources */,
 				A80CDCB22A30F5AA007FA7CE /* AnchorDetailView.swift in Sources */,
 				82A0167D2A0015AA00EAA526 /* NavigationManager.swift in Sources */,
 				656987362A4F159800F5C584 /* MenusAndTextFields.swift in Sources */,

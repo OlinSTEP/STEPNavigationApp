@@ -26,6 +26,7 @@ struct AnchorDetailView_Manage: View {
                     Spacer()
                     VStack(spacing: 18) {
                         SmallNavigationLink(destination: AnchorDetailEditView(anchorDetails: anchorDetails, buttonLabel: "Save", buttonDestination: {AnchorDetailView_Manage(anchorDetails: anchorDetails)}), label: "Edit")
+                      //  SmallNavigationLink(destination: TestAnchorLocalizationView(anchorDetails: anchorDetails), label: "Try Finding this Anchor")
                         SmallNavigationLink(destination: SelectConnectingAnchorsView(anchorID1: anchorDetails.id), label: "Connect")
                         SmallButton(action: {
                             showingConfirmation = true

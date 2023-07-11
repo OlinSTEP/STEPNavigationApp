@@ -132,5 +132,6 @@ struct ScreenHeader: View {
         .navigationBarBackButtonHidden(backButtonHidden)
         .background(AppColor.foreground)
         .foregroundColor(AppColor.background)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }

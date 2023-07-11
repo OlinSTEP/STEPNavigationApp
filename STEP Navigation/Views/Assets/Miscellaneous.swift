@@ -268,10 +268,10 @@ struct LeftLabel: View {
     let color: Color
     
     init(text: String, textSize: Font = .largeTitle, color: Color = AppColor.foreground) {
-            self.text = text
-            self.textSize = textSize
-            self.color = color
-        }
+        self.text = text
+        self.textSize = textSize
+        self.color = color
+    }
     
     var body: some View {
         HStack {

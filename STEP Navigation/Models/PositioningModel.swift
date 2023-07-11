@@ -81,6 +81,22 @@ struct CloudAnchorResolutionInfomation {
     let pose: simd_float4x4
 }
 
+/// This describes how the phone is tilted relative to the ARWorldTrackingSession.  Tilt is determined by measuring the angle between the phone's negative x-axis and the world y-axis
+enum PhoneTilt: Int {
+    /// tilt is less than 15 degrees
+    case upright = 1
+    /// tilt is between 15 and 30 degrees
+    case almostUpright = 2
+    /// tilt is betwen 60 and 30 degrees
+    case halfway = 3
+    /// tilt is more than 60 degrees
+    case mostlyFlat = 4
+    
+    func isAtLeastAsFlatAs(_ other: PhoneTilt)->Bool {
+        return self.rawValue >= other.rawValue
+    }
+}
+
 /// This class handles three basic functions.  First, it maintains the positioning information for the current session (in both AR space and in geolocation space).  Second, it handles the alignment of map space to the current AR space.  Third, it manages the rendering of content in the AR scene.
 class PositioningModel: NSObject, ObservableObject {
     /// The shared handle to the singleton instance of this class
@@ -98,7 +114,9 @@ class PositioningModel: NSObject, ObservableObject {
     private var qualityChecker: Timer?
     /// a mapping from anchor identifiers to cloud identifiers
     private var identifierToCloudIdentifier: [UUID: String] = [:]
+    /// use this to sequence GARSession operations
     private var arCoreDispatchQueue = DispatchQueue(label: "arCoreQueue")
+    /// the condition object to synchronize the queue
     private var sessionReadyCondition = NSCondition()
     /// keeps track of whether the GARSession is ready
     private var sessionReady = false
@@ -108,8 +126,14 @@ class PositioningModel: NSObject, ObservableObject {
     @Published var resolvedCloudAnchors = Set<String>()
     /// the current geo localization accuracy
     @Published var geoLocalizationAccuracy: GeoLocationAccuracy = .none
+    /// the degree to which the phone is tilted
+    @Published var phoneTilt: PhoneTilt?
     /// the current latitude and longitude
     @Published var currentLatLon: CLLocationCoordinate2D?
+    /// true if we encountered a tracking error since the session was started
+    @Published var hadTrackingError: Bool = false
+    /// the cloud anchor IDs for the landmarks we are searching for
+    private var cloudAnchorLandmarkIDs: Set<String> = []
     /// A buffer of previous poses that provide us with suitable history for estimate cloud anchor quality
     private var poseBuffer: [simd_float4x4] = []
     /// the maximum length of the pose buffer
@@ -196,6 +220,7 @@ class PositioningModel: NSObject, ObservableObject {
     
     /// Stop positioning using ARCore and ARKit
     func stopPositioning() {
+        removeRenderedContent()
         garSession = nil
         sessionReadyCondition.lock()
         sessionReady = false
@@ -213,8 +238,12 @@ class PositioningModel: NSObject, ObservableObject {
     func resetAlignment() {
         manualAlignment = nil
         currentQuality = nil
-        currentLatLon = nil
-        geoLocalizationAccuracy = .none
+        hadTrackingError = false
+        phoneTilt = nil
+        cloudAnchorLandmarkIDs = []
+        // remember the last lat/lon to avoid getting stuck geo localizing
+        // currentLatLon = nil
+        geoLocalizationAccuracy = .coarse
         resolvedCloudAnchors = []
         cloudAnchorAligner = CloudAnchorAligner()
     }
@@ -381,10 +410,18 @@ class PositioningModel: NSObject, ObservableObject {
     /// Set the cloud anchor landmarks that will be used for aligning map space and the current tracking session
     /// - Parameter landmarks: the keys are cloud anchor identifiers and the values are the expected poses in map space.
     func setCloudAnchors(landmarks: [String: simd_float4x4]) {
+        cloudAnchorLandmarkIDs = Set(landmarks.keys)
         cloudAnchorAligner.cloudAnchorLandmarks = landmarks
         for cloudAnchorID in landmarks.keys {
             resolveCloudAnchor(byID: cloudAnchorID)
         }
+    }
+    
+    /// Check if one of the specified cloud anchor IDs is a landmark
+    /// - Parameter cloudAnchorIDs: the landmarks to test
+    /// - Returns: true if it is a landmark and false otherwise
+    func didFindLandmark(cloudAnchorIDs: Set<String>)->Bool {
+        return !cloudAnchorLandmarkIDs.intersection(cloudAnchorIDs).isEmpty
     }
     
     /// Create a new cloud anchor after the specified delay and with the specified name
@@ -434,7 +471,7 @@ class PositioningModel: NSObject, ObservableObject {
         }
         let poseIndex = max(0, poseBuffer.count - Self.poseBufferLookbackForCloudAnchorAssessment)
         let poseToUseForQualityEstimation = poseBuffer[poseIndex].alignY()
-        createCloudAnchor(atPose: poseToUseForQualityEstimation, withMetadata: metadata, completionHandler: completionHandler)
+        createCloudAnchor(atPose: poseToUseForQualityEstimation, withMetadata: metadata, makeAnnouncement: false, completionHandler: completionHandler)
     }
     
     /// Wait on the ``sessionIsReadyCondition``
@@ -451,13 +488,15 @@ class PositioningModel: NSObject, ObservableObject {
     ///   - pose: the pose of the cloud anchor in the current tracking session
     ///   - metadata: the metadata to be associated with the cloud anchor
     ///   - completionHandler: called with an input of the cloud anchor identifier if successful, nil otherwise
-    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata, completionHandler: @escaping (String?)->()) {
+    func createCloudAnchor(atPose pose: simd_float4x4, withMetadata metadata: CloudAnchorMetadata, makeAnnouncement: Bool = true, completionHandler: @escaping (String?)->()) {
         arCoreDispatchQueue.async {
             self.waitOnSession()
             let newAnchor = ARAnchor(transform: pose)
             self.arView.session.add(anchor: newAnchor)
             do {
-                AnnouncementManager.shared.announce(announcement: "Trying to host anchor")
+                if makeAnnouncement {
+                    AnnouncementManager.shared.announce(announcement: "Trying to host anchor")
+                }
                 try self.garSession?.hostCloudAnchor(newAnchor, ttlDays: 1) { cloudIdentifier, anchorState in
                     guard anchorState == .success else {
                         AnnouncementManager.shared.announce(announcement: "Failed to host anchor")
@@ -474,7 +513,9 @@ class PositioningModel: NSObject, ObservableObject {
                         PathRecorder.shared.addCloudAnchor(identifier: cloudIdentifier, metadata: metadata, currentPose: pose)
                         
                     }
-                    AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
+                    if makeAnnouncement {
+                        AnnouncementManager.shared.announce(announcement: "Cloud Anchor Created")
+                    }
                     return completionHandler(cloudIdentifier)
                 }
             } catch {
@@ -504,6 +545,21 @@ class PositioningModel: NSObject, ObservableObject {
             }
         }
     }
+    
+    private func adjustTilt(cameraTransform: simd_float4x4) {
+        let v1 = simd_float3(0, 1, 0)
+        let v2 = -cameraTransform.columns.0.inhomogeneous
+        let tilt = abs(simd_quatf(from: v1, to: v2).angle)
+        if tilt < 15.0 * Float.pi / 180.0 {
+            phoneTilt = .upright
+        } else if tilt < 30.0 * .pi / 180.0 {
+            phoneTilt = .almostUpright
+        } else if tilt < 60.0 {
+            phoneTilt = .halfway
+        } else {
+            phoneTilt = .mostlyFlat
+        }
+    }
 }
 
 extension PositioningModel: ARSessionDelegate {
@@ -518,9 +574,20 @@ extension PositioningModel: ARSessionDelegate {
     ///   - frame: the new frame
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         PathLogger.shared.logPose(frame.camera.transform, timestamp: frame.timestamp)
+        if case .limited(reason: .excessiveMotion) = frame.camera.trackingState {
+            hadTrackingError = true
+            AnnouncementManager.shared.announce(announcement: "Excessive camera motion.")
+        }
+        if case .limited(reason: .insufficientFeatures) = frame.camera.trackingState {
+            hadTrackingError = true
+            AnnouncementManager.shared.announce(announcement: "Insufficient visual features. Lighting may be poor.")
+        }
         if frame.camera.trackingState == .normal && garSession == nil {
             startGARSession()
             monitorQuality()
+        }
+        if frame.camera.trackingState == .normal {
+            adjustTilt(cameraTransform: frame.camera.transform)
         }
         do {
             if let garFrame = try garSession?.update(frame) {
