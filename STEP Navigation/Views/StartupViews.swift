@@ -153,6 +153,23 @@ struct StartupPage5:  View {
                     UnorderedList(listItems: ["Clew Maps 2 will vibrate and give you audio clues as you follow a route. If you veer off the path the clues will stop.", "If you stop hearing the audio clues, stop and turn the phone from side to side until the sounds resume.", "If needed, press the 'Get Directions' button for audio directions to get back on the route."])
                 }
                 Spacer()
+                SmallNavigationLink(destination: StartupPage6(), label: "Next")
+            }
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                ExitTutorial()
+            }
+        }
+    }
+}
+
+struct StartupPage6:  View {
+    var body: some View {
+        ScreenBackground {
+            VStack {
+                ScreenHeader(title: "Demo Video: How to Follow a Route")
+                VideoView(videoID: "aVLYKcKvoC4")
+                Spacer()
                 SmallNavigationLink(destination: StartupPage7(), label: "Next")
             }
             .navigationBarBackButtonHidden()
@@ -162,6 +179,7 @@ struct StartupPage5:  View {
         }
     }
 }
+
 
 struct StartupPage7:  View {
     var body: some View {
@@ -186,15 +204,55 @@ struct StartupPage8:  View {
     var body: some View {
         ScreenBackground {
             VStack {
-                ScreenHeader(title: "See it in Action", backButtonHidden: true)
-                StartupText("In this video we will demonstrate how Clew Maps 2 works.")
-                VideoView(videoID: "G5BonVtsfmY")
+                ScreenHeader(title: "Demo Video: How to Create an Anchor")
+                VideoView(videoID: "ZYOYGU-PIQw")
                 Spacer()
-                SmallNavigationLink(destination: HomeView(), label: "Finish Tutorial")
+                SmallNavigationLink(destination: StartupPage9(), label: "Next")
+            }
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                ExitTutorial()
             }
         }
     }
 }
+
+struct StartupPage9:  View {
+    var body: some View {
+        ScreenBackground {
+            VStack {
+                ScreenHeader(title: "Connecting Anchors")
+                ScrollView {
+                    UnorderedList(listItems: ["After creating anchors they need to be connected to create a map of the space. There are three types of connections.", "Directly connected anchors are two anchors that have a route recorded directly between them; every time you record a connection you are creating directly connected anchors.", "Indirectly connected anchors are anchors that are connected by a series of multiple routes.", "Connected in Reverse anchors are anchors that were directly connected in only one direction (i.e. from Anchor A to Anchor B) and had the reverse route (i.e. from Anchor B to Anchor A) auto-generated."])
+                }
+                Spacer()
+                SmallNavigationLink(destination: StartupPage10(), label: "Next")
+            }
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                ExitTutorial()
+            }
+        }
+    }
+}
+
+struct StartupPage10:  View {
+    var body: some View {
+        ScreenBackground {
+            VStack {
+                ScreenHeader(title: "Demo Video: How to Connect Anchors")
+                VideoView(videoID: "vFuFk05MYvA")
+                Spacer()
+                SmallNavigationLink(destination: HomeView(), label: "Finish Tutorial")
+            }
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                ExitTutorial()
+            }
+        }
+    }
+}
+
 
 struct StartupText: View {
     let text: String
