@@ -231,6 +231,7 @@ class DataModelManager: ObservableObject {
                             maxDistance: CLLocationDistance,
                             withBuffer: CLLocationDistance = 0.0) -> Set<LocationDataModel> {
         var models = Set<LocationDataModel>()
+        PositioningModel.shared.adjusting()
         if anchorType == .indoorDestination {
             for anchorTypeCase in AnchorType.allCases.filter({ $0.isIndoors }) {
                 models.formUnion(allLocationModels[anchorTypeCase] ?? [])

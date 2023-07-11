@@ -93,6 +93,7 @@ class FirebaseManager: ObservableObject {
             
             for anchor in PositioningModel.shared.cloudlandmarks {
                 PositioningModel.shared.processedrender(anchor)
+              
             }
             
             /// deals with the odometry vertices

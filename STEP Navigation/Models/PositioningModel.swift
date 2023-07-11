@@ -108,6 +108,7 @@ class PositioningModel: NSObject, ObservableObject {
     /// the cloud anchors that have been resolved so far.  The elements of the set are the cloud identifiers
     @Published var resolvedCloudAnchors = Set<String>()
     /// cloud anchors
+    var textNodelist : [SCNNode] = []
     var anchorpoints = [AnchorPointInfo]()
     var posepoints = [PoseData]()
     var cloudlandmarks = [CloudLandmarks]()
@@ -185,6 +186,7 @@ class PositioningModel: NSObject, ObservableObject {
         let configuration = ARWorldTrackingConfiguration()
         configuration.isAutoFocusEnabled = false
         arView.session.run(configuration)
+//        PositioningModel.shared.adjusting()
     }
     
     /// Start positioning using only GPS
@@ -211,6 +213,7 @@ class PositioningModel: NSObject, ObservableObject {
         beingResolved = []
         arView.session.pause()
         resetAlignment()
+        
     }
     
     /// Remove any rendered content
@@ -328,6 +331,7 @@ class PositioningModel: NSObject, ObservableObject {
             
             let callback = resolveCloudAnchor(byID: anchor.id)
             beingResolved.append(ResolvingInfo(id: anchor.id, location: location, callback: callback, type: anchor.getAnchorType()))
+//            PositioningModel.shared.adjusting()
         }
     }
     
@@ -394,6 +398,10 @@ class PositioningModel: NSObject, ObservableObject {
     func processedpose(_ posed: ProcessedPose){
         let initialAlignment = posed.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
         rendererHelper.renderCircle(at: posed.location, withInitialAlignment: initialAlignment, id: UUID())
+    }
+    
+    func adjusting(){
+        rendererHelper.adjustlabels(nodelist: PositioningModel.shared.textNodelist)
     }
     
     func processedrender(_ processedanchor: CloudLandmarks){
@@ -637,7 +645,7 @@ class RendererHelper {
     /// ID list
     var idlist: [UUID] = []
     var poseidlist: [UUID] = []
-    var textNodelist : [SCNNode] = []
+//    var textNodelist : [SCNNode] = []
     var nodes: [UUID: SCNNode] = [:]
     var cloudlandmarks : [CloudLandmarks] = []
     var PoseNodes: [UUID: SCNNode] = [:]
@@ -681,25 +689,38 @@ class RendererHelper {
         let textNode = SCNNode(geometry: textGeometry)
         textNode.scale = SCNVector3(0.005, 0.005, 0.005)
         
-        adjustlabels(nodelist: textNodelist)
         
-        textNodelist.append(textNode)
+        PositioningModel.shared.textNodelist.append(textNode)
+        
+        adjustlabels(nodelist: PositioningModel.shared.textNodelist)
         
         return textNode
     }
     
     
-    func adjustlabels(nodelist : [SCNNode]){
+    func adjustlabels(nodelist: [SCNNode]){
         
-        guard let cameraTransform = arView.session.currentFrame?.camera.transform else {
-            fatalError("Camera transform not available")
-        }
-        let cameraRotation = SCNVector3(cameraTransform.columns.2.x, cameraTransform.columns.2.y, cameraTransform.columns.2.z)
-        
-        for textNode in nodelist {
-            textNode.eulerAngles = SCNVector3(0, atan2(cameraRotation.x, cameraRotation.z), 0)
+        if let cameraTransform = arView.session.currentFrame?.camera.transform {
+    
+            let cameraRotation = SCNVector3(cameraTransform.columns.2.x, cameraTransform.columns.2.y, cameraTransform.columns.2.z)
+            
+            for textNode in nodelist {
+                textNode.eulerAngles = SCNVector3(0, atan2(cameraRotation.x, cameraRotation.z), 0)
+            }
         }
     }
+    
+//    func adjusting(nodelist: [SCNNode] ){
+//
+//        if let cameraTransform = arView.session.currentFrame?.camera.transform {
+//
+//            let cameraRotation = SCNVector3(cameraTransform.columns.2.x, cameraTransform.columns.2.y, cameraTransform.columns.2.z)
+//
+//            for textNode in textNodelist {
+//                textNode.eulerAngles = SCNVector3(0, atan2(cameraRotation.x, cameraRotation.z), 0)
+//            }
+//        }
+//    }
     
     
     func createMapNode(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: String) {
@@ -750,7 +771,7 @@ class RendererHelper {
     
     func renderCircle(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: UUID) {
         
-        let radius: CGFloat = 0.05
+        let radius: CGFloat = 0.04
         
         let circle = SCNSphere(radius: radius)
         circle.firstMaterial?.diffuse.contents = UIColor.red
@@ -761,7 +782,7 @@ class RendererHelper {
         
         PoseNodes[id] = node
         
-        adjustlabels(nodelist: textNodelist)
+//        adjustlabels(nodelist: textNodelist)
         
         if anchorNode == nil {
             anchorNode = SCNNode()

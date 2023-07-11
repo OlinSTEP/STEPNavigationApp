@@ -293,12 +293,12 @@ struct VisualizingARMapView: View{
     var body: some View {
         HStack{
             VStack {
-                Text("Go to the next anchor.")
+                Text("Follow the path.")
                 Text("Resolved " + newResolved)
                 
-                Button("save"){
-                    PathRecorder.shared.toFirebase()
-                }
+//                Button("save"){
+//                    PathRecorder.shared.toFirebase()
+//                }
                 .onAppear() {
                     PositioningModel.shared.startPositioning()
 //                    PathRecorder.shared.startRecording()
