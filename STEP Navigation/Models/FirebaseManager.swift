@@ -95,7 +95,6 @@ class FirebaseManager: ObservableObject {
                 PositioningModel.shared.processedrender(anchor)
             }
             
-            
             /// deals with the odometry vertices
             let odomdict = map.odometryDict
             
@@ -108,13 +107,9 @@ class FirebaseManager: ObservableObject {
                 PositioningModel.shared.processedposes.append(ProcessedPose(id: odom.poseId, mode: .cloudAnchorBased, location: odomPose))
                 PositioningModel.shared.processedpose(PositioningModel.shared.processedposes.last!)
 
-                
             }
-        
         }
     }
-    
-    
     
     /// a handle to the connection collection.  This handle is affected by the the mapping sub folder setting.
     private var connectionCollection: CollectionReference {
@@ -263,7 +258,6 @@ class FirebaseManager: ObservableObject {
                   "weight": edgeWeight,
                   "pathID": id] as [String : Any]])
         ])
-
     }
     
     /// Parse the data from Firebase containing the cloud anchor

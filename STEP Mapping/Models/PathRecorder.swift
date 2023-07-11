@@ -120,6 +120,7 @@ class PathRecorder {
     func addCloudAnchor(identifier: String, metadata: CloudAnchorMetadata, currentPose: simd_float4x4, timestamp: Double) {
         cloudAnchors.append([[
 //            "metadata": metadata,
+            "name": metadata.name,
             "timestamp": timestamp,
             "pose": currentPose.toColumnMajor(),
             "poseId":  breadCrumbs.count,
@@ -138,6 +139,7 @@ class PathRecorder {
     
     /// Stores the recorded data in firebase storage and the JSON path in realtime database
     func toFirebase(){
+        
         firebaseRef = Database.database(url: "https://stepnavigation-default-rtdb.firebaseio.com").reference()
         firebaseStorage = Storage.storage()
         firebaseStorageRef = firebaseStorage.reference()

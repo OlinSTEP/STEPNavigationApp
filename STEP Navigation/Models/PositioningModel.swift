@@ -356,91 +356,13 @@ class PositioningModel: NSObject, ObservableObject {
                 if let metadata = FirebaseManager.shared.getCloudAnchorMetadata(byID: cloudAnchorID) {
                     PathRecorder.shared.addCloudAnchor(identifier: cloudAnchorID, metadata: metadata, currentPose: garAnchor.transform, timestamp: self.arView.session.currentFrame?.timestamp ?? 0.0)
                 }
-//                PathRecorder.shared.resolvedAnchor()
+                //                PathRecorder.shared.resolvedAnchor()
                 
                 PositioningModel.shared.anchorpoints.append(AnchorPointInfo(id: UUID(), CloudAnchorName : self.lastAnchor, CloudAnchorID: cloudAnchorID, mode: .cloudAnchorBased, location: garAnchor.transform))
                 
                 PositioningModel.shared.renderer(self.anchorpoints.last!)
-//                print("resolving!")
-                
-
-                
-                
-//                PositioningModel.shared.processedrender(PositioningModel.shared.cloudlandmarks.last!)
-                
-                
-               // let mapFileName = "TestProcessed/DA7F44EC-033C-445A-8E4A-5E68FA2E4DF0_processed.json"
-                
-//                FirebaseManager.createMap(from: mapFileName) { map in
-////                    print("Map created: \(map)")
-//
-//                    /// deals with the cloud anchors
-//                    let anchordict = map.anchorDictionary
-//                    var landmarks: [String: simd_float4x4] = [:]
-//
-//                    for (_, anchor) in anchordict {
-//                        let anchorPose = simd_float4x4(translation: simd_float3(anchor.translation.x, anchor.translation.y, anchor.translation.z), rotation: simd_quatf(ix: anchor.rotation.x, iy: anchor.rotation.y, iz: anchor.rotation.z, r: anchor.rotation.w))
-//                        landmarks[anchor.cloudidentifier] = anchorPose
-//                        PositioningModel.shared.cloudlandmarks.append(CloudLandmarks(id: anchor.cloudidentifier, mode: .cloudAnchorBased, location: anchorPose))
-//                    }
-//                    PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
-////                    print("landmarks are printed \(landmarks)")
-//
-//
-//                    /// deals with the odometry vertices
-//                    let odomdict = map.odometryDict
-//
-//                    var odommarks: [Int: simd_float4x4] = [:]
-//
-//                    for (_, odom) in odomdict ?? [:] {
-//                        let odomPose = simd_float4x4(translation: simd_float3(odom.translation.x, odom.translation.y, odom.translation.z), rotation: simd_quatf(ix: odom.rotation.x, iy: odom.rotation.y, iz: odom.rotation.z, r: odom.rotation.w))
-//                        odommarks[odom.poseId] = odomPose
-//
-//                        PositioningModel.shared.processedposes.append(ProcessedPose(id: odom.poseId, mode: .cloudAnchorBased, location: odomPose))
-//
-//                        print("Processed poses \(PositioningModel.shared.processedposes)")
-//                    }
-//
-/
-                
-                
-//                let mapFileName = "TestProcessed/DA7F44EC-033C-445A-8E4A-5E68FA2E4DF0_processed.json"
-//
-//                FirebaseManager.createMap(from: mapFileName) { map in
-//                      print("Map created: \(map)")
-
-//                    let anchordict = map.anchorDictionary
-//                    var landmarks: [String: simd_float4x4] = [:]
-//
-//                    for (_, anchor) in anchordict {
-//                        let anchorPose = simd_float4x4(translation: simd_float3(anchor.translation.x, anchor.translation.y, anchor.translation.z), rotation: simd_quatf(ix: anchor.rotation.x, iy: anchor.rotation.y, iz: anchor.rotation.z, r: anchor.rotation.w))
-//                        landmarks[anchor.cloudidentifier] = anchorPose
-//                        PositioningModel.shared.cloudlandmarks.append(CloudLandmarks(id: anchor.cloudidentifier, mode: .cloudAnchorBased, location: anchorPose))
-//                    }
-//                    PositioningModel.shared.setCloudAnchors(landmarks: landmarks)
-//                    print("landmarks are printed \(landmarks)")
-
-//                                            let matchingAnchors = PositioningModel.shared.cloudlandmarks.filter { $0.id == cloudAnchorID }
-//                                            if let matchingAnchor = matchingAnchors.first {
-//                                                PositioningModel.shared.processedrender(matchingAnchor)
-//                                            } else {
-//                                                print("No processed anchor found")
-//
-//                                            }
-//                    if let matchingIndex = PositioningModel.shared.cloudlandmarks.firstIndex(where: { $0.id == cloudAnchorID }) {
-                //                        let matchingAnchor = PositioningModel.shared.cloudlandmarks[matchingIndex]
-                //                        PositioningModel.shared.processedrender(matchingAnchor)
-                //                    } else {
-                //                        print("No processed anchor found")
-                //                    }
-                
-                //                    print("processed stuff yay :) \(PositioningModel.shared.cloudlandmarks.last!)")
-                //                    PositioningModel.shared.processedrender(PositioningModel.shared.cloudlandmarks.last!)
-                //                        print( "actual stuff \(PositioningModel.shared.cloudlandmarks)")
             }
-        }
-        
-        catch {
+        } catch {
             print("error \(error.localizedDescription)")
         }
         return nil
@@ -475,10 +397,10 @@ class PositioningModel: NSObject, ObservableObject {
     }
     
     func processedrender(_ processedanchor: CloudLandmarks){
-     
+        
         let initialAlignment = processedanchor.mode == .cloudAnchorBased ? manualAlignment : matrix_identity_float4x4
         rendererHelper.createMapNode(at: processedanchor.location, withInitialAlignment: initialAlignment, id: processedanchor.id)
-
+        
     }
     
     /// Render the keypoint in the session
@@ -718,7 +640,6 @@ class RendererHelper {
     var textNodelist : [SCNNode] = []
     var nodes: [UUID: SCNNode] = [:]
     var cloudlandmarks : [CloudLandmarks] = []
-//    var processednodes : [String: SCNNode]
     var PoseNodes: [UUID: SCNNode] = [:]
     /// The streetscape meshes that have been rendered
     var renderedStreetscapes: [UUID: SCNNode] = [:]
@@ -775,7 +696,6 @@ class RendererHelper {
         }
         let cameraRotation = SCNVector3(cameraTransform.columns.2.x, cameraTransform.columns.2.y, cameraTransform.columns.2.z)
         
-        
         for textNode in nodelist {
             textNode.eulerAngles = SCNVector3(0, atan2(cameraRotation.x, cameraRotation.z), 0)
         }
@@ -793,7 +713,6 @@ class RendererHelper {
         
         mapNode?.addChildNode(labelNode)
         mapNode?.removeFromParentNode()
-
         
         if anchorNode == nil {
             anchorNode = SCNNode()
@@ -804,9 +723,6 @@ class RendererHelper {
             anchorNode!.addChildNode(mapNode!)
 }
         
-    
-    
-
     
     func renderKeypoint(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: UUID, name: String) {
         
@@ -830,6 +746,7 @@ class RendererHelper {
             anchorNode?.simdTransform = initialTransform
             anchorNode!.addChildNode(node!)
         }
+    
     
     func renderCircle(at location: simd_float4x4, withInitialAlignment alignment: simd_float4x4?, id: UUID) {
         
