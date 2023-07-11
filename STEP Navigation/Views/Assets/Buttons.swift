@@ -153,6 +153,7 @@ struct SmallNavigationLink<Destination: View>: View {
                         .bold()
                         .foregroundColor(invert ? foregroundColor : backgroundColor)
                         .multilineTextAlignment(.center)
+                        .padding(6)
                 }
                 .frame(maxWidth: .infinity)
                 .frame(minHeight: 54)
@@ -196,6 +197,7 @@ struct SmallButton: View {
                     .bold()
                     .foregroundColor(invert ? foregroundColor : backgroundColor)
                     .multilineTextAlignment(.center)
+                    .padding(6)
             }
             .frame(maxWidth: .infinity)
             .frame(minHeight: 54)
@@ -233,6 +235,7 @@ struct SmallButton_Settings: View {
                     .bold()
                     .foregroundColor(selected ? color2 : AppColor.foreground)
                     .multilineTextAlignment(.center)
+                    .padding(6)
             }
             .frame(maxWidth: .infinity)
             .frame(minHeight: 54)

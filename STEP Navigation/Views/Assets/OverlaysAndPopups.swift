@@ -90,8 +90,8 @@ struct ConfirmationPopup<Destination: View>: View {
                 }
             }
             .foregroundColor(AppColor.background)
-            .padding(.vertical, 6)
-            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 8)
             
             VStack(spacing: 12) {
                 SmallNavigationLink(destination: confirmButtonDestination, label: confirmButtonLabel, foregroundColor: AppColor.background, backgroundColor: AppColor.foreground, secondaryAction: secondaryAction)
@@ -100,13 +100,17 @@ struct ConfirmationPopup<Destination: View>: View {
                     showingConfirmation = false
                 }, label: "Cancel", foregroundColor: AppColor.background, backgroundColor: AppColor.foreground, invert: true)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 6)
+            .padding(.horizontal, 8)
+            .padding(.bottom, 8)
         }
         .accessibilityAddTraits(.isModal)
         .frame(width: 360, height: 250)
         .background(AppColor.foreground)
         .cornerRadius(20)
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(AppColor.background, style: StrokeStyle(lineWidth: 3))
+        )
     }
     
 }

@@ -45,6 +45,8 @@ struct AnchorDetailsText: View {
                 Text("\(distanceAway.metersAsUnitString) away")
                 Spacer()
             }
+            .lineLimit(1)
+            .truncationMode(.tail)
             .font(.title)
             .padding(.horizontal)
             VStack {
@@ -90,7 +92,6 @@ struct FromToAnchorDetails: View {
                     .font(.title2)
                     .padding(.horizontal)
                     .padding(.top)
-                    .padding(.bottom, 1)
                     .foregroundColor(AppColor.foreground)
                 Spacer()
             }
@@ -116,9 +117,7 @@ struct FromToAnchorDetails: View {
                     .font(.title2)
                     .padding(.horizontal)
                     .padding(.top)
-                    .padding(.bottom, 1)
                     .foregroundColor(AppColor.foreground)
-                
                 Spacer()
             }
             if let currentLocation = PositioningModel.shared.currentLatLon {
